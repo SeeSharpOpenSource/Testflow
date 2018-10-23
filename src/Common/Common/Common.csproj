@@ -52,8 +52,8 @@
     <Compile Include="DataInterface\Sequence\ISequenceData.cs" />
     <Compile Include="DataInterface\Sequence\ISequenceGroupInfo.cs" />
     <Compile Include="DataInterface\VariableType.cs" />
-    <Compile Include="DataInterface\Variable\IVariable.cs" />
-    <Compile Include="DataInterface\Variable\IVariableCollection.cs" />
+    <Compile Include="DataInterface\Sequence\IVariable.cs" />
+    <Compile Include="DataInterface\Sequence\IVariableCollection.cs" />
     <Compile Include="ModuleInterface\IConfigurationManager.cs" />
     <Compile Include="ModuleInterface\ILogService.cs" />
     <Compile Include="TestflowDataException.cs" />
