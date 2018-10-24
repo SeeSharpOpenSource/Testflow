@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
+using System.Xml.Serialization;
 using Testflow.DataInterface.ComDescription;
 
 namespace Testflow.DataInterface.Sequence
@@ -18,9 +19,9 @@ namespace Testflow.DataInterface.Sequence
         string Description { get; set; }
 
         /// <summary>
-        /// 测试序列组关联的所有组件的ID号
+        /// 测试序列组关联的所有组件
         /// </summary>
-        ISet<int> Components { get; set; }
+        ISet<IAssemblyDescription> Components { get; set; }
 
         /// <summary>
         /// 测试序列组格式版本等信息
@@ -33,6 +34,11 @@ namespace Testflow.DataInterface.Sequence
         IList<IAssemblyDescription> Assemblies { get; set; }
 
         /// <summary>
+        ///  测试序列组声明周期内所有使用到的变量
+        /// </summary>
+        IVariableCollection Variables { get; set; }
+
+        /// <summary>
         /// 测试序列组当前关联的测试序列组参数信息
         /// </summary>
         ISequenceGroupParameter Parameters { get; set; }
@@ -40,17 +46,17 @@ namespace Testflow.DataInterface.Sequence
         /// <summary>
         /// 测试序列组的SetUp模块
         /// </summary>
-        ISequenceData SetUp { get; }
+        ISequenceData SetUp { get; set; }
 
         /// <summary>
         /// 测试序列组待执行的序列集合
         /// </summary>
-        ISequenceCollection Sequences { get; }
+        ISequenceCollection Sequences { get; set; }
 
         /// <summary>
         /// 测试序列组的TearDown模块
         /// </summary>
-        ISequenceData TearDown { get; }
+        ISequenceData TearDown { get; set; }
         
         /// <summary>
         /// 初始化一个空白的测试序列组

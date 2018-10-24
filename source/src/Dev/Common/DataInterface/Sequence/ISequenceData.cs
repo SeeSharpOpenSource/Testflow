@@ -7,6 +7,8 @@ namespace Testflow.DataInterface.Sequence
     /// </summary>
     public interface ISequenceData: ICloneable
     {
-         
+        string Name { get; set; }
+        string Description { get; set; }
+        IVariableCollection Variables { get; set; }
     }
 }

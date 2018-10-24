@@ -9,6 +9,10 @@ namespace Testflow.DataInterface.Sequence
         IAssemblyDescription Assembly { get; set; }
         Type Type { get; set; }
         VariableType VariableType { get; set; }
-
+        
+        /// <summary>
+        /// 是否定义时初始化
+        /// </summary>
+        bool InitWhenDefine { get; set; }
     }
 }
