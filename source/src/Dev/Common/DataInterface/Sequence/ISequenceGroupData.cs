@@ -29,6 +29,11 @@ namespace Testflow.DataInterface.Sequence
         IList<IAssemblyDescription> Assemblies { get; set; }
 
         /// <summary>
+        /// 测试序列组的参数
+        /// </summary>
+        IArgumentCollection Arguments { get; set; }
+
+        /// <summary>
         ///  测试序列组声明周期内所有使用到的变量
         /// </summary>
         IVariableCollection Variables { get; set; }
@@ -37,6 +42,11 @@ namespace Testflow.DataInterface.Sequence
         /// 测试序列组当前关联的测试序列组参数信息
         /// </summary>
         ISequenceGroupParameter Parameters { get; set; }
+
+        /// <summary>
+        /// 执行模型，顺序执行/并行执行
+        /// </summary>
+        ExecutionModel ExecutionModel { get; set; }
 
         /// <summary>
         /// 测试序列组的SetUp模块

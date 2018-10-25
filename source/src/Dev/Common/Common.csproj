@@ -42,8 +42,18 @@
   <ItemGroup>
     <Compile Include="Common\Constants.cs" />
     <Compile Include="Common\PropertyExtendable.cs" />
-    <Compile Include="DataInterface\ComDescription\FunctionType.cs" />
+    <Compile Include="DataInterface\FunctionType.cs" />
+    <Compile Include="DataInterface\ExecutionModel.cs" />
     <Compile Include="DataInterface\IArgumentDescription.cs" />
+    <Compile Include="DataInterface\Sequence\IArgumentCollection.cs" />
+    <Compile Include="DataInterface\Sequence\IArgumentData.cs" />
+    <Compile Include="DataInterface\Sequence\IFunctionData.cs" />
+    <Compile Include="DataInterface\Sequence\IParameterData.cs" />
+    <Compile Include="DataInterface\Sequence\IParameterDataCollection.cs" />
+    <Compile Include="DataInterface\Sequence\ISequenceParameter.cs" />
+    <Compile Include="DataInterface\Sequence\ISequenceParameterInfo.cs" />
+    <Compile Include="DataInterface\Sequence\ITestGroupData.cs" />
+    <Compile Include="DataInterface\Sequence\ParameterType.cs" />
     <Compile Include="DesignTime\IDesigntimeContext.cs" />
     <Compile Include="DataInterface\ComDescription\IFuncInterfaceDescription.cs" />
     <Compile Include="DataInterface\ComDescription\IInstanceDescription.cs" />
@@ -52,7 +62,7 @@
     <Compile Include="DataInterface\Sequence\ISequenceData.cs" />
     <Compile Include="DataInterface\Sequence\ISequenceGroupInfo.cs" />
     <Compile Include="DataInterface\VariableType.cs" />
-    <Compile Include="DataInterface\Sequence\IVariable.cs" />
+    <Compile Include="DataInterface\Sequence\IVariableData.cs" />
     <Compile Include="DataInterface\Sequence\IVariableCollection.cs" />
     <Compile Include="ICounter.cs" />
     <Compile Include="IRetryCounter.cs" />

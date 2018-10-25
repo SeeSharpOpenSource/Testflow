@@ -12,10 +12,10 @@ namespace Testflow
     /// </summary>
     public interface ICounter
     {
-        /// <summary>
-        /// 计数器名称
-        /// </summary>
-        string Name { get; set; }
+//        /// <summary>
+//        /// 计数器名称
+//        /// </summary>
+//        string Name { get; set; }
 
         /// <summary>
         /// 计数器当前计数值

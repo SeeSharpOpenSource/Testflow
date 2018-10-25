@@ -2,7 +2,7 @@
 
 namespace Testflow.DataInterface.Sequence
 {
-    public interface IVariableCollection : IList<IVariableData>
+    public interface IArgumentCollection : IList<IArgumentData>
     {
          
     }

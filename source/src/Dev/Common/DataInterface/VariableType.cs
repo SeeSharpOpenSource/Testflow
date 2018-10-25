@@ -8,21 +8,21 @@
         /// <summary>
         /// 值类型
         /// </summary>
-        Value,
+        Value = 0,
 
         /// <summary>
         /// 类类型
         /// </summary>
-        Class,
+        Class = 1,
         
         /// <summary>
         /// 结构体类型
         /// </summary>
-        Struct,
+        Struct = 2,
 
         /// <summary>
         /// 枚举
         /// </summary>
-        Enumeration
+        Enumeration = 3
     }
 }

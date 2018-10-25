@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Testflow.DataInterface.Sequence
 {
@@ -7,6 +8,6 @@ namespace Testflow.DataInterface.Sequence
     /// </summary>
     public interface ISequenceGroupParameter : ICloneable
     {
-        
+        IList<ISequenceParameter> 
     }
 }

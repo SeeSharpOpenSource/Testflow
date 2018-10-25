@@ -15,6 +15,16 @@ namespace Testflow.DataInterface.Sequence
         IList<ISequenceStepData> SubSteps { get; set; }
 
         /// <summary>
+        /// 步骤在当前序列的索引
+        /// </summary>
+        int Index { get; set; }
+
+        /// <summary>
+        /// 当前步骤的Function，如果该步骤包含子步骤，该参数为null
+        /// </summary>
+        IFunctionData Function { get; set; }
+
+        /// <summary>
         /// 是否包含子步骤
         /// </summary>
         [XmlIgnore]

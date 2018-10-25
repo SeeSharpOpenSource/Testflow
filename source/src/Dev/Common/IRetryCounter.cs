@@ -7,10 +7,10 @@ namespace Testflow
     /// </summary>
     public interface IRetryCounter
     {
-        /// <summary>
-        /// 计数器名称
-        /// </summary>
-        string Name { get; set; }
+//        /// <summary>
+//        /// 计数器名称
+//        /// </summary>
+//        string Name { get; set; }
 
         /// <summary>
         /// 计数器当前重试次数
