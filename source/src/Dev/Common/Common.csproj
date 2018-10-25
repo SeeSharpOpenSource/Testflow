@@ -52,6 +52,7 @@
     <Compile Include="DataInterface\Sequence\IParameterDataCollection.cs" />
     <Compile Include="DataInterface\Sequence\ISequenceParameter.cs" />
     <Compile Include="DataInterface\Sequence\ISequenceParameterInfo.cs" />
+    <Compile Include="DataInterface\Sequence\ISequenceStepParameter.cs" />
     <Compile Include="DataInterface\Sequence\ITestGroupData.cs" />
     <Compile Include="DataInterface\Sequence\ParameterType.cs" />
     <Compile Include="DesignTime\IDesigntimeContext.cs" />

@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Xml.Serialization;
+using Testflow.DataInterface.ComDescription;
 
 namespace Testflow.DataInterface.Sequence
 {
@@ -34,5 +36,11 @@ namespace Testflow.DataInterface.Sequence
         /// 方法返回值信息
         /// </summary>
         IArgumentData ReturnType { get; set; }
+
+        /// <summary>
+        /// 关联的Description信息
+        /// </summary>
+        [XmlIgnore]
+        IFuncInterfaceDescription Description { get; set; }
     }
 }

@@ -8,7 +8,6 @@ namespace Testflow.DataInterface.ComDescription
     /// </summary>
     public interface IInstanceDescription : IInterfaceDescription
     {
-
         /// <summary>
         /// 实例的所有属性
         /// </summary>

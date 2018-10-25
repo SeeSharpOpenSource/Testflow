@@ -5,6 +5,11 @@ namespace Testflow.DataInterface.Sequence
     public interface IParameterData
     {
         /// <summary>
+        /// 当前ParameterData在ParametorCollection中的索引
+        /// </summary>
+        int Index { get; set; }
+
+        /// <summary>
         /// 参数的值，如果是变量，则值为IVariableData
         /// </summary>
         object Value { get; set; }
