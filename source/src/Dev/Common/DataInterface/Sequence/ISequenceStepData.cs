@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Xml.Serialization;
 
 namespace Testflow.DataInterface.Sequence
 {
@@ -7,6 +9,25 @@ namespace Testflow.DataInterface.Sequence
     /// </summary>
     public interface ISequenceStepData : ICloneable
     {
-         
+        /// <summary>
+        /// 保存子步骤，如果不包含则为空或null
+        /// </summary>
+        IList<ISequenceStepData> SubSteps { get; set; }
+
+        /// <summary>
+        /// 是否包含子步骤
+        /// </summary>
+        [XmlIgnore]
+        bool HasSubSteps { get; }
+        
+        /// <summary>
+        /// 循环计数器
+        /// </summary>
+        ICounter LoopCounter { get; set; }
+
+        /// <summary>
+        /// 重试计数器
+        /// </summary>
+        IRetryCounter RetryCounter { get; set; }
     }
 }

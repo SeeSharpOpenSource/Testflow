@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System.Xml.Serialization;
 
-namespace Testflow.DataInterface.ComDescription
+namespace Testflow.DataInterface
 {
     /// <summary>
     /// 保存单个Assembly的描述信息
@@ -20,12 +20,14 @@ namespace Testflow.DataInterface.ComDescription
         /// <summary>
         /// 程序集是否可用
         /// </summary>
+        [XmlIgnore]
         bool Available { get; }
 
-        /// <summary>
-        /// 使用到的程序集的所有命名空间
-        /// </summary> 
-        ISet<string> NameSpaces { get; set; }
+//        /// <summary>
+//        /// 使用到的程序集的所有命名空间
+//        /// </summary> 
+//        [XmlIgnore]
+//        ISet<string> NameSpaces { get; set; }
 
         /// <summary>
         /// 程序集的版本号

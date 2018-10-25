@@ -1,6 +1,7 @@
 ﻿using System;
+using Testflow.DataInterface.ComDescription;
 
-namespace Testflow.DataInterface.ComDescription
+namespace Testflow.DataInterface
 {
     public interface IArgumentDescription
     {

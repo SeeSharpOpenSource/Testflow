@@ -2,7 +2,7 @@
 using Testflow.DataInterface.ComDescription;
 using Testflow.DataInterface.Sequence;
 
-namespace Testflow.DataInterface
+namespace Testflow.DesignTime
 {
     public interface IDesigntimeContext
     {
@@ -20,5 +20,6 @@ namespace Testflow.DataInterface
         /// 设计时内操作的测试序列组
         /// </summary>
         ISequenceGroupData SequenceGroup { get; }
+
     }
 }

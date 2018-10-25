@@ -43,8 +43,8 @@
     <Compile Include="Common\Constants.cs" />
     <Compile Include="Common\PropertyExtendable.cs" />
     <Compile Include="DataInterface\ComDescription\FunctionType.cs" />
-    <Compile Include="DataInterface\ComDescription\IArgumentDescription.cs" />
-    <Compile Include="DataInterface\IDesigntimeContext.cs" />
+    <Compile Include="DataInterface\IArgumentDescription.cs" />
+    <Compile Include="DesignTime\IDesigntimeContext.cs" />
     <Compile Include="DataInterface\ComDescription\IFuncInterfaceDescription.cs" />
     <Compile Include="DataInterface\ComDescription\IInstanceDescription.cs" />
     <Compile Include="DataInterface\ComDescription\IInterfaceDescription.cs" />
@@ -54,6 +54,8 @@
     <Compile Include="DataInterface\VariableType.cs" />
     <Compile Include="DataInterface\Sequence\IVariable.cs" />
     <Compile Include="DataInterface\Sequence\IVariableCollection.cs" />
+    <Compile Include="ICounter.cs" />
+    <Compile Include="IRetryCounter.cs" />
     <Compile Include="ModuleInterface\IConfigurationManager.cs" />
     <Compile Include="ModuleInterface\ILogService.cs" />
     <Compile Include="TestflowDataException.cs" />
@@ -69,7 +71,7 @@
     <Compile Include="ModuleInterface\ISequenceSerializer.cs" />
     <Compile Include="ModuleInterface\IStepDebugger.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="DataInterface\ComDescription\IAssemblyDescription.cs" />
+    <Compile Include="DataInterface\IAssemblyDescription.cs" />
     <Compile Include="DataInterface\IConfiguration.cs" />
     <Compile Include="DataInterface\IParameterCheckInfo.cs" />
     <Compile Include="DataInterface\IRuntimeStatusInfo.cs" />

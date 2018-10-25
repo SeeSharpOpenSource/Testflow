@@ -19,11 +19,6 @@ namespace Testflow.DataInterface.Sequence
         string Description { get; set; }
 
         /// <summary>
-        /// 测试序列组关联的所有组件
-        /// </summary>
-        ISet<IAssemblyDescription> Components { get; set; }
-
-        /// <summary>
         /// 测试序列组格式版本等信息
         /// </summary>
         ISequenceGroupInfo Info { get; set; }
