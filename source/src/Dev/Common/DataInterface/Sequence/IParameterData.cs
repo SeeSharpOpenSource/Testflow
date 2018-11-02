@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Xml.Serialization;
+using Testflow.DataInterface.ComDescription;
 
 namespace Testflow.DataInterface.Sequence
 {
@@ -12,12 +14,7 @@ namespace Testflow.DataInterface.Sequence
         /// <summary>
         /// 参数的值，如果是变量，则值为IVariableData
         /// </summary>
-        object Value { get; set; }
-
-        /// <summary>
-        /// 参数所在配置集
-        /// </summary>
-        IAssemblyDescription Assembly { get; set; }
+        string Value { get; set; }
 
         /// <summary>
         /// 当前的值是变量还是值
@@ -27,6 +24,6 @@ namespace Testflow.DataInterface.Sequence
         /// <summary>
         /// 该参数的Type类型
         /// </summary>
-        Type Type { get; set; }
+        ITypeData Type { get; set; }
     }
 }

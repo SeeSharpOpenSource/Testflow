@@ -5,8 +5,28 @@ namespace Testflow.DataInterface.ComDescription
     /// <summary>
     /// 方法描述接口
     /// </summary>
-    public interface IFuncInterfaceDescription : IInterfaceDescription
+    public interface IFuncInterfaceDescription
     {
+        /// <summary>
+        /// 名称
+        /// </summary>
+        string Name { get; set; }
+
+        /// <summary>
+        /// 描述信息，如果没有则为string.Empty
+        /// </summary>
+        string Description { get; set; }
+
+        /// <summary>
+        /// 属于那种类型
+        /// </summary>
+        VariableType ArgumentType { get; set; }
+
+        /// <summary>
+        /// 对应的Type对象
+        /// </summary>
+        ITypeData ClassType { get; set; }
+
         /// <summary>
         /// 是否是泛型方法
         /// </summary>
@@ -26,6 +46,11 @@ namespace Testflow.DataInterface.ComDescription
         /// 方法所在实例，静态方法时该参数为null
         /// </summary>
         IInstanceDescription Instance { set; get; }
+
+        /// <summary>
+        /// 当前方法所在类
+        /// </summary>
+        string Class { get; set; }
 
         /// <summary>
         /// 方法被显示的签名字符串

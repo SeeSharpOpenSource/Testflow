@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Xml;
+using System.Xml.Serialization;
 
 namespace Testflow.DataInterface.Sequence
 {
@@ -35,6 +37,7 @@ namespace Testflow.DataInterface.Sequence
         /// <summary>
         /// 测试序列组文件的路径
         /// </summary>
+        [XmlIgnore]
         string SequenceGroupFile { get; set; }
 
         /// <summary>
@@ -45,6 +48,7 @@ namespace Testflow.DataInterface.Sequence
         /// <summary>
         /// 测试序列组是否被修改的标识位
         /// </summary>
+        [XmlIgnore]
         bool Modified { get; }
     }
 }

@@ -15,6 +15,11 @@ namespace Testflow.DataInterface.Sequence
         IList<ISequenceStepData> SubSteps { get; set; }
 
         /// <summary>
+        /// 步骤描述
+        /// </summary>
+        string Description { get; set; }
+        
+        /// <summary>
         /// 步骤在当前序列的索引
         /// </summary>
         int Index { get; set; }

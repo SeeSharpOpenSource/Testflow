@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Xml.Serialization;
+using Testflow.DataInterface.ComDescription;
 
 namespace Testflow.DataInterface.Sequence
 {
     /// <summary>
-    /// 参数类
+    /// 参数类，描述FunctionData的接口
     /// </summary>
     public interface IArgumentData
     {
@@ -14,18 +15,14 @@ namespace Testflow.DataInterface.Sequence
         string Name { get; set; }
 
         /// <summary>
-        /// 参数类所在的程序集
-        /// </summary>
-        IAssemblyDescription Assembly { get; set; }
-
-        /// <summary>
         /// 参数类的Type对象
         /// </summary>
-        Type Type { get; set; }
+        ITypeData Type { get; set; }
 
         /// <summary>
         /// 参数类的类型
         /// </summary>
+        [XmlIgnore]
         VariableType VariableType { get; set; }
     }
 }

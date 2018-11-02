@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Xml.Serialization;
 
 namespace Testflow.DataInterface.Sequence
 {
@@ -27,6 +28,7 @@ namespace Testflow.DataInterface.Sequence
         /// <summary>
         /// 序列参数文件路径
         /// </summary>
+        [XmlIgnore]
         string Path { get; set; }
         
         /// <summary>

@@ -13,19 +13,14 @@ namespace Testflow.DataInterface.Sequence
         FunctionType Type { get; set; }
 
         /// <summary>
-        /// 方法所在程序集
-        /// </summary>
-        IAssemblyDescription Assembly { get; set; }
-
-        /// <summary>
         /// 方法名
         /// </summary>
         string MethodName { get; set; }
 
         /// <summary>
-        /// 方法所在命名空间
+        /// 方法所在类
         /// </summary>
-        string NameSpace { get; set; }
+        ITypeData ClassType { get; set; }
 
         /// <summary>
         /// 方法参数列表信息

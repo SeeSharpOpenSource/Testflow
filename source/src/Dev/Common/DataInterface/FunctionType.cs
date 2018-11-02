@@ -1,5 +1,8 @@
 ﻿namespace Testflow.DataInterface
 {
+    /// <summary>
+    /// 方法类型需
+    /// </summary>
     public enum FunctionType
     {
         // 构造方法

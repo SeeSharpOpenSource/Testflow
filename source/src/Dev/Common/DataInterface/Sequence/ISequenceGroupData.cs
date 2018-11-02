@@ -26,7 +26,7 @@ namespace Testflow.DataInterface.Sequence
         /// <summary>
         /// 测试序列组关联的所有程序集
         /// </summary>
-        IList<IAssemblyDescription> Assemblies { get; set; }
+        IList<IComInterfaceDescription> Components { get; set; }
 
         /// <summary>
         /// 测试序列组的参数

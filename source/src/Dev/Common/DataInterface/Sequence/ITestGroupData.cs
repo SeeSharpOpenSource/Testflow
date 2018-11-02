@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Testflow.DataInterface.ComDescription;
 
 namespace Testflow.DataInterface.Sequence
 {
@@ -7,7 +8,7 @@ namespace Testflow.DataInterface.Sequence
         /// <summary>
         /// 测试序列组关联的所有程序集
         /// </summary>
-        IList<IAssemblyDescription> Assemblies { get; set; }
+        IList<IComInterfaceDescription> Assemblies { get; set; }
 
         /// <summary>
         /// 执行模型，顺序执行/并行执行
