@@ -1,7 +1,10 @@
 ﻿using System;
 
-namespace Testflow
+namespace Testflow.Common
 {
+    /// <summary>
+    /// Testflow的异常基类
+    /// </summary>
     [Serializable]
     public class TestflowException : ApplicationException
     {

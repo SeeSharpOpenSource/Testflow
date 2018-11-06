@@ -1,7 +1,10 @@
 ﻿using System;
 
-namespace Testflow
+namespace Testflow.Common
 {
+    /// <summary>
+    /// Testflow的数据异常
+    /// </summary>
     [Serializable]
     public class TestflowDataException : TestflowException
     {

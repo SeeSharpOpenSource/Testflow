@@ -1,7 +1,10 @@
 ﻿using System;
 
-namespace Testflow
+namespace Testflow.Common
 {
+    /// <summary>
+    /// Testflow内部异常
+    /// </summary>
     [Serializable]
     public class TestflowInternalException : TestflowException
     {
