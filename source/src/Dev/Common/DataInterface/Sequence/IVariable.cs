@@ -7,7 +7,7 @@ namespace Testflow.DataInterface.Sequence
     /// <summary>
     /// 变量数据
     /// </summary>
-    public interface IVariableData
+    public interface IVariable
     {
         /// <summary>
         /// 变量名称
@@ -23,10 +23,11 @@ namespace Testflow.DataInterface.Sequence
         /// 变量的类型
         /// </summary>
         VariableType VariableType { get; set; }
-        
+
         /// <summary>
         /// 变量的值，如果没有则为null
         /// </summary>
+        [XmlIgnore]
         string Value { get; set; }
     }
 }

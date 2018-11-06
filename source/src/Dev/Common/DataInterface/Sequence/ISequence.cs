@@ -6,7 +6,7 @@ namespace Testflow.DataInterface.Sequence
     /// <summary>
     /// 保存单个测试序列信息的数据结构
     /// </summary>
-    public interface ISequenceData: ICloneable
+    public interface ISequence: ISequenceFlowContainer, ICloneable
     {
         /// <summary>
         /// 序列名称
@@ -31,6 +31,6 @@ namespace Testflow.DataInterface.Sequence
         /// <summary>
         /// 测试的步骤集合
         /// </summary>
-        IList<ISequenceStepData> Steps { get; set; }
+        IList<ISequenceStep> Steps { get; set; }
     }
 }

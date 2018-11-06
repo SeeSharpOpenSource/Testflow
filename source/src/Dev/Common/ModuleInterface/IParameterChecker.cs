@@ -1,6 +1,6 @@
 ﻿namespace Testflow.ModuleInterface
 {
-    public interface IParameterChecker
+    public interface IParameterChecker : IController
     {
          
     }

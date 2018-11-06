@@ -1,6 +1,6 @@
 ﻿namespace Testflow.ModuleInterface
 {
-    public interface IConfigurationManager
+    public interface IConfigurationManager : IController
     {
          
     }

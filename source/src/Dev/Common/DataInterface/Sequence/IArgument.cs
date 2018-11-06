@@ -7,7 +7,7 @@ namespace Testflow.DataInterface.Sequence
     /// <summary>
     /// 参数类，描述FunctionData的接口
     /// </summary>
-    public interface IArgumentData
+    public interface IArgument
     {
         /// <summary>
         /// 参数类

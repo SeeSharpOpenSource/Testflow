@@ -1,6 +1,6 @@
 ﻿namespace Testflow.ModuleInterface
 {
-    public interface IResultManager
+    public interface IResultManager : IController
     {
          
     }

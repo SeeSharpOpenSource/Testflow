@@ -1,6 +1,6 @@
 ﻿namespace Testflow.ModuleInterface
 {
-    public interface ILogService
+    public interface ILogService : IController
     {
          
     }

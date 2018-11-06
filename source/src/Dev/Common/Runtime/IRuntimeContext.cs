@@ -1,7 +1,8 @@
 ﻿using System;
+using Testflow.Common;
 using Testflow.DataInterface.Sequence;
 
-namespace Testflow.DataInterface
+namespace Testflow.Runtime
 {
     /// <summary>
     /// 保存单个运行会话的上下文信息
@@ -29,6 +30,11 @@ namespace Testflow.DataInterface
         /// 当前运行会话的线程ID
         /// </summary>
         int ThreadID { get; }
+
+        /// <summary>
+        /// 会话的运行时状态
+        /// </summary>
+        RuntimeState State { get; }
         
         /// <summary>
         /// 当前会话的开始时间
@@ -38,6 +44,6 @@ namespace Testflow.DataInterface
         /// <summary>
         /// 当前会话关联的测试序列组
         /// </summary>
-        ISequenceGroupData SequenceGroup { get; }
+        ISequenceGroup SequenceGroup { get; }
     }
 }

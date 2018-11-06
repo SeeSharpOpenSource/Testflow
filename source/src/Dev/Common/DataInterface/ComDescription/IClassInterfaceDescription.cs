@@ -5,7 +5,7 @@ namespace Testflow.DataInterface.ComDescription
     /// <summary>
     /// 类类型描述信息
     /// </summary>
-    public interface IClassInterfaceDescription
+    public interface IClassInterfaceDescription : IDescriptionData
     {
         /// <summary>
         /// 类类型描述信息

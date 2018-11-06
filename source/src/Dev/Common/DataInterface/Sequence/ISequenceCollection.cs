@@ -6,7 +6,7 @@ namespace Testflow.DataInterface.Sequence
     /// <summary>
     /// IsequeceData的列表容器
     /// </summary>
-    public interface ISequenceCollection : IList<ISequenceData>, ICloneable
+    public interface ISequenceCollection : IList<ISequence>, ICloneable
     {
          
     }

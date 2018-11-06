@@ -1,6 +1,6 @@
 ﻿namespace Testflow.ModuleInterface
 {
-    public interface IStepDebugger
+    public interface IStepDebugger : IController
     {
          
     }

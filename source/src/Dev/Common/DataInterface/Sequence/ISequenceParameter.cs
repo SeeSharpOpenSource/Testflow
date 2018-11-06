@@ -5,7 +5,7 @@ namespace Testflow.DataInterface.Sequence
     /// <summary>
     /// 每个Sequence的参数配置
     /// </summary>
-    public interface ISequenceParameter
+    public interface ISequenceParameter : ISequenceDataContainer
     {
         /// <summary>
         /// 该参数Sequence在当前SequenceGroup的索引号

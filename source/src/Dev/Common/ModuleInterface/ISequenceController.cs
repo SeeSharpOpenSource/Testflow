@@ -1,6 +1,6 @@
 ﻿namespace Testflow.ModuleInterface
 {
-    public interface ISequenceController
+    public interface ISequenceController : IController
     {
          
     }

@@ -30,7 +30,7 @@ namespace Testflow.DataInterface.Sequence
         /// <summary>
         /// 方法返回值信息
         /// </summary>
-        IArgumentData ReturnType { get; set; }
+        IArgument ReturnType { get; set; }
 
         /// <summary>
         /// 关联的Description信息

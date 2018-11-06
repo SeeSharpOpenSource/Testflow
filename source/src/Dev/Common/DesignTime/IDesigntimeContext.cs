@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Testflow.DataInterface;
 using Testflow.DataInterface.ComDescription;
 using Testflow.DataInterface.Sequence;
 
@@ -6,6 +7,9 @@ namespace Testflow.DesignTime
 {
     public interface IDesigntimeContext
     {
+        /// <summary>
+        /// 当前设计时名称
+        /// </summary>
         string Name { get; }
 
         /// <summary>
@@ -21,13 +25,11 @@ namespace Testflow.DesignTime
         /// <summary>
         /// 设计时内操作的测试序列组，如果操作的是TestGroup，该值为null
         /// </summary>
-        ISequenceGroupData SequenceGroup { get; }
+        ISequenceGroup SequenceGroup { get; }
 
         /// <summary>
         /// 设计时内操作的TestGroup
         /// </summary>
-        ITestGroupData TestGroup { get; set; }
-
-        IDesigntimeContext GetContext(string contextName);
+        ITestGroup TestGroup { get; set; }
     }
 }

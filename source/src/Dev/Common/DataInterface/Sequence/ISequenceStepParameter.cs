@@ -2,7 +2,7 @@
 
 namespace Testflow.DataInterface.Sequence
 {
-    public interface ISequenceStepParameter
+    public interface ISequenceStepParameter : ISequenceDataContainer
     {
         /// <summary>
         /// 在当前层级的索引

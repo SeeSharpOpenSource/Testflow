@@ -3,12 +3,12 @@ using Testflow.DataInterface.ComDescription;
 
 namespace Testflow.DataInterface.Sequence
 {
-    public interface ITestGroupData
+    public interface ITestGroup : ISequenceFlowContainer
     {
         /// <summary>
         /// 测试序列组关联的所有程序集
         /// </summary>
-        IList<IComInterfaceDescription> Assemblies { get; set; }
+        IAssemblyInfoCollection Assemblies { get; set; }
 
         /// <summary>
         /// 执行模型，顺序执行/并行执行
@@ -23,12 +23,12 @@ namespace Testflow.DataInterface.Sequence
         /// <summary>
         /// 测试序列组的SetUp模块
         /// </summary>
-        ISequenceData SetUp { get; set; }
+        ISequence SetUp { get; set; }
 
         /// <summary>
         /// 当前测试组中包含的序列组信息
         /// </summary>
-        IList<ISequenceGroupData> SequenceGroups { get; set; }
+        IList<ISequenceGroup> SequenceGroups { get; set; }
 
         /// <summary>
         /// 所有测试组中的参数配置
@@ -38,6 +38,6 @@ namespace Testflow.DataInterface.Sequence
             /// <summary>
         /// 测试序列组的TearDown模块
         /// </summary>
-        ISequenceData TearDown { get; set; }
+        ISequence TearDown { get; set; }
     }
 }

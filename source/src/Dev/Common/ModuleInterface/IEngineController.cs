@@ -1,6 +1,6 @@
 ﻿namespace Testflow.ModuleInterface
 {
-    public interface IEngineController
+    public interface IEngineController : IController
     {
          
     }

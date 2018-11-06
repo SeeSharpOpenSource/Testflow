@@ -1,11 +1,11 @@
 ﻿using System.Xml.Serialization;
 
-namespace Testflow.DataInterface.ComDescription
+namespace Testflow.DataInterface
 {
     /// <summary>
     /// 保存单个Assembly的描述信息
     /// </summary>
-    public interface IAssemblyDescription
+    public interface IAssemblyInfo
     {
         /// <summary>
         /// 程序集名称

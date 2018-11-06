@@ -6,18 +6,8 @@ namespace Testflow.DataInterface.ComDescription
     /// <summary>
     /// 实例对象描述接口
     /// </summary>
-    public interface IInstanceDescription
+    public interface IInstanceDescription : IDescriptionData
     {
-        /// <summary>
-        /// 名称
-        /// </summary>
-        string Name { get; set; }
-
-        /// <summary>
-        /// 描述信息，如果没有则为string.Empty
-        /// </summary>
-        string Description { get; set; }
-
         /// <summary>
         /// 所在命名空间
         /// </summary>

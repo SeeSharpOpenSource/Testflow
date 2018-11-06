@@ -1,6 +1,6 @@
 ﻿namespace Testflow.ModuleInterface
 {
-    public interface IDataPersistance
+    public interface IDataPersistance : IController
     {
          
     }

@@ -6,7 +6,7 @@ using Testflow.DataInterface.ComDescription;
 
 namespace Testflow.DataInterface.Sequence
 {
-    public interface ISequenceGroupData : ICloneable
+    public interface ISequenceGroup : ISequenceFlowContainer, ICloneable
     {
         /// <summary>
         /// 测试序列组的名称
@@ -26,7 +26,7 @@ namespace Testflow.DataInterface.Sequence
         /// <summary>
         /// 测试序列组关联的所有程序集
         /// </summary>
-        IList<IComInterfaceDescription> Components { get; set; }
+        IAssemblyInfoCollection Components { get; set; }
 
         /// <summary>
         /// 测试序列组的参数
@@ -51,7 +51,7 @@ namespace Testflow.DataInterface.Sequence
         /// <summary>
         /// 测试序列组的SetUp模块
         /// </summary>
-        ISequenceData SetUp { get; set; }
+        ISequence SetUp { get; set; }
 
         /// <summary>
         /// 测试序列组待执行的序列集合
@@ -61,7 +61,7 @@ namespace Testflow.DataInterface.Sequence
         /// <summary>
         /// 测试序列组的TearDown模块
         /// </summary>
-        ISequenceData TearDown { get; set; }
+        ISequence TearDown { get; set; }
         
         /// <summary>
         /// 初始化一个空白的测试序列组

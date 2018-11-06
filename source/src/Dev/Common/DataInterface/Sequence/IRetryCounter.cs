@@ -1,16 +1,16 @@
 ﻿using System.Xml.Serialization;
 
-namespace Testflow
+namespace Testflow.DataInterface.Sequence
 {
     /// <summary>
     /// 重试计数器
     /// </summary>
     public interface IRetryCounter
     {
-//        /// <summary>
-//        /// 计数器名称
-//        /// </summary>
-//        string Name { get; set; }
+        /// <summary>
+        /// 计数器名称
+        /// </summary>
+        string Name { get; set; }
 
         /// <summary>
         /// 计数器当前重试次数
