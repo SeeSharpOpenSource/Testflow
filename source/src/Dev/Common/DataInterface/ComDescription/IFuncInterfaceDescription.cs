@@ -10,7 +10,7 @@ namespace Testflow.DataInterface.ComDescription
         /// <summary>
         /// 属于那种类型
         /// </summary>
-        VariableType ArgumentType { get; set; }
+        FunctionType ArgumentType { get; set; }
 
         /// <summary>
         /// 对应的Type对象
@@ -36,11 +36,6 @@ namespace Testflow.DataInterface.ComDescription
         /// 方法所在实例，静态方法时该参数为null
         /// </summary>
         IInstanceDescription Instance { set; get; }
-
-        /// <summary>
-        /// 当前方法所在类
-        /// </summary>
-        string Class { get; set; }
 
         /// <summary>
         /// 方法被显示的签名字符串

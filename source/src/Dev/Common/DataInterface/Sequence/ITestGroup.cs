@@ -28,7 +28,7 @@ namespace Testflow.DataInterface.Sequence
         /// <summary>
         /// 当前测试组中包含的序列组信息
         /// </summary>
-        IList<ISequenceGroup> SequenceGroups { get; set; }
+        ISequenceGroupCollection SequenceGroups { get; set; }
 
         /// <summary>
         /// 所有测试组中的参数配置

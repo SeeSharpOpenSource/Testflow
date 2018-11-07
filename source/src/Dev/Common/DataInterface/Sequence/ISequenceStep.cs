@@ -12,7 +12,7 @@ namespace Testflow.DataInterface.Sequence
         /// <summary>
         /// 保存子步骤，如果不包含则为空或null
         /// </summary>
-        IList<ISequenceStep> SubSteps { get; set; }
+        ISequenceStepCollection SubSteps { get; set; }
 
         /// <summary>
         /// 步骤描述
@@ -38,7 +38,7 @@ namespace Testflow.DataInterface.Sequence
         /// <summary>
         /// 循环计数器
         /// </summary>
-        ICounter LoopCounter { get; set; }
+        ILoopCounter LoopCounter { get; set; }
 
         /// <summary>
         /// 重试计数器

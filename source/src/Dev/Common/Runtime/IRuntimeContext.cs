@@ -7,7 +7,7 @@ namespace Testflow.Runtime
     /// <summary>
     /// 保存单个运行会话的上下文信息
     /// </summary>
-    public interface IRuntimeContext
+    public interface IRuntimeContext : IEntityComponent
     {
         /// <summary>
         /// 运行会话的名称
@@ -42,8 +42,13 @@ namespace Testflow.Runtime
         DateTime StartTime { get; }
 
         /// <summary>
-        /// 当前会话关联的测试序列组
+        /// 当前会话关联的测试序列组，如果当前Handle是TestGroup，则该项为null
         /// </summary>
         ISequenceGroup SequenceGroup { get; }
+
+        /// <summary>
+        /// 当前会话关联的测试组
+        /// </summary>
+        ITestGroup TestGroup { get; }
     }
 }

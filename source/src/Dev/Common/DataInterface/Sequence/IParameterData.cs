@@ -4,7 +4,7 @@ using Testflow.DataInterface.ComDescription;
 
 namespace Testflow.DataInterface.Sequence
 {
-    public interface IParameter
+    public interface IParameterData
     {
         /// <summary>
         /// 当前ParameterData在ParametorCollection中的索引

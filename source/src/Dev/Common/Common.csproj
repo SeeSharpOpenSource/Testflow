@@ -41,6 +41,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Common\Constants.cs" />
+    <Compile Include="Common\I18nInterface.cs" />
+    <Compile Include="Common\IEntityComponent.cs" />
     <Compile Include="Common\PropertyExtendable.cs" />
     <Compile Include="DataInterface\ComDescription\ArgumentModifier.cs" />
     <Compile Include="DataInterface\ComDescription\IClassInterfaceDescription.cs" />
@@ -53,13 +55,15 @@
     <Compile Include="DataInterface\Sequence\IArgumentCollection.cs" />
     <Compile Include="DataInterface\Sequence\IArgument.cs" />
     <Compile Include="DataInterface\Sequence\IFunctionData.cs" />
-    <Compile Include="DataInterface\Sequence\IParameter.cs" />
+    <Compile Include="DataInterface\Sequence\IParameterData.cs" />
     <Compile Include="DataInterface\Sequence\IParameterDataCollection.cs" />
     <Compile Include="DataInterface\Sequence\ISequenceDataContainer.cs" />
     <Compile Include="DataInterface\Sequence\ISequenceElement.cs" />
     <Compile Include="DataInterface\Sequence\ISequenceFlowContainer.cs" />
+    <Compile Include="DataInterface\Sequence\ISequenceGroupCollection.cs" />
     <Compile Include="DataInterface\Sequence\ISequenceParameter.cs" />
     <Compile Include="DataInterface\Sequence\ISequenceParameterInfo.cs" />
+    <Compile Include="DataInterface\Sequence\ISequenceStepCollection.cs" />
     <Compile Include="DataInterface\Sequence\ISequenceStepParameter.cs" />
     <Compile Include="DataInterface\Sequence\ITestGroup.cs" />
     <Compile Include="DataInterface\Sequence\IVariableValue.cs" />
@@ -75,12 +79,14 @@
     <Compile Include="DataInterface\Sequence\IVariable.cs" />
     <Compile Include="DataInterface\Sequence\IVariableCollection.cs" />
     <Compile Include="Common\SerializationTarget.cs" />
-    <Compile Include="DesignTime\IDesignTimeHandler.cs" />
-    <Compile Include="DataInterface\Sequence\ICounter.cs" />
+    <Compile Include="DesignTime\IDesignTimeSession.cs" />
+    <Compile Include="DataInterface\Sequence\ILoopCounter.cs" />
     <Compile Include="DataInterface\Sequence\IRetryCounter.cs" />
     <Compile Include="FlowRunner.cs" />
     <Compile Include="FlowRunnerOptions.cs" />
     <Compile Include="ModuleInterface\IController.cs" />
+    <Compile Include="RunMode.cs" />
+    <Compile Include="Runtime\IRuntimeSession.cs" />
     <Compile Include="Runtime\IRuntimeService.cs" />
     <Compile Include="Runtime\RuntimeState.cs" />
     <Compile Include="ModuleInterface\IConfigurationManager.cs" />

@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace Testflow.DataInterface.Sequence
 {
     /// <summary>
-    /// 
+    /// 测试序列组参数配置
     /// </summary>
     public interface ISequenceGroupParameter : ISequenceDataContainer, ICloneable
     {

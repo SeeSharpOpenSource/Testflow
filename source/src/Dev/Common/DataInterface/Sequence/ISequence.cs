@@ -31,6 +31,6 @@ namespace Testflow.DataInterface.Sequence
         /// <summary>
         /// 测试的步骤集合
         /// </summary>
-        IList<ISequenceStep> Steps { get; set; }
+        ISequenceStepCollection Steps { get; set; }
     }
 }

@@ -1,17 +1,23 @@
 ﻿namespace Testflow.DataInterface
 {
     /// <summary>
-    /// 方法类型需
+    /// 方法类型
     /// </summary>
     public enum FunctionType
     {
-        // 构造方法
+        /// <summary>
+        /// 构造方法
+        /// </summary>
         Constructor = 0,
 
-        // 实例函数
+        /// <summary>
+        /// 实例函数
+        /// </summary>
         InstanceFunction = 1,
 
-        // 静态方法
+        /// <summary>
+        /// 静态方法
+        /// </summary>
         StaticFunction = 2
     }
 }

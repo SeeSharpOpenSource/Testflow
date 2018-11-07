@@ -6,8 +6,7 @@ using System.Threading.Tasks;
 
 namespace Testflow.DataInterface.Sequence
 {
-    public interface IParameterDataCollection :　IList<IParameterData>
+    public interface ISequenceStepCollection : IList<ISequenceStep>
     {
-
     }
 }

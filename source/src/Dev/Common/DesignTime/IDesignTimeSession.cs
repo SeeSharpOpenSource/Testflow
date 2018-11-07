@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Testflow.Common;
 using Testflow.DataInterface;
 using Testflow.DataInterface.Sequence;
 
@@ -7,19 +8,19 @@ namespace Testflow.DesignTime
     /// <summary>
     /// 设计时控制类
     /// </summary>
-    public interface IDesignTimeHandler
+    public interface IDesignTimeSession : IEntityComponent
     {
+        /// <summary>
+        /// 当前设计时的上下文信息
+        /// </summary>
+        IDesigntimeContext Context { get; }
+
         /// <summary>
         /// 获取匹配当前类型的所有变量列表
         /// </summary>
         /// <param name="type">需要匹配的类型数据</param>
         /// <returns></returns>
-        IList<IVariable> GetFittedVariables(ITypeData type);
-
-        /// <summary>
-        /// 当前设计时的上下文信息
-        /// </summary>
-        IDesigntimeContext Context { get; }
+        IVariableCollection GetFittedVariables(ITypeData type);
 
         /// <summary>
         /// 添加某个序列到测试序列组

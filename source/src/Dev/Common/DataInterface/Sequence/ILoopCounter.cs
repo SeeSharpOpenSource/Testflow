@@ -5,7 +5,7 @@ namespace Testflow.DataInterface.Sequence
     /// <summary>
     /// Testflow的计数器
     /// </summary>
-    public interface ICounter
+    public interface ILoopCounter
     {
         /// <summary>
         /// 计数器名称
