@@ -22,6 +22,8 @@ namespace Testflow.DesignTime
         /// <returns></returns>
         IVariableCollection GetFittedVariables(ITypeData type);
 
+        #region Sequence　Edit
+
         /// <summary>
         /// 添加某个序列到测试序列组
         /// </summary>
@@ -94,9 +96,45 @@ namespace Testflow.DesignTime
         void SetArgumentValue(string variableName, string value);
 
         /// <summary>
+        /// 为指定序列步骤添加循环计数器
+        /// </summary>
+        /// <param name="sequenceStep">待添加循环计数器的序列步骤</param>
+        /// <returns>添加的循环计数器</returns>
+        ILoopCounter AddLoopCounter(ISequenceStep sequenceStep);
+
+        /// <summary>
+        /// 为指定序列步骤添加循环计数器
+        /// </summary>
+        /// <param name="sequenceStep">待添加循环计数器的序列步骤</param>
+        /// <returns>添加的重试计数器</returns>
+        IRetryCounter AddRetryCounter(ISequenceStep sequenceStep);
+
+        /// <summary>
+        /// 删除指定序列步骤的循环计数器
+        /// </summary>
+        /// <param name="sequenceStep">待删除循环计数器的序列步骤</param>
+        /// <returns>被删除的循环计数器</returns>
+        ILoopCounter RemoveLoopCounter(ISequenceStep sequenceStep);
+
+        /// <summary>
+        /// 删除指定序列步骤的循重试计数器
+        /// </summary>
+        /// <param name="sequenceStep">待删除重试计数器的序列步骤</param>
+        /// <returns>被删除的重试计数器</returns>
+        IRetryCounter RemoveRetryCounter(ISequenceStep sequenceStep);
+
+        #endregion
+
+
+        #region 文件IO
+
+        /// <summary>
         /// 保存配置集到文件
         /// </summary>
         /// <param name="filePath"></param>
         void Save(string filePath);
+
+        #endregion
+
     }
 }

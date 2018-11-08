@@ -2,6 +2,6 @@
 {
     public interface IDataPersistance : IController
     {
-         
+        
     }
 }

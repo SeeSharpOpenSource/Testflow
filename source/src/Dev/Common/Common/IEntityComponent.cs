@@ -2,6 +2,9 @@
 
 namespace Testflow.Common
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public interface IEntityComponent : IDisposable
     {
         /// <summary>

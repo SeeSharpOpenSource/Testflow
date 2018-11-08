@@ -43,6 +43,7 @@
     <Compile Include="Common\Constants.cs" />
     <Compile Include="Common\I18nInterface.cs" />
     <Compile Include="Common\IEntityComponent.cs" />
+    <Compile Include="Common\IPropertyExtendable.cs" />
     <Compile Include="Common\PropertyExtendable.cs" />
     <Compile Include="DataInterface\ComDescription\ArgumentModifier.cs" />
     <Compile Include="DataInterface\ComDescription\IClassInterfaceDescription.cs" />
@@ -86,8 +87,11 @@
     <Compile Include="FlowRunnerOptions.cs" />
     <Compile Include="ModuleInterface\IController.cs" />
     <Compile Include="RunMode.cs" />
+    <Compile Include="Runtime\IRunningContainer.cs" />
     <Compile Include="Runtime\IRuntimeSession.cs" />
     <Compile Include="Runtime\IRuntimeService.cs" />
+    <Compile Include="Runtime\IStatusMaintainer.cs" />
+    <Compile Include="Runtime\IStepDebugger.cs" />
     <Compile Include="Runtime\RuntimeState.cs" />
     <Compile Include="ModuleInterface\IConfigurationManager.cs" />
     <Compile Include="ModuleInterface\ILogService.cs" />
@@ -117,6 +121,7 @@
     <Compile Include="DataInterface\ISynthesizedStatusInfo.cs" />
     <Compile Include="DataInterface\ComDescription\IComInterfaceDescription.cs" />
     <Compile Include="Runtime\IRuntimeContext.cs" />
+    <Compile Include="Runtime\RunTimeType.cs" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

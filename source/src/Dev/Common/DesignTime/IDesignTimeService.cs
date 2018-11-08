@@ -7,19 +7,21 @@ namespace Testflow.DesignTime
     public interface IDesignTimeService : IEntityComponent
     {
         /// <summary>
-        /// SetUp模块的Handler
+        /// SetUp模块的会话
         /// </summary>
-        IDesignTimeSession SetUpHandler { get; }
+        IDesignTimeSession SetUpSession { get; }
 
         /// <summary>
-        /// 保存所有设计时Handler的集合
+        /// 保存所有设计时会话的集合
         /// </summary>
-        IList<IDesignTimeSession> Sessions { get; }
+        IList<IDesignTimeSession> SequenceSessions { get; }
 
         /// <summary>
-        /// TearDown模块的Handler
+        /// TearDown模块的会话
         /// </summary>
-        IDesignTimeSession TearDownHandler { get; }
+        IDesignTimeSession TearDownSession { get; }
+
+        #region Sequence Edit
 
         /// <summary>
         /// 添加一个SequenceGroup
@@ -57,5 +59,9 @@ namespace Testflow.DesignTime
         /// <param name="sequenceGroup">待删除的Handler</param>
         /// <returns>删除的Handler对象</returns>
         IDesignTimeSession RemoveSequenceGroup(IDesignTimeSession sequenceGroup);
+        
+        #endregion
+
+
     }
 }

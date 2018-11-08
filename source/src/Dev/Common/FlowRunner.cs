@@ -1,4 +1,5 @@
 ﻿using System;
+using Testflow.Common;
 using Testflow.DesignTime;
 using Testflow.ModuleInterface;
 using Testflow.Runtime;
@@ -29,7 +30,10 @@ namespace Testflow
             }
             lock(_instLock)
             {
-                _runnerInst = GenerateFlowRunner(options);
+                if (null != _runnerInst)
+                {
+                    _runnerInst = GenerateFlowRunner(options);
+                }
             }
             return _runnerInst;
         }
@@ -101,6 +105,13 @@ namespace Testflow
         public abstract ISequenceSerializer SequenceSerializer { get; }
 
         #endregion
+
+        #region 辅助组件接口
+
+        public abstract I18NInterface I18n { get; }
+
+        #endregion
+
 
         /// <summary>
         /// 运行器选项

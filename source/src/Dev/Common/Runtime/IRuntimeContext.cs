@@ -26,11 +26,7 @@ namespace Testflow.Runtime
         /// <param name="parameters">传入的参数名称</param>
         /// <returns></returns>
         object GetService(string serviceName, params object[] parameters);
-        /// <summary>
-        /// 当前运行会话的线程ID
-        /// </summary>
-        int ThreadID { get; }
-
+        
         /// <summary>
         /// 会话的运行时状态
         /// </summary>
@@ -40,6 +36,8 @@ namespace Testflow.Runtime
         /// 当前会话的开始时间
         /// </summary>
         DateTime StartTime { get; }
+
+
 
         /// <summary>
         /// 当前会话关联的测试序列组，如果当前Handle是TestGroup，则该项为null
