@@ -3,7 +3,10 @@ using Testflow.DataInterface.ComDescription;
 
 namespace Testflow.DataInterface.Sequence
 {
-    public interface ITestGroup : ISequenceFlowContainer
+    /// <summary>
+    /// 测试工程文件接口
+    /// </summary>
+    public interface ITestProject : ISequenceFlowContainer
     {
         /// <summary>
         /// 测试序列组关联的所有程序集

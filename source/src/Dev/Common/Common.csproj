@@ -66,7 +66,7 @@
     <Compile Include="DataInterface\Sequence\ISequenceParameterInfo.cs" />
     <Compile Include="DataInterface\Sequence\ISequenceStepCollection.cs" />
     <Compile Include="DataInterface\Sequence\ISequenceStepParameter.cs" />
-    <Compile Include="DataInterface\Sequence\ITestGroup.cs" />
+    <Compile Include="DataInterface\Sequence\ITestProject.cs" />
     <Compile Include="DataInterface\Sequence\IVariableValue.cs" />
     <Compile Include="DataInterface\Sequence\ParameterType.cs" />
     <Compile Include="DesignTime\IDesignTimeService.cs" />
@@ -87,11 +87,16 @@
     <Compile Include="FlowRunnerOptions.cs" />
     <Compile Include="ModuleInterface\IController.cs" />
     <Compile Include="RunMode.cs" />
-    <Compile Include="Runtime\IRunningContainer.cs" />
+    <Compile Include="Runtime\FailedType.cs" />
+    <Compile Include="Runtime\ICallStack.cs" />
+    <Compile Include="Runtime\IRuntimeConfiguration.cs" />
     <Compile Include="Runtime\IRuntimeSession.cs" />
     <Compile Include="Runtime\IRuntimeService.cs" />
-    <Compile Include="Runtime\IStatusMaintainer.cs" />
+    <Compile Include="Runtime\IRuntimeStatusCollection.cs" />
+    <Compile Include="Runtime\IStatisticCollection.cs" />
     <Compile Include="Runtime\IStepDebugger.cs" />
+    <Compile Include="Runtime\IStepDebuggerCollection.cs" />
+    <Compile Include="Runtime\RuntimeDelegate.cs" />
     <Compile Include="Runtime\RuntimeState.cs" />
     <Compile Include="ModuleInterface\IConfigurationManager.cs" />
     <Compile Include="ModuleInterface\ILogService.cs" />
@@ -112,16 +117,16 @@
     <Compile Include="DataInterface\IAssemblyInfo.cs" />
     <Compile Include="DataInterface\IConfiguration.cs" />
     <Compile Include="DataInterface\IParameterCheckInfo.cs" />
-    <Compile Include="DataInterface\IRuntimeStatusInfo.cs" />
+    <Compile Include="Runtime\IRuntimeStatusInfo.cs" />
     <Compile Include="DataInterface\Sequence\ISequenceCollection.cs" />
     <Compile Include="DataInterface\Sequence\ISequenceStep.cs" />
     <Compile Include="DataInterface\Sequence\ISequenceGroupParameter.cs" />
     <Compile Include="DataInterface\Sequence\ISequenceGroup.cs" />
-    <Compile Include="DataInterface\ISynthesizedStatistics.cs" />
-    <Compile Include="DataInterface\ISynthesizedStatusInfo.cs" />
+    <Compile Include="Runtime\ISynthesizedStatistics.cs" />
+    <Compile Include="Runtime\ISynthesizedStatusInfo.cs" />
     <Compile Include="DataInterface\ComDescription\IComInterfaceDescription.cs" />
     <Compile Include="Runtime\IRuntimeContext.cs" />
-    <Compile Include="Runtime\RunTimeType.cs" />
+    <Compile Include="Runtime\RuntimeType.cs" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

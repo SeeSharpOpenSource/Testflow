@@ -20,6 +20,11 @@ namespace Testflow.Runtime
         long SessionId { get; }
 
         /// <summary>
+        /// 当前运行会话的线程ID
+        /// </summary>
+        int ThreadID { get; }
+
+        /// <summary>
         /// 获取服务
         /// </summary>
         /// <param name="serviceName">服务名称</param>
@@ -28,16 +33,9 @@ namespace Testflow.Runtime
         object GetService(string serviceName, params object[] parameters);
         
         /// <summary>
-        /// 会话的运行时状态
+        /// 当前会话关联的测试组
         /// </summary>
-        RuntimeState State { get; }
-        
-        /// <summary>
-        /// 当前会话的开始时间
-        /// </summary>
-        DateTime StartTime { get; }
-
-
+        ITestProject TestGroup { get; }
 
         /// <summary>
         /// 当前会话关联的测试序列组，如果当前Handle是TestGroup，则该项为null
@@ -45,8 +43,13 @@ namespace Testflow.Runtime
         ISequenceGroup SequenceGroup { get; }
 
         /// <summary>
-        /// 当前会话关联的测试组
+        /// 调试器
         /// </summary>
-        ITestGroup TestGroup { get; }
+        IStepDebuggerCollection Debuggers { get; }
+
+        /// <summary>
+        /// 所有序列的运行时状态信息
+        /// </summary>
+        IRuntimeStatusCollection RunTimeStatus { get; }
     }
 }

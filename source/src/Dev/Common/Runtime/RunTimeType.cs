@@ -3,7 +3,7 @@
     /// <summary>
     /// 运行时类型
     /// </summary>
-    public enum RunTimeType
+    public enum RuntimeType
     {
         /// <summary>
         /// 运行模式

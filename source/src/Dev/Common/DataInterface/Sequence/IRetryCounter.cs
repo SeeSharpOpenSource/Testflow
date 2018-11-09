@@ -8,7 +8,7 @@ namespace Testflow.DataInterface.Sequence
     public interface IRetryCounter
     {
         /// <summary>
-        /// 计数器名称
+        /// 重试计数变量名称
         /// </summary>
         string Name { get; set; }
 

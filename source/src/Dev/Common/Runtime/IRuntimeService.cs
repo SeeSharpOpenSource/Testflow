@@ -12,6 +12,11 @@ namespace Testflow.Runtime
         IList<IRuntimeSession> Sessions { get; }
 
         /// <summary>
+        /// 
+        /// </summary>
+        IRuntimeConfiguration Configuration { get; set; }
+
+        /// <summary>
         /// 根据序列组名称获取Handler
         /// </summary>
         /// <param name="sequenceGroupName">序列组名称</param>

@@ -11,6 +11,11 @@ namespace Testflow.DesignTime
     public interface IDesignTimeSession : IEntityComponent
     {
         /// <summary>
+        /// 当前设计时的会话ID
+        /// </summary>
+        long SessionId { get; set; }
+
+        /// <summary>
         /// 当前设计时的上下文信息
         /// </summary>
         IDesigntimeContext Context { get; }
@@ -21,6 +26,8 @@ namespace Testflow.DesignTime
         /// <param name="type">需要匹配的类型数据</param>
         /// <returns></returns>
         IVariableCollection GetFittedVariables(ITypeData type);
+
+
 
         #region Sequence　Edit
 

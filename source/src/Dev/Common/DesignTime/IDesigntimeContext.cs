@@ -12,12 +12,7 @@ namespace Testflow.DesignTime
         /// 当前设计时名称
         /// </summary>
         string Name { get; }
-
-        /// <summary>
-        /// 当前设计时的会话ID
-        /// </summary>
-        long SessionId { get; set; }
-
+        
         /// <summary>
         /// 设计时导入的所有组件和程序集的映射
         /// </summary>
@@ -31,6 +26,6 @@ namespace Testflow.DesignTime
         /// <summary>
         /// 设计时内操作的TestGroup
         /// </summary>
-        ITestGroup TestGroup { get; set; }
+        ITestProject TestGroup { get; set; }
     }
 }

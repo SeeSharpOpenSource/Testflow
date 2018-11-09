@@ -8,7 +8,7 @@ namespace Testflow.DataInterface.Sequence
     public interface ILoopCounter
     {
         /// <summary>
-        /// 计数器名称
+        /// 计数器迭代变量名称
         /// </summary>
         string Name { get; set; }
 

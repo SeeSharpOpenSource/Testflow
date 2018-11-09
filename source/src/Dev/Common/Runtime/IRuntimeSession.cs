@@ -11,22 +11,37 @@ namespace Testflow.Runtime
         /// </summary>
         IRuntimeContext Context { get; }
 
-        /// <summary>
-        /// 运行容器
-        /// </summary>
-        IRunningContainer RunDomain { get; }
+        RuntimeState
+
+        #region Status相关事件
 
         /// <summary>
-        /// 状态刷新控制器
+        /// Events raised when a sequence is start and host receive runtime stauts information. Asynchronous event.
         /// </summary>
-        IStatusMaintainer StatusMaintainer { get; }
+        event RuntimeDelegate.StatusReceivedAction SequenceStarted;
 
         /// <summary>
-        /// 持续时间
+        /// Events raised when receive runtime status information. Asynchronous event.
         /// </summary>
-        TimeSpan ElapsedTime { get; }
+        event RuntimeDelegate.StatusReceivedAction StatusReceived;
 
-        
+        /// <summary>
+        /// Events raised when a sequence is over and host receive runtime stauts information. Asynchronous event.
+        /// </summary>
+        event RuntimeDelegate.StatusReceivedAction SequenceOver;
+
+        /// <summary>
+        /// Events raised when a sequence is failed and host receive runtime stauts information. Asynchronous event.
+        /// </summary>
+        event RuntimeDelegate.StatusReceivedAction SequenceFailed;
+
+        /// <summary>
+        /// Events raised when a sequence is failed and host receive runtime stauts information. Asynchronous event.
+        /// </summary>
+        event RuntimeDelegate.TestOverAction TestOver;
+
+        #endregion
+
 
         #region 运行时控制
 
@@ -44,7 +59,7 @@ namespace Testflow.Runtime
 
         #region 状态控制
 
-        IRuntimeStatusInfo AcquireStatus();
+        void ForceRefreshStatus();
 
         #endregion
     }
