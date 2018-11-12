@@ -1,6 +1,6 @@
 ﻿using System.Xml.Serialization;
 
-namespace Testflow.DataInterface
+namespace Testflow.Data
 {
     /// <summary>
     /// 保存单个Assembly的描述信息

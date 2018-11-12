@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Testflow.DataInterface
+namespace Testflow.Data
 {
     public interface IAssemblyInfoCollection : IList<IAssemblyInfo>
     {

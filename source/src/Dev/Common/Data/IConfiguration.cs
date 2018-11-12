@@ -1,6 +1,6 @@
 ﻿using Testflow.Common;
 
-namespace Testflow.DataInterface
+namespace Testflow.Data
 {
     /// <summary>
     /// 框架配置数据接口

@@ -1,4 +1,4 @@
-﻿namespace Testflow.DataInterface
+﻿namespace Testflow.Data
 {
     /// <summary>
     /// 值的类型
