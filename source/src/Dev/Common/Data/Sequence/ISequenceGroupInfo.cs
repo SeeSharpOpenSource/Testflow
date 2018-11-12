@@ -2,7 +2,7 @@
 using System.Xml;
 using System.Xml.Serialization;
 
-namespace Testflow.DataInterface.Sequence
+namespace Testflow.Data.Sequence
 {
     /// <summary>
     /// 保存测试序列组相关信息的接口

@@ -1,6 +1,6 @@
 ﻿using System.Xml.Serialization;
 
-namespace Testflow.DataInterface.Sequence
+namespace Testflow.Data.Sequence
 {
     /// <summary>
     /// Testflow的计数器

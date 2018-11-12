@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Testflow.DataInterface.Sequence
+namespace Testflow.Data.Sequence
 {
     /// <summary>
     /// IsequeceData的列表容器

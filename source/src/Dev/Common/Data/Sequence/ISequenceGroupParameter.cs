@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Testflow.DataInterface.Sequence
+namespace Testflow.Data.Sequence
 {
     /// <summary>
     /// 测试序列组参数配置

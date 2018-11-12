@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Testflow.DataInterface.Sequence
+namespace Testflow.Data.Sequence
 {
     public interface ISequenceGroupCollection : IList<ISequenceGroup>
     {

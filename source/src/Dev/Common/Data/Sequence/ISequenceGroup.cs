@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 using System.Xml.Serialization;
-using Testflow.DataInterface.ComDescription;
+using Testflow.Data.Description;
 
-namespace Testflow.DataInterface.Sequence
+namespace Testflow.Data.Sequence
 {
     public interface ISequenceGroup : ISequenceFlowContainer, ICloneable
     {

@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Xml.Serialization;
-using Testflow.DataInterface.ComDescription;
+using Testflow.Data.Description;
 
-namespace Testflow.DataInterface.Sequence
+namespace Testflow.Data.Sequence
 {
     /// <summary>
     /// 参数类，描述FunctionData的接口

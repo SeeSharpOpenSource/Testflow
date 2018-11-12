@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
-using Testflow.DataInterface.ComDescription;
+using Testflow.Data.Description;
 
-namespace Testflow.DataInterface.Sequence
+namespace Testflow.Data.Sequence
 {
     /// <summary>
     /// 测试工程文件接口

@@ -1,4 +1,4 @@
-﻿namespace Testflow.DataInterface.Sequence
+﻿namespace Testflow.Data.Sequence
 {
     public interface IVariableValue
     {

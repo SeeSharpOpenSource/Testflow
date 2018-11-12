@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Xml.Serialization;
-using Testflow.DataInterface.ComDescription;
+using Testflow.Data.Description;
 
-namespace Testflow.DataInterface.Sequence
+namespace Testflow.Data.Sequence
 {
     public interface IFunctionData
     {

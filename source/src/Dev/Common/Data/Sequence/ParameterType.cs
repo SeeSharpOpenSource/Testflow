@@ -1,4 +1,4 @@
-﻿namespace Testflow.DataInterface.Sequence
+﻿namespace Testflow.Data.Sequence
 {
     /// <summary>
     /// 参数类型，值/变量引用

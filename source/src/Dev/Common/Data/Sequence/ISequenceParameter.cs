@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Testflow.DataInterface.Sequence
+namespace Testflow.Data.Sequence
 {
     /// <summary>
     /// 每个Sequence的参数配置

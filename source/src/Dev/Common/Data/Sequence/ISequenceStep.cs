@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Xml.Serialization;
 
-namespace Testflow.DataInterface.Sequence
+namespace Testflow.Data.Sequence
 {
     /// <summary>
     /// 保存测试序列中单个步骤的数据结构
@@ -34,7 +34,7 @@ namespace Testflow.DataInterface.Sequence
         /// </summary>
         [XmlIgnore]
         bool HasSubSteps { get; }
-        
+
         /// <summary>
         /// 循环计数器
         /// </summary>
