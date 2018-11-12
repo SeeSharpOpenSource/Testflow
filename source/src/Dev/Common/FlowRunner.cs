@@ -1,7 +1,7 @@
 ﻿using System;
 using Testflow.Common;
 using Testflow.DesignTime;
-using Testflow.ModuleInterface;
+using Testflow.Modules;
 using Testflow.Runtime;
 
 namespace Testflow

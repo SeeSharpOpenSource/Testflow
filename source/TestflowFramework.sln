@@ -25,6 +25,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "i18n", "src\Dev\i18n\i18n.c
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Logger", "src\Dev\Logger\Logger.csproj", "{DC3CD3DE-1B8E-4847-B752-63352F35F1E2}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UserLibInterface", "src\Dev\UserLibInterface\UserLibInterface.csproj", "{C286714C-DE6E-4643-9B56-245FB0F3A322}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -43,6 +45,10 @@ Global
 		{DC3CD3DE-1B8E-4847-B752-63352F35F1E2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DC3CD3DE-1B8E-4847-B752-63352F35F1E2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DC3CD3DE-1B8E-4847-B752-63352F35F1E2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C286714C-DE6E-4643-9B56-245FB0F3A322}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C286714C-DE6E-4643-9B56-245FB0F3A322}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C286714C-DE6E-4643-9B56-245FB0F3A322}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C286714C-DE6E-4643-9B56-245FB0F3A322}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -51,5 +57,6 @@ Global
 		{1681CDD7-0CC2-49D2-9E82-7B03B52DB283} = {F3BC7E81-DCA6-4751-B80D-E538C3524573}
 		{35105702-E8D2-4465-A118-687B6C85C466} = {F3BC7E81-DCA6-4751-B80D-E538C3524573}
 		{DC3CD3DE-1B8E-4847-B752-63352F35F1E2} = {F3BC7E81-DCA6-4751-B80D-E538C3524573}
+		{C286714C-DE6E-4643-9B56-245FB0F3A322} = {F3BC7E81-DCA6-4751-B80D-E538C3524573}
 	EndGlobalSection
 EndGlobal
