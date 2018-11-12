@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
-using Testflow.DataInterface;
-using Testflow.DataInterface.ComDescription;
+using Testflow.Data;
+using Testflow.Data.Description;
 
-namespace Testflow.ModuleInterface
+namespace Testflow.Modules
 {
     /// <summary>
     /// 组件接口加载模块
@@ -43,6 +43,14 @@ namespace Testflow.ModuleInterface
         /// <param name="directory">目录的路径</param>
         /// <returns>组件的接口描述信息</returns>
         IList<IComInterfaceDescription> GetComponentInterfaces(string directory);
+
+        /// <summary>
+        /// 获取某个变量属性的类型信息
+        /// </summary>
+        /// <param name="variableType">变量的variableType</param>
+        /// <param name="variableStr">变量的字符串</param>
+        /// <returns></returns>
+        ITypeData GetPropertyType(ITypeData variableType, string variableStr);
 
     }
 }

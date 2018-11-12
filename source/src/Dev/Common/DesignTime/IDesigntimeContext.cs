@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using Testflow.Common;
-using Testflow.DataInterface;
-using Testflow.DataInterface.ComDescription;
-using Testflow.DataInterface.Sequence;
+using Testflow.Data;
+using Testflow.Data.Description;
+using Testflow.Data.Sequence;
 
 namespace Testflow.DesignTime
 {

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Testflow.ModuleInterface
+namespace Testflow.Modules
 {
     /// <summary>
     /// 控制接口基类

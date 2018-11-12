@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using Testflow.Common;
-using Testflow.DataInterface;
-using Testflow.DataInterface.Sequence;
+using Testflow.Data;
+using Testflow.Data.Sequence;
 
 namespace Testflow.DesignTime
 {
@@ -26,8 +26,6 @@ namespace Testflow.DesignTime
         /// <param name="type">需要匹配的类型数据</param>
         /// <returns></returns>
         IVariableCollection GetFittedVariables(ITypeData type);
-
-
 
         #region Sequence　Edit
 
@@ -89,32 +87,67 @@ namespace Testflow.DesignTime
         void AddVariable(ISequenceFlowContainer parent, IVariable variable, int index);
 
         /// <summary>
-        /// 配置参数值
+        /// 配置变量值
         /// </summary>
         /// <param name="variable">待配置的变量</param>
         /// <param name="value">配置的变量值</param>
-        void SetArgumentValue(ISequenceStep variable, string value);
+        void SetVariableValue(IVariable variable, string value);
+
+        /// <summary>
+        /// 配置变量值
+        /// </summary>
+        /// <param name="variableName">变量名称</param>
+        /// <param name="value">配置的变量值</param>
+        void SetVariableValue(string variableName, string value);
 
         /// <summary>
         /// 配置参数值
         /// </summary>
-        /// <param name="variableName">变量名称</param>
-        /// <param name="value">配置的变量值</param>
-        void SetArgumentValue(string variableName, string value);
+        /// <param name="argumentName">参数名称</param>
+        /// <param name="value">参数值</param>
+        /// <param name="sequenceIndex">序列的索引</param>
+        /// <param name="indexes">当前序列所在的Step的索引序列，如果是多层step，分别为从上层到下层的索引</param>
+        void SetArgumentValue(string argumentName, string value, int sequenceIndex, params int[] indexes);
+
+        /// <summary>
+        /// 配置参数值
+        /// </summary>
+        /// <param name="argumentName">参数名称</param>
+        /// <param name="value">参数值</param>
+        /// <param name="sequence">该参数所在序列的Step</param>
+        void SetArgumentValue(string argumentName, string value, ISequenceStep sequence);
 
         /// <summary>
         /// 为指定序列步骤添加循环计数器
         /// </summary>
         /// <param name="sequenceStep">待添加循环计数器的序列步骤</param>
+        /// <param name="maxCount">最大计数</param>
         /// <returns>添加的循环计数器</returns>
-        ILoopCounter AddLoopCounter(ISequenceStep sequenceStep);
+        ILoopCounter AddLoopCounter(ISequenceStep sequenceStep, int maxCount);
 
         /// <summary>
         /// 为指定序列步骤添加循环计数器
         /// </summary>
         /// <param name="sequenceStep">待添加循环计数器的序列步骤</param>
+        /// <param name="maxCount">最大计数</param>
         /// <returns>添加的重试计数器</returns>
-        IRetryCounter AddRetryCounter(ISequenceStep sequenceStep);
+        IRetryCounter AddRetryCounter(ISequenceStep sequenceStep, int maxCount);
+
+        /// <summary>
+        /// 修改Counter的计数
+        /// </summary>
+        /// <param name="counter">待修改的Counter</param>
+        /// <param name="maxCount">最大计数值</param>
+        /// <param name="enabled">是否使能</param>
+        void ModifyCounter(ILoopCounter counter, int maxCount, bool enabled);
+
+        /// <summary>
+        /// 修改Counter的计数
+        /// </summary>
+        /// <param name="counter">待修改的Counter</param>
+        /// <param name="maxCount">最大计数值</param>
+        /// <param name="enabled">是否使能</param>
+        void ModifyCounter(IRetryCounter counter, int maxCount, bool enabled);
 
         /// <summary>
         /// 删除指定序列步骤的循环计数器
@@ -131,17 +164,5 @@ namespace Testflow.DesignTime
         IRetryCounter RemoveRetryCounter(ISequenceStep sequenceStep);
 
         #endregion
-
-
-        #region 文件IO
-
-        /// <summary>
-        /// 保存配置集到文件
-        /// </summary>
-        /// <param name="filePath"></param>
-        void Save(string filePath);
-
-        #endregion
-
     }
 }

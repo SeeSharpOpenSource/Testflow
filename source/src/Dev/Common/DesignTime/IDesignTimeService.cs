@@ -1,9 +1,13 @@
 ﻿using System.Collections.Generic;
 using Testflow.Common;
-using Testflow.DataInterface.Sequence;
+using Testflow.Data;
+using Testflow.Data.Sequence;
 
 namespace Testflow.DesignTime
 {
+    /// <summary>
+    /// 设计时服务
+    /// </summary>
     public interface IDesignTimeService : IEntityComponent
     {
         /// <summary>
@@ -59,7 +63,19 @@ namespace Testflow.DesignTime
         /// <param name="sequenceGroup">待删除的Handler</param>
         /// <returns>删除的Handler对象</returns>
         IDesignTimeSession RemoveSequenceGroup(IDesignTimeSession sequenceGroup);
-        
+
+        #endregion
+
+        #region 设计时支持
+
+        /// <summary>
+        /// 获取字符串对应变量匹配前缀的的属性集合
+        /// </summary>
+        /// <param name="variable"></param>
+        /// <param name="propertyPrefix"></param>
+        /// <returns></returns>
+        IList<string> GetFittedProperties(string variable, string propertyPrefix);
+
         #endregion
 
 
