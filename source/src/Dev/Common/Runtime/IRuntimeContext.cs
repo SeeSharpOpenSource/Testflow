@@ -1,6 +1,7 @@
 ﻿using System;
+using System.Diagnostics;
 using Testflow.Common;
-using Testflow.DataInterface.Sequence;
+using Testflow.Data.Sequence;
 
 namespace Testflow.Runtime
 {
@@ -18,6 +19,21 @@ namespace Testflow.Runtime
         /// 运行时的会话ID
         /// </summary>
         long SessionId { get; }
+
+        /// <summary>
+        /// 主机信息
+        /// </summary>
+        IHostInfo HostInfo { get; }
+
+        /// <summary>
+        /// 运行当前会话的进程
+        /// </summary>
+        Process Process { get; }
+
+        /// <summary>
+        /// 当前运行会话的AppDomain
+        /// </summary>
+        AppDomain RunDomain { get; set; }
 
         /// <summary>
         /// 当前运行会话的线程ID

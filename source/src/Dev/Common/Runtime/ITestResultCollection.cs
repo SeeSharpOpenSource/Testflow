@@ -2,7 +2,7 @@
 
 namespace Testflow.Runtime
 {
-    public interface IStatisticCollection : IDictionary<int, ISynthesizedStatistics>
+    public interface ITestResultCollection : IDictionary<int, ISequenceTestResult>
     {
         /// <summary>
         /// SetUp模块是否成功
@@ -28,5 +28,8 @@ namespace Testflow.Runtime
         /// TearDown模块是否成功
         /// </summary>
         bool TearDownSuccess { get; }
+
+
+
     }
 }

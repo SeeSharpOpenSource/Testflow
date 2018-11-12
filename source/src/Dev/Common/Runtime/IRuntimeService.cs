@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using Testflow.Common;
-using Testflow.DataInterface.Sequence;
+using Testflow.Data.Sequence;
 
 namespace Testflow.Runtime
 {

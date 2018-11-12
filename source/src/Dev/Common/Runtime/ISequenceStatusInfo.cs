@@ -1,13 +1,13 @@
 ﻿using System.Collections.Generic;
 using Testflow.Common;
-using Testflow.DataInterface.Sequence;
+using Testflow.Data.Sequence;
 
 namespace Testflow.Runtime
 {
     /// <summary>
     /// 保存一个测试序列组运行时单个监视点的综合状态信息，提供给外部模块使用。
     /// </summary>
-    public interface ISynthesizedStatusInfo : IPropertyExtendable
+    public interface ISequenceStatusInfo : IPropertyExtendable
     {
         /// <summary>
         /// 正在执行的序列

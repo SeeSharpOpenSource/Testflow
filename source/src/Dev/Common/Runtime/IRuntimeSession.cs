@@ -1,6 +1,6 @@
 ﻿using System;
 using Testflow.Common;
-using Testflow.DataInterface;
+using Testflow.Data;
 
 namespace Testflow.Runtime
 {
@@ -11,7 +11,10 @@ namespace Testflow.Runtime
         /// </summary>
         IRuntimeContext Context { get; }
 
-        RuntimeState
+        /// <summary>
+        /// 运行时状态
+        /// </summary>
+        RuntimeState State { get; }
 
         #region Status相关事件
 

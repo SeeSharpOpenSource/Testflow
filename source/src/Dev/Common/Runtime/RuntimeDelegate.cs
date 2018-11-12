@@ -12,6 +12,6 @@
         /// 执行结束后的委托
         /// </summary>
         /// <param name="statistics">执行结束后的统计信息</param>
-        public delegate void TestOverAction(ISynthesizedStatistics statistics);
+        public delegate void TestOverAction(ITestResultCollection statistics);
     }
 }
