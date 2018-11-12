@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Testflow.DataInterface.ComDescription
+namespace Testflow.Data.Description
 {
     /// <summary>
     /// 属性描述接口

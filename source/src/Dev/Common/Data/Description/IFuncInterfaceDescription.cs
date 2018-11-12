@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Testflow.DataInterface.ComDescription
+namespace Testflow.Data.Description
 {
     /// <summary>
     /// 方法描述接口

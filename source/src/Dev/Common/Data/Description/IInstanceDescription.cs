@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Testflow.DataInterface.ComDescription
+namespace Testflow.Data.Description
 {
     /// <summary>
     /// 实例对象描述接口

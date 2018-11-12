@@ -1,4 +1,4 @@
-﻿namespace Testflow.DataInterface.ComDescription
+﻿namespace Testflow.Data.Description
 {
     /// <summary>
     /// Description对象的基类

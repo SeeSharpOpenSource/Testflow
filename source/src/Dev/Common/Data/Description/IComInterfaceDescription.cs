@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Xml.Serialization;
 
-namespace Testflow.DataInterface.ComDescription
+namespace Testflow.Data.Description
 {
     /// <summary>
     /// 组件接口描述类，保存某个组件接口的描述信息。该类由ComInterfaceLoader生成。
@@ -28,5 +28,9 @@ namespace Testflow.DataInterface.ComDescription
         /// </summary>
         IList<IClassInterfaceDescription> Functions { get; }
 
+        /// <summary>
+        /// 该程序集支持对外暴露的变量类型
+        /// </summary>
+        IList<ITypeData> VariableTypes { get; set; }
     }
 }
