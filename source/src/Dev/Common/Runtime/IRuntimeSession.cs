@@ -1,6 +1,7 @@
 ﻿using System;
 using Testflow.Common;
 using Testflow.Data;
+using Testflow.Data.Sequence;
 
 namespace Testflow.Runtime
 {
@@ -31,7 +32,7 @@ namespace Testflow.Runtime
         /// <summary>
         /// Events raised when a sequence is over and host receive runtime stauts information. Asynchronous event.
         /// </summary>
-        event RuntimeDelegate.StatusReceivedAction SequenceOver;
+        event RuntimeDelegate.StatusReceivedAction SequenceSuccess;
 
         /// <summary>
         /// Events raised when a sequence is failed and host receive runtime stauts information. Asynchronous event.
@@ -41,7 +42,7 @@ namespace Testflow.Runtime
         /// <summary>
         /// Events raised when a sequence is failed and host receive runtime stauts information. Asynchronous event.
         /// </summary>
-        event RuntimeDelegate.TestOverAction TestOver;
+        event RuntimeDelegate.TestSessionOverAction TestOver;
 
         #endregion
 
@@ -58,10 +59,20 @@ namespace Testflow.Runtime
         /// </summary>
         void Stop();
 
+        /// <summary>
+        /// 根据调用堆栈获取当前执行的Step
+        /// </summary>
+        /// <param name="stack">当前的执行堆栈</param>
+        /// <returns></returns>
+        ISequenceStep GetSequenceStep(ICallStack stack);
+
         #endregion
 
         #region 状态控制
 
+        /// <summary>
+        /// 强制更新所有的状态标识
+        /// </summary>
         void ForceRefreshStatus();
 
         #endregion

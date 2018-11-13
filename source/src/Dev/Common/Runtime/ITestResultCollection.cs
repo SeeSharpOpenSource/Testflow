@@ -28,8 +28,5 @@ namespace Testflow.Runtime
         /// TearDown模块是否成功
         /// </summary>
         bool TearDownSuccess { get; }
-
-
-
     }
 }

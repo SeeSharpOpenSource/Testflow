@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Testflow.Common;
 using Testflow.Data.Sequence;
 
@@ -10,9 +11,9 @@ namespace Testflow.Runtime
         /// 所有运行时Handler的集合
         /// </summary>
         IList<IRuntimeSession> Sessions { get; }
-
+        
         /// <summary>
-        /// 
+        /// 运行时服务的配置
         /// </summary>
         IRuntimeConfiguration Configuration { get; set; }
 
@@ -27,9 +28,8 @@ namespace Testflow.Runtime
         /// 根据序列组获取Handler
         /// </summary>
         /// <param name="sequenceGroup">序列组</param>
-        /// <returns>返回的序列组Handler</returns>
+        /// <returns>返回的序列组运行会话</returns>
         IRuntimeSession GetSession(ISequenceGroup sequenceGroup);
-
     }
 
     

@@ -11,5 +11,10 @@ namespace Testflow.Runtime
         /// 运行时类型，运行/调试
         /// </summary>
         RuntimeType Type { get; set; }
+
+        /// <summary>
+        /// 状态更新周期，单位为ms
+        /// </summary>
+        int StatusTransCycle { get; set; }
     }
 }
