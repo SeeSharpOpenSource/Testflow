@@ -15,6 +15,12 @@ namespace Testflow.Data.Sequence
         ISequenceStepCollection SubSteps { get; set; }
 
         /// <summary>
+        /// 当前步骤的上级节点
+        /// </summary>
+        [XmlIgnore]
+        ISequenceElement Parent { get; set; }
+
+        /// <summary>
         /// 步骤描述
         /// </summary>
         string Description { get; set; }

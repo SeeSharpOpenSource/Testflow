@@ -20,6 +20,11 @@ namespace Testflow.Data.Sequence
         ITypeData Type { get; set; }
 
         /// <summary>
+        /// 参数的修饰符
+        /// </summary>
+        ArgumentModifier Modifier { get; set; }
+
+        /// <summary>
         /// 参数类的类型
         /// </summary>
         [XmlIgnore]

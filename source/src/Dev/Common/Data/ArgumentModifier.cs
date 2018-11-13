@@ -1,4 +1,4 @@
-﻿namespace Testflow.Data.Description
+﻿namespace Testflow.Data
 {
     public enum ArgumentModifier
     {
