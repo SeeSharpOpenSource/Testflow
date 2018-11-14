@@ -3,6 +3,9 @@ using Testflow.Data.Sequence;
 
 namespace Testflow.Runtime
 {
+    /// <summary>
+    /// 调用堆栈
+    /// </summary>
     public interface ICallStack
     {
         /// <summary>

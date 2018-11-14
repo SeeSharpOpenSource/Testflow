@@ -44,6 +44,7 @@
     <Compile Include="Common\I18nInterface.cs" />
     <Compile Include="Common\IEntityComponent.cs" />
     <Compile Include="Common\IPropertyExtendable.cs" />
+    <Compile Include="Common\LogLevel.cs" />
     <Compile Include="Common\PropertyExtendable.cs" />
     <Compile Include="Data\ArgumentModifier.cs" />
     <Compile Include="Data\Description\IClassInterfaceDescription.cs" />
@@ -69,6 +70,10 @@
     <Compile Include="Data\Sequence\ITestProject.cs" />
     <Compile Include="Data\Sequence\IVariableValue.cs" />
     <Compile Include="Data\Sequence\ParameterType.cs" />
+    <Compile Include="Data\RecordLevel.cs" />
+    <Compile Include="Debug\IDebugContext.cs" />
+    <Compile Include="Debug\IDebugService.cs" />
+    <Compile Include="Debug\IDebugSession.cs" />
     <Compile Include="DesignTime\IDesignTimeService.cs" />
     <Compile Include="DesignTime\IDesigntimeContext.cs" />
     <Compile Include="Data\Description\IFuncInterfaceDescription.cs" />
@@ -86,6 +91,11 @@
     <Compile Include="FlowRunner.cs" />
     <Compile Include="FlowRunnerOptions.cs" />
     <Compile Include="Modules\IController.cs" />
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
     <Compile Include="RunMode.cs" />
     <Compile Include="Runtime\FailedType.cs" />
     <Compile Include="Runtime\ICallStack.cs" />
@@ -108,13 +118,11 @@
     <Compile Include="Common\TestflowInternalException.cs" />
     <Compile Include="Common\TestflowRuntimeException.cs" />
     <Compile Include="Modules\IComInterfaceLoader.cs" />
-    <Compile Include="Modules\IDataPersistance.cs" />
+    <Compile Include="Modules\IDataMaintainer.cs" />
     <Compile Include="Modules\IEngineController.cs" />
     <Compile Include="Modules\IParameterChecker.cs" />
     <Compile Include="Modules\IResultManager.cs" />
-    <Compile Include="Modules\ISequenceController.cs" />
     <Compile Include="Modules\ISequenceSerializer.cs" />
-    <Compile Include="Modules\IStepDebugger.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Data\IAssemblyInfo.cs" />
     <Compile Include="Data\IConfiguration.cs" />
@@ -131,7 +139,12 @@
     <Compile Include="Runtime\RuntimeType.cs" />
     <Compile Include="Runtime\ISequenceFailedInfo.cs" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
