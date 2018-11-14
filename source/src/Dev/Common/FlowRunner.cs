@@ -24,18 +24,28 @@ namespace Testflow
         /// <returns></returns>
         public static FlowRunner GetInstance(FlowRunnerOptions options)
         {
+            CheckIfExistDifferentRunner(options);
             if (null != _runnerInst)
             {
                 return _runnerInst;
             }
             lock(_instLock)
             {
+                CheckIfExistDifferentRunner(options);
                 if (null != _runnerInst)
                 {
                     _runnerInst = GenerateFlowRunner(options);
                 }
             }
             return _runnerInst;
+        }
+
+        private static void CheckIfExistDifferentRunner(FlowRunnerOptions options)
+        {
+            if (null != _runnerInst && !_runnerInst.Option.Equals(options))
+            {
+                throw new TestflowRuntimeException(-1, "A flowrunner instance with different option exist.");
+            }
         }
 
         private static FlowRunner GenerateFlowRunner(FlowRunnerOptions options)
@@ -77,7 +87,7 @@ namespace Testflow
         /// <summary>
         /// 数据持久化模块
         /// </summary>
-        public abstract IDataPersistance DataPersistance { get; }
+        public abstract IDataMaintainer DataPersistance { get; }
 
         /// <summary>
         /// 引擎控制模块
@@ -108,6 +118,9 @@ namespace Testflow
 
         #region 辅助组件接口
 
+        /// <summary>
+        /// 国际化组件
+        /// </summary>
         public abstract I18NInterface I18n { get; }
 
         #endregion
@@ -119,7 +132,7 @@ namespace Testflow
         public FlowRunnerOptions Option;
 
         /// <summary>
-        /// 初始化模块
+        /// 初始化框架平台
         /// </summary>
         public abstract void Initialize();
 
