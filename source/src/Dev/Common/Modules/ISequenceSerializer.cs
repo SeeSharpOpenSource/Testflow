@@ -3,6 +3,9 @@ using Testflow.Data.Sequence;
 
 namespace Testflow.Modules
 {
+    /// <summary>
+    /// 序列持久化模块
+    /// </summary>
     public interface ISequenceSerializer : IController
     {
         /// <summary>

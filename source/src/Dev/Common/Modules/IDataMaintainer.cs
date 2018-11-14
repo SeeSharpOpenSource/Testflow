@@ -4,9 +4,9 @@ using Testflow.Data.Sequence;
 namespace Testflow.Modules
 {
     /// <summary>
-    /// 
+    /// 数据持久化模块
     /// </summary>
-    public interface IDataPersistance : IController
+    public interface IDataMaintainer : IController
     {
         
     }
