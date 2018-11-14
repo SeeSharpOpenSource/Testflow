@@ -6,6 +6,11 @@
     public enum VariableType
     {
         /// <summary>
+        /// 未确定的类型
+        /// </summary>
+        Undefined = -1,
+
+        /// <summary>
         /// 值类型
         /// </summary>
         Value = 0,
@@ -23,6 +28,6 @@
         /// <summary>
         /// 枚举
         /// </summary>
-        Enumeration = 3
+        Enumeration = 3,
     }
 }
