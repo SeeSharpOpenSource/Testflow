@@ -2,6 +2,7 @@
 using Testflow.Common;
 using Testflow.Data.Description;
 using Testflow.Data.Sequence;
+using Testflow.Runtime;
 
 namespace Testflow.DesignTime
 {
@@ -30,9 +31,9 @@ namespace Testflow.DesignTime
         /// </summary>
         ITestProject TestGroup { get; set; }
 
-        /// <summary>
-        /// 当前序列组的所有断点信息
-        /// </summary>
-        IDictionary<int, IBreakPointsInfo> BreakPoints { get; }
+//        /// <summary>
+//        /// 当前序列组的所有断点信息
+//        /// </summary>
+//        IDictionary<int, IBreakPointsInfo> BreakPoints { get; }
     }
 }

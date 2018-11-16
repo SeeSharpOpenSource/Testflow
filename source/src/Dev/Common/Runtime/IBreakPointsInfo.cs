@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using Testflow.Data.Sequence;
 
-namespace Testflow.DesignTime
+namespace Testflow.Runtime
 {
     /// <summary>
     /// 单个序列组的断点信息

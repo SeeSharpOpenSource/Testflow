@@ -11,6 +11,11 @@ namespace Testflow.Runtime
     public interface IRuntimeService : IEntityComponent
     {
         /// <summary>
+        /// 服务会话的测试工程组
+        /// </summary>
+        ITestProject TestProject { get; set; }
+
+        /// <summary>
         /// 所有运行时Handler的集合
         /// </summary>
         IList<IRuntimeSession> Sessions { get; }
@@ -48,7 +53,14 @@ namespace Testflow.Runtime
         /// <summary>
         /// 激活设计时服务
         /// </summary>
-        void Activate();
+        /// <param name="testProject">待运行的测试工程</param>
+        void Activate(ITestProject testProject);
+
+        /// <summary>
+        /// 激活设计时服务
+        /// </summary>
+        /// <param name="sequenceGroup">待运行的序列组</param>
+        void Activate(ISequenceGroup sequenceGroup);
 
         /// <summary>
         /// 停止设计时服务

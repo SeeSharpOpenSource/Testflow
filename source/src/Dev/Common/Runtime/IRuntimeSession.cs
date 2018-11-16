@@ -84,5 +84,45 @@ namespace Testflow.Runtime
         void ForceRefreshStatus();
 
         #endregion
+
+        #region 调试控制
+
+        /// <summary>
+        /// 在某个序列的某个Step上添加断点
+        /// </summary>
+        /// <param name="sequence">待调试的序列</param>
+        /// <param name="sequenceStep">断点位置</param>
+        bool AddBreakPoint(ISequence sequence, ISequenceStep sequenceStep);
+
+        /// <summary>
+        /// 删除某个序列的某个Step上的断点
+        /// </summary>
+        /// <param name="sequence">调试的序列</param>
+        /// <param name="sequenceStep">断点位置</param>
+        bool RemoveBreakPoint(ISequence sequence, ISequenceStep sequenceStep);
+
+        /// <summary>
+        /// 删除某个序列上的所有断点
+        /// </summary>
+        /// <param name="sequence"></param>
+        void RemoveAllBreakPoint(ISequence sequence);
+
+        /// <summary>
+        /// 返回某个Step是否包含调试断点
+        /// </summary>
+        /// <param name="sequence">调试的测试序列</param>
+        /// <param name="sequenceStep">判断是否存在断点的Step</param>
+        /// <returns></returns>
+        bool HasBreakPoint(ISequence sequence, ISequenceStep sequenceStep);
+
+        /// <summary>
+        /// 根据索引号获取对应的Sequence
+        /// </summary>
+        /// <param name="index">序列对应的索引号</param>
+        /// <returns>Sequence对象</returns>
+        ISequence GetSequence(int index);
+
+        #endregion
+
     }
 }

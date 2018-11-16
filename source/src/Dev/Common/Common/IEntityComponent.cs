@@ -1,4 +1,5 @@
 ﻿using System;
+using Testflow.Data.Sequence;
 
 namespace Testflow.Common
 {
