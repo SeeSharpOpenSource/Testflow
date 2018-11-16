@@ -16,6 +16,11 @@ namespace Testflow.Runtime
         ITestProject TestProject { get; set; }
 
         /// <summary>
+        /// 运行时状态
+        /// </summary>
+        RuntimeState State { get; }
+
+        /// <summary>
         /// 所有运行时Handler的集合
         /// </summary>
         IList<IRuntimeSession> Sessions { get; }
@@ -66,6 +71,16 @@ namespace Testflow.Runtime
         /// 停止设计时服务
         /// </summary>
         void Deactivate();
+
+        /// <summary>
+        /// 开始运行
+        /// </summary>
+        void Run();
+
+        /// <summary>
+        /// 强制停止
+        /// </summary>
+        void Stop();
 
         #endregion
 

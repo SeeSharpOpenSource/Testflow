@@ -20,6 +20,11 @@ namespace Testflow.Runtime
         /// </summary>
         RuntimeState State { get; }
 
+        /// <summary>
+        /// 当前会话的ID，该ID和运行的序列组的ID一致
+        /// </summary>
+        int ID { get; }
+
         #region Status相关事件
 
         /// <summary>
