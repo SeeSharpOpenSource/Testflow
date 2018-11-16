@@ -2,6 +2,9 @@
 
 namespace Testflow.Data.Sequence
 {
+    /// <summary>
+    /// 序列单个步骤的参数配置
+    /// </summary>
     public interface ISequenceStepParameter : ISequenceDataContainer
     {
         /// <summary>

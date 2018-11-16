@@ -6,6 +6,9 @@ using Testflow.Data.Description;
 
 namespace Testflow.Data.Sequence
 {
+    /// <summary>
+    /// 测试序列组
+    /// </summary>
     public interface ISequenceGroup : ISequenceFlowContainer, ICloneable
     {
         /// <summary>

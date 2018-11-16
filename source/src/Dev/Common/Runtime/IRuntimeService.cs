@@ -5,6 +5,9 @@ using Testflow.Data.Sequence;
 
 namespace Testflow.Runtime
 {
+    /// <summary>
+    /// 运行时服务
+    /// </summary>
     public interface IRuntimeService : IEntityComponent
     {
         /// <summary>
@@ -30,6 +33,21 @@ namespace Testflow.Runtime
         /// <param name="sequenceGroup">序列组</param>
         /// <returns>返回的序列组运行会话</returns>
         IRuntimeSession GetSession(ISequenceGroup sequenceGroup);
+
+        #region 运行时控制
+
+        /// <summary>
+        /// 激活设计时服务
+        /// </summary>
+        void Activate();
+
+        /// <summary>
+        /// 停止设计时服务
+        /// </summary>
+        void Deactivate();
+
+        #endregion
+
     }
 
     

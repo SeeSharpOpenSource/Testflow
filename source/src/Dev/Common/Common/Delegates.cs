@@ -1,17 +1,29 @@
-﻿namespace Testflow.Runtime
+﻿using Testflow.Runtime;
+
+namespace Testflow.Common
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class RuntimeDelegate
     {
         /// <summary>
         /// 状态数据获取后的委托
         /// </summary>
         /// <param name="statusInfo">获取的运行时状态信息</param>
+        /// <param name="stack">调用堆栈</param>
         public delegate void StatusReceivedAction(IRuntimeStatusInfo statusInfo, ICallStack stack);
 
         /// <summary>
         /// 执行结束后的委托
         /// </summary>
         /// <param name="statistics">执行结束后的统计信息</param>
+        /// <param name="stack">调用堆栈</param>
         public delegate void TestSessionOverAction(ITestResultCollection statistics, ICallStack stack);
+
+        /// <summary>
+        /// 断点命中后的委托
+        /// </summary>
+        public delegate void BreakPointHittedAction();
     }
 }

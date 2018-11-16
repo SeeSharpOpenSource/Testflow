@@ -3,6 +3,9 @@ using System.Xml.Serialization;
 
 namespace Testflow.Data.Sequence
 {
+    /// <summary>
+    /// 序列参数配置相关信息
+    /// </summary>
     public interface ISequenceParameterInfo
     {
         /// <summary>

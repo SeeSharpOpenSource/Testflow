@@ -5,6 +5,9 @@ using Testflow.Data.Description;
 
 namespace Testflow.Data.Sequence
 {
+    /// <summary>
+    /// 保存一个步骤中调用的方法信息
+    /// </summary>
     public interface IFunctionData
     {
         /// <summary>

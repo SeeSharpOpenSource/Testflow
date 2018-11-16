@@ -1,5 +1,8 @@
 ﻿namespace Testflow.Data.Description
 {
+    /// <summary>
+    /// 参数描述接口
+    /// </summary>
     public interface IArgumentDescription : IDescriptionData
     {
         /// <summary>

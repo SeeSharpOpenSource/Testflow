@@ -6,12 +6,15 @@ using Testflow.Runtime;
 
 namespace Testflow
 {
-    public abstract class FlowRunner : IDisposable
+    /// <summary>
+    /// Testflow框架平台的运行器
+    /// </summary>
+    public abstract class TestflowRunner : IDisposable
     {
-        private static FlowRunner _runnerInst;
+        private static TestflowRunner _runnerInst;
         private static object _instLock;
 
-        static FlowRunner()
+        static TestflowRunner()
         {
             _instLock = new object();
             _runnerInst = null;
@@ -22,7 +25,7 @@ namespace Testflow
         /// </summary>
         /// <param name="options">FlowRunner的选项配置</param>
         /// <returns></returns>
-        public static FlowRunner GetInstance(FlowRunnerOptions options)
+        public static TestflowRunner GetInstance(TestflowRunnerOptions options)
         {
             CheckIfExistDifferentRunner(options);
             if (null != _runnerInst)
@@ -40,7 +43,7 @@ namespace Testflow
             return _runnerInst;
         }
 
-        private static void CheckIfExistDifferentRunner(FlowRunnerOptions options)
+        private static void CheckIfExistDifferentRunner(TestflowRunnerOptions options)
         {
             if (null != _runnerInst && !_runnerInst.Option.Equals(options))
             {
@@ -48,12 +51,16 @@ namespace Testflow
             }
         }
 
-        private static FlowRunner GenerateFlowRunner(FlowRunnerOptions options)
+        private static TestflowRunner GenerateFlowRunner(TestflowRunnerOptions options)
         {
             throw new System.NotImplementedException();
         }
 
-        protected FlowRunner(FlowRunnerOptions options)
+        /// <summary>
+        /// 抽象类的构造方法
+        /// </summary>
+        /// <param name="options"></param>
+        protected TestflowRunner(TestflowRunnerOptions options)
         {
             this.Option = options;
         }
@@ -129,7 +136,7 @@ namespace Testflow
         /// <summary>
         /// 运行器选项
         /// </summary>
-        public FlowRunnerOptions Option;
+        public TestflowRunnerOptions Option;
 
         /// <summary>
         /// 初始化框架平台

@@ -2,6 +2,9 @@
 
 namespace Testflow.Runtime
 {
+    /// <summary>
+    /// 一个测试序列组的所有测试结果的集合
+    /// </summary>
     public interface ITestResultCollection : IDictionary<int, ISequenceTestResult>
     {
         /// <summary>

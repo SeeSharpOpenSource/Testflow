@@ -5,6 +5,9 @@ using Testflow.Data.Sequence;
 
 namespace Testflow.Runtime
 {
+    /// <summary>
+    /// 运行时单个测试用例组运行的会话
+    /// </summary>
     public interface IRuntimeSession : IEntityComponent
     {
         /// <summary>

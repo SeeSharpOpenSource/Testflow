@@ -72,9 +72,9 @@
     <Compile Include="Data\Sequence\IVariableValue.cs" />
     <Compile Include="Data\Sequence\ParameterType.cs" />
     <Compile Include="Data\RecordLevel.cs" />
-    <Compile Include="Debugger\IDebugContext.cs" />
-    <Compile Include="Debugger\IDebugService.cs" />
-    <Compile Include="Debugger\IDebugSession.cs" />
+    <Compile Include="DesignTime\IBreakPointsInfo.cs" />
+    <Compile Include="Runtime\IDebugInformation.cs" />
+    <Compile Include="Runtime\ISequenceDebugger.cs" />
     <Compile Include="DesignTime\IDesignTimeService.cs" />
     <Compile Include="DesignTime\IDesigntimeContext.cs" />
     <Compile Include="Data\Description\IFuncInterfaceDescription.cs" />
@@ -89,8 +89,8 @@
     <Compile Include="DesignTime\IDesignTimeSession.cs" />
     <Compile Include="Data\Sequence\ILoopCounter.cs" />
     <Compile Include="Data\Sequence\IRetryCounter.cs" />
-    <Compile Include="FlowRunner.cs" />
-    <Compile Include="FlowRunnerOptions.cs" />
+    <Compile Include="TestflowRunner.cs" />
+    <Compile Include="TestflowRunnerOptions.cs" />
     <Compile Include="Modules\IController.cs" />
     <Compile Include="RunMode.cs" />
     <Compile Include="Runtime\FailedType.cs" />
@@ -104,7 +104,7 @@
     <Compile Include="Runtime\ITestResultCollection.cs" />
     <Compile Include="Runtime\IStepDebugger.cs" />
     <Compile Include="Runtime\IStepDebuggerCollection.cs" />
-    <Compile Include="Runtime\RuntimeDelegate.cs" />
+    <Compile Include="Common\Delegates.cs" />
     <Compile Include="Runtime\RuntimeState.cs" />
     <Compile Include="Modules\IConfigurationManager.cs" />
     <Compile Include="Modules\ILogService.cs" />
