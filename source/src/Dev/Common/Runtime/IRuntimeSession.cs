@@ -47,6 +47,11 @@ namespace Testflow.Runtime
         /// </summary>
         event RuntimeDelegate.TestSessionOverAction TestOver;
 
+        /// <summary>
+        /// 断点命中事件，当某个断点被命中时触发
+        /// </summary>
+        event RuntimeDelegate.BreakPointHittedAction BreakPointHitted;
+
         #endregion
 
 

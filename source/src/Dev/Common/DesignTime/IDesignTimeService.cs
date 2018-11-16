@@ -18,12 +18,27 @@ namespace Testflow.DesignTime
         /// <summary>
         /// 保存所有设计时会话的集合
         /// </summary>
-        IList<IDesignTimeSession> SequenceSessions { get; }
+        IDictionary<int, IDesignTimeSession> SequenceSessions { get; }
 
         /// <summary>
         /// TearDown模块的会话
         /// </summary>
         IDesignTimeSession TearDownSession { get; }
+
+        #region 设计时控制
+
+        /// <summary>
+        /// 激活设计时服务
+        /// </summary>
+        void Activate();
+
+        /// <summary>
+        /// 停止设计时服务
+        /// </summary>
+        void Deactivate();
+
+        #endregion
+
 
         #region Sequence Edit
 

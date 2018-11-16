@@ -1,11 +1,13 @@
 ﻿using System.Collections.Generic;
 using Testflow.Common;
-using Testflow.Data;
 using Testflow.Data.Description;
 using Testflow.Data.Sequence;
 
 namespace Testflow.DesignTime
 {
+    /// <summary>
+    /// 单个测试序列组的设计时上下文
+    /// </summary>
     public interface IDesigntimeContext : IEntityComponent
     {
         /// <summary>
@@ -27,5 +29,10 @@ namespace Testflow.DesignTime
         /// 设计时内操作的TestGroup
         /// </summary>
         ITestProject TestGroup { get; set; }
+
+        /// <summary>
+        /// 当前序列组的所有断点信息
+        /// </summary>
+        IDictionary<int, IBreakPointsInfo> BreakPoints { get; }
     }
 }

@@ -89,6 +89,7 @@
     <Compile Include="DesignTime\IDesignTimeSession.cs" />
     <Compile Include="Data\Sequence\ILoopCounter.cs" />
     <Compile Include="Data\Sequence\IRetryCounter.cs" />
+    <Compile Include="Runtime\ISequenceDebuggerCollection.cs" />
     <Compile Include="TestflowRunner.cs" />
     <Compile Include="TestflowRunnerOptions.cs" />
     <Compile Include="Modules\IController.cs" />
@@ -102,8 +103,6 @@
     <Compile Include="Runtime\IRuntimeService.cs" />
     <Compile Include="Runtime\IRuntimeStatusCollection.cs" />
     <Compile Include="Runtime\ITestResultCollection.cs" />
-    <Compile Include="Runtime\IStepDebugger.cs" />
-    <Compile Include="Runtime\IStepDebuggerCollection.cs" />
     <Compile Include="Common\Delegates.cs" />
     <Compile Include="Runtime\RuntimeState.cs" />
     <Compile Include="Modules\IConfigurationManager.cs" />

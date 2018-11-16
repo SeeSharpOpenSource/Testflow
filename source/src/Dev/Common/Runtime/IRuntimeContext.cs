@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using Testflow.Common;
 using Testflow.Data.Sequence;
@@ -61,11 +62,18 @@ namespace Testflow.Runtime
         /// <summary>
         /// 调试器
         /// </summary>
-        IStepDebuggerCollection Debuggers { get; }
+        ISequenceDebuggerCollection Debuggers { get; }
+
+        /// <summary>
+        /// 当前的调试器
+        /// </summary>
+        ISequenceDebugger Debugger { get; }
 
         /// <summary>
         /// 所有序列的运行时状态信息
         /// </summary>
         IRuntimeStatusCollection RunTimeStatus { get; }
     }
+
+    
 }

@@ -34,6 +34,15 @@ namespace Testflow.Runtime
         /// <returns>返回的序列组运行会话</returns>
         IRuntimeSession GetSession(ISequenceGroup sequenceGroup);
 
+        #region 事件
+
+        /// <summary>
+        /// 所有测试执行结束后触发
+        /// </summary>
+        event RuntimeDelegate.TestProjectOverAction TestOver;
+
+        #endregion
+
         #region 运行时控制
 
         /// <summary>
