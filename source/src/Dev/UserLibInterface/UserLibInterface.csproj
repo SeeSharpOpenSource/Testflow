@@ -42,7 +42,8 @@
   <ItemGroup>
     <Compile Include="Attributes\SynchronizedFunctionAttribute.cs" />
     <Compile Include="Attributes\HideAttribute.cs" />
-    <Compile Include="Attributes\TestflowClassAttribute.cs" />
+    <Compile Include="Attributes\TestflowTypeAttribute.cs" />
+    <Compile Include="Attributes\TestflowElementAttribute.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ISynchronizedResource.cs" />
   </ItemGroup>
