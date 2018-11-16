@@ -5,8 +5,9 @@
     /// </summary>
     public interface ISynchronizedResource
     {
+        /// <summary>
+        /// 
+        /// </summary>
         void Synchronize();
-
-        
     }
 }

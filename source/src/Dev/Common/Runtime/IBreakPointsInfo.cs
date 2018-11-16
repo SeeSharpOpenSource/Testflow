@@ -4,7 +4,7 @@ using Testflow.Data.Sequence;
 namespace Testflow.Runtime
 {
     /// <summary>
-    /// 单个序列组的断点信息
+    /// 单个序列的断点信息
     /// </summary>
     public interface IBreakPointsInfo
     {

@@ -6,7 +6,7 @@ using Testflow.DesignTime;
 namespace Testflow.Runtime
 {
     /// <summary>
-    /// 单个测试序列组的调试会话
+    /// 单个测试序列的调试会话
     /// </summary>
     public interface ISequenceDebugger
     {

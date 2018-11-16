@@ -2,6 +2,9 @@
 
 namespace Testflow.Attributes
 {
+    /// <summary>
+    /// 是否隐藏某个类/属性/方法
+    /// </summary>
     [AttributeUsage(AttributeTargets.All)]
     public class HideAttribute : Attribute
     {
