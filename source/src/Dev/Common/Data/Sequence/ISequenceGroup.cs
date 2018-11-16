@@ -12,16 +12,6 @@ namespace Testflow.Data.Sequence
     public interface ISequenceGroup : ISequenceFlowContainer, ICloneable
     {
         /// <summary>
-        /// 测试序列组的名称
-        /// </summary>
-        string Name { get; set; }
-
-        /// <summary>
-        /// 测试序列组的描述
-        /// </summary>
-        string Description { get; set; }
-
-        /// <summary>
         /// 测试序列组格式版本等信息
         /// </summary>
         ISequenceGroupInfo Info { get; set; }

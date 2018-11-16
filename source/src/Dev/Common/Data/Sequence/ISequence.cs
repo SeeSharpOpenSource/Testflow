@@ -10,11 +10,6 @@ namespace Testflow.Data.Sequence
     public interface ISequence: ISequenceFlowContainer, ICloneable
     {
         /// <summary>
-        /// 序列名称
-        /// </summary>
-        string Name { get; set; }
-        
-        /// <summary>
         /// 测试序列在当前序列组的索引
         /// </summary>
         int Index { get; set; }
