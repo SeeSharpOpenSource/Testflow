@@ -14,6 +14,11 @@ namespace Testflow.Common
         void InitExtendProperties();
 
         /// <summary>
+        /// 扩展属性
+        /// </summary>
+        Dictionary<string, object> Properties { get; }
+
+        /// <summary>
         /// 设置属性的值
         /// </summary>
         /// <param name="propertyName">属性名</param>

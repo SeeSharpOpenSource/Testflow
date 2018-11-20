@@ -28,9 +28,14 @@ namespace Testflow.Runtime
         #region 调试流程控制
 
         /// <summary>
-        /// 执行到下个Step
+        /// 如果存在子Step，则进入子Step序列，否则执行到下个同级Step
         /// </summary>
-        void ToNextStep();
+        void StepInto();
+
+        /// <summary>
+        /// 执行到下个同级Step
+        /// </summary>
+        void StepOver();
 
         /// <summary>
         /// 继续执行，直到下一个断点

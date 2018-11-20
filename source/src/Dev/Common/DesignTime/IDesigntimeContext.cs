@@ -17,7 +17,7 @@ namespace Testflow.DesignTime
         string Name { get; }
         
         /// <summary>
-        /// 设计时导入的所有组件和程序集的映射
+        /// 该会话在设计时使用的所有组件和程序集的映射
         /// </summary>
         IDictionary<string, IComInterfaceDescription> Components { get; }
 

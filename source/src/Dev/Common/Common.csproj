@@ -72,6 +72,7 @@
     <Compile Include="Data\Sequence\IVariableValue.cs" />
     <Compile Include="Data\Sequence\ParameterType.cs" />
     <Compile Include="Data\RecordLevel.cs" />
+    <Compile Include="Modules\IConfigData.cs" />
     <Compile Include="Runtime\IBreakPointsInfo.cs" />
     <Compile Include="Runtime\IDebugInformation.cs" />
     <Compile Include="Runtime\ISequenceDebugger.cs" />

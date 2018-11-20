@@ -40,13 +40,13 @@ namespace Testflow.Runtime
         /// <summary>
         /// Events raised when a sequence is over and host receive runtime stauts information. Asynchronous event.
         /// </summary>
-        event RuntimeDelegate.StatusReceivedAction SequenceSuccess;
-
-        /// <summary>
-        /// Events raised when a sequence is failed and host receive runtime stauts information. Asynchronous event.
-        /// </summary>
-        event RuntimeDelegate.StatusReceivedAction SequenceFailed;
-
+        event RuntimeDelegate.StatusReceivedAction SequenceOver;
+//
+//        /// <summary>
+//        /// Events raised when a sequence is failed and host receive runtime stauts information. Asynchronous event.
+//        /// </summary>
+//        event RuntimeDelegate.StatusReceivedAction SequenceFailed;
+        
         /// <summary>
         /// Events raised when a sequence is failed and host receive runtime stauts information. Asynchronous event.
         /// </summary>

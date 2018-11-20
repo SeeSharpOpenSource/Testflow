@@ -29,7 +29,7 @@ namespace Testflow.Modules
         /// </summary>
         /// <param name="source">反序列化的源</param>
         /// <param name="param">额外参数</param>
-        ITestProject DeSerialize(SerializationTarget source, params string[] param);
+        ITestProject Deserialize(SerializationTarget source, params string[] param);
 
         /// <summary>
         /// 反序列化测试序列组
