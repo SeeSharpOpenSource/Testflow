@@ -49,5 +49,11 @@ namespace Testflow.Data.Sequence
         /// </summary>
         [XmlIgnore]
         string Value { get; set; }
+
+        /// <summary>
+        /// 变量的作用域范围
+        /// </summary>
+        [XmlIgnore]
+        ISequenceFlowContainer Parent { get; set; }
     }
 }

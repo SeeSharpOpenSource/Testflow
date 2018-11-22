@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Xml.Serialization;
 using Testflow.Common;
 
@@ -58,5 +59,10 @@ namespace Testflow.Runtime
         /// 调用堆栈
         /// </summary>
         ICallStack CallStack { get; }
+
+        /// <summary>
+        /// 变量的事实取值
+        /// </summary>
+        Dictionary<string, object> VariableValues { get; }
     }
 }

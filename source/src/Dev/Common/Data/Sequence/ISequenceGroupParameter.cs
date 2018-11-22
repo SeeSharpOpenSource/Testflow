@@ -14,6 +14,11 @@ namespace Testflow.Data.Sequence
         ISequenceParameterInfo Info { get; set; }
 
         /// <summary>
+        /// 序列组内的变量值
+        /// </summary>
+        IList<IVariableInitValue> VariableValues { get; set; }
+
+            /// <summary>
         /// Setup模块对应的参数配置
         /// </summary>
         ISequenceParameter SetUpParameters { get; set; }

@@ -31,5 +31,10 @@ namespace Testflow.Runtime
         /// TearDown模块是否成功
         /// </summary>
         bool TearDownSuccess { get; }
+
+        /// <summary>
+        /// 变量的事实取值
+        /// </summary>
+        Dictionary<string, object> VariableValues { get; }
     }
 }

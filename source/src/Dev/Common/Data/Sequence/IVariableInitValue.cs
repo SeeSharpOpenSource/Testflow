@@ -1,10 +1,13 @@
 ﻿namespace Testflow.Data.Sequence
 {
-    public interface IVariableValue
+    /// <summary>
+    /// 变量的初始值
+    /// </summary>
+    public interface IVariableInitValue
     {
-        /// <summary>
-        /// 变量名称
-        /// </summary>
+         /// <summary>
+         /// 变量名称
+         /// </summary>
         string Name { get; set; }
 
         /// <summary>

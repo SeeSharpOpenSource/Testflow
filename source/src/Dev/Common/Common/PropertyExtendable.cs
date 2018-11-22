@@ -7,14 +7,18 @@ namespace Testflow.Common
     /// <summary>
     /// 可扩展属性类的基类
     /// </summary>
-    public abstract class PropertyExtendable
+    public abstract class PropertyExtendable : IPropertyExtendable
     {
         private Dictionary<string, object> _extendProperties;
         private Dictionary<string, Type> _extendPropertyTypes;
 
         private ConcurrentDictionary<string, object> _nameToValue;
 
-        protected virtual void InitExtendProperties(int propertyCount = Constants.DefaultExtendParamCapacity)
+        /// <summary>
+        /// 构造长度为PropertyExtendable数量的参数集合
+        /// </summary>
+        /// <param name="propertyCount"></param>
+        protected PropertyExtendable(int propertyCount = Constants.DefaultExtendParamCapacity)
         {
             _extendProperties = new Dictionary<string, object>(propertyCount);
             _extendPropertyTypes = new Dictionary<string, Type>(propertyCount);
@@ -29,6 +33,10 @@ namespace Testflow.Common
             return _nameToValue[propertyName];
         }
 
+        public abstract void InitExtendProperties();
+
+        public Dictionary<string, object> Properties { get; }
+
         public void SetProperty(string propertyName, object value)
         {
             this._nameToValue.TryUpdate(propertyName, value, _nameToValue[propertyName]);
@@ -41,6 +49,11 @@ namespace Testflow.Common
         public bool ContainsProperty(string propertyName)
         {
             return _extendPropertyTypes.ContainsKey(propertyName);
+        }
+
+        public IList<string> GetPropertyNames()
+        {
+            throw new NotImplementedException();
         }
     }
 }

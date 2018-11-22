@@ -56,19 +56,24 @@ namespace Testflow.Runtime
         #region 运行时控制
 
         /// <summary>
-        /// 激活设计时服务
+        /// 加载运行时待执行的测试工程
         /// </summary>
         /// <param name="testProject">待运行的测试工程</param>
-        void Activate(ITestProject testProject);
+        void Load(ITestProject testProject);
 
         /// <summary>
-        /// 激活设计时服务
+        /// 加载运行时待执行的序列组
         /// </summary>
         /// <param name="sequenceGroup">待运行的序列组</param>
-        void Activate(ISequenceGroup sequenceGroup);
+        void Load(ISequenceGroup sequenceGroup);
 
         /// <summary>
-        /// 停止设计时服务
+        /// 激活运行时服务
+        /// </summary>
+        void Activate();
+
+        /// <summary>
+        /// 停止运行时服务
         /// </summary>
         void Deactivate();
 

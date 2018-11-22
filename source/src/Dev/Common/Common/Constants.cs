@@ -3,14 +3,22 @@
     /// <summary>
     /// 公共常量类
     /// </summary>
-    internal static class Constants
+    public static class Constants
     {
-        public const int DefaultExtendParamCapacity = 4;
+        /// <summary>
+        /// 外部属性的默认扩展参数个数
+        /// </summary>
+        internal const int DefaultExtendParamCapacity = 4;
 
         /// <summary>
-        /// 序列文件扩展名
+        /// 序列信息文件扩展名
         /// </summary>
-        public const string SequenceFileExtension = "tfxml";
+        public const string SequenceFileExtension = "tfseq";
+
+        /// <summary>
+        /// 序列参数配置文件的扩展名
+        /// </summary>
+        public const string SequenceDataFileExtension = "tfparam";
 
         /// <summary>
         /// 测试组工程文件扩展名

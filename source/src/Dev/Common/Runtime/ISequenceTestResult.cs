@@ -54,5 +54,10 @@ namespace Testflow.Runtime
         /// 测试失败信息
         /// </summary>
         ISequenceFailedInfo FailedInfo { get; set; }
+
+        /// <summary>
+        /// 变量的事实取值
+        /// </summary>
+        Dictionary<string, object> VariableValues { get; }
     }
 }

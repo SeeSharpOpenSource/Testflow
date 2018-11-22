@@ -17,6 +17,10 @@ namespace Testflow.Data.Sequence
         /// </summary>
         IList<ISequenceStepParameter> StepParameters { get; set; }
 
+        /// <summary>
+        /// 序列内的变量值
+        /// </summary>
+        IList<IVariableInitValue> VariableValues { get; set; }
     }
     
 }

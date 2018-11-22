@@ -13,7 +13,7 @@ namespace Testflow.DesignTime
     {
         /// <summary>
         /// 当前设计时的会话ID
-        /// </summary>
+        /// </summary> 
         long SessionId { get; set; }
 
         /// <summary>
@@ -151,19 +151,19 @@ namespace Testflow.DesignTime
         /// <summary>
         /// 配置参数值
         /// </summary>
-        /// <param name="argumentName">参数名称</param>
+        /// <param name="parameterName">参数名称</param>
         /// <param name="value">参数值</param>
         /// <param name="sequenceIndex">序列的索引</param>
         /// <param name="indexes">当前序列所在的Step的索引序列，如果是多层step，分别为从上层到下层的索引</param>
-        void SetArgumentValue(string argumentName, string value, int sequenceIndex, params int[] indexes);
+        void SetParameterValue(string parameterName, string value, int sequenceIndex, params int[] indexes);
 
         /// <summary>
         /// 配置参数值
         /// </summary>
-        /// <param name="argumentName">参数名称</param>
+        /// <param name="parameterName">参数名称</param>
         /// <param name="value">参数值</param>
         /// <param name="sequence">该参数所在序列的Step</param>
-        void SetArgumentValue(string argumentName, string value, ISequenceStep sequence);
+        void SetParameterValue(string parameterName, string value, ISequenceStep sequence);
 
         /// <summary>
         /// 为指定序列步骤添加循环计数器
