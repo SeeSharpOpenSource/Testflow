@@ -17,11 +17,11 @@ namespace Testflow.Modules
         IRuntimeService CreateRuntimeService(IPropertyExtendable properties);
 
         /// <summary>
-        /// 适用配置项
+        /// 初始化某个会话中的所有调试器
         /// </summary>
-        /// <param name="properties"></param>
-        void ApplyConfig(IPropertyExtendable properties);
-
+        /// <param name="session">待初始化调试器的会话</param>
+        void InitDebugger(IRuntimeSession session);
+        
         /// <summary>
         /// 创建运行时
         /// </summary>

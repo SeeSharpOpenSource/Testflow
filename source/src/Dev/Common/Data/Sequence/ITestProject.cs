@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+﻿ using System.Collections.Generic;
 using Testflow.Data.Description;
 
 namespace Testflow.Data.Sequence
@@ -38,7 +38,7 @@ namespace Testflow.Data.Sequence
         /// </summary>
         IList<IParameterDataCollection> SequenceParameters { get; set; }
 
-            /// <summary>
+        /// <summary>
         /// 测试序列组的TearDown模块
         /// </summary>
         ISequence TearDown { get; set; }

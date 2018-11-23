@@ -10,14 +10,9 @@ namespace Testflow.Data.Sequence
     public interface ISequence: ISequenceFlowContainer, ICloneable
     {
         /// <summary>
-        /// 测试序列在当前序列组的索引
+        /// 测试序列在当前序列组的索引。Setup的Index为0，Teardown的Index为最后一个
         /// </summary>
         int Index { get; set; }
-
-        /// <summary>
-        /// 测试序列描述
-        /// </summary>
-        string Description { get; set; }
 
         /// <summary>
         /// 序列的变量集合

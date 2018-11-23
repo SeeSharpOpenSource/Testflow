@@ -45,6 +45,7 @@
     <Compile Include="Attributes\HideAttribute.cs" />
     <Compile Include="Attributes\TestflowTypeAttribute.cs" />
     <Compile Include="Attributes\TestflowElementAttribute.cs" />
+    <Compile Include="IFlowConsole.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ISynchronizedResource.cs" />
   </ItemGroup>
