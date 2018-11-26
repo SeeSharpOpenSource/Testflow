@@ -50,14 +50,17 @@
     <Compile Include="Data\ArgumentModifier.cs" />
     <Compile Include="Data\Description\IClassInterfaceDescription.cs" />
     <Compile Include="Data\Description\IDescriptionData.cs" />
+    <Compile Include="Common\ISerializableMap.cs" />
     <Compile Include="Data\FunctionType.cs" />
     <Compile Include="Data\ExecutionModel.cs" />
     <Compile Include="Data\Description\IArgumentDescription.cs" />
     <Compile Include="Data\IAssemblyInfoCollection.cs" />
     <Compile Include="Data\ITypeData.cs" />
+    <Compile Include="Data\Sequence\ConditionType.cs" />
     <Compile Include="Data\Sequence\IArgumentCollection.cs" />
     <Compile Include="Data\Sequence\IArgument.cs" />
     <Compile Include="Data\Sequence\IFunctionData.cs" />
+    <Compile Include="Data\Sequence\IGotoCondition.cs" />
     <Compile Include="Data\Sequence\IParameterData.cs" />
     <Compile Include="Data\Sequence\IParameterDataCollection.cs" />
     <Compile Include="Data\Sequence\ISequenceDataContainer.cs" />
@@ -70,6 +73,7 @@
     <Compile Include="Data\Sequence\ISequenceStepParameter.cs" />
     <Compile Include="Data\Sequence\ITestProject.cs" />
     <Compile Include="Data\Sequence\IVariableInitValue.cs" />
+    <Compile Include="Data\Sequence\RunBehavior.cs" />
     <Compile Include="Data\Sequence\ParameterType.cs" />
     <Compile Include="Data\RecordLevel.cs" />
     <Compile Include="Modules\IConfigData.cs" />

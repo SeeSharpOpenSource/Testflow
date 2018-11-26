@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using Testflow.Common;
 
 namespace Testflow.Runtime
 {
     /// <summary>
     /// 运行时状态集合
     /// </summary>
-    public interface IRuntimeStatusCollection : IDictionary<int, IRuntimeStatusInfo>
+    public interface IRuntimeStatusCollection : ISerializableMap<int, IRuntimeStatusInfo>
     {
          
     }

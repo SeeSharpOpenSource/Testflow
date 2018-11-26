@@ -9,23 +9,18 @@ namespace Testflow.Runtime
     public interface ICallStack
     {
         /// <summary>
-        /// 被调用测试工程
-        /// </summary>
-        ITestProject TestProject { get; }
-
-        /// <summary>
         /// 被调用测试组
         /// </summary>
-        ISequenceGroup SequenceGroup { get; }
+        int SequenceGroupIndex { get; }
 
         /// <summary>
         /// 被调用测试序列
         /// </summary>
-        ISequence Sequence { get; }
+        int SequenceIndex { get; }
 
         /// <summary>
         /// 序列步骤调用堆栈
         /// </summary>
-        Stack<ISequenceStep> StepStack { get; }
+        IList<int> StepStack { get; }
     }
 }

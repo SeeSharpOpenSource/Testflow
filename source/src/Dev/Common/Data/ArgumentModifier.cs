@@ -1,5 +1,8 @@
 ﻿namespace Testflow.Data
 {
+    /// <summary>
+    /// 参数的修饰符
+    /// </summary>
     public enum ArgumentModifier
     {
         /// <summary>

@@ -23,5 +23,10 @@ namespace Testflow.Data.Sequence
         /// 测试的步骤集合
         /// </summary>
         ISequenceStepCollection Steps { get; set; }
+
+        /// <summary>
+        /// 运行时行为，正常运行/跳过/强制失败/强制成功
+        /// </summary>
+        RunBehavior Behavior { get; set; }
     }
 }

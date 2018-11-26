@@ -13,12 +13,17 @@ namespace Testflow.Runtime
         /// <summary>
         /// 所在的运行时会话
         /// </summary>
-        IRuntimeSession Session { get; }
+        int SessionId { get; }
 
         /// <summary>
-        /// 运行时的ID
+        /// 当前序列索引号
         /// </summary>
-        int ID { get; set; }
+        int SequenceIndex { get; set; }
+
+        /// <summary>
+        /// 当前报告在当前序列信息发送的索引号
+        /// </summary>
+        ulong StatusIndex { get; set; }
 
         /// <summary>
         /// 当前会话的开始时间
@@ -33,7 +38,7 @@ namespace Testflow.Runtime
         /// <summary>
         /// 总运行时间
         /// </summary>
-        DateTime EndTime { get; }
+        DateTime RecordTime { get; }
 
         /// <summary>
         /// 内存占用
@@ -46,9 +51,9 @@ namespace Testflow.Runtime
         long MemoryAllocated { get; }
 
         /// <summary>
-        /// CPU使用事件
+        /// CPU使用事件，单位为ms
         /// </summary>
-        TimeSpan ProcessorTime { get; }
+        ulong ProcessorTime { get; }
 
         /// <summary>
         /// 运行时状态
@@ -61,8 +66,8 @@ namespace Testflow.Runtime
         ICallStack CallStack { get; }
 
         /// <summary>
-        /// 变量的事实取值
+        /// 变量的实时取值
         /// </summary>
-        Dictionary<string, object> VariableValues { get; }
+        ISerializableMap<string, object> VariableValues { get; }
     }
 }

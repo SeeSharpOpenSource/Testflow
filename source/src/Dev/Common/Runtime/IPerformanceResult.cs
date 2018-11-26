@@ -9,9 +9,9 @@ namespace Testflow.Runtime
     public interface IPerformanceResult : IPropertyExtendable
     {
         /// <summary>
-        /// CPU使用事件
+        /// CPU使用事件，单位为ms
         /// </summary>
-        TimeSpan CpuTime { get; set; }
+        ulong CpuTime { get; set; }
 
         /// <summary>
         /// 平均分配的内存

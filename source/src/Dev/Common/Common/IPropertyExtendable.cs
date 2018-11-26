@@ -16,7 +16,7 @@ namespace Testflow.Common
         /// <summary>
         /// 扩展属性
         /// </summary>
-        Dictionary<string, object> Properties { get; }
+        ISerializableMap<string, object> Properties { get; }
 
         /// <summary>
         /// 设置属性的值

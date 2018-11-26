@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Testflow.Common;
+using Testflow.Data.Description;
 using Testflow.Data.Sequence;
 
 namespace Testflow.Runtime
@@ -10,25 +11,25 @@ namespace Testflow.Runtime
     /// </summary>
     public interface ISequenceTestResult : IPropertyExtendable
     {
-        /// <summary>
-        /// 测试序列所在工程
-        /// </summary>
-        ITestProject TestProject { get; }
+//        /// <summary>
+//        /// 测试序列所在工程
+//        /// </summary>
+//        ITestProject TestProject { get; }
 
         /// <summary>
         /// 序列所在的测试序列组
         /// </summary>
-        ISequenceGroup SequenceGroup { get; }
+        int SessionId { get; }
 
         /// <summary>
         /// 被执行的测试序列
         /// </summary>
-        ISequence Sequence { get; }
+        int SequenceIndex { get; }
 
         /// <summary>
-        /// 测试是否成功
+        /// 测试结果状态
         /// </summary>
-        bool Success { get; set; }
+        RuntimeState ResultState { get; set; }
 
         /// <summary>
         /// 开始时间
@@ -41,9 +42,9 @@ namespace Testflow.Runtime
         DateTime EndTime { get; set; }
 
         /// <summary>
-        /// 消耗的时间
+        /// 消耗的时间，单位为ms
         /// </summary>
-        TimeSpan ElapsedTime { get; set; }
+        ulong ElapsedTime { get; set; }
 
         /// <summary>
         /// 性能测试结果
@@ -58,6 +59,6 @@ namespace Testflow.Runtime
         /// <summary>
         /// 变量的事实取值
         /// </summary>
-        Dictionary<string, object> VariableValues { get; }
+        ISerializableMap<string, object> VariableValues { get; }
     }
 }

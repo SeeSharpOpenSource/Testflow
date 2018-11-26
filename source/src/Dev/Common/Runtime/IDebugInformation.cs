@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Testflow.Common;
 using Testflow.Data.Sequence;
 
 namespace Testflow.Runtime
@@ -15,13 +16,13 @@ namespace Testflow.Runtime
         ICallStack DebugStack { get; }
 
         /// <summary>
-        /// 从起始或者上个断点到当前执行结束的事件
+        /// CPU使用事件，单位为ms
         /// </summary>
-        TimeSpan ElapsedTime { get; }
+        ulong ElapsedTime { get; }
 
         /// <summary>
         /// 变量调试信息
         /// </summary>
-        Dictionary<string, object> VariableDebugInfo { get; }
+        ISerializableMap<string, object> VariableDebugInfo { get; }
     }
 }

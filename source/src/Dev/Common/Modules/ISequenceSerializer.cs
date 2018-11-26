@@ -9,6 +9,19 @@ namespace Testflow.Modules
     public interface ISequenceSerializer : IController
     {
         /// <summary>
+        /// 创建空白的测试工程
+        /// </summary>
+        /// <returns>返回创建的测试工程</returns>
+        ITestProject CreateTestProject();
+
+
+        /// <summary>
+        /// 创建空白的序列组
+        /// </summary>
+        /// <returns>返回创建的空白测试组</returns>
+        ISequenceGroup CreateSequenceGroup();
+
+        /// <summary>
         /// 序列化测试工程
         /// </summary>
         /// <param name="project">待序列化的工程</param>

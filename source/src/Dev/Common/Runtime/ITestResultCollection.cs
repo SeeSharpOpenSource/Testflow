@@ -1,11 +1,12 @@
 ﻿using System.Collections.Generic;
+using Testflow.Common;
 
 namespace Testflow.Runtime
 {
     /// <summary>
     /// 一个测试序列组的所有测试结果的集合
     /// </summary>
-    public interface ITestResultCollection : IDictionary<int, ISequenceTestResult>
+    public interface ITestResultCollection : ISerializableMap<int, ISequenceTestResult>
     {
         /// <summary>
         /// SetUp模块是否成功
@@ -33,8 +34,8 @@ namespace Testflow.Runtime
         bool TearDownSuccess { get; }
 
         /// <summary>
-        /// 变量的事实取值
+        /// 变量的实时取值
         /// </summary>
-        Dictionary<string, object> VariableValues { get; }
+        ISerializableMap<string, object> VariableValues { get; }
     }
 }

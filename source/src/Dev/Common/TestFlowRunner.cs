@@ -94,7 +94,7 @@ namespace Testflow
         /// <summary>
         /// 数据持久化模块
         /// </summary>
-        public abstract IDataMaintainer DataPersistance { get; }
+        public abstract IDataMaintainer DataMaintainer { get; }
 
         /// <summary>
         /// 引擎控制模块

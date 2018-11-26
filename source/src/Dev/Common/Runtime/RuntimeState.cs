@@ -26,28 +26,33 @@
         DebugBlocked = 3,
 
         /// <summary>
+        /// 跳过执行
+        /// </summary>
+        Skipped = 4,
+
+        /// <summary>
         /// 测试成功
         /// </summary>
-        Success = 4,
+        Success = 5,
 
         /// <summary>
         /// 执行失败
         /// </summary>
-        Failed = 5,
+        Failed = 6,
 
         /// <summary>
         /// 发生异常
         /// </summary>
-        Error = 6,
+        Error = 7,
 
         /// <summary>
         /// 申请中止
         /// </summary>
-        AbortRequested = 7,
+        AbortRequested = 8,
 
         /// <summary>
         /// 已中止状态
         /// </summary>
-        Abort = 8
+        Abort = 9
     }
 }
