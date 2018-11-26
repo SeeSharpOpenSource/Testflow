@@ -56,11 +56,9 @@
     <Compile Include="Data\Description\IArgumentDescription.cs" />
     <Compile Include="Data\IAssemblyInfoCollection.cs" />
     <Compile Include="Data\ITypeData.cs" />
-    <Compile Include="Data\Sequence\ConditionType.cs" />
     <Compile Include="Data\Sequence\IArgumentCollection.cs" />
     <Compile Include="Data\Sequence\IArgument.cs" />
     <Compile Include="Data\Sequence\IFunctionData.cs" />
-    <Compile Include="Data\Sequence\IGotoCondition.cs" />
     <Compile Include="Data\Sequence\IParameterData.cs" />
     <Compile Include="Data\Sequence\IParameterDataCollection.cs" />
     <Compile Include="Data\Sequence\ISequenceDataContainer.cs" />
