@@ -37,6 +37,16 @@ namespace Testflow.Data.Sequence
         bool HasSubSteps { get; }
 
         /// <summary>
+        /// 当执行失败时是否停止执行
+        /// </summary>
+        bool BreakIfFailed { get; set; }
+
+        /// <summary>
+        /// 运行行为，正常运行/跳过/强制成功/强制失败
+        /// </summary>
+        RunBehavior Behavior { get; set; }
+
+        /// <summary>
         /// 循环计数器
         /// </summary>
         ILoopCounter LoopCounter { get; set; }
