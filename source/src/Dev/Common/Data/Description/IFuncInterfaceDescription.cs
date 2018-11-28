@@ -13,9 +13,9 @@ namespace Testflow.Data.Description
         FunctionType ArgumentType { get; set; }
 
         /// <summary>
-        /// 对应的Type对象
+        /// 对应的Type对象的索引号
         /// </summary>
-        ITypeData ClassType { get; set; }
+        int ClassTypeIndex { get; set; }
 
         /// <summary>
         /// 是否是泛型方法

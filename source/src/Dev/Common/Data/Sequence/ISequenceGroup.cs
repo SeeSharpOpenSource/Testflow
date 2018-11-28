@@ -22,6 +22,11 @@ namespace Testflow.Data.Sequence
         IAssemblyInfoCollection Components { get; set; }
 
         /// <summary>
+        /// 当前序列组中用到的所有Type数据
+        /// </summary>
+        ITypeDataCollection TypeDatas { get; set; }
+
+        /// <summary>
         /// 测试序列组的参数
         /// </summary>
         IArgumentCollection Arguments { get; set; }

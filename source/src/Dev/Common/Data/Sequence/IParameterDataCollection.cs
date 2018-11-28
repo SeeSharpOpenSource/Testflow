@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace Testflow.Data.Sequence
 {
+    /// <summary>
+    /// 参数信息的集合
+    /// </summary>
     public interface IParameterDataCollection :　IList<IParameterData>
     {
 

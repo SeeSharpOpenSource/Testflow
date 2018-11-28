@@ -19,9 +19,9 @@ namespace Testflow.Data.Description
         VariableType ArgumentType { get; set; }
 
         /// <summary>
-        /// 对应的Type对象
+        /// 对应的Type对象的索引号
         /// </summary>
-        ITypeData Type { get; set; }
+        int TypeIndex { get; set; }
 
         /// <summary>
         /// 实例的所有属性

@@ -52,5 +52,12 @@ namespace Testflow.Modules
         /// <returns></returns>
         ITypeData GetPropertyType(ITypeData variableType, string variableStr);
 
+        /// <summary>
+        /// 获取某个类型的所有属性，可以使用propertyType进行过滤
+        /// </summary>
+        /// <param name="type">类型信息</param>
+        /// <param name="propertyType">过滤的Type全名，包括命名空间。如果不指定可以配置为null</param>
+        /// <returns></returns>
+        IList<string> GetTypeProperties(ITypeData type, ITypeData propertyType = null);
     }
 }

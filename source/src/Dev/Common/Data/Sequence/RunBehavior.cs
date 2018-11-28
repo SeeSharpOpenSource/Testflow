@@ -8,7 +8,7 @@
         /// <summary>
         /// 正常运行
         /// </summary>
-        Run,
+        Normal,
 
         /// <summary>
         /// 跳过该步骤

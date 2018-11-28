@@ -9,6 +9,11 @@ namespace Testflow.Data
     public interface ITypeData
     {
         /// <summary>
+        /// 类型数据在当前容器中的索引
+        /// </summary>
+        int Index { get; set; }
+
+        /// <summary>
         /// 类型所在配置集名称
         /// </summary>
         string AssemblyName { get; set; }

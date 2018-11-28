@@ -3,9 +3,9 @@
 namespace Testflow.Data.Sequence
 {
     /// <summary>
-    /// 变量的集合
+    /// 测试序列组使用的所有Type的集合
     /// </summary>
-    public interface IVariableCollection : IList<IVariable>
+    public interface ITypeDataCollection : IList<ITypeData>
     {
          
     }

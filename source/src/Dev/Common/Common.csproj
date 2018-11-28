@@ -70,6 +70,7 @@
     <Compile Include="Data\Sequence\ISequenceStepCollection.cs" />
     <Compile Include="Data\Sequence\ISequenceStepParameter.cs" />
     <Compile Include="Data\Sequence\ITestProject.cs" />
+    <Compile Include="Data\Sequence\ITypeDataCollection.cs" />
     <Compile Include="Data\Sequence\IVariableInitValue.cs" />
     <Compile Include="Data\Sequence\RunBehavior.cs" />
     <Compile Include="Data\Sequence\ParameterType.cs" />
