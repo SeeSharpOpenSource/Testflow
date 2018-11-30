@@ -28,10 +28,10 @@ namespace Testflow.Data
         /// </summary>
         string Name { get; set; }
 
-        /// <summary>
-        /// 类型的Type对象
-        /// </summary>
-        [XmlIgnore]
-        Type Type { get; set; }
+//        /// <summary>
+//        /// 类型的Type对象
+//        /// </summary>
+//        [XmlIgnore]
+//        Type Type { get; set; }
     }
 }
