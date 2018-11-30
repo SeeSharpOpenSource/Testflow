@@ -166,6 +166,36 @@ namespace Testflow.DesignTime
         void SetParameterValue(string parameterName, string value, ISequenceStep sequence);
 
         /// <summary>
+        /// 配置Step的实例变量
+        /// </summary>
+        /// <param name="variableName">变量名</param>
+        /// <param name="sequenceIndex">序列的索引</param>
+        /// <param name="indexes">当前序列所在的Step的索引序列，如果是多层step，分别为从上层到下层的索引</param>
+        void SetInstance(string variableName, int sequenceIndex, params int[] indexes);
+
+        /// <summary>
+        /// 配置Step的实例变量
+        /// </summary>
+        /// <param name="variableName">变量名</param>
+        /// <param name="sequence">该参数所在序列的Step</param>
+        void SetInstance(string variableName, ISequenceStep sequence);
+
+        /// <summary>
+        /// 配置Step的返回变量
+        /// </summary>
+        /// <param name="variableName">变量名</param>
+        /// <param name="sequenceIndex">序列的索引</param>
+        /// <param name="indexes">当前序列所在的Step的索引序列，如果是多层step，分别为从上层到下层的索引</param>
+        void SetReturn(string variableName, int sequenceIndex, params int[] indexes);
+
+        /// <summary>
+        /// 配置Step的Return变量
+        /// </summary>
+        /// <param name="variableName">变量名</param>
+        /// <param name="sequence">该参数所在序列的Step</param>
+        void SetReturn(string variableName, ISequenceStep sequence);
+
+        /// <summary>
         /// 为指定序列步骤添加循环计数器
         /// </summary>
         /// <param name="sequenceStep">待添加循环计数器的序列步骤</param>
