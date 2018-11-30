@@ -8,11 +8,11 @@
         /// <summary>
         /// 序列化到文件
         /// </summary>
-        File,
+        File = 0,
 
         /// <summary>
         /// 序列化到数据库
         /// </summary>
-        DataBase
+        DataBase = 1
     }
 }
