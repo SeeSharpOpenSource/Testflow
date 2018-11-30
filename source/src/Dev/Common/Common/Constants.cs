@@ -30,6 +30,11 @@
         /// </summary>
         public const string LogFileExtension = "log";
 
+        /// <summary>
+        /// 最小有效的double值
+        /// </summary>
+        public const double MinDoubleValue = 1E-200;
+
 
     }
 }

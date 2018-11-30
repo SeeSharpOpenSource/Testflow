@@ -117,9 +117,9 @@ namespace Testflow
         public abstract IResultManager ResultManager { get; }
 
         /// <summary>
-        /// 序列化模块
+        /// 序列管理模块
         /// </summary>
-        public abstract ISequenceSerializer SequenceSerializer { get; }
+        public abstract ISequenceManager SequenceManager { get; }
 
         #endregion
 

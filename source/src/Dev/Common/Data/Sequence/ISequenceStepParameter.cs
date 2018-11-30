@@ -18,12 +18,12 @@ namespace Testflow.Data.Sequence
         IList<ISequenceStepParameter> SubStepParameters { get; set; }
 
         /// <summary>
-        /// 参数配置，如果该Step包含子步骤则该项为null
+        /// 参数配置，如果该Step包含子步骤则该项为空
         /// </summary>
         IParameterDataCollection Parameters { get; set; }
 
         /// <summary>
-        /// 方法所在类的实例，静态方法时为null
+        /// 方法所在类的实例，静态方法时为空
         /// </summary>
         string Instance { get; set; }
 
