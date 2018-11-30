@@ -21,7 +21,7 @@ namespace Testflow.Data
         /// 程序集是否可用
         /// </summary>
         [XmlIgnore]
-        bool Available { get; }
+        bool Available { get; set; }
 
 //        /// <summary>
 //        /// 使用到的程序集的所有命名空间
