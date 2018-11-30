@@ -25,6 +25,6 @@ namespace Testflow.Modules
         /// <summary>
         /// 告警信息
         /// </summary>
-        string WarningInfo { get; set; }
+        string Infomation { get; set; }
     }
 }
