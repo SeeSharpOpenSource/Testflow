@@ -124,7 +124,6 @@
     <Compile Include="Modules\ISequenceManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Data\IAssemblyInfo.cs" />
-    <Compile Include="Data\CheckInfo\IParameterCheckInfo.cs" />
     <Compile Include="Runtime\IRuntimeStatusInfo.cs" />
     <Compile Include="Data\Sequence\ISequenceCollection.cs" />
     <Compile Include="Data\Sequence\ISequenceStep.cs" />
