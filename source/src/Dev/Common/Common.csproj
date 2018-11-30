@@ -46,7 +46,6 @@
     <Compile Include="Common\IEntityComponent.cs" />
     <Compile Include="Common\IPropertyExtendable.cs" />
     <Compile Include="Common\LogLevel.cs" />
-    <Compile Include="Common\PropertyExtendable.cs" />
     <Compile Include="Data\ArgumentModifier.cs" />
     <Compile Include="Data\Description\IClassInterfaceDescription.cs" />
     <Compile Include="Data\Description\IDescriptionData.cs" />
@@ -122,10 +121,10 @@
     <Compile Include="Modules\IEngineController.cs" />
     <Compile Include="Modules\IParameterChecker.cs" />
     <Compile Include="Modules\IResultManager.cs" />
-    <Compile Include="Modules\ISequenceSerializer.cs" />
+    <Compile Include="Modules\ISequenceManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Data\IAssemblyInfo.cs" />
-    <Compile Include="Data\IParameterCheckInfo.cs" />
+    <Compile Include="Data\CheckInfo\IParameterCheckInfo.cs" />
     <Compile Include="Runtime\IRuntimeStatusInfo.cs" />
     <Compile Include="Data\Sequence\ISequenceCollection.cs" />
     <Compile Include="Data\Sequence\ISequenceStep.cs" />
