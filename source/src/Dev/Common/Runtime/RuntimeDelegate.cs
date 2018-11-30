@@ -1,8 +1,7 @@
 ﻿using System.Collections.Generic;
 using Testflow.Data.Sequence;
-using Testflow.Runtime;
 
-namespace Testflow.Common
+namespace Testflow.Runtime
 {
     /// <summary>
     /// 

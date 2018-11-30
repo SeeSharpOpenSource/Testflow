@@ -107,7 +107,7 @@
     <Compile Include="Runtime\IRuntimeService.cs" />
     <Compile Include="Runtime\IRuntimeStatusCollection.cs" />
     <Compile Include="Runtime\ITestResultCollection.cs" />
-    <Compile Include="Common\Delegates.cs" />
+    <Compile Include="Runtime\RuntimeDelegate.cs" />
     <Compile Include="Runtime\RuntimeState.cs" />
     <Compile Include="Modules\IConfigurationManager.cs" />
     <Compile Include="Modules\ILogService.cs" />
