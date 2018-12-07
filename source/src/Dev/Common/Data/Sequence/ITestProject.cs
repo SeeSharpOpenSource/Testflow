@@ -9,6 +9,11 @@ namespace Testflow.Data.Sequence
     public interface ITestProject : ISequenceFlowContainer
     {
         /// <summary>
+        /// 当前序列组中用到的所有Type数据
+        /// </summary>
+        ITypeDataCollection TypeDatas { get; set; }
+
+        /// <summary>
         /// 测试序列组关联的所有程序集
         /// </summary>
         IAssemblyInfoCollection Assemblies { get; set; }
