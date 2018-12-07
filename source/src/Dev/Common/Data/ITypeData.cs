@@ -8,10 +8,10 @@ namespace Testflow.Data
     /// </summary>
     public interface ITypeData
     {
-        /// <summary>
-        /// 类型数据在当前容器中的索引
-        /// </summary>
-        int Index { get; set; }
+//        /// <summary>
+//        /// 类型数据在当前容器中的索引
+//        /// </summary>
+//        int Index { get; set; }
 
         /// <summary>
         /// 类型所在配置集名称
@@ -27,6 +27,19 @@ namespace Testflow.Data
         /// 类型名称
         /// </summary>
         string Name { get; set; }
+
+        /// <summary>
+        /// 获取该类型的完整名称
+        /// </summary>
+        [XmlIgnore]
+        string GetFullName { get; }
+
+        /// <summary>
+        /// 判断两个类型是否相等
+        /// </summary>
+        /// <param name="fullName">类型的完整名称</param>
+        /// <returns></returns>
+        bool Eqauls(string fullName);
 
 //        /// <summary>
 //        /// 类型的Type对象
