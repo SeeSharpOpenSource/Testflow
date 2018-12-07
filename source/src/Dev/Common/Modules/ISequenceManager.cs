@@ -21,34 +21,31 @@ namespace Testflow.Modules
         /// 创建空白的测试工程
         /// </summary>
         /// <returns>返回创建的测试工程</returns>
-        ITestProject CreateTestProject(params object[] param);
+        ITestProject CreateTestProject();
 
         /// <summary>
         /// 创建空白的序列组
         /// </summary>
         /// <returns>返回创建的空白测试组</returns>
-        ISequenceGroup CreateSequenceGroup(params object[] param);
+        ISequenceGroup CreateSequenceGroup();
 
         /// <summary>
         /// 创建空白的序列
         /// </summary>
-        /// <param name="param"></param>
         /// <returns></returns>
-        ISequence CreateSequence(params object[] param);
+        ISequence CreateSequence();
 
         /// <summary>
         /// 创建空白的序列Step
         /// </summary>
-        /// <param name="param"></param>
         /// <returns></returns>
-        ISequenceStep CreateSequenceStep(params object[] param);
+        ISequenceStep CreateSequenceStep();
 
         /// <summary>
         /// 创建空白的Argument
         /// </summary>
-        /// <param name="param"></param>
         /// <returns></returns>
-        IArgument CreateArugment(params object[] param);
+        IArgument CreateArugment();
 
         /// <summary>
         /// 创建空白的FunctionData
@@ -60,37 +57,39 @@ namespace Testflow.Modules
         /// <summary>
         /// 创建空白的LoopCounter
         /// </summary>
-        /// <param name="param"></param>
         /// <returns></returns>
-        ILoopCounter CreateLoopCounter(params object[] param);
+        ILoopCounter CreateLoopCounter();
 
         /// <summary>
         /// 创建空白的RetryCounter
         /// </summary>
-        /// <param name="param"></param>
         /// <returns></returns>
-        IRetryCounter CreateRetryCounter(params object[] param);
+        IRetryCounter CreateRetryCounter();
 
         /// <summary>
         /// 创建空白的SequenceGroupParameter
         /// </summary>
-        /// <param name="param"></param>
         /// <returns></returns>
-        ISequenceGroupParameter CreateSequenceGroupParameter(params object[] param);
+        ISequenceGroupParameter CreateSequenceGroupParameter();
 
         /// <summary>
         /// 创建空白的SequenceParameter
         /// </summary>
-        /// <param name="param"></param>
         /// <returns></returns>
-        ISequenceParameter CreateSequenceParameter(params object[] param);
+        ISequenceParameter CreateSequenceParameter();
 
         /// <summary>
         /// 创建空白的SequenceStepParameter
         /// </summary>
-        /// <param name="param"></param>
         /// <returns></returns>
-        ISequenceStepParameter CreateSequenceStepParameter(params object[] param);
+        ISequenceStepParameter CreateSequenceStepParameter();
+
+        /// <summary>
+        /// 创建空白的ParameterData
+        /// </summary>
+        /// <param name="argument">该ParameterData对应的Argument对象</param>
+        /// <returns></returns>
+        IParameterData CreateParameterData(IArgument argument);
 
         /// <summary>
         /// 创建空白的TypeData
