@@ -15,21 +15,33 @@ namespace Testflow.Modules
         LogLevel RecordLevel { get; set; }
 
         /// <summary>
+        /// 初始化日志会话
+        /// </summary>
+        /// <param name="sessionId">日志会话ID</param>
+        void InitLogSession(int sessionId);
+
+        /// <summary>
         /// 以指定级别打印日志
         /// </summary>
         /// <param name="logLevel">日志级别</param>
-        /// <param name="context">运行时上下文</param>
+        /// <param name="sessionId">运行时上下文的ID</param>
         /// <param name="sequenceIndex">序列索引</param>
         /// <param name="message">信息</param>
-        void Print(LogLevel logLevel, IRuntimeContext context, int sequenceIndex, string message);
+        void Print(LogLevel logLevel, int sessionId, int sequenceIndex, string message);
 
         /// <summary>
         /// 以指定级别打印异常信息
         /// </summary>
         /// <param name="logLevel">日志级别</param>
-        /// <param name="context">运行时上下文</param>
+        /// <param name="sessionId">运行时上下文的ID</param>
         /// <param name="sequenceIndex">序列索引</param>
         /// <param name="exception">待打印的异常</param>
-        void Print(LogLevel logLevel, IRuntimeContext context, int sequenceIndex, Exception exception);
+        void Print(LogLevel logLevel, int sessionId, int sequenceIndex, Exception exception);
+
+        /// <summary>
+        /// 销毁日志会话
+        /// </summary>
+        /// <param name="sessionId">日志会话ID</param>
+        void DestroyLogSession(int sessionId);
     }
 }
