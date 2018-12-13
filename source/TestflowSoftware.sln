@@ -3,21 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ComInterfaceLoader", "ComInterfaceLoader", "{09F2429C-8A86-49BA-8229-71B8F63A10C0}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Dev", "Dev", "{F3BC7E81-DCA6-4751-B80D-E538C3524573}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Core", "Core", "{040DD94F-D203-46A8-B4B9-C1B7566216E8}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ParamChecker", "ParamChecker", "{8C2BBCF2-2BE7-428E-BD3C-537D6C972713}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "PersistanceModule", "PersistanceModule", "{4D075D76-2E87-4249-A9DC-3FECEA76DC69}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "PlatformRunner", "PlatformRunner", "{8CB3094B-3A9A-4EE6-AB6B-80D31FECE925}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ResultManager", "ResultManager", "{2929BCF8-8F1B-4335-B576-F137D7851D8E}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SerializationModule", "SerializationModule", "{73306908-6934-4F28-B0C8-7171D87FEC38}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common", "src\Dev\Common\Common.csproj", "{1681CDD7-0CC2-49D2-9E82-7B03B52DB283}"
 EndProject
@@ -28,6 +14,10 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UserLibInterface", "src\Dev\UserLibInterface\UserLibInterface.csproj", "{C286714C-DE6E-4643-9B56-245FB0F3A322}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UserLib", "UserLib", "{E27F11E8-1618-45EF-940B-36D54EDB5D88}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UI", "UI", "{7D35505D-E259-4382-B618-1AA50DDDCF86}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestFlow", "src\UI\TestFlow\TestFlow.csproj", "{4852FAE8-F67B-42CA-B1D9-46908531CEE9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -51,6 +41,10 @@ Global
 		{C286714C-DE6E-4643-9B56-245FB0F3A322}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C286714C-DE6E-4643-9B56-245FB0F3A322}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C286714C-DE6E-4643-9B56-245FB0F3A322}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4852FAE8-F67B-42CA-B1D9-46908531CEE9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4852FAE8-F67B-42CA-B1D9-46908531CEE9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4852FAE8-F67B-42CA-B1D9-46908531CEE9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4852FAE8-F67B-42CA-B1D9-46908531CEE9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -60,5 +54,6 @@ Global
 		{35105702-E8D2-4465-A118-687B6C85C466} = {F3BC7E81-DCA6-4751-B80D-E538C3524573}
 		{DC3CD3DE-1B8E-4847-B752-63352F35F1E2} = {F3BC7E81-DCA6-4751-B80D-E538C3524573}
 		{C286714C-DE6E-4643-9B56-245FB0F3A322} = {F3BC7E81-DCA6-4751-B80D-E538C3524573}
+		{4852FAE8-F67B-42CA-B1D9-46908531CEE9} = {7D35505D-E259-4382-B618-1AA50DDDCF86}
 	EndGlobalSection
 EndGlobal
