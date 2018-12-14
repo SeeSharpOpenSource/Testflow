@@ -126,9 +126,9 @@ namespace Testflow
         #region 辅助组件接口
 
         /// <summary>
-        /// 国际化组件
+        /// 获取对应配置的国际化组件
         /// </summary>
-        public abstract I18NInterface I18n { get; }
+        public abstract I18NInterface GetI18n(I18nOption option);
 
         #endregion
 

@@ -43,6 +43,7 @@
   <ItemGroup>
     <Compile Include="Common\Constants.cs" />
     <Compile Include="Common\I18nInterface.cs" />
+    <Compile Include="Common\I18nOption.cs" />
     <Compile Include="Common\IEntityComponent.cs" />
     <Compile Include="Common\IPropertyExtendable.cs" />
     <Compile Include="Common\LogLevel.cs" />
