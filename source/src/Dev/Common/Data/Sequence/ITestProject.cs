@@ -29,9 +29,19 @@ namespace Testflow.Data.Sequence
         IVariableCollection Variables { get; set; }
 
         /// <summary>
+        /// 序列组内的变量值
+        /// </summary>
+        IList<IVariableInitValue> VariableValues { get; set; }
+
+        /// <summary>
         /// 测试序列组的SetUp模块
         /// </summary>
         ISequence SetUp { get; set; }
+
+        /// <summary>
+        /// 测试工程的Setup参数配置
+        /// </summary>
+        ISequenceParameter SetUpParameters { get; set; }
 
         /// <summary>
         /// 当前测试组中包含的序列组信息
@@ -47,5 +57,10 @@ namespace Testflow.Data.Sequence
         /// 测试序列组的TearDown模块
         /// </summary>
         ISequence TearDown { get; set; }
+
+        /// <summary>
+        /// 测试工程的TearDown参数配置
+        /// </summary>
+        ISequenceParameter TearDownParameters { get; set; }
     }
 }
