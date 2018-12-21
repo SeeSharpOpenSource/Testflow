@@ -7,8 +7,15 @@ namespace Testflow.Modules
     /// <summary>
     /// 组件接口加载模块
     /// </summary>
-    public interface IComInterfaceLoader : IController
+    public interface IComInterfaceManager : IController
     {
+        /// <summary>
+        /// 根据组件的索引号获取对应的接口描述信息
+        /// </summary>
+        /// <param name="componentId"></param>
+        /// <returns></returns>
+        IComInterfaceDescription GetComInterfaceById(int componentId);
+
         /// <summary>
         /// 从指定路径加载某个组件的接口描述信息
         /// </summary>
@@ -28,7 +35,7 @@ namespace Testflow.Modules
         /// </summary>
         /// <param name="paths">组件的路径集合</param>
         /// <returns>组件的接口描述信息</returns>
-        IComInterfaceDescription GetComponentInterfaces(IList<string> paths);
+        IList<IComInterfaceDescription> GetComponentInterfaces(IList<string> paths);
 
         /// <summary>
         /// 获取AssemblyInfo集合对应的组件接口描述信息
@@ -48,9 +55,9 @@ namespace Testflow.Modules
         /// 获取某个变量属性的类型信息
         /// </summary>
         /// <param name="variableType">变量的variableType</param>
-        /// <param name="variableStr">变量的字符串</param>
+        /// <param name="propertyName">属性名</param>
         /// <returns></returns>
-        ITypeData GetPropertyType(ITypeData variableType, string variableStr);
+        ITypeData GetPropertyType(ITypeData variableType, string propertyName);
 
         /// <summary>
         /// 获取某个类型的所有属性，可以使用propertyType进行过滤

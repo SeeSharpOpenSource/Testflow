@@ -84,7 +84,7 @@ namespace Testflow
         /// <summary>
         /// 组件接口加载模块
         /// </summary>
-        public abstract IComInterfaceLoader ComInterfaceLoader { get; }
+        public abstract IComInterfaceManager ComInterfaceManager { get; }
 
         /// <summary>
         /// 配置管理模块
