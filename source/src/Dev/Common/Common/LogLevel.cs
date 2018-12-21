@@ -8,7 +8,7 @@
         /// <summary>
         /// 最低级别
         /// </summary>
-        All = 0,
+        Trace = 0,
 
         /// <summary>
         /// 调试级别
