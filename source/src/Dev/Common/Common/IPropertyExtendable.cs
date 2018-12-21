@@ -33,6 +33,13 @@ namespace Testflow.Common
         object GetProperty(string propertyName);
 
         /// <summary>
+        /// 获取属性
+        /// </summary>
+        /// <param name="propertyName">属性名称</param>
+        /// <returns>属性的值</returns>
+        TDataType GetProperty<TDataType>(string propertyName);
+
+        /// <summary>
         /// 获取属性的类型
         /// </summary>
         /// <param name="propertyName">属性名称</param>

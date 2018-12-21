@@ -13,7 +13,7 @@ namespace Testflow.Data
         string AssemblyName { get; set; }
 
         /// <summary>
-        /// 程序集所在目录
+        /// 程序集所在路径
         /// </summary>
         string Path { get; set; }
 

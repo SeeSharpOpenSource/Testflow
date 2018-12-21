@@ -13,8 +13,14 @@ namespace Testflow.Modules
         /// <summary>
         /// 创建运行时服务
         /// </summary>
-        /// <returns></returns>
-        IRuntimeService CreateRuntimeService(IPropertyExtendable properties);
+        /// <param name="testProject">待运行的测试工程</param>
+        IRuntimeService CreateRuntimeService(ITestProject testProject);
+        
+        /// <summary>
+        /// 创建运行时服务
+        /// </summary>
+        /// <param name="sequenceGroup">待运行的测试序列组</param>
+        IRuntimeService CreateRuntimeService(ISequenceGroup sequenceGroup);
 
         /// <summary>
         /// 初始化某个会话中的所有调试器

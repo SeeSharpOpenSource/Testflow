@@ -13,9 +13,14 @@ namespace Testflow.Data.Description
         FunctionType ArgumentType { get; set; }
 
         /// <summary>
+        /// 组件的索引在全局的索引号
+        /// </summary>
+        int ComponentIndex { get; set; }
+
+        /// <summary>
         /// 对应的Type对象的索引号
         /// </summary>
-        int ClassTypeIndex { get; set; }
+        int ClassTypeId { get; set; }
 
         /// <summary>
         /// 是否是泛型方法
@@ -33,18 +38,8 @@ namespace Testflow.Data.Description
         IList<IArgumentDescription> Arguments { get; set; }
 
         /// <summary>
-        /// 方法所在实例，静态方法时该参数为null
-        /// </summary>
-        IInstanceDescription Instance { set; get; }
-
-        /// <summary>
         /// 方法被显示的签名字符串
         /// </summary>
         string Signature { get; set; }
-
-        /// <summary>
-        /// 方法被调用时的字符串构造器
-        /// </summary>
-        string FunctionCallingFormat { get; set; }
     }
 }

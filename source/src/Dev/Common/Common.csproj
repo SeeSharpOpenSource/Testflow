@@ -76,7 +76,8 @@
     <Compile Include="Data\Sequence\RunBehavior.cs" />
     <Compile Include="Data\Sequence\ParameterType.cs" />
     <Compile Include="Data\RecordLevel.cs" />
-    <Compile Include="Modules\IConfigData.cs" />
+    <Compile Include="Modules\ILogStream.cs" />
+    <Compile Include="Modules\IModuleConfigData.cs" />
     <Compile Include="Modules\IWarningInfo.cs" />
     <Compile Include="Runtime\IBreakPointsInfo.cs" />
     <Compile Include="Runtime\IDebugInformation.cs" />
@@ -84,7 +85,6 @@
     <Compile Include="DesignTime\IDesignTimeService.cs" />
     <Compile Include="DesignTime\IDesigntimeContext.cs" />
     <Compile Include="Data\Description\IFuncInterfaceDescription.cs" />
-    <Compile Include="Data\Description\IInstanceDescription.cs" />
     <Compile Include="Data\Description\IPropertyDescription.cs" />
     <Compile Include="Data\Sequence\ISequence.cs" />
     <Compile Include="Data\Sequence\ISequenceGroupInfo.cs" />
@@ -118,7 +118,7 @@
     <Compile Include="Common\TestflowException.cs" />
     <Compile Include="Common\TestflowInternalException.cs" />
     <Compile Include="Common\TestflowRuntimeException.cs" />
-    <Compile Include="Modules\IComInterfaceLoader.cs" />
+    <Compile Include="Modules\IComInterfaceManager.cs" />
     <Compile Include="Modules\IDataMaintainer.cs" />
     <Compile Include="Modules\IEngineController.cs" />
     <Compile Include="Modules\IParameterChecker.cs" />

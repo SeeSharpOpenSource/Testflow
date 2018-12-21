@@ -8,9 +8,19 @@ namespace Testflow.Data.Description
     public interface IClassInterfaceDescription : IDescriptionData
     {
         /// <summary>
-        /// 类类型描述信息的索引号
+        /// 组件接口描述在全局的索引号
         /// </summary>
-        int ClassTypeIndex { get; set; }
+        int ComponentIndex { get; set; }
+
+        /// <summary>
+        /// 类在当前组件描述中的唯一ID
+        /// </summary>
+        int ClassId { get; set; }
+
+        /// <summary>
+        /// 类的类型信息
+        /// </summary>
+        ITypeData ClassType { get; set; }
 
         /// <summary>
         /// 该类中包含的所有方法信息
