@@ -37,6 +37,7 @@ obj/
 TestResults/
 test/
 .vs/
+~*.*
 
 # CSharp temporary files
 *.cd
