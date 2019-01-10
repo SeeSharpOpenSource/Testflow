@@ -76,7 +76,7 @@
     <Compile Include="Data\Sequence\RunBehavior.cs" />
     <Compile Include="Data\Sequence\ParameterType.cs" />
     <Compile Include="Data\RecordLevel.cs" />
-    <Compile Include="Modules\ILogStream.cs" />
+    <Compile Include="Modules\ILogSession.cs" />
     <Compile Include="Modules\IModuleConfigData.cs" />
     <Compile Include="Modules\IWarningInfo.cs" />
     <Compile Include="Runtime\IBreakPointsInfo.cs" />
