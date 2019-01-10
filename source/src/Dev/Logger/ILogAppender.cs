@@ -1,13 +1,15 @@
 ﻿using System;
 using Testflow.Common;
 
-namespace Testflow.Modules
+namespace Testflow.Logger
 {
-    /// <summary>
-    /// 日志流，在运行时中被调用
-    /// </summary>
-    public interface ILogStream
+    public interface ILogAppender
     {
+        /// <summary>
+        /// 初始化流
+        /// </summary>
+        void Initialize();
+
         /// <summary>
         /// 在框架中以指定级别向某个运行时会话的日志流打印日志
         /// </summary>
