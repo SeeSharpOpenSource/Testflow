@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Threading;
+using System.Linq;
 using Testflow.Common;
+using Testflow.Log;
 using Testflow.Modules;
 using Testflow.Runtime;
+using Testflow.Utility.I18nUtil;
+using Testflow.Utility.MessageUtil;
 
 namespace Testflow.Logger
 {
@@ -12,38 +15,77 @@ namespace Testflow.Logger
     /// </summary>
     public class LogService : ILogService
     {
-        private readonly Dictionary<int, ILogSession> _logStreams;
+        private readonly Dictionary<int, LogSession> _runtimeLogSessions;
+        private LogSession _designtimeLogSession;
+        private readonly I18N _i18N;
+        private Messenger _messenger;
 
+        /// <summary>
+        /// 创建日志服务实例
+        /// </summary>
         public LogService()
         {
-            _logStreams = new Dictionary<int, ILogSession>(Constants.DefaultLogStreamSize);
+            _runtimeLogSessions = new Dictionary<int, LogSession>(Constants.DefaultLogStreamSize);
+            I18NOption i18NOption = new I18NOption(this.GetType().Assembly, "Resources.i18n_logger_zh", "Resources.i18n_logger_en")
+            {
+                Name = Constants.I18NName
+            };
+            _i18N = I18N.GetInstance(i18NOption);
         }
 
-        public IModuleConfigData ConfigData { get; set; }
+        IModuleConfigData IController.ConfigData { get; set; }
 
-        public void Initialize()
+        void IController.RuntimeInitialize()
+        {
+            MessengerOption option = new MessengerOption(Constants.LogQueueName, null);
+            try
+            {
+                _messenger = Messenger.GetMessenger(option);
+            }
+            catch (TestflowRuntimeException ex)
+            {
+                if (ex.ErrorCode == TestflowErrorCode.MessengerRuntimeError)
+                {
+                    _messenger = Messenger.CreateMessenger(option);
+                }
+                else
+                {
+                    throw;
+                }
+            }
+            _messenger.Initialize(_runtimeLogSessions.Values.ToArray());
+            foreach (LogSession logSession in _runtimeLogSessions.Values)
+            {
+                logSession.Dispose();
+            }
+            _runtimeLogSessions.Clear();
+        }
+
+        void IController.DesigntimeInitialize()
+        {
+            _designtimeLogSession = new LogSession(Constants.DesigntimeSessionId);
+        }
+
+        void IController.ApplyConfig(IModuleConfigData configData)
         {
             throw new NotImplementedException();
         }
 
-        public void ApplyConfig(IModuleConfigData configData)
+        LogLevel ILogService.LogLevel { get; set; }
+
+        void ILogService.Print(LogLevel logLevel, int sequenceIndex, string message)
         {
             throw new NotImplementedException();
         }
 
-        public LogLevel LogLevel { get; set; }
-        public void Print(LogLevel logLevel, int sequenceIndex, string message)
+        void ILogService.Print(LogLevel logLevel, int sequenceIndex, Exception exception)
         {
             throw new NotImplementedException();
         }
 
-        public void Print(LogLevel logLevel, int sequenceIndex, Exception exception)
-        {
-            throw new NotImplementedException();
-        }
+        LogLevel ILogService.RuntimeLogLevel { get; set; }
 
-        public LogLevel RuntimeLogLevel { get; set; }
-        public ILogSession GetLogSession(IRuntimeSession session)
+        ILogSession ILogService.GetLogSession(IRuntimeSession session)
         {
             throw new NotImplementedException();
         }
@@ -68,9 +110,24 @@ namespace Testflow.Logger
             throw new NotImplementedException();
         }
 
-        public void Dispose()
+        /// <summary>
+        /// 停止运行时日志
+        /// </summary>
+        public void StopRuntimeLogging()
         {
-            throw new NotImplementedException();
+            _messenger.Dispose();
+            _messenger = null;
+        }
+
+        void IDisposable.Dispose()
+        {
+            _designtimeLogSession?.Dispose();
+            foreach (LogSession logSession in _runtimeLogSessions.Values)
+            {
+                logSession.Dispose();
+            }
+            _runtimeLogSessions.Clear();
+            Messenger.DestroyMessenger(Constants.LogQueueName);
         }
     }
 }
