@@ -7,8 +7,8 @@
     <ProjectGuid>{35105702-E8D2-4465-A118-687B6C85C466}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Testflow.i18n</RootNamespace>
-    <AssemblyName>Testflow.i18n</AssemblyName>
+    <RootNamespace>Testflow.Utility</RootNamespace>
+    <AssemblyName>Testflow.Utility</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -20,7 +20,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>bin\Debug\Testflow.i18n.XML</DocumentationFile>
+    <DocumentationFile>bin\Debug\Testflow.Utility.xml</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -33,6 +33,7 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Messaging" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -42,9 +43,17 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Constants.cs" />
-    <Compile Include="I18N.cs" />
-    <Compile Include="I18NOption.cs" />
-    <Compile Include="I18NOptionComparer.cs" />
+    <Compile Include="I18nUtil\I18N.cs" />
+    <Compile Include="I18nUtil\I18NOption.cs" />
+    <Compile Include="I18nUtil\I18NOptionComparer.cs" />
+    <Compile Include="MessageUtil\IMessageConsumer.cs" />
+    <Compile Include="MessageUtil\IMessage.cs" />
+    <Compile Include="MessageUtil\MessageDispatcher.cs" />
+    <Compile Include="MessageUtil\Messenger.cs" />
+    <Compile Include="MessageUtil\MessengerOption.cs" />
+    <Compile Include="MessageUtil\FormatterType.cs" />
+    <Compile Include="MessageUtil\Messengers\MsmqMessenger.cs" />
+    <Compile Include="MessageUtil\MessengerType.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Resources\i18n_i18n_en.Designer.cs">
       <DependentUpon>i18n_i18n_en.resx</DependentUpon>
@@ -55,6 +64,16 @@
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>i18n_i18n_zh.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Resources\i18n_messenger_en.Designer.cs">
+      <DependentUpon>i18n_messenger_en.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="Resources\i18n_messenger_zh.Designer.cs">
+      <DependentUpon>i18n_messenger_zh.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
     </Compile>
   </ItemGroup>
   <ItemGroup>
@@ -71,6 +90,14 @@
     <EmbeddedResource Include="Resources\i18n_i18n_zh.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>i18n_i18n_zh.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\i18n_messenger_en.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>i18n_messenger_en.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\i18n_messenger_zh.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>i18n_messenger_zh.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

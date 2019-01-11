@@ -1,16 +1,13 @@
 ﻿using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using System.Resources;
 using System.Threading;
 using Testflow.Common;
-using Testflow.Data;
-using Testflow.Modules;
-using Testflow.Runtime;
+using Testflow.Utility.I18nUtil;
+using Constants = Testflow.Utility.Constants;
 
-namespace Testflow.i18n
+namespace Testflow.i18n.I18nUtil
 {
     /// <summary>
     /// 国际化功能类
@@ -48,6 +45,36 @@ namespace Testflow.i18n
             return _i18nEntities[fitKey];
         }
 
+        /// <summary>
+        /// 移除指定名称的I18n实例
+        /// </summary>
+        /// <param name="i18nName"></param>
+        public static void RemoveInstance(string i18nName)
+        {
+            I18NOption fitKey = _i18nEntities.Keys.First(option => i18nName.Equals(option.Name));
+            I18N i18n;
+            if (null != fitKey)
+            {
+                _i18nEntities.TryRemove(fitKey, out i18n);
+                i18n?.Dispose();
+            }
+        }
+
+        /// <summary>
+        /// 移除指定的I18n实例
+        /// </summary>
+        /// <param name="option">待删除的option实例</param>
+        public static void RemoveInstance(I18NOption option)
+        {
+            I18NOption fitKey = _i18nEntities.Keys.First(item => option.Equals(item));
+            I18N i18n;
+            if (null != fitKey)
+            {
+                _i18nEntities.TryRemove(fitKey, out i18n);
+                i18n?.Dispose();
+            }
+        }
+
         private readonly ResourceManager _resourceManager;
 
         private I18N(I18NOption option)
@@ -56,11 +83,11 @@ namespace Testflow.i18n
             string resource = null;
             if (languageName.Equals(option.FirstLanguage))
             {
-                resource = option.FirstLanFile;
+                resource = option.FirstLanguageFile;
             }
             else if (languageName.Equals(option.SecondLanguage))
             {
-                resource = option.SecondLanFile;
+                resource = option.SecondLanguageFile;
             }
             else if (Constants.EnglishName.Equals(option.FirstLanguage) || Constants.EnglishName.Equals(option.SecondLanguage))
             {
@@ -120,13 +147,13 @@ namespace Testflow.i18n
             switch (Thread.CurrentThread.CurrentCulture.Name)
             {
                 case Constants.ChineseName:
-                    resource = new ResourceManager("Resources.i18n_i18n_zh.resx", typeof(I18N).Assembly);
+                    resource = new ResourceManager("Resources.i18n_i18n_zh", typeof(I18N).Assembly);
                     break;
                 case Constants.EnglishName:
-                    resource = new ResourceManager("Resources.i18n_i18n_en.resx", typeof (I18N).Assembly);
+                    resource = new ResourceManager("Resources.i18n_i18n_en", typeof (I18N).Assembly);
                     break;
                 default:
-                    resource = new ResourceManager("Resources.i18n_i18n_en.resx", typeof(I18N).Assembly);
+                    resource = new ResourceManager("Resources.i18n_i18n_en", typeof(I18N).Assembly);
                     break;
             }
             return resource.GetString(labelKey);

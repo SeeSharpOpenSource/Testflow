@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Security.Cryptography;
 using Testflow.Common;
+using Testflow.Utility.I18nUtil;
 
 namespace Testflow.i18n
 {
@@ -9,7 +10,7 @@ namespace Testflow.i18n
     {
         public bool Equals(I18NOption elem1, I18NOption elem2)
         {
-            return elem1.FirstLanFile.Equals(elem2.FirstLanFile) && elem1.SecondLanFile.Equals(elem2.SecondLanFile) &&
+            return elem1.FirstLanguageFile.Equals(elem2.FirstLanguageFile) && elem1.SecondLanguageFile.Equals(elem2.SecondLanguageFile) &&
                 elem1.FirstLanguage.Equals(elem2.FirstLanguage) && elem1.SecondLanguage.Equals(elem2.SecondLanguage);
         }
 

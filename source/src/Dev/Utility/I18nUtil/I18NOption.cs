@@ -1,6 +1,7 @@
 ﻿using System.Reflection;
+using Testflow.i18n;
 
-namespace Testflow.i18n
+namespace Testflow.Utility.I18nUtil
 {
     /// <summary>
     /// I18n参数配置类
@@ -11,17 +12,17 @@ namespace Testflow.i18n
         /// 创建I18n参数类
         /// </summary>
         /// <param name="assembly">应用的程序集</param>
-        /// <param name="firstLanFile">第一语言信息所在资源文件</param>
-        /// <param name="secondLanFile">第二语言信息所在资源文件</param>
-        public I18NOption(Assembly assembly, string firstLanFile, string secondLanFile)
+        /// <param name="firstLanguageFile">第一语言信息所在资源文件</param>
+        /// <param name="secondLanguageFile">第二语言信息所在资源文件</param>
+        public I18NOption(Assembly assembly, string firstLanguageFile, string secondLanguageFile)
         {
             this.Assembly = assembly;
 
             this.FirstLanguage = Constants.ChineseName;
             this.SecondLanguage = Constants.EnglishName;
 
-            this.FirstLanFile = firstLanFile;
-            this.SecondLanFile = secondLanFile;
+            this.FirstLanguageFile = firstLanguageFile;
+            this.SecondLanguageFile = secondLanguageFile;
 
             this._name = null;
         }
@@ -34,12 +35,12 @@ namespace Testflow.i18n
         /// <summary>
         /// 第一语言所在资源文件
         /// </summary>
-        public string FirstLanFile { get; set; }
+        public string FirstLanguageFile { get; set; }
         
         /// <summary>
         /// 第二语言所在资源文件
         /// </summary>
-        public string SecondLanFile { get; set; }
+        public string SecondLanguageFile { get; set; }
         
         /// <summary>
         /// 第一语言名称
@@ -59,9 +60,19 @@ namespace Testflow.i18n
         {
             get
             {
-                return _name ?? $"{Assembly.FullName}+{FirstLanguage}+${SecondLanguage}+{FirstLanFile}+${SecondLanFile}";
+                return _name ?? $"{Assembly.FullName}+{FirstLanguage}+${SecondLanguage}+{FirstLanguageFile}+${SecondLanguageFile}";
             }
             set { this._name = value; }
+        }
+
+        /// <summary>
+        /// 判断两个Option实例是否相等
+        /// </summary>
+        public bool Equals(I18NOption comparer)
+        {
+            return ReferenceEquals(Assembly, comparer.Assembly) && FirstLanguage.Equals(comparer.FirstLanguage) &&
+                   SecondLanguage.Equals(comparer.SecondLanguage) && FirstLanguageFile.Equals(comparer.FirstLanguageFile) &&
+                   SecondLanguageFile.Equals(comparer.SecondLanguageFile);
         }
     }
 }
