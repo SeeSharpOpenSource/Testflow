@@ -1,5 +1,6 @@
 ﻿using System;
 using Testflow.Common;
+using Testflow.Log;
 using Testflow.Runtime;
 
 namespace Testflow.Modules

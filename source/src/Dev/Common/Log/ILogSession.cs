@@ -1,7 +1,7 @@
 ﻿using System;
 using Testflow.Common;
 
-namespace Testflow.Modules
+namespace Testflow.Log
 {
     /// <summary>
     /// 日志会话，在运行时中被调用

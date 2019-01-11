@@ -14,5 +14,10 @@
         /// 国际化模块运行时异常
         /// </summary>
         public const int I18nRuntimeError = -1100;
+
+        /// <summary>
+        /// 信使运行时异常
+        /// </summary>
+        public const int MessengerRuntimeError = 1200;
     }
 }
