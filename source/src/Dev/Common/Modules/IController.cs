@@ -13,9 +13,14 @@ namespace Testflow.Modules
         IModuleConfigData ConfigData { get; set; }
 
         /// <summary>
-        /// 初始化控制组件
+        /// 运行时初始化控制组件
         /// </summary>
-        void Initialize();
+        void RuntimeInitialize();
+
+        /// <summary>
+        /// 设计时初始化控制组件
+        /// </summary>
+        void DesigntimeInitialize();
 
         /// <summary>
         /// 适用该模块的参数配置
