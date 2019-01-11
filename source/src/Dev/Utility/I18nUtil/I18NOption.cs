@@ -1,5 +1,4 @@
 ﻿using System.Reflection;
-using Testflow.i18n;
 
 namespace Testflow.Utility.I18nUtil
 {

@@ -3,7 +3,6 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using Testflow.Common;
-using Testflow.i18n.I18nUtil;
 using Testflow.Utility.I18nUtil;
 using Testflow.Utility.MessageUtil.Messengers;
 
@@ -14,7 +13,8 @@ namespace Testflow.Utility.MessageUtil
     /// </summary>
     public abstract class Messenger : IDisposable
     {
-        private static ConcurrentBag<Messenger> _messengers;
+        private static HashSet<Messenger> _messengers;
+        private static object _lock = new object();
 
         static Messenger()
         {
@@ -23,7 +23,7 @@ namespace Testflow.Utility.MessageUtil
             {
                 Name = Constants.MessengerName
             };
-            _messengers = new ConcurrentBag<Messenger>(new List<Messenger>(2));
+            _messengers = new HashSet<Messenger>();
         }
 
         /// <summary>
@@ -52,8 +52,16 @@ namespace Testflow.Utility.MessageUtil
         {
             //此处不存在并发写入的同一个元素的情况，所以未加锁保护
             Messenger messenger;
-            if (null == (messenger = _messengers.First(item => item.Option.Equals(option))))
+            if (null != (messenger = _messengers.First(item => item.Option.Equals(option))))
             {
+                return messenger;
+            }
+            lock (_lock)
+            {
+                if (null != (messenger = _messengers.First(item => item.Option.Equals(option))))
+                {
+                    return messenger;
+                }
                 switch (option.Type)
                 {
                     case MessengerType.MSMQ:
@@ -109,7 +117,7 @@ namespace Testflow.Utility.MessageUtil
         /// 初始化信使类
         /// </summary>
         /// <param name="consumers"></param>
-        public virtual void Initialize(IList<IMessageConsumer> consumers)
+        public virtual void Initialize(params IMessageConsumer[] consumers)
         {
             this.InitializeMessageQueue();
             this.RegisterEvent();
@@ -142,6 +150,26 @@ namespace Testflow.Utility.MessageUtil
         /// <summary>
         /// 销毁信使实例
         /// </summary>
-        public abstract void Dispose();
+        public virtual void Dispose()
+        {
+            lock (_lock)
+            {
+                _messengers.Remove(this);
+            }
+        }
+
+        /// <summary>
+        /// 销毁某个信使
+        /// </summary>
+        /// <param name="logQueueName">信使的名称</param>
+        public static void DestroyMessenger(string logQueueName)
+        {
+            Messenger messenger = _messengers.First(item => item.Option.Path.Equals(logQueueName));
+            if (null != messenger)
+            {
+                _messengers.Remove(messenger);
+                messenger.Dispose();
+            }
+        }
     }
 }

@@ -15,14 +15,14 @@ namespace Testflow.Utility.MessageUtil
         public int DispatchInterval { get; set; }
         
         // TODO 暂未实现其他高阶功能和流量控制，后续完善
-        public MessageDispatcher(Messenger messenger, IList<IMessageConsumer> consumers)
+        public MessageDispatcher(Messenger messenger, IMessageConsumer[] consumers)
         {
             // 暂时使用异步接收方式
             this._messenger = messenger;
-            this._consumers = new Dictionary<int, IMessageConsumer>(consumers.Count);
+            this._consumers = new Dictionary<int, IMessageConsumer>(consumers.Length);
             foreach (IMessageConsumer consumer in consumers)
             {
-                _consumers.Add(consumer.SeesionId, consumer);
+                _consumers.Add(consumer.SessionId, consumer);
             }
             this._messenger.MessageReceived += DispatchMessage;
         }

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Messaging;
 using Testflow.Common;
-using Testflow.i18n.I18nUtil;
+using Testflow.Utility.I18nUtil;
 
 namespace Testflow.Utility.MessageUtil.Messengers
 {

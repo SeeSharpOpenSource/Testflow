@@ -4,10 +4,8 @@ using System.Linq;
 using System.Resources;
 using System.Threading;
 using Testflow.Common;
-using Testflow.Utility.I18nUtil;
-using Constants = Testflow.Utility.Constants;
 
-namespace Testflow.i18n.I18nUtil
+namespace Testflow.Utility.I18nUtil
 {
     /// <summary>
     /// 国际化功能类

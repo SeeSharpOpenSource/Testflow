@@ -8,7 +8,7 @@
         /// <summary>
         /// 会话ID
         /// </summary>
-        int SeesionId { get; }
+        int SessionId { get; }
 
         /// <summary>
         /// 处理接收到的消息
