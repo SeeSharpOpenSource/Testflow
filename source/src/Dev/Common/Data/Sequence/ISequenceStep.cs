@@ -35,13 +35,7 @@ namespace Testflow.Data.Sequence
         /// </summary>
         [XmlIgnore]
         bool HasSubSteps { get; }
-
-        /// <summary>
-        /// 该Step的参数配置信息
-        /// </summary>
-        [XmlIgnore]
-        ISequenceStepParameter Parameters { get; }
-
+        
         /// <summary>
         /// 当执行失败时是否停止执行
         /// </summary>

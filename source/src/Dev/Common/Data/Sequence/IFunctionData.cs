@@ -31,6 +31,12 @@ namespace Testflow.Data.Sequence
         IArgumentCollection ParameterType { get; set; }
 
         /// <summary>
+        /// 该Function的参数配置信息
+        /// </summary>
+        [XmlIgnore]
+        ISequenceStepParameter Parameters { get; }
+
+        /// <summary>
         /// 方法返回值信息
         /// </summary>
         IArgument ReturnType { get; set; }
