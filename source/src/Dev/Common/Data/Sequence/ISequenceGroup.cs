@@ -19,7 +19,7 @@ namespace Testflow.Data.Sequence
         /// <summary>
         /// 测试序列组关联的所有程序集
         /// </summary>
-        IAssemblyInfoCollection Components { get; set; }
+        IAssemblyInfoCollection Assemblies { get; set; }
 
         /// <summary>
         /// 当前序列组中用到的所有Type数据

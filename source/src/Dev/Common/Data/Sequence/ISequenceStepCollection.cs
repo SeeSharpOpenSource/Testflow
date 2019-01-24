@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace Testflow.Data.Sequence
 {
+    /// <summary>
+    /// 序列Step的集合
+    /// </summary>
     public interface ISequenceStepCollection : IList<ISequenceStep>
     {
     }
