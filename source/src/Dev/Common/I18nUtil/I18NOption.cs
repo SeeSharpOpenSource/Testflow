@@ -6,7 +6,7 @@ namespace Testflow.I18nUtil
     /// <summary>
     /// I18n参数配置类
     /// </summary>
-    public class I18NOption
+    internal class I18NOption
     {
         /// <summary>
         /// 创建I18n参数类

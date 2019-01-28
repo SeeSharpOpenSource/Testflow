@@ -10,7 +10,7 @@ namespace Testflow.I18nUtil
     /// <summary>
     /// 国际化功能类
     /// </summary>
-    public class I18N : IDisposable
+    internal class I18N : IDisposable
     {
         private static readonly ConcurrentDictionary<I18NOption, I18N> _i18nEntities = new ConcurrentDictionary<I18NOption, I18N>(new I18NOptionComparer());
 
