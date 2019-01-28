@@ -3,7 +3,7 @@
     /// <summary>
     /// 公共常量类
     /// </summary>
-    public static class Constants
+    public static class CommonConst
     {
         /// <summary>
         /// 外部属性的默认扩展参数个数
@@ -35,6 +35,11 @@
         /// </summary>
         public const double MinDoubleValue = 1E-200;
 
+        public const string ChineseName = "zh-CN";
+        public const string EnglishName = "en-US";
 
+        internal const string I18nName = "LoggerI18N";
+
+        public const int PlatformLogSession = -1;
     }
 }

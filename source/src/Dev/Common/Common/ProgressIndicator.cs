@@ -37,12 +37,12 @@ namespace Testflow.Common
         /// <summary>
         /// 是否开始
         /// </summary>
-        public bool IsStart => Math.Abs(MinValue - _value) > Constants.MinDoubleValue;
+        public bool IsStart => Math.Abs(MinValue - _value) > CommonConst.MinDoubleValue;
 
         /// <summary>
         /// 是否结束
         /// </summary>
-        public bool IsEnd => Math.Abs(MaxValue - _value) > Constants.MinDoubleValue;
+        public bool IsEnd => Math.Abs(MaxValue - _value) > CommonConst.MinDoubleValue;
 
         /// <summary>
         /// 构造方法

@@ -41,7 +41,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Common\Constants.cs" />
+    <Compile Include="Common\CommonConst.cs" />
     <Compile Include="Common\IEntityComponent.cs" />
     <Compile Include="Common\IPropertyExtendable.cs" />
     <Compile Include="Common\LogLevel.cs" />
@@ -75,11 +75,24 @@
     <Compile Include="Data\Sequence\RunBehavior.cs" />
     <Compile Include="Data\Sequence\ParameterType.cs" />
     <Compile Include="Data\RecordLevel.cs" />
+    <Compile Include="I18nUtil\I18N.cs" />
+    <Compile Include="I18nUtil\I18NOption.cs" />
+    <Compile Include="I18nUtil\I18NOptionComparer.cs" />
     <Compile Include="Log\LogFormatter.cs" />
     <Compile Include="Log\LogData.cs" />
     <Compile Include="Log\ILogSession.cs" />
     <Compile Include="Modules\IModuleConfigData.cs" />
     <Compile Include="Modules\IWarningInfo.cs" />
+    <Compile Include="Resources\locale\i18n_common_en.Designer.cs">
+      <DependentUpon>i18n_common_en.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="Resources\locale\i18n_common_zh.Designer.cs">
+      <DependentUpon>i18n_common_zh.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
     <Compile Include="Runtime\IBreakPointsInfo.cs" />
     <Compile Include="Runtime\IDebugInformation.cs" />
     <Compile Include="Runtime\ISequenceDebugger.cs" />
@@ -97,6 +110,7 @@
     <Compile Include="Data\Sequence\ILoopCounter.cs" />
     <Compile Include="Data\Sequence\IRetryCounter.cs" />
     <Compile Include="Runtime\ISequenceDebuggerCollection.cs" />
+    <Compile Include="TestflowContext.cs" />
     <Compile Include="TestflowRunner.cs" />
     <Compile Include="TestflowRunnerOptions.cs" />
     <Compile Include="Modules\IController.cs" />
@@ -138,6 +152,17 @@
     <Compile Include="Runtime\IRuntimeContext.cs" />
     <Compile Include="Runtime\RuntimeType.cs" />
     <Compile Include="Runtime\ISequenceFailedInfo.cs" />
+    <Compile Include="TestflowStates.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\locale\i18n_common_en.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>i18n_common_en.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\locale\i18n_common_zh.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>i18n_common_zh.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
