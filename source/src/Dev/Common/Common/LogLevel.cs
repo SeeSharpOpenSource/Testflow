@@ -33,6 +33,11 @@
         /// <summary>
         /// 严重错误级别
         /// </summary>
-        Fatal = 5
+        Fatal = 5, 
+
+        /// <summary>
+        /// 关闭日志
+        /// </summary>
+        Off = 6
     }
 }
