@@ -27,6 +27,7 @@ namespace Testflow.Log
         /// <param name="logLevel">日志级别</param>
         /// <param name="sequenceIndex">序列索引</param>
         /// <param name="exception">待打印的异常</param>
-        void Print(LogLevel logLevel, int sequenceIndex, Exception exception);
+        /// <param name="message">待打印的消息</param>
+        void Print(LogLevel logLevel, int sequenceIndex, Exception exception, string message = "");
     }
 }
