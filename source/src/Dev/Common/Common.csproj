@@ -88,8 +88,8 @@
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
     </Compile>
-    <Compile Include="Resources\locale\i18n_common_zh.Designer.cs">
-      <DependentUpon>i18n_common_zh.resx</DependentUpon>
+    <Compile Include="Resources\locale\i18n_common_cn.Designer.cs">
+      <DependentUpon>i18n_common_cn.resx</DependentUpon>
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
     </Compile>
@@ -159,9 +159,9 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>i18n_common_en.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <EmbeddedResource Include="Resources\locale\i18n_common_zh.resx">
+    <EmbeddedResource Include="Resources\locale\i18n_common_cn.resx">
       <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>i18n_common_zh.Designer.cs</LastGenOutput>
+      <LastGenOutput>i18n_common_cn.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

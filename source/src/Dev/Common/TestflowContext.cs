@@ -13,12 +13,8 @@ namespace Testflow
         /// </summary>
         public TestflowStates State
         {
-            get
-            {
-                Thread.VolatileRead(ref _stateValue);
-                return (TestflowStates) _stateValue;
-            }
-            set { this._stateValue = (int) value; }
+            get { return (TestflowStates) _stateValue; }
+            set { Thread.VolatileWrite(ref _stateValue, (int) value); }
         }
 
         internal TestflowContext()
