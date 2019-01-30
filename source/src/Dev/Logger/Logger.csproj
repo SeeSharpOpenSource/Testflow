@@ -47,8 +47,11 @@
   <ItemGroup>
     <Compile Include="Constants.cs" />
     <Compile Include="ILogAppender.cs" />
+    <Compile Include="PlatformLogSession.cs" />
+    <Compile Include="LogMessage.cs" />
     <Compile Include="LogService.cs" />
     <Compile Include="LogSession.cs" />
+    <Compile Include="RemoteLogger.cs" />
     <Compile Include="Resources\i18n_logger_en.Designer.cs">
       <DependentUpon>i18n_logger_en.resx</DependentUpon>
       <AutoGen>True</AutoGen>

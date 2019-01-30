@@ -70,6 +70,15 @@ namespace Testflow.Logger.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to 非法的日志参数。.
+        /// </summary>
+        internal static string InvalidLogArgument {
+            get {
+                return ResourceManager.GetString("InvalidLogArgument", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to 日志消息队列已被其他应用占用。.
         /// </summary>
         internal static string LogQueueExist {

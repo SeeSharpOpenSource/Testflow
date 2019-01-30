@@ -1,4 +1,5 @@
 ﻿using System;
+using log4net;
 using log4net.Config;
 using Testflow.Common;
 using Testflow.Log;
@@ -28,22 +29,26 @@ namespace Testflow.Logger
         /// </summary>
         public int SessionId { get; set; }
 
-        void IMessageConsumer.Handle(IMessage message)
+        public void Handle(IMessage message)
+        {
+            LogMessage logMessage = message as LogMessage;
+            if (null == logMessage)
+            {
+                return;
+            }
+        }
+
+        public void Print(LogLevel logLevel, int sequenceIndex, string message)
         {
             throw new NotImplementedException();
         }
 
-        void ILogSession.Print(LogLevel logLevel, int sequenceIndex, string message)
+        public void Print(LogLevel logLevel, int sequenceIndex, Exception exception, string message = "")
         {
             throw new NotImplementedException();
         }
 
-        void ILogSession.Print(LogLevel logLevel, int sequenceIndex, Exception exception)
-        {
-            throw new NotImplementedException();
-        }
-
-        void IDisposable.Dispose()
+        public void Dispose()
         {
             throw new NotImplementedException();
         }

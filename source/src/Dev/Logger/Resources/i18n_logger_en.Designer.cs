@@ -70,6 +70,15 @@ namespace Testflow.Logger.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Invalid Logger argument..
+        /// </summary>
+        internal static string InvalidLogArgument {
+            get {
+                return ResourceManager.GetString("InvalidLogArgument", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Log message queue is used by other application..
         /// </summary>
         internal static string LogQueueExist {
