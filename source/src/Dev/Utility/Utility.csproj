@@ -77,12 +77,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Common\Common.csproj">
-      <Project>{1681cdd7-0cc2-49d2-9e82-7b03b52db283}</Project>
-      <Name>Common</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <EmbeddedResource Include="Resources\i18n_i18n_en.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>i18n_i18n_en.Designer.cs</LastGenOutput>
@@ -99,6 +93,12 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>i18n_messenger_zh.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Common\Common.csproj">
+      <Project>{1681cdd7-0cc2-49d2-9e82-7b03b52db283}</Project>
+      <Name>Common</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

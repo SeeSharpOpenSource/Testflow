@@ -18,11 +18,6 @@ namespace Testflow.Utility.MessageUtil
 
         static Messenger()
         {
-            // 初始化i18n模块
-            I18NOption i18NOption = new I18NOption(typeof(Messenger).Assembly, "Resources.i18n_messenger_en", "Resources.i18n_messenger_en")
-            {
-                Name = Constants.MessengerName
-            };
             _messengers = new HashSet<Messenger>();
         }
 
@@ -92,6 +87,14 @@ namespace Testflow.Utility.MessageUtil
             return messenger;
         }
 
+        /// <summary>
+        /// 是否包含某个Messenger的声明
+        /// </summary>
+        public static bool Exist(MessengerOption option)
+        {
+            return null != _messengers.First(item => item.Option.Equals(option));
+        }
+
         private MessageDispatcher _messageDispatcher;
 
         /// <summary>
@@ -101,6 +104,12 @@ namespace Testflow.Utility.MessageUtil
         protected Messenger(MessengerOption option)
         {
             this.Option = option;
+            // 初始化i18n模块
+            I18NOption i18NOption = new I18NOption(typeof(Messenger).Assembly, "Resources.i18n_messenger_en", "Resources.i18n_messenger_en")
+            {
+                Name = Constants.MessengerName
+            };
+            I18N i18N = I18N.GetInstance(i18NOption);
         }
 
         /// <summary>
@@ -116,7 +125,7 @@ namespace Testflow.Utility.MessageUtil
         /// <summary>
         /// 初始化信使类
         /// </summary>
-        /// <param name="consumers"></param>
+        /// <param name="consumers"></param> 
         public virtual void Initialize(params IMessageConsumer[] consumers)
         {
             this.InitializeMessageQueue();
@@ -135,7 +144,7 @@ namespace Testflow.Utility.MessageUtil
         /// <param name="message">待发送的消息</param>
         /// <param name="format">格式器类型</param>
         /// <param name="targetTypes">目标类型</param>
-        internal abstract bool Send(IMessage message, FormatterType format, params Type[] targetTypes);
+        public abstract bool Send(IMessage message, FormatterType format, params Type[] targetTypes);
 
         /// <summary>
         /// 初始化消息队列
@@ -171,5 +180,9 @@ namespace Testflow.Utility.MessageUtil
                 messenger.Dispose();
             }
         }
+        /// <summary>
+        /// 清除消息队列的所有数据
+        /// </summary>
+        public abstract void Clear();
     }
 }

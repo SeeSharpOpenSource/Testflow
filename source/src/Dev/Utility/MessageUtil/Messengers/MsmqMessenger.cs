@@ -24,7 +24,7 @@ namespace Testflow.Utility.MessageUtil.Messengers
             return message?.Body as IMessage;
         }
 
-        internal override bool Send(IMessage message, FormatterType format, params Type[] targetTypes)
+        public override bool Send(IMessage message, FormatterType format, params Type[] targetTypes)
         {
             if (!_messageQueue.CanWrite)
             {
@@ -83,6 +83,11 @@ namespace Testflow.Utility.MessageUtil.Messengers
                 //TODO 未添加日志
             }
             this._messageQueue.Dispose();
+        }
+
+        public override void Clear()
+        {
+            _messageQueue.Purge();
         }
     }
 }
