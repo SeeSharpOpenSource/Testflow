@@ -1,7 +1,7 @@
 ﻿using System.Reflection;
 using Testflow.Common;
 
-namespace Testflow.I18nUtil
+namespace Testflow.Common.I18nUtil
 {
     /// <summary>
     /// I18n参数配置类

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Security.Cryptography;
 
-namespace Testflow.I18nUtil
+namespace Testflow.Common.I18nUtil
 {
     internal class I18NOptionComparer : IEqualityComparer<I18NOption>
     {
