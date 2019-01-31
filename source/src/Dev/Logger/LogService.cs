@@ -16,7 +16,7 @@ namespace Testflow.Logger
     /// </summary>
     public class LogService : ILogService
     {
-        private readonly Dictionary<int, LogSession> _runtimeLogSessions;
+        private readonly Dictionary<int, LocalLogSession> _runtimeLogSessions;
         private PlatformLogSession _platformLogSession;
         private readonly I18N _i18N;
         private Messenger _messenger;
@@ -28,7 +28,7 @@ namespace Testflow.Logger
         /// </summary>
         public LogService()
         {
-            _runtimeLogSessions = new Dictionary<int, LogSession>(Constants.DefaultLogStreamSize);
+            _runtimeLogSessions = new Dictionary<int, LocalLogSession>(Constants.DefaultLogStreamSize);
             I18NOption i18NOption = new I18NOption(this.GetType().Assembly, "Resources.i18n_logger_zh", "Resources.i18n_logger_en")
             {
                 Name = Constants.I18NName
@@ -48,7 +48,7 @@ namespace Testflow.Logger
             _messenger = Messenger.Exist(option) ? Messenger.GetMessenger(option) : Messenger.CreateMessenger(option);
             InitializeRuntimeSession();
             _messenger.Initialize(_runtimeLogSessions.Values.ToArray());
-            foreach (LogSession logSession in _runtimeLogSessions.Values)
+            foreach (LocalLogSession logSession in _runtimeLogSessions.Values)
             {
                 logSession.Dispose();
             }
@@ -60,7 +60,7 @@ namespace Testflow.Logger
             _runtimeLogSessions.Clear();
             foreach (IRuntimeSession runtimeSession in _testflowInst.RuntimeService.Sessions)
             {
-                _runtimeLogSessions.Add(runtimeSession.ID, new LogSession(runtimeSession.ID));
+                _runtimeLogSessions.Add(runtimeSession.ID, new LocalLogSession(runtimeSession.ID));
             }
         }
 
@@ -71,7 +71,7 @@ namespace Testflow.Logger
 
         void IController.ApplyConfig(IModuleConfigData configData)
         {
-            throw new NotImplementedException();
+            // TODO to implement
         }
 
         public LogLevel LogLevel { get; set; }
@@ -81,31 +81,35 @@ namespace Testflow.Logger
             _platformLogSession.Print(logLevel, sequenceIndex, message);
         }
 
-        void ILogService.Print(LogLevel logLevel, int sequenceIndex, Exception exception, string message = "")
+        void ILogService.Print(LogLevel logLevel, int sequenceIndex, Exception exception, string message)
         {
             _platformLogSession.Print(logLevel, sequenceIndex, exception, message);
         }
 
         LogLevel ILogService.RuntimeLogLevel { get; set; }
 
-        ILogSession ILogService.GetLogSession(IRuntimeSession session)
+        ILogSession ILogService.GetLogSession(int sessionId)
         {
-            throw new NotImplementedException();
+            return _runtimeLogSessions.ContainsKey(sessionId) ?_runtimeLogSessions[sessionId] : null;
         }
 
         public void Print(LogLevel logLevel, int sessionId, int sequenceIndex, string message)
         {
-            throw new NotImplementedException();
+            _platformLogSession.Print(logLevel, Constants.DesigntimeSessionId, message);
         }
 
-        public void Print(LogLevel logLevel, int sessionId, int sequenceIndex, Exception exception)
+        public void Print(LogLevel logLevel, int sessionId, int sequenceIndex, Exception exception, string message = "")
         {
-            throw new NotImplementedException();
+            _platformLogSession.Print(logLevel, Constants.DesigntimeSessionId, exception, message);
         }
 
         public void DestroyLogStream(int sessionId)
         {
-            throw new NotImplementedException();
+            if (_runtimeLogSessions.ContainsKey(sessionId))
+            {
+                _runtimeLogSessions[sessionId].Dispose();
+                _runtimeLogSessions.Remove(sessionId);
+            }
         }
 
         public void DestroyLogStream()
@@ -125,7 +129,7 @@ namespace Testflow.Logger
         void IDisposable.Dispose()
         {
             _platformLogSession?.Dispose();
-            foreach (LogSession logSession in _runtimeLogSessions.Values)
+            foreach (LocalLogSession logSession in _runtimeLogSessions.Values)
             {
                 logSession.Dispose();
             }

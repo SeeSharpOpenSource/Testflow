@@ -44,8 +44,8 @@ namespace Testflow.Modules
         /// <summary>
         /// 创建某个运行时会话的日志流
         /// </summary>
-        /// <param name="session">运行时会话。-1为系统自留的日志，该日志流不能被手动销毁</param>
-        ILogSession GetLogSession(IRuntimeSession session);
+        /// <param name="sessionId">运行时会话ID。-1为系统自留的日志，该日志流不能被手动销毁</param>
+        ILogSession GetLogSession(int sessionId);
 
         /// <summary>
         /// 在框架中以指定级别向某个运行时会话的日志流打印日志
@@ -63,7 +63,8 @@ namespace Testflow.Modules
         /// <param name="sessionId">运行时上下文的ID</param>
         /// <param name="sequenceIndex">序列索引</param>
         /// <param name="exception">待打印的异常</param>
-        void Print(LogLevel logLevel, int sessionId, int sequenceIndex, Exception exception);
+        /// <param name="message"></param>
+        void Print(LogLevel logLevel, int sessionId, int sequenceIndex, Exception exception, string message = "");
 
         /// <summary>
         /// 删除运行时ID对应的日志流

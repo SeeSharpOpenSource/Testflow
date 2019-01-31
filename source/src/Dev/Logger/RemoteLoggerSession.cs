@@ -8,16 +8,16 @@ namespace Testflow.Logger
     /// <summary>
     /// 远程日志会话
     /// </summary>
-    public class RemoteLogger : ILogSession
+    public class RemoteLoggerSession : ILogSession
     {
-        private static RemoteLogger _inst;
+        private static RemoteLoggerSession _inst;
         private static object _instLock = new object();
         private readonly Messenger _messenger;
         private readonly LogLevel _logLevel;
         private FormatterType _formatter;
         private readonly Type[] _targetType;
 
-        private RemoteLogger(int sessionId, LogLevel logLevel, FormatterType formatter)
+        private RemoteLoggerSession(int sessionId, LogLevel logLevel, FormatterType formatter)
         {
             _logLevel = logLevel;
             this.SessionId = sessionId;
@@ -30,7 +30,7 @@ namespace Testflow.Logger
         /// <summary>
         /// 获取RemobeLoggerSession的实例
         /// </summary>
-        public static RemoteLogger GetInstance(int sessionId, LogLevel logLevel, FormatterType formatter)
+        public static RemoteLoggerSession GetInstance(int sessionId, LogLevel logLevel, FormatterType formatter)
         {
             if (null != _inst && _inst.SessionId == sessionId)
             {
@@ -44,7 +44,7 @@ namespace Testflow.Logger
                 }
                 if (null == _inst)
                 {
-                    _inst = new RemoteLogger(sessionId, logLevel, formatter);
+                    _inst = new RemoteLoggerSession(sessionId, logLevel, formatter);
                     return _inst;
                 }
             }
