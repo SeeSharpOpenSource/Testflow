@@ -14,17 +14,7 @@ namespace Testflow.Utility.I18nUtil
 
         public int GetHashCode(I18NOption option)
         {
-            SHA1 sha1 = SHA1.Create(option.Name);
-            byte[] hashBytes = sha1.Hash;
-            int size = hashBytes.Length;
-            sha1.Dispose();
-            if (size > sizeof(int))
-            {
-                size = sizeof(int);
-            }
-            int[] hashValue = new int[1];
-            Buffer.BlockCopy(hashBytes, 0, hashValue, 0, size);
-            return hashValue[0];
+            return option.ToString().GetHashCode();
         }
     }
 }
