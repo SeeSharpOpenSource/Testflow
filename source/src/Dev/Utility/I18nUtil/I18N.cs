@@ -156,13 +156,13 @@ namespace Testflow.Utility.I18nUtil
             switch (Thread.CurrentThread.CurrentCulture.Name)
             {
                 case Constants.ChineseName:
-                    resource = new ResourceManager("Resources.i18n_i18n_zh", typeof(I18N).Assembly);
+                    resource = new ResourceManager("Testflow.Utility.Resources.i18n_i18n_zh", typeof(I18N).Assembly);
                     break;
                 case Constants.EnglishName:
-                    resource = new ResourceManager("Resources.i18n_i18n_en", typeof (I18N).Assembly);
+                    resource = new ResourceManager("Testflow.Utility.Resources.i18n_i18n_en", typeof (I18N).Assembly);
                     break;
                 default:
-                    resource = new ResourceManager("Resources.i18n_i18n_en", typeof(I18N).Assembly);
+                    resource = new ResourceManager("Testflow.Utility.Resources.i18n_i18n_en", typeof(I18N).Assembly);
                     break;
             }
             return resource.GetString(labelKey);

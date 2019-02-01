@@ -29,7 +29,7 @@ namespace Testflow.Logger
         public LogService()
         {
             _runtimeLogSessions = new Dictionary<int, LocalLogSession>(Constants.DefaultLogStreamSize);
-            I18NOption i18NOption = new I18NOption(this.GetType().Assembly, "Resources.i18n_logger_zh", "Resources.i18n_logger_en")
+            I18NOption i18NOption = new I18NOption(this.GetType().Assembly, "i18n_logger_zh", "i18n_logger_en")
             {
                 Name = Constants.I18NName
             };

@@ -105,7 +105,7 @@ namespace Testflow.Utility.MessageUtil
         {
             this.Option = option;
             // 初始化i18n模块
-            I18NOption i18NOption = new I18NOption(typeof(Messenger).Assembly, "Resources.i18n_messenger_en", "Resources.i18n_messenger_en")
+            I18NOption i18NOption = new I18NOption(typeof(Messenger).Assembly, "i18n_messenger_zh", "i18n_messenger_en")
             {
                 Name = Constants.MessengerName
             };

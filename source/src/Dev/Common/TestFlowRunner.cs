@@ -87,7 +87,7 @@ namespace Testflow
             this.Option = options;
             this.Context = new TestflowContext();
             I18NOption i18NOption = new I18NOption(typeof (TestflowRunner).Assembly,
-                "Testflow.Resources.locale.i18n_common_zh", "Testflow.Resources.locale.i18n_common_en")
+                "Testflow.Resources.locale.i18n_common_cn", "Testflow.Resources.locale.i18n_common_en")
             {
                 Name = CommonConst.I18nName
             };
