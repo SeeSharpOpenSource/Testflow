@@ -3,7 +3,6 @@ using System.Collections.Concurrent;
 using System.Linq;
 using System.Resources;
 using System.Threading;
-using Testflow.Common;
 
 namespace Testflow.Common.I18nUtil
 {
@@ -78,18 +77,18 @@ namespace Testflow.Common.I18nUtil
         private I18N(I18NOption option)
         {
             string languageName = Thread.CurrentThread.CurrentCulture.Name;
-            string resource = null;
+            string resourceShortName = null;
             if (languageName.Equals(option.FirstLanguage))
             {
-                resource = option.FirstLanguageFile;
+                resourceShortName = option.FirstLanguageFile;
             }
             else if (languageName.Equals(option.SecondLanguage))
             {
-                resource = option.SecondLanguageFile;
+                resourceShortName = option.SecondLanguageFile;
             }
             else if (CommonConst.EnglishName.Equals(option.FirstLanguage) || CommonConst.EnglishName.Equals(option.SecondLanguage))
             {
-                resource = CommonConst.EnglishName.Equals(option.FirstLanguage) ?
+                resourceShortName = CommonConst.EnglishName.Equals(option.FirstLanguage) ?
                     option.FirstLanguage : option.SecondLanguage;
             }
             else
@@ -97,12 +96,23 @@ namespace Testflow.Common.I18nUtil
                 string msgFormat = GetResourceItem("UnsupportedLanguage");
                 throw new TestflowRuntimeException(TestflowErrorCode.I18nRuntimeError, string.Format(msgFormat, languageName));
             }
-            this._resourceManager = new ResourceManager(resource, option.Assembly);
-            if (null == this._resourceManager)
+            string resourceFullName = null;
+            // 修改国际化为使用反射获取资源文件配置
+            foreach (string resourceName in option.Assembly.GetManifestResourceNames())
+            {
+                if (resourceName.Equals(resourceShortName) || resourceName.Contains($".{resourceShortName}.resx") ||
+                    resourceName.Contains($".{resourceShortName}.resources"))
+                {
+                    resourceFullName = resourceName.Remove(resourceName.LastIndexOf("."));
+                    break;
+                }
+            }
+            if (null == resourceFullName)
             {
                 string msgFormat = GetResourceItem("ResourceNotExist");
-                throw new TestflowRuntimeException(TestflowErrorCode.I18nRuntimeError, string.Format(msgFormat, resource));
+                throw new TestflowRuntimeException(TestflowErrorCode.I18nRuntimeError, string.Format(msgFormat, resourceShortName));
             }
+            this._resourceManager = new ResourceManager(resourceFullName, option.Assembly);
         }
 
 //        public IModuleConfigData ConfigData { get; set; }
