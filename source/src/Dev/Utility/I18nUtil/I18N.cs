@@ -15,10 +15,9 @@ namespace Testflow.Utility.I18nUtil
         private static readonly ConcurrentDictionary<I18NOption, I18N> _i18nEntities = new ConcurrentDictionary<I18NOption, I18N>(new I18NOptionComparer());
 
         /// <summary>
-        /// 获取I18n实例
+        /// 获取I18N实例
         /// </summary>
-        /// <param name="option"></param>
-        /// <returns></returns>
+        /// <param name="option">国际化参数</param>
         public static I18N GetInstance(I18NOption option)
         {
             if (!_i18nEntities.ContainsKey(option))
@@ -29,13 +28,25 @@ namespace Testflow.Utility.I18nUtil
         }
 
         /// <summary>
+        /// 初始化I18N实例，如果已经存在则返回
+        /// </summary>
+        /// <param name="option">国际化参数</param>
+        public static void InitInstance(I18NOption option)
+        {
+            if (!_i18nEntities.ContainsKey(option))
+            {
+                _i18nEntities.TryAdd(option, new I18N(option));
+            }
+        }
+
+        /// <summary>
         /// 获取I18n实例
         /// </summary>
         /// <param name="i18nName">i18n名称</param>
         /// <returns></returns>
         public static I18N GetInstance(string i18nName)
         {
-            I18NOption fitKey = _i18nEntities.Keys.First(option => i18nName.Equals(option.Name));
+            I18NOption fitKey = _i18nEntities.Keys.FirstOrDefault(option => i18nName.Equals(option.Name));
             if (null == fitKey)
             {
                 throw new TestflowRuntimeException(TestflowErrorCode.I18nRuntimeError, GetResourceItem("NotInitialized"));
@@ -49,7 +60,7 @@ namespace Testflow.Utility.I18nUtil
         /// <param name="i18nName"></param>
         public static void RemoveInstance(string i18nName)
         {
-            I18NOption fitKey = _i18nEntities.Keys.First(option => i18nName.Equals(option.Name));
+            I18NOption fitKey = _i18nEntities.Keys.FirstOrDefault(option => i18nName.Equals(option.Name));
             I18N i18n;
             if (null != fitKey)
             {
@@ -64,7 +75,7 @@ namespace Testflow.Utility.I18nUtil
         /// <param name="option">待删除的option实例</param>
         public static void RemoveInstance(I18NOption option)
         {
-            I18NOption fitKey = _i18nEntities.Keys.First(item => option.Equals(item));
+            I18NOption fitKey = _i18nEntities.Keys.FirstOrDefault(item => option.Equals(item));
             I18N i18n;
             if (null != fitKey)
             {

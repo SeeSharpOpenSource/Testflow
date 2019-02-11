@@ -23,12 +23,12 @@ namespace Testflow.Dev.UtilityTest
             {
                 Name = I18nName
             };
-            _i18N = I18N.GetInstance(_i18NOption);
         }
 
         [TestMethod]
         public void GetEntity()
         {
+            I18N.InitInstance(_i18NOption);
             I18N i18N = I18N.GetInstance(I18nName);
             Assert.AreNotEqual(null, i18N);
         }
