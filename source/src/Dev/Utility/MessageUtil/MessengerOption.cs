@@ -24,6 +24,11 @@ namespace Testflow.Utility.MessageUtil
         public MessengerType Type { get; set; }
 
         /// <summary>
+        /// 目标类型
+        /// </summary>
+        public Type[] TargetTypes { get; set; }
+
+        /// <summary>
         /// 创建信使选项类实例
         /// </summary>
         /// <param name="path">消息队列地址</param>
@@ -33,6 +38,7 @@ namespace Testflow.Utility.MessageUtil
             this.Path = path;
             this.HostAddress = ".";
             this.Type = MessengerType.MSMQ;
+            this.TargetTypes = targetType;
         }
 
         /// <summary>

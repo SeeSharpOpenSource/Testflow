@@ -31,6 +31,10 @@ namespace Testflow.Utility.MessageUtil.Messengers
                 return false;
             }
             IMessageFormatter formatter = null;
+            if (null == targetTypes)
+            {
+                targetTypes = Option.TargetTypes;
+            }
             switch (format)
             {
                     case FormatterType.Xml:
@@ -56,7 +60,8 @@ namespace Testflow.Utility.MessageUtil.Messengers
                 throw new TestflowRuntimeException(TestflowErrorCode.MessengerRuntimeError, 
                     i18N.GetFStr("MessageQueueExist", Option.Path));
             }
-            this._messageQueue = new MessageQueue(Option.Path);
+            this._messageQueue = MessageQueue.Create(Option.Path);
+//            this._messageQueue = new MessageQueue(Option.Path);
             this._messageQueue.Purge();
         }
 

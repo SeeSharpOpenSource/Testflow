@@ -45,15 +45,15 @@ namespace Testflow.Utility.MessageUtil
         /// </summary>
         public static Messenger CreateMessenger(MessengerOption option)
         {
+            Messenger messenger = null;
             //此处不存在并发写入的同一个元素的情况，所以未加锁保护
-            Messenger messenger;
-            if (null != (messenger = _messengers.First(item => item.Option.Equals(option))))
+            if (null != (messenger = _messengers.FirstOrDefault(item => item.Option.Equals(option))))
             {
                 return messenger;
             }
             lock (_lock)
             {
-                if (null != (messenger = _messengers.First(item => item.Option.Equals(option))))
+                if (null != (messenger = _messengers.FirstOrDefault(item => item.Option.Equals(option))))
                 {
                     return messenger;
                 }
@@ -69,8 +69,8 @@ namespace Testflow.Utility.MessageUtil
                         break;
                 }
                 _messengers.Add(messenger);
+                return messenger;
             }
-            return messenger;
         }
 
         /// <summary>
@@ -78,7 +78,7 @@ namespace Testflow.Utility.MessageUtil
         /// </summary>
         public static Messenger GetMessenger(MessengerOption option)
         {
-            Messenger messenger = _messengers.First(item => item.Option.Equals(option));
+            Messenger messenger = _messengers.FirstOrDefault(item => item.Option.Equals(option));
             if (null == messenger)
             {
                 I18N i18N = I18N.GetInstance(Constants.MessengerName);
@@ -92,7 +92,7 @@ namespace Testflow.Utility.MessageUtil
         /// </summary>
         public static bool Exist(MessengerOption option)
         {
-            return null != _messengers.First(item => item.Option.Equals(option));
+            return null != _messengers.FirstOrDefault(item => item.Option.Equals(option));
         }
 
         private MessageDispatcher _messageDispatcher;
@@ -109,7 +109,7 @@ namespace Testflow.Utility.MessageUtil
             {
                 Name = Constants.MessengerName
             };
-            I18N i18N = I18N.GetInstance(i18NOption);
+            I18N.InitInstance(i18NOption);
         }
 
         /// <summary>
@@ -173,7 +173,7 @@ namespace Testflow.Utility.MessageUtil
         /// <param name="logQueueName">信使的名称</param>
         public static void DestroyMessenger(string logQueueName)
         {
-            Messenger messenger = _messengers.First(item => item.Option.Path.Equals(logQueueName));
+            Messenger messenger = _messengers.FirstOrDefault(item => item.Option.Path.Equals(logQueueName));
             if (null != messenger)
             {
                 _messengers.Remove(messenger);
