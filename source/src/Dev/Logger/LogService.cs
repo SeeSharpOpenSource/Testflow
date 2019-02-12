@@ -44,10 +44,10 @@ namespace Testflow.Logger
         void IController.RuntimeInitialize()
         {
             this._platformLogSession = new PlatformLogSession(-1);
-            MessengerOption option = new MessengerOption(Constants.LogQueueName, null);
-            _messenger = Messenger.Exist(option) ? Messenger.GetMessenger(option) : Messenger.CreateMessenger(option);
+            MessengerOption option = new MessengerOption(Constants.LogQueueName, typeof(LogMessage));
+            _messenger = Messenger.GetMessenger(option);
             InitializeRuntimeSession();
-            _messenger.Initialize(_runtimeLogSessions.Values.ToArray());
+            _messenger.RegisterConsumer(_runtimeLogSessions.Values.ToArray());
             foreach (LocalLogSession logSession in _runtimeLogSessions.Values)
             {
                 logSession.Dispose();

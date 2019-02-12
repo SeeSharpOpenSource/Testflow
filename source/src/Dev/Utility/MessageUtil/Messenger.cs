@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using Testflow.Common;
 using Testflow.Utility.I18nUtil;
@@ -41,9 +42,9 @@ namespace Testflow.Utility.MessageUtil
         }
 
         /// <summary>
-        /// 使用option创建信使类，如果已存在抛出异常
+        /// 使用option获取已配置的信使类，如果不存在抛出异常
         /// </summary>
-        public static Messenger CreateMessenger(MessengerOption option)
+        public static Messenger GetMessenger(MessengerOption option)
         {
             Messenger messenger = null;
             //此处不存在并发写入的同一个元素的情况，所以未加锁保护
@@ -63,28 +64,17 @@ namespace Testflow.Utility.MessageUtil
                         messenger = new MsmqMessenger(option);
                         break;
                     case MessengerType.Kafka:
+                        // TODO 待实现
                         throw new NotImplementedException();
                         break;
                     default:
+                        throw new NotImplementedException();
                         break;
                 }
+                messenger.Initialize();
                 _messengers.Add(messenger);
                 return messenger;
             }
-        }
-
-        /// <summary>
-        /// 使用option获取已配置的信使类，如果不存在抛出异常
-        /// </summary>
-        public static Messenger GetMessenger(MessengerOption option)
-        {
-            Messenger messenger = _messengers.FirstOrDefault(item => item.Option.Equals(option));
-            if (null == messenger)
-            {
-                I18N i18N = I18N.GetInstance(Constants.MessengerName);
-                throw new TestflowRuntimeException(TestflowErrorCode.MessengerRuntimeError, i18N.GetStr("MessengerNotInitialized"));
-            }
-            return messenger;
         }
 
         /// <summary>
@@ -125,18 +115,31 @@ namespace Testflow.Utility.MessageUtil
         /// <summary>
         /// 初始化信使类
         /// </summary>
-        /// <param name="consumers"></param> 
-        public virtual void Initialize(params IMessageConsumer[] consumers)
+        protected void Initialize()
         {
             this.InitializeMessageQueue();
             this.RegisterEvent();
-            _messageDispatcher = new MessageDispatcher(this, consumers);
+
+            // TODO 同步模式暂时不使用，后期再添加
+//            _messageDispatcher = new MessageDispatcher(this, consumers);
+        }
+
+        /// <summary>
+        /// 注册消费者，数据接收端调用
+        /// </summary>
+        public void RegisterConsumer(params IMessageConsumer[] consumers)
+        {
+            foreach (IMessageConsumer messageConsumer in consumers)
+            {
+                this.MessageReceived += messageConsumer.Handle;
+            }
         }
 
         /// <summary>
         /// 接收信息，未添加高阶参数配置，后续再更新
         /// </summary>
-        internal abstract IMessage Receive();
+        /// <param name="targetTypes">目标数据类型</param>
+        internal abstract IMessage Receive(params Type[] targetTypes);
 
         /// <summary>
         /// 发送消息，未添加高阶配置，后续再更新

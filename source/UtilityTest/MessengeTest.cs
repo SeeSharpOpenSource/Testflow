@@ -10,20 +10,20 @@ namespace Testflow.Dev.UtilityTest
     {
         private Messenger _messenger;
         private MessengerOption _option;
-        const string MsgQueueName = "Test";
-        const int MaxSession = 10;
+        const string MsgQueueName = @".\Private$\TestflowTest";
+        const int MaxSession = 50;
 
         [TestInitialize]
         public void SetUp()
         {
             _option = new MessengerOption(MsgQueueName, new Type[] {typeof (TestMessage)});
-            _messenger = Messenger.CreateMessenger(_option);
+            _messenger = Messenger.GetMessenger(_option);
             IMessageConsumer[] consumers = new IMessageConsumer[MaxSession];
             for (int i = 0; i < MaxSession; i++)
             {
                 consumers[i] = new TestConsumer(i);
             }
-            _messenger.Initialize(consumers);
+            _messenger.RegisterConsumer(consumers);
         }
 
         [TestMethod]
@@ -34,7 +34,7 @@ namespace Testflow.Dev.UtilityTest
         }
 
         [TestMethod]
-        public void TestConsumer()
+        public void TestAsyncReceive()
         {
             for (int i = 0; i < MaxSession; i++)
             {
@@ -43,18 +43,17 @@ namespace Testflow.Dev.UtilityTest
                     Id = i,
                     Message = CreateTestMessage(i)
                 };
-                _messenger.Send(message, FormatterType.Xml, null);
-                Thread.Sleep(100);
-                Assert.AreEqual(_messenger.MessageCount, 0);
+                _messenger.Send(message, FormatterType.Xml);
+                Thread.Sleep(10);
+                Assert.AreEqual(0, _messenger.MessageCount);
             }
         }
 
         [TestCleanup]
         public void TearDown()
         {
-            _messenger?.Dispose();
+            Messenger.DestroyMessenger(MsgQueueName);
         }
-
 
         public static string CreateTestMessage(int id)
         {
@@ -78,7 +77,8 @@ namespace Testflow.Dev.UtilityTest
         public void Handle(IMessage message)
         {
             string expect = MessengeTest.CreateTestMessage(SessionId);
-            Assert.AreEqual(expect, message);
+            TestMessage testMessage = message as TestMessage;
+            Assert.AreEqual(expect, testMessage?.Message);
         }
     }
 }

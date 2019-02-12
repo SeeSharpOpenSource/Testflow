@@ -24,6 +24,16 @@ namespace Testflow.Utility.MessageUtil
         public MessengerType Type { get; set; }
 
         /// <summary>
+        /// 接收类型
+        /// </summary>
+        public ReceiveType ReceiveType { get; set; }
+
+        /// <summary>
+        /// 格式化器类型
+        /// </summary>
+        public FormatterType Formatter { get; set; }
+
+        /// <summary>
         /// 目标类型
         /// </summary>
         public Type[] TargetTypes { get; set; }
@@ -38,7 +48,9 @@ namespace Testflow.Utility.MessageUtil
             this.Path = path;
             this.HostAddress = ".";
             this.Type = MessengerType.MSMQ;
+            this.ReceiveType = ReceiveType.Asynchronous;
             this.TargetTypes = targetType;
+            this.Formatter = FormatterType.Xml;
         }
 
         /// <summary>

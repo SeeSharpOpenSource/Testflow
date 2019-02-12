@@ -14,5 +14,10 @@
         /// 二进制类型的格式化器
         /// </summary>
         Bin = 1,
+
+        /// <summary>
+        /// json类型的格式化器
+        /// </summary>
+        Json = 2
     }
 }

@@ -54,6 +54,7 @@
     <Compile Include="MessageUtil\FormatterType.cs" />
     <Compile Include="MessageUtil\Messengers\MsmqMessenger.cs" />
     <Compile Include="MessageUtil\MessengerType.cs" />
+    <Compile Include="MessageUtil\ReceiveType.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Resources\i18n_i18n_en.Designer.cs">
       <DependentUpon>i18n_i18n_en.resx</DependentUpon>
