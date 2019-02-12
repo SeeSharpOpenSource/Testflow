@@ -17,7 +17,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "PlatformRunner", "PlatformR
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ResultManager", "ResultManager", "{2929BCF8-8F1B-4335-B576-F137D7851D8E}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SerializationModule", "SerializationModule", "{73306908-6934-4F28-B0C8-7171D87FEC38}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SequenceManager", "SequenceManager", "{73306908-6934-4F28-B0C8-7171D87FEC38}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common", "src\Dev\Common\Common.csproj", "{1681CDD7-0CC2-49D2-9E82-7B03B52DB283}"
 EndProject
