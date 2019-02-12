@@ -5,12 +5,12 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("i18n")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyTitle("Utility")]
+[assembly: AssemblyDescription("Testflow framework utilities")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Microsoft")]
-[assembly: AssemblyProduct("i18n")]
-[assembly: AssemblyCopyright("Copyright © Microsoft 2018")]
+[assembly: AssemblyCompany("JYTEK")]
+[assembly: AssemblyProduct("Testflow framework utilities")]
+[assembly: AssemblyCopyright("Copyright © JYTEK 2016")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

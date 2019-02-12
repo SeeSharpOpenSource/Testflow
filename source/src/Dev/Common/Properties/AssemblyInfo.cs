@@ -10,7 +10,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("JYTEK")]
 [assembly: AssemblyProduct("Testflow")]
-[assembly: AssemblyCopyright("Copyright © JYTEK 2018")]
+[assembly: AssemblyCopyright("Copyright © JYTEK 2016")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
