@@ -14,5 +14,15 @@
         /// 描述信息
         /// </summary>
         string Description { get; set; }
+
+        /// <summary>
+        /// 上级流程容器
+        /// </summary>
+        ISequenceFlowContainer Parent { get; set; }
+
+        /// <summary>
+        /// 克隆一个序列数据
+        /// </summary>
+        ISequenceFlowContainer Clone();
     }
 }
