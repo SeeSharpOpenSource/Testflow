@@ -15,9 +15,9 @@ namespace Testflow.Data.Sequence
         string Name { get; set; }
 
         /// <summary>
-        /// 变量的Type对象的索引号
+        /// 变量的Type对象
         /// </summary>
-        int TypeIndex { get; set; }
+        ITypeData Type { get; set; }
 
         /// <summary>
         /// 变量的类型

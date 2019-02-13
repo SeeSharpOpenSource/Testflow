@@ -23,9 +23,5 @@ namespace Testflow.Data.Sequence
         /// 当前的值是变量还是值
         /// </summary>
         ParameterType ParameterType { get; set; }
-//        /// <summary>
-//        /// 该参数的Type类型的索引号
-//        /// </summary>
-//        int TypeIndex { get; set; }
     }
 }

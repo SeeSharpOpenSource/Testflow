@@ -15,9 +15,9 @@ namespace Testflow.Data.Sequence
         string Name { get; set; }
 
         /// <summary>
-        /// 参数类的Type对象的索引号
+        /// 参数类的Type对象
         /// </summary>
-        int TypeIndex { get; set; }
+        ITypeData Type { get; set; }
 
         /// <summary>
         /// 参数的修饰符

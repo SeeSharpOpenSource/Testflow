@@ -21,9 +21,9 @@ namespace Testflow.Data.Sequence
         string MethodName { get; set; }
 
         /// <summary>
-        /// 方法所在类的索引号
+        /// 方法所在类
         /// </summary>
-        int ClassTypeIndex { get; set; }
+        ITypeData ClassType { get; set; }
 
         /// <summary>
         /// 方法参数列表信息
