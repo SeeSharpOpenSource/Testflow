@@ -11,9 +11,9 @@
         VariableType ArgumentType { get; set; }
 
         /// <summary>
-        /// 参数的Type对象的索引号
+        /// 参数的Type对象
         /// </summary>
-        int TypeIndex { get; set; }
+        ITypeData Type { get; set; }
 
         /// <summary>
         /// 参数的修饰符
