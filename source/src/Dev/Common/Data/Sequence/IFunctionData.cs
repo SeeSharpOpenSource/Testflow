@@ -37,6 +37,16 @@ namespace Testflow.Data.Sequence
         IParameterDataCollection Parameters { get; }
 
         /// <summary>
+        /// 方法所在类的实例，静态方法时为空
+        /// </summary>
+        string Instance { get; set; }
+
+        /// <summary>
+        /// 保存返回值的变量名
+        /// </summary>
+        string Return { get; set; }
+
+        /// <summary>
         /// 方法返回值信息
         /// </summary>
         IArgument ReturnType { get; set; }
