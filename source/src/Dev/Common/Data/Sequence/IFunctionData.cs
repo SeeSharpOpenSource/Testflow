@@ -34,7 +34,7 @@ namespace Testflow.Data.Sequence
         /// 该Function的参数配置信息
         /// </summary>
         [XmlIgnore]
-        ISequenceStepParameter Parameters { get; }
+        IParameterDataCollection Parameters { get; }
 
         /// <summary>
         /// 方法返回值信息
