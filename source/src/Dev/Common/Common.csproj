@@ -42,6 +42,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Common\CommonConst.cs" />
+    <Compile Include="Common\ICloneableClass.cs" />
     <Compile Include="Common\IEntityComponent.cs" />
     <Compile Include="Common\IPropertyExtendable.cs" />
     <Compile Include="Common\LogLevel.cs" />

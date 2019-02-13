@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Xml.Serialization;
+using Testflow.Common;
 using Testflow.Data.Description;
 
 namespace Testflow.Data.Sequence
@@ -7,7 +8,7 @@ namespace Testflow.Data.Sequence
     /// <summary>
     /// 参数类，描述FunctionData的接口
     /// </summary>
-    public interface IArgument
+    public interface IArgument : ICloneableClass<IArgument>
     {
         /// <summary>
         /// 参数类
