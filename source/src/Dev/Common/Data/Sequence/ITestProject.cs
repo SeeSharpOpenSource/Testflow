@@ -51,7 +51,7 @@ namespace Testflow.Data.Sequence
         /// <summary>
         /// 所有测试组中的参数配置
         /// </summary>
-        IList<IParameterDataCollection> SequenceParameters { get; set; }
+        IList<IParameterDataCollection> SequenceGroupParameters { get; set; }
 
         /// <summary>
         /// 测试序列组的TearDown模块
