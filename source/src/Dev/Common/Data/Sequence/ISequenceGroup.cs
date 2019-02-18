@@ -1,15 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Runtime.Serialization;
-using System.Xml.Serialization;
-using Testflow.Data.Description;
-
-namespace Testflow.Data.Sequence
+﻿namespace Testflow.Data.Sequence
 {
     /// <summary>
     /// 测试序列组
     /// </summary>
-    public interface ISequenceGroup : ISequenceFlowContainer, ICloneable
+    public interface ISequenceGroup : ISequenceFlowContainer
     {
         /// <summary>
         /// 测试序列组格式版本等信息
@@ -60,15 +54,5 @@ namespace Testflow.Data.Sequence
         /// 测试序列组的TearDown模块
         /// </summary>
         ISequence TearDown { get; set; }
-        
-        /// <summary>
-        /// 初始化一个空白的测试序列组
-        /// </summary>
-        void Initialize();
-
-        /// <summary>
-        /// 对测试序列组执行变更后更新所有签名信息
-        /// </summary>
-        void RefreshSignature();
     }
 }

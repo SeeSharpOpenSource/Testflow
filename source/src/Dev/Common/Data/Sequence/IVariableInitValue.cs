@@ -3,7 +3,7 @@
     /// <summary>
     /// 变量的初始值
     /// </summary>
-    public interface IVariableInitValue
+    public interface IVariableInitValue : ISequenceDataContainer
     {
          /// <summary>
          /// 变量名称

@@ -35,7 +35,7 @@ namespace Testflow.Data.Sequence
         /// 该Function的参数配置信息
         /// </summary>
         [XmlIgnore]
-        IParameterDataCollection Parameters { get; }
+        IParameterDataCollection Parameters { get; set; }
 
         /// <summary>
         /// 方法所在类的实例，静态方法时为空

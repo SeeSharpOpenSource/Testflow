@@ -7,7 +7,7 @@ namespace Testflow.Data.Sequence
     /// <summary>
     /// 保存单个测试序列信息的数据结构
     /// </summary>
-    public interface ISequence: ISequenceFlowContainer, ICloneable
+    public interface ISequence: ISequenceFlowContainer
     {
         /// <summary>
         /// 测试序列在当前序列组的索引。Setup的Index为0，Teardown的Index为最后一个

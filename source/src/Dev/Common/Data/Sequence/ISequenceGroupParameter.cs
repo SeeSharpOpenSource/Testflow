@@ -6,7 +6,7 @@ namespace Testflow.Data.Sequence
     /// <summary>
     /// 测试序列组参数配置
     /// </summary>
-    public interface ISequenceGroupParameter : ISequenceDataContainer, ICloneable
+    public interface ISequenceGroupParameter : ISequenceDataContainer
     {
         /// <summary>
         /// 序列参数信息
@@ -32,10 +32,6 @@ namespace Testflow.Data.Sequence
         /// Setup模块对应的参数配置
         /// </summary>
         ISequenceParameter TearDownParameters { get; set; }
-
-        /// <summary>
-        /// 更新所有签名信息
-        /// </summary>
-        void RefreshSignature();
+        
     }
 }

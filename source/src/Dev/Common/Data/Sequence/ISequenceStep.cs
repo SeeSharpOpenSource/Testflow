@@ -7,7 +7,7 @@ namespace Testflow.Data.Sequence
     /// <summary>
     /// 保存测试序列中单个步骤的数据结构
     /// </summary>
-    public interface ISequenceStep : ISequenceFlowContainer, ICloneable
+    public interface ISequenceStep : ISequenceFlowContainer
     {
         /// <summary>
         /// 保存子步骤，如果不包含则为空或null

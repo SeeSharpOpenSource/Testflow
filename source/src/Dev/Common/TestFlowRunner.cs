@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using Testflow.Common;
 using Testflow.DesignTime;
 using Testflow.Common.I18nUtil;
@@ -35,6 +36,7 @@ namespace Testflow
             }
             lock(_instLock)
             {
+                Thread.MemoryBarrier();
                 CheckIfExistDifferentRunner(options);
                 if (null != _runnerInst)
                 {

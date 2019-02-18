@@ -8,5 +8,9 @@ namespace Testflow.Data.Sequence
     /// </summary>
     public interface ISequenceDataContainer : ISequenceElement, ICloneableClass<ISequenceDataContainer>
     {
+        /// <summary>
+        /// 使用所属序列对象初始化
+        /// </summary>
+        void Initialize(ISequenceFlowContainer flowContainer);
     }
 }

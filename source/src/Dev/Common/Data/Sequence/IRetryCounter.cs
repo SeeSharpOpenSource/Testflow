@@ -1,11 +1,12 @@
 ﻿using System.Xml.Serialization;
+using Testflow.Common;
 
 namespace Testflow.Data.Sequence
 {
     /// <summary>
     /// 重试计数器
     /// </summary>
-    public interface IRetryCounter
+    public interface IRetryCounter : ICloneableClass<IRetryCounter>
     {
         /// <summary>
         /// 重试计数变量名称
@@ -13,30 +14,18 @@ namespace Testflow.Data.Sequence
         string Name { get; set; }
 
         /// <summary>
-        /// 计数器当前重试次数
-        /// </summary>
-        [XmlIgnore]
-        int RetryTimes { get; }
-
-        /// <summary>
         /// 计数器的最大重试次数
         /// </summary>
         int MaxRetryTimes { get; set; }
 
         /// <summary>
-        /// 索引器增加计数，如果已经达到上限则抛出异常
-        /// </summary>
-        void Flip();
-
-        /// <summary>
         /// Retry功能是否使能
         /// </summary>
-        [XmlIgnore]
-        bool RetryEnabled { get; }
+        bool RetryEnabled { get; set; }
 
         /// <summary>
-        /// 清除计数器
+        /// 记录当前的重试次数的变量
         /// </summary>
-        void Clear();
+        string CounterVariable { get; set; }
     }
 }

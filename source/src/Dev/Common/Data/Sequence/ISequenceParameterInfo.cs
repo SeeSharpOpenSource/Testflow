@@ -19,10 +19,10 @@ namespace Testflow.Data.Sequence
         string Hash { get; set; }
 
         /// <summary>
-        /// 对应测试序列组当前的MD5
+        /// 序列参数创建时间
         /// </summary>
-        string MD5 { get; set; }
-        
+        DateTime CreateTime { get; set; }
+
         /// <summary>
         /// 序列参数最新的更新时间
         /// </summary>

@@ -50,7 +50,6 @@ namespace Testflow.Modules
         /// <summary>
         /// 创建空白的FunctionData
         /// </summary>
-        /// <param name="funcInterface"></param>
         /// <returns></returns>
         IFunctionData CreateFunctionData(IFuncInterfaceDescription funcInterface);
 
@@ -129,20 +128,28 @@ namespace Testflow.Modules
         /// <param name="target">序列化的目标</param>
         /// <param name="param">额外参数</param>
         void Serialize(ISequenceGroup sequenceGroup, SerializationTarget target, params string[] param);
-
+        
         /// <summary>
-        /// 反序列化测试工程
+        /// 加载测试工程
         /// </summary>
         /// <param name="source">反序列化的源</param>
         /// <param name="param">额外参数</param>
-        ITestProject DeserializeTestProject(SerializationTarget source, params string[] param);
+        ITestProject LoadTestProject(SerializationTarget source, params string[] param);
 
         /// <summary>
-        /// 反序列化测试序列组
+        /// 加载测试序列组
         /// </summary>
         /// <param name="source">反序列化的源</param>
-        /// <param name="param">额外参数</param>
-        ISequenceGroup DeserializeSequenceGroup(SerializationTarget source, params string[] param);
+        /// <param name="param">额外参数，如果是文件需要传入文件路径</param>
+        ISequenceGroup LoadSequenceGroup(SerializationTarget source, params string[] param);
+
+        /// <summary>
+        /// 加载参数配置文件
+        /// </summary>
+        /// <param name="sequenceGroup">加载参数配置的目标序列组</param>
+        /// <param name="forceLoad">是否强制加载，false时如果hash比对不通过会报错</param>
+        /// <param name="param">额外参数，如果是文件需要传入文件路径</param>
+        void LoadParameter(ISequenceGroup sequenceGroup, bool forceLoad, params string[] param);
 
         #endregion
 

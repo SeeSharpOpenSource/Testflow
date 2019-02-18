@@ -21,5 +21,11 @@ namespace Testflow.Data.Sequence
         /// 上级流程容器
         /// </summary>
         ISequenceFlowContainer Parent { get; set; }
+
+        /// <summary>
+        /// 使用父级对象初始化
+        /// </summary>
+        /// <param name="parent"></param>
+        void Initialize(ISequenceFlowContainer parent);
     }
 }

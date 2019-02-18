@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Xml.Serialization;
+using Testflow.Common;
 using Testflow.Data.Description;
 
 namespace Testflow.Data.Sequence
@@ -7,13 +8,8 @@ namespace Testflow.Data.Sequence
     /// <summary>
     /// 变量数据
     /// </summary>
-    public interface IVariable
+    public interface IVariable : ISequenceFlowContainer
     {
-        /// <summary>
-        /// 变量名称
-        /// </summary>
-        string Name { get; set; }
-
         /// <summary>
         /// 变量的Type对象
         /// </summary>
@@ -23,12 +19,7 @@ namespace Testflow.Data.Sequence
         /// 变量的类型
         /// </summary>
         VariableType VariableType { get; set; }
-
-        /// <summary>
-        /// 变量的描述信息
-        /// </summary>
-        string Description { get; set; }
-
+        
         /// <summary>
         /// 在日志中的记录级别
         /// </summary>
@@ -49,11 +40,5 @@ namespace Testflow.Data.Sequence
         /// </summary>
         [XmlIgnore]
         string Value { get; set; }
-
-        /// <summary>
-        /// 变量的作用域范围
-        /// </summary>
-        [XmlIgnore]
-        ISequenceFlowContainer Parent { get; set; }
     }
 }
