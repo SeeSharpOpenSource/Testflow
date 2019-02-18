@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Utility")]
-[assembly: AssemblyDescription("Testflow framework utilities")]
+[assembly: AssemblyTitle("RuntimeService")]
+[assembly: AssemblyDescription("Testflow runtime service library")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("JYTEK")]
-[assembly: AssemblyProduct("Testflow framework utilities")]
+[assembly: AssemblyProduct("RuntimeService")]
 [assembly: AssemblyCopyright("Copyright © JYTEK 2016")]
 [assembly: AssemblyTrademark("SeeSharp")]
 [assembly: AssemblyCulture("")]
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(true)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("35105702-e8d2-4465-a118-687b6c85c466")]
+[assembly: Guid("e5790e2f-ede6-4b70-86c7-35a89dc9e41b")]
 
 // Version information for an assembly consists of the following four values:
 //
