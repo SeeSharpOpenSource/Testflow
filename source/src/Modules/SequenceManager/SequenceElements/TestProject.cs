@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
+using System.Xml.Serialization;
 using Testflow.Common;
 using Testflow.Data;
 using Testflow.Data.Sequence;
+using Testflow.SequenceManager.Common;
 
 namespace Testflow.SequenceManager.SequenceElements
 {
@@ -23,6 +25,7 @@ namespace Testflow.SequenceManager.SequenceElements
             this.SetUpParameters = new SequenceParameter();
             this.SequenceGroups = new SequenceGroupCollection();
             this.SequenceGroupParameters = new List<IParameterDataCollection>();
+            this.SequenceGroupLocations = null;
             this.TearDown = new Sequence();
             this.TearDownParameters = new SequenceParameter();
         }
@@ -30,28 +33,46 @@ namespace Testflow.SequenceManager.SequenceElements
         public string Name { get; set; }
         public string Description { get; set; }
 
+        [XmlIgnore]
+        [SerializationIgnore]
         public ISequenceFlowContainer Parent
         {
             get { return null; }
             set { throw new InvalidOperationException(); }
         }
 
+        public ITypeDataCollection TypeDatas { get; set; }
+
+        public IAssemblyInfoCollection Assemblies { get; set; }
+
+        public ExecutionModel ExecutionModel { get; set; }
+
+        public IVariableCollection Variables { get; set; }
+
+        public IList<IVariableInitValue> VariableValues { get; set; }
+
+        public ISequence SetUp { get; set; }
+
+        public ISequenceParameter SetUpParameters { get; set; }
+
+        [XmlIgnore]
+        [SerializationIgnore]
+        public ISequenceGroupCollection SequenceGroups { get; set; }
+
+        public SequenceGroupLocationInfoCollection SequenceGroupLocations { get; set; }
+
+        [XmlIgnore]
+        [SerializationIgnore]
+        public IList<IParameterDataCollection> SequenceGroupParameters { get; set; }
+
+        public ISequence TearDown { get; set; }
+
+        public ISequenceParameter TearDownParameters { get; set; }
+
         public void Initialize(ISequenceFlowContainer parent)
         {
-            return;
+            this.SequenceGroupLocations = new SequenceGroupLocationInfoCollection();
         }
-
-        public ITypeDataCollection TypeDatas { get; set; }
-        public IAssemblyInfoCollection Assemblies { get; set; }
-        public ExecutionModel ExecutionModel { get; set; }
-        public IVariableCollection Variables { get; set; }
-        public IList<IVariableInitValue> VariableValues { get; set; }
-        public ISequence SetUp { get; set; }
-        public ISequenceParameter SetUpParameters { get; set; }
-        public ISequenceGroupCollection SequenceGroups { get; set; }
-        public IList<IParameterDataCollection> SequenceGroupParameters { get; set; }
-        public ISequence TearDown { get; set; }
-        public ISequenceParameter TearDownParameters { get; set; }
 
         public ISequenceFlowContainer Clone()
         {
