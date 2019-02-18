@@ -157,6 +157,21 @@ namespace Testflow.SequenceManager.Common
             return true;
         }
 
+        public static void RefreshTypeIndex(ITestProject testProject)
+        {
+            foreach (IVariable variable in testProject.Variables)
+            {
+                Variable variableObj = (variable as Variable);
+                variableObj.TypeIndex = testProject.TypeDatas.IndexOf(variableObj.Type);
+            }
+            RefreshTypeIndex(testProject.SetUp, testProject.TypeDatas);
+            foreach (ISequenceGroup sequenceGroup in testProject.SequenceGroups)
+            {
+                RefreshTypeIndex(sequenceGroup);
+            }
+            RefreshTypeIndex(testProject.TearDown, testProject.TypeDatas);
+        }
+
         public static void RefreshTypeIndex(ISequenceGroup sequenceGroup)
         {
             foreach (IArgument argument in sequenceGroup.Arguments)
