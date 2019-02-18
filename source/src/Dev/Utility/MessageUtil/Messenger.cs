@@ -3,6 +3,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Threading;
 using Testflow.Common;
 using Testflow.Utility.I18nUtil;
 using Testflow.Utility.MessageUtil.Messengers;
@@ -54,6 +55,7 @@ namespace Testflow.Utility.MessageUtil
             }
             lock (_lock)
             {
+                Thread.MemoryBarrier();
                 if (null != (messenger = _messengers.FirstOrDefault(item => item.Option.Equals(option))))
                 {
                     return messenger;
@@ -97,7 +99,7 @@ namespace Testflow.Utility.MessageUtil
             // 初始化i18n模块
             I18NOption i18NOption = new I18NOption(typeof(Messenger).Assembly, "i18n_messenger_zh", "i18n_messenger_en")
             {
-                Name = Constants.MessengerName
+                Name = UtilityConstants.MessengerName
             };
             I18N.InitInstance(i18NOption);
         }

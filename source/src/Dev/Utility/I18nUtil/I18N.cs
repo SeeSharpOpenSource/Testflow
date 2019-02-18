@@ -49,7 +49,7 @@ namespace Testflow.Utility.I18nUtil
             I18NOption fitKey = _i18nEntities.Keys.FirstOrDefault(option => i18nName.Equals(option.Name));
             if (null == fitKey)
             {
-                throw new TestflowRuntimeException(TestflowErrorCode.I18nRuntimeError, GetResourceItem("NotInitialized"));
+                throw new TestflowRuntimeException(UtilityConstants.I18nRuntimeError, GetResourceItem("NotInitialized"));
             }
             return _i18nEntities[fitKey];
         }
@@ -98,15 +98,15 @@ namespace Testflow.Utility.I18nUtil
             {
                 resourceShortName = option.SecondLanguageFile;
             }
-            else if (Constants.EnglishName.Equals(option.FirstLanguage) || Constants.EnglishName.Equals(option.SecondLanguage))
+            else if (UtilityConstants.EnglishName.Equals(option.FirstLanguage) || UtilityConstants.EnglishName.Equals(option.SecondLanguage))
             {
-                resourceShortName = Constants.EnglishName.Equals(option.FirstLanguage) ?
+                resourceShortName = UtilityConstants.EnglishName.Equals(option.FirstLanguage) ?
                     option.FirstLanguage : option.SecondLanguage;
             }
             else
             {
                 string msgFormat = GetResourceItem("UnsupportedLanguage");
-                throw new TestflowRuntimeException(TestflowErrorCode.I18nRuntimeError, string.Format(msgFormat, languageName));
+                throw new TestflowRuntimeException(UtilityConstants.I18nRuntimeError, string.Format(msgFormat, languageName));
             }
             string resourceFullName = null;
             // 修改国际化为使用反射获取资源文件配置
@@ -122,7 +122,7 @@ namespace Testflow.Utility.I18nUtil
             if (null == resourceFullName)
             {
                 string msgFormat = GetResourceItem("ResourceNotExist");
-                throw new TestflowRuntimeException(TestflowErrorCode.I18nRuntimeError, string.Format(msgFormat, resourceShortName));
+                throw new TestflowRuntimeException(UtilityConstants.I18nRuntimeError, string.Format(msgFormat, resourceShortName));
             }
             this._resourceManager = new ResourceManager(resourceFullName, option.Assembly);
         }
@@ -151,7 +151,7 @@ namespace Testflow.Utility.I18nUtil
             if (null == msgFormat)
             {
                 string errFormat = GetResourceItem("ItemNotExist");
-                throw new TestflowRuntimeException(TestflowErrorCode.I18nRuntimeError, errFormat);
+                throw new TestflowRuntimeException(UtilityConstants.I18nRuntimeError, errFormat);
             }
             return string.Format(msgFormat, param);
         }
@@ -166,10 +166,10 @@ namespace Testflow.Utility.I18nUtil
             ResourceManager resource;
             switch (Thread.CurrentThread.CurrentCulture.Name)
             {
-                case Constants.ChineseName:
+                case UtilityConstants.ChineseName:
                     resource = new ResourceManager("Testflow.Utility.Resources.i18n_i18n_zh", typeof(I18N).Assembly);
                     break;
-                case Constants.EnglishName:
+                case UtilityConstants.EnglishName:
                     resource = new ResourceManager("Testflow.Utility.Resources.i18n_i18n_en", typeof (I18N).Assembly);
                     break;
                 default:

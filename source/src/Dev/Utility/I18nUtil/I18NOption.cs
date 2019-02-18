@@ -17,8 +17,8 @@ namespace Testflow.Utility.I18nUtil
         {
             this.Assembly = assembly;
 
-            this.FirstLanguage = Constants.ChineseName;
-            this.SecondLanguage = Constants.EnglishName;
+            this.FirstLanguage = UtilityConstants.ChineseName;
+            this.SecondLanguage = UtilityConstants.EnglishName;
 
             this.FirstLanguageFile = firstLanguageFile;
             this.SecondLanguageFile = secondLanguageFile;

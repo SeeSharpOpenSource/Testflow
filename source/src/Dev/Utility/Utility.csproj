@@ -42,7 +42,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Constants.cs" />
+    <Compile Include="UtilityConstants.cs" />
     <Compile Include="I18nUtil\I18N.cs" />
     <Compile Include="I18nUtil\I18NOption.cs" />
     <Compile Include="I18nUtil\I18NOptionComparer.cs" />
