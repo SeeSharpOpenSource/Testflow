@@ -25,6 +25,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Dev", "Dev", "{04AEFFF7-652
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UtilityTest", "test\Dev\UtilityTest\UtilityTest.csproj", "{B06DD0CB-7EC4-4B09-8761-BB600B70C37C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SequenceManager", "src\Modules\SequenceManager\SequenceManager.csproj", "{6C461D7E-7EA4-4BF2-9168-82180132A0C9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -51,6 +53,10 @@ Global
 		{B06DD0CB-7EC4-4B09-8761-BB600B70C37C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B06DD0CB-7EC4-4B09-8761-BB600B70C37C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B06DD0CB-7EC4-4B09-8761-BB600B70C37C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6C461D7E-7EA4-4BF2-9168-82180132A0C9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6C461D7E-7EA4-4BF2-9168-82180132A0C9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6C461D7E-7EA4-4BF2-9168-82180132A0C9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6C461D7E-7EA4-4BF2-9168-82180132A0C9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -65,5 +71,6 @@ Global
 		{35105702-E8D2-4465-A118-687B6C85C466} = {F3BC7E81-DCA6-4751-B80D-E538C3524573}
 		{04AEFFF7-6525-4904-A0D5-8EFB09995CDD} = {AA67EC51-E2E3-49A5-9DC3-C1EFC2EAB0E3}
 		{B06DD0CB-7EC4-4B09-8761-BB600B70C37C} = {04AEFFF7-6525-4904-A0D5-8EFB09995CDD}
+		{6C461D7E-7EA4-4BF2-9168-82180132A0C9} = {040DD94F-D203-46A8-B4B9-C1B7566216E8}
 	EndGlobalSection
 EndGlobal

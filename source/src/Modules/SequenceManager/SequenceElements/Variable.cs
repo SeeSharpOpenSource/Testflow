@@ -1,0 +1,78 @@
+﻿using System;
+using System.Xml.Serialization;
+using Testflow.Data;
+using Testflow.Data.Sequence;
+using Testflow.SequenceManager.Common;
+
+namespace Testflow.SequenceManager.SequenceElements
+{
+    [Serializable]
+    public class Variable : IVariable
+    {
+        public Variable()
+        {
+            this.Name = string.Empty;
+            this.Type = null;
+            this.TypeIndex = Constants.UnverifiedTypeIndex;
+            this.Description = string.Empty;
+            this.LogRecordLevel = RecordLevel.None;
+            this.ReportRecordLevel = RecordLevel.None;
+            this.OIRecordLevel = RecordLevel.None;
+            this.Value = string.Empty;
+            this.Parent = null;
+        }
+
+        public string Name { get; set; }
+
+        [XmlIgnore]
+        [SerializationIgnore]
+        public ITypeData Type { get; set; }
+
+        public int TypeIndex { get; set; }
+        public VariableType VariableType { get; set; }
+        public string Description { get; set; }
+        public RecordLevel LogRecordLevel { get; set; }
+        public RecordLevel ReportRecordLevel { get; set; }
+        public RecordLevel OIRecordLevel { get; set; }
+
+        [XmlIgnore]
+        [SerializationIgnore]
+        public string Value { get; set; }
+
+        public ISequenceFlowContainer Parent { get; set; }
+        public void Initialize(ISequenceFlowContainer parent)
+        {
+            this.Parent = parent;
+        }
+
+        public ISequenceFlowContainer Clone()
+        {
+            Variable variable = new Variable()
+            {
+                Name = this.Name + Constants.CopyPostfix,
+                Description = this.Description,
+                LogRecordLevel = this.LogRecordLevel,
+                ReportRecordLevel = this.ReportRecordLevel,
+                OIRecordLevel = this.OIRecordLevel,
+                Parent = null,
+                Type = this.Type,
+                TypeIndex = Constants.UnverifiedTypeIndex,
+                VariableType = this.VariableType
+            };
+            switch (variable.VariableType)
+            {
+                case VariableType.Undefined:
+                case VariableType.Value:
+                case VariableType.Struct:
+                case VariableType.Enumeration:
+                    variable.Value = this.Value;
+                    break;
+                case VariableType.Class:
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+            return variable;
+        }
+    }
+}
