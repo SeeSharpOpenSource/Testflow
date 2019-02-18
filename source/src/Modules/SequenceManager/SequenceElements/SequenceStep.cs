@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Xml.Serialization;
 using Testflow.Common;
 using Testflow.Data.Sequence;
 using Testflow.SequenceManager.Common;
@@ -24,6 +25,9 @@ namespace Testflow.SequenceManager.SequenceElements
         }
         public string Name { get; set; }
         public string Description { get; set; }
+
+        [XmlIgnore]
+        [SerializationIgnore]
         public ISequenceFlowContainer Parent { get; set; }
 
         public ISequenceStepCollection SubSteps { get; set; }

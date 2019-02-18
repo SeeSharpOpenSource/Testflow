@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Text;
+using System.Xml.Serialization;
 using Testflow.Common;
 using Testflow.Data;
 using Testflow.Data.Sequence;
@@ -32,6 +33,9 @@ namespace Testflow.SequenceManager.SequenceElements
 
         public string Name { get; set; }
         public string Description { get; set; }
+
+        [XmlIgnore]
+        [SerializationIgnore]
         public ISequenceFlowContainer Parent { get; set; }
 
         public ISequenceGroupInfo Info { get; set; }
@@ -94,7 +98,8 @@ namespace Testflow.SequenceManager.SequenceElements
             this.Info.Hash = this.GetSequenceGroupSignature();
             if (null != Parameters)
             {
-                Parameters.RefreshSignature();
+                SequenceGroupParameter sequenceGroupParameter = Parameters as SequenceGroupParameter;
+                sequenceGroupParameter.RefreshSignature(this);
                 Parameters.Info.Hash = this.Info.Hash;
             }
         }
@@ -153,7 +158,7 @@ namespace Testflow.SequenceManager.SequenceElements
             Common.Utility.CloneCollection(this.Arguments, arguments);
 
             VariableCollection variables = new VariableCollection();
-            Common.Utility.CloneCollection(this.Variables, variables);
+            Common.Utility.CloneFlowCollection(this.Variables, variables);
 
             // SequenceGroupParameter只在序列化时使用
             // Parameters只有在序列化时才会生成，在加载完成后会被删除

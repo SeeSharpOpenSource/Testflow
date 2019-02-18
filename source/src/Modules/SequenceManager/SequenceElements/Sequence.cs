@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Xml.Serialization;
 using Testflow.Common;
 using Testflow.Data.Sequence;
 using Testflow.SequenceManager.Common;
@@ -21,8 +22,10 @@ namespace Testflow.SequenceManager.SequenceElements
         }
         public string Name { get; set; }
         public string Description { get; set; }
+
+        [XmlIgnore]
+        [SerializationIgnore]
         public ISequenceFlowContainer Parent { get; set; }
-        
 
         public int Index { get; set; }
 
@@ -35,7 +38,7 @@ namespace Testflow.SequenceManager.SequenceElements
         public void Initialize(ISequenceFlowContainer parent)
         {
             SequenceGroup sequenceGroup = this.Parent as SequenceGroup;
-            string[] existNames = existNames = (from sequence in sequenceGroup.Sequences
+            string[] existNames = (from sequence in sequenceGroup.Sequences
                 where !ReferenceEquals(sequence, this)
                 select sequence.Name).ToArray();
             if (!Common.Utility.IsValidName(this.Name))

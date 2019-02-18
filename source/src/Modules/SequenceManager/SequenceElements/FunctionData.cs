@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Xml.Serialization;
 using Testflow.Data;
 using Testflow.Data.Description;
 using Testflow.Data.Sequence;
@@ -25,7 +26,11 @@ namespace Testflow.SequenceManager.SequenceElements
 
         public FunctionType Type { get; set; }
         public string MethodName { get; set; }
+
+        [XmlIgnore]
+        [SerializationIgnore]
         public ITypeData ClassType { get; set; }
+
         public int ClassTypeIndex { get; set; }
         public IArgumentCollection ParameterType { get; set; }
         public IParameterDataCollection Parameters { get; set; }

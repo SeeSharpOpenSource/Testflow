@@ -1,11 +1,13 @@
 ﻿using System;
+using System.Xml.Serialization;
 using Testflow.Data;
+using Testflow.SequenceManager.Common;
 
 namespace Testflow.SequenceManager.SequenceElements
 {
+    [Serializable]
     public class AssemblyInfo : IAssemblyInfo
     {
-        [Serializable]
         public AssemblyInfo()
         {
             this.AssemblyName = string.Empty;
@@ -18,6 +20,8 @@ namespace Testflow.SequenceManager.SequenceElements
 
         public string Path { get; set; }
 
+        [XmlIgnore]
+        [SerializationIgnore]
         public bool Available { get; set; }
 
         public string Version { get; set; }

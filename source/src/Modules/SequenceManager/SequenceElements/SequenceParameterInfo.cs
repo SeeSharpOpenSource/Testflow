@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Xml.Serialization;
 using Testflow.Data.Sequence;
+using Testflow.SequenceManager.Common;
 
 namespace Testflow.SequenceManager.SequenceElements
 {
@@ -20,6 +22,8 @@ namespace Testflow.SequenceManager.SequenceElements
         public DateTime ModifiedTime { get; set; }
         public DateTime CreateTime { get; set; }
         public string Path { get; set; }
+        [XmlIgnore]
+        [SerializationIgnore]
         public bool Modified { get; set; }
     }
 }

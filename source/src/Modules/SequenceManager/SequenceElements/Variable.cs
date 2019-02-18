@@ -39,7 +39,10 @@ namespace Testflow.SequenceManager.SequenceElements
         [SerializationIgnore]
         public string Value { get; set; }
 
+        [XmlIgnore]
+        [SerializationIgnore]
         public ISequenceFlowContainer Parent { get; set; }
+
         public void Initialize(ISequenceFlowContainer parent)
         {
             this.Parent = parent;

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Xml.Serialization;
 using Testflow.Data;
 using Testflow.Data.Sequence;
 using Testflow.SequenceManager.Common;
@@ -19,6 +20,8 @@ namespace Testflow.SequenceManager.SequenceElements
 
         public string Name { get; set; }
 
+        [XmlIgnore]
+        [SerializationIgnore]
         public ITypeData Type { get; set; }
 
         public int TypeIndex { get; set; }
