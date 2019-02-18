@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using Testflow.Common;
 using Testflow.Log;
 using Testflow.Utility.MessageUtil;
@@ -38,6 +39,7 @@ namespace Testflow.Logger
             }
             lock (_instLock)
             {
+                Thread.MemoryBarrier();
                 if (null != _inst && sessionId == _inst.SessionId)
                 {
                     return _inst;
