@@ -26,7 +26,7 @@ namespace Testflow.SequenceManager.SequenceElements
 
         public void Add(IParameterData item)
         {
-            this._innerCollection.Add(item);
+            Common.Utility.AddAndRefreshIndex(this._innerCollection, item);
         }
 
         public void Clear()
