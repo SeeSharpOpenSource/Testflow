@@ -16,6 +16,11 @@
         IAssemblyInfoCollection Assemblies { get; set; }
 
         /// <summary>
+        /// 当前SequenceGroup是否可用
+        /// </summary>
+        bool Available { get; set; }
+
+        /// <summary>
         /// 当前序列组中用到的所有Type数据
         /// </summary>
         ITypeDataCollection TypeDatas { get; set; }

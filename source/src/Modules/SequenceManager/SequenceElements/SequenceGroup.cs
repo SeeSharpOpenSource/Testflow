@@ -21,6 +21,7 @@ namespace Testflow.SequenceManager.SequenceElements
             this.Parent = null;
             this.Info = null;
             this.Assemblies = null;
+            this.Available = true;
             this.TypeDatas = null;
             this.Arguments = null;
             this.Variables = null;
@@ -41,6 +42,8 @@ namespace Testflow.SequenceManager.SequenceElements
         public ISequenceGroupInfo Info { get; set; }
 
         public IAssemblyInfoCollection Assemblies { get; set; }
+
+        public bool Available { get; set; }
 
         public ITypeDataCollection TypeDatas { get; set; }
 
@@ -76,6 +79,7 @@ namespace Testflow.SequenceManager.SequenceElements
 
             this.Info = new SequenceGroupInfo();
             this.Assemblies = new AssemblyInfoCollection();
+            this.Available = true;
             this.TypeDatas = new TypeDataCollection();
             this.Arguments = new ArgumentCollection();
             this.Variables = new VariableCollection();
