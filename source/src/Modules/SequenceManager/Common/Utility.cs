@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Management;
 using System.Reflection;
@@ -56,7 +57,7 @@ namespace Testflow.SequenceManager.Common
 
         public static bool IsValidName(string name, params string[] existNames)
         {
-            return !string.IsNullOrWhiteSpace(name) && existNames.Contains(name);
+            return !string.IsNullOrWhiteSpace(name) && !existNames.Contains(name);
         }
 
         public static string GetHashValue(string hashSource, Encoding encoding)
@@ -155,6 +156,21 @@ namespace Testflow.SequenceManager.Common
                 index++;
             }
             return true;
+        }
+
+        public static string GetParameterFilePath(string sequenceFilePath)
+        {
+            const char fileExtensionDelim = '.';
+            int delimIndex = sequenceFilePath.LastIndexOf(fileExtensionDelim);
+            return sequenceFilePath.Substring(0, delimIndex + 1) + CommonConst.SequenceDataFileExtension;
+        }
+
+        public static string GetSequenceGroupPath(string testProjectFilePath, int index)
+        {
+            int delimIndex = testProjectFilePath.LastIndexOf(Path.DirectorySeparatorChar);
+            string fileDirectory = testProjectFilePath.Substring(0, delimIndex + 1);
+            string sequenceGroupName = string.Format(Constants.SequenceGroupNameFormat, index);
+            return $"{fileDirectory}{sequenceGroupName}{Path.DirectorySeparatorChar}{sequenceGroupName}.{CommonConst.SequenceFileExtension}";
         }
 
         public static void RefreshTypeIndex(ITestProject testProject)
