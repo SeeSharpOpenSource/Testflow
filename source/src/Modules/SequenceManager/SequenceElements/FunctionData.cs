@@ -1,10 +1,12 @@
-﻿using Testflow.Data;
+﻿using System;
+using Testflow.Data;
 using Testflow.Data.Description;
 using Testflow.Data.Sequence;
 using Testflow.SequenceManager.Common;
 
 namespace Testflow.SequenceManager.SequenceElements
 {
+    [Serializable]
     public class FunctionData : IFunctionData
     {
         public FunctionData()

@@ -1,10 +1,12 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using Testflow.Data;
 using Testflow.SequenceManager.Common;
 
 namespace Testflow.SequenceManager.SequenceElements
 {
+    [Serializable]
     public class AssemblyInfoCollection : IAssemblyInfoCollection
     {
         private readonly List<IAssemblyInfo> _innerCollection;

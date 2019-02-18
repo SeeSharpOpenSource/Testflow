@@ -3,6 +3,7 @@ using Testflow.Data.Sequence;
 
 namespace Testflow.SequenceManager.SequenceElements
 {
+    [Serializable]
     public class SequenceParameterInfo : ISequenceParameterInfo
     {
         public SequenceParameterInfo()

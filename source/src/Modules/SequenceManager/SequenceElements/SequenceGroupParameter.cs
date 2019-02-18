@@ -4,6 +4,7 @@ using Testflow.Data.Sequence;
 
 namespace Testflow.SequenceManager.SequenceElements
 {
+    [Serializable]
     // SequenceGroupParameter只在序列化时使用
     public class SequenceGroupParameter : ISequenceGroupParameter
     {

@@ -1,10 +1,12 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using Testflow.Data.Sequence;
 using Testflow.SequenceManager.Common;
 
 namespace Testflow.SequenceManager.SequenceElements
 {
+    [Serializable]
     public class ParameterDataCollection : IParameterDataCollection
     {
         private readonly List<IParameterData> _innerCollection;

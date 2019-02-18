@@ -1,9 +1,11 @@
-﻿using Testflow.Data;
+﻿using System;
+using Testflow.Data;
 
 namespace Testflow.SequenceManager.SequenceElements
 {
     public class AssemblyInfo : IAssemblyInfo
     {
+        [Serializable]
         public AssemblyInfo()
         {
             this.AssemblyName = string.Empty;

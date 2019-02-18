@@ -1,8 +1,10 @@
-﻿using Testflow.Data.Sequence;
+﻿using System;
+using Testflow.Data.Sequence;
 using Testflow.SequenceManager.Common;
 
 namespace Testflow.SequenceManager.SequenceElements
 {
+    [Serializable]
     public class RetryCounter : IRetryCounter
     {
         public RetryCounter()
