@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Runtime.Serialization;
 using System.Xml.Serialization;
-using Testflow.Common;
 using Testflow.Data;
 using Testflow.Data.Sequence;
 using Testflow.SequenceManager.Common;
@@ -61,8 +59,6 @@ namespace Testflow.SequenceManager.SequenceElements
 
         public SequenceGroupLocationInfoCollection SequenceGroupLocations { get; set; }
 
-        [XmlIgnore]
-        [SerializationIgnore]
         public IList<IParameterDataCollection> SequenceGroupParameters { get; set; }
 
         public ISequence TearDown { get; set; }
