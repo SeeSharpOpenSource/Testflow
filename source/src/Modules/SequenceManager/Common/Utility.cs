@@ -60,6 +60,20 @@ namespace Testflow.SequenceManager.Common
             return !string.IsNullOrWhiteSpace(name) && !existNames.Contains(name);
         }
 
+        public static bool IsValidPath(string filePath)
+        {
+            if (string.IsNullOrWhiteSpace(filePath))
+            {
+                return false;
+            }
+            if (Directory.Exists(filePath))
+            {
+                return true;
+            }
+            int pathIndex = filePath.LastIndexOf(Path.DirectorySeparatorChar);
+            return Directory.Exists(filePath.Substring(0, pathIndex));
+        }
+
         public static string GetHashValue(string hashSource, Encoding encoding)
         {
             string hashValue;

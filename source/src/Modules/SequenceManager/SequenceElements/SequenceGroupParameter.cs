@@ -72,7 +72,7 @@ namespace Testflow.SequenceManager.SequenceElements
                 Modified = false,
                 CreateTime = DateTime.Now,
                 ModifiedTime = DateTime.Now,
-                Path = string.Empty,
+                Path = sequenceGroup.Info.SequenceParamFile,
                 Version = sequenceGroup.Info.Version
             };
             this.VariableValues = new VariableInitValueCollection();
