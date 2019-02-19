@@ -10,7 +10,7 @@ namespace Testflow.Data.Description
         /// <summary>
         /// 属于那种类型
         /// </summary>
-        FunctionType ArgumentType { get; set; }
+        FunctionType FuncType { get; set; }
 
         /// <summary>
         /// 组件的索引在全局的索引号
