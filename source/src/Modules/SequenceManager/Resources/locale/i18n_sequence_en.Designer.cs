@@ -61,6 +61,15 @@ namespace Testflow.SequenceManager.Resources.locale {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Invalid file type..
+        /// </summary>
+        internal static string InvalidFileType {
+            get {
+                return ResourceManager.GetString("InvalidFileType", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Invalid model version:{0}..
         /// </summary>
         internal static string InvalidModelVersion {

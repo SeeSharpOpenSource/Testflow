@@ -61,6 +61,15 @@ namespace Testflow.SequenceManager.Resources.locale {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to 无效的文件类型。.
+        /// </summary>
+        internal static string InvalidFileType {
+            get {
+                return ResourceManager.GetString("InvalidFileType", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to 非法的模型版本号{0}。.
         /// </summary>
         internal static string InvalidModelVersion {
