@@ -18,9 +18,9 @@ namespace Testflow.Data.Description
         int ComponentIndex { get; set; }
 
         /// <summary>
-        /// 对应的Type对象的索引号
+        /// 对应的Type对象
         /// </summary>
-        int ClassTypeId { get; set; }
+        ITypeData ClassType { get; set; }
 
         /// <summary>
         /// 是否是泛型方法
