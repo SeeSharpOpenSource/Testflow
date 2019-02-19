@@ -115,54 +115,54 @@ namespace Testflow
         /// <summary>
         /// 组件接口加载模块
         /// </summary>
-        public abstract IComInterfaceManager ComInterfaceManager { get; }
+        public abstract IComInterfaceManager ComInterfaceManager { get; protected set; }
 
         /// <summary>
         /// 配置管理模块
         /// </summary>
-        public abstract IConfigurationManager ConfigurationManager { get; }
+        public abstract IConfigurationManager ConfigurationManager { get; protected set; }
 
         /// <summary>
         /// 数据持久化模块
         /// </summary>
-        public abstract IDataMaintainer DataMaintainer { get; }
+        public abstract IDataMaintainer DataMaintainer { get; protected set; }
 
         /// <summary>
         /// 引擎控制模块
         /// </summary>
-        public abstract IEngineController EngineController { get; }
+        public abstract IEngineController EngineController { get; protected set; }
 
         /// <summary>
         /// 日志服务模块
         /// </summary>
-        public abstract ILogService LogService { get; }
+        public abstract ILogService LogService { get; protected set; }
 
         /// <summary>
         /// 参数检查模块
         /// </summary>
-        public abstract IParameterChecker ParameterChecker { get; }
+        public abstract IParameterChecker ParameterChecker { get; protected set; }
 
         /// <summary>
         /// 结果管理模块
         /// </summary>
-        public abstract IResultManager ResultManager { get; }
+        public abstract IResultManager ResultManager { get; protected set; }
 
         /// <summary>
         /// 序列管理模块
         /// </summary>
-        public abstract ISequenceManager SequenceManager { get; }
+        public abstract ISequenceManager SequenceManager { get; protected set; }
 
         #endregion
 
         /// <summary>
         /// 运行器选项
         /// </summary>
-        public TestflowRunnerOptions Option { get; }
+        public TestflowRunnerOptions Option { get; protected set; }
 
         /// <summary>
         /// Testflow平台的上下文信息
         /// </summary>
-        public TestflowContext Context { get; }
+        public TestflowContext Context { get; protected set; }
 
         /// <summary>
         /// 初始化框架平台
