@@ -7,7 +7,7 @@ using Testflow.SequenceManager.Common;
 namespace Testflow.SequenceManager.SequenceElements
 {
     [Serializable]
-    public class ParameterDataCollection : IParameterDataCollection
+    internal class ParameterDataCollection : IParameterDataCollection
     {
         private readonly List<IParameterData> _innerCollection;
 

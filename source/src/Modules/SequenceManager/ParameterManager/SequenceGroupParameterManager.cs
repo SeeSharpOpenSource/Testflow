@@ -2,7 +2,7 @@
 
 namespace Testflow.SequenceManager.ParameterManager
 {
-    public class SequenceGroupParameterManager : ParameterManagerBase
+    internal class SequenceGroupParameterManager : ParameterManagerBase
     {
         public SequenceGroupParameterManager(IModuleConfigData configData) : base(configData)
         {

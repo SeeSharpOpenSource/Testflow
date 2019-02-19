@@ -6,7 +6,7 @@ namespace Testflow.SequenceManager.SequenceElements
 {
     [Serializable]
     // SequenceGroupParameter只在序列化时使用
-    public class SequenceGroupParameter : ISequenceGroupParameter
+    internal class SequenceGroupParameter : ISequenceGroupParameter
     {
         public SequenceGroupParameter()
         {

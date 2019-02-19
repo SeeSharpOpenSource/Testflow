@@ -8,7 +8,7 @@ using Testflow.SequenceManager.Common;
 namespace Testflow.SequenceManager.SequenceElements
 {
     [Serializable]
-    public class TestProject : ITestProject
+    internal class TestProject : ITestProject
     {
         public TestProject()
         {

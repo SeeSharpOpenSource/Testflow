@@ -12,7 +12,7 @@ using Testflow.Utility.I18nUtil;
 namespace Testflow.SequenceManager.SequenceElements
 {
     [Serializable]
-    public class SequenceGroup : ISequenceGroup
+    internal class SequenceGroup : ISequenceGroup
     {
         public SequenceGroup()
         {

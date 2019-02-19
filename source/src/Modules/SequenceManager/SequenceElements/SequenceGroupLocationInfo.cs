@@ -3,7 +3,7 @@
 namespace Testflow.SequenceManager.SequenceElements
 {
     [Serializable]
-    public class SequenceGroupLocationInfo
+    internal class SequenceGroupLocationInfo
     {
         public SequenceGroupLocationInfo()
         {

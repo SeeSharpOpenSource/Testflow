@@ -7,7 +7,7 @@ using Testflow.Utility.I18nUtil;
 
 namespace Testflow.SequenceManager.ParameterManager
 {
-    public abstract class ParameterManagerBase
+    internal abstract class ParameterManagerBase
     {
         protected readonly IModuleConfigData ConfigData;
         protected ParameterManagerBase(IModuleConfigData configData)

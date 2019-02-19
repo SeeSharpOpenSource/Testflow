@@ -8,7 +8,7 @@ using Testflow.SequenceManager.Common;
 namespace Testflow.SequenceManager.SequenceElements
 {
     [Serializable]
-    public class FunctionData : IFunctionData
+    internal class FunctionData : IFunctionData
     {
         public FunctionData()
         {

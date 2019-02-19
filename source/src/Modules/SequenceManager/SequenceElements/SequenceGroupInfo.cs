@@ -6,7 +6,7 @@ using Testflow.SequenceManager.Common;
 namespace Testflow.SequenceManager.SequenceElements
 {
     [Serializable]
-    public class SequenceGroupInfo : ISequenceGroupInfo
+    internal class SequenceGroupInfo : ISequenceGroupInfo
     {
         public SequenceGroupInfo()
         {

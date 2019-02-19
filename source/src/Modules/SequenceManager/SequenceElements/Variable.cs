@@ -7,7 +7,7 @@ using Testflow.SequenceManager.Common;
 namespace Testflow.SequenceManager.SequenceElements
 {
     [Serializable]
-    public class Variable : IVariable
+    internal class Variable : IVariable
     {
         public Variable()
         {

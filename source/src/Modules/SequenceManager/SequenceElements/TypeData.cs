@@ -4,7 +4,7 @@ using Testflow.Data;
 namespace Testflow.SequenceManager.SequenceElements
 {
     [Serializable]
-    public class TypeData : ITypeData
+    internal class TypeData : ITypeData
     {
         public string AssemblyName { get; set; }
         public string Namespace { get; set; }

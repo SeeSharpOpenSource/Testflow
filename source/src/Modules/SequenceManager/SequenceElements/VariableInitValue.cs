@@ -4,7 +4,7 @@ using Testflow.Data.Sequence;
 namespace Testflow.SequenceManager.SequenceElements
 {
     [Serializable]
-    public class VariableInitValue : IVariableInitValue
+    internal class VariableInitValue : IVariableInitValue
     {
         public VariableInitValue()
         {

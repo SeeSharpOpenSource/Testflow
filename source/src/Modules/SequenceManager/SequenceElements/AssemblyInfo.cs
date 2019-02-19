@@ -6,7 +6,7 @@ using Testflow.SequenceManager.Common;
 namespace Testflow.SequenceManager.SequenceElements
 {
     [Serializable]
-    public class AssemblyInfo : IAssemblyInfo
+    internal class AssemblyInfo : IAssemblyInfo
     {
         public AssemblyInfo()
         {
