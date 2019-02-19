@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using log4net;
 using Testflow.Common;
 using Testflow.Log;
@@ -23,10 +24,34 @@ namespace Testflow.Logger
         private readonly TestflowContext _context;
         private readonly TestflowRunner _testflowInst;
 
+        private static LogService _inst = null;
+        private static readonly object _instLock = new object();
+
+        /// <summary>
+        /// 获取LogService实例
+        /// </summary>
+        public static LogService GetLogService()
+        {
+            if (null != _inst)
+            {
+                return _inst;
+            }
+            lock (_instLock)
+            {
+                Thread.MemoryBarrier();
+                if (null != _inst)
+                {
+                    return _inst;
+                }
+                _inst = new LogService();
+            }
+            return _inst;
+        }
+
         /// <summary>
         /// 创建日志服务实例
         /// </summary>
-        public LogService()
+        private LogService()
         {
             _runtimeLogSessions = new Dictionary<int, LocalLogSession>(Constants.DefaultLogStreamSize);
             I18NOption i18NOption = new I18NOption(this.GetType().Assembly, "i18n_logger_zh", "i18n_logger_en")
@@ -36,7 +61,6 @@ namespace Testflow.Logger
             _i18N = I18N.GetInstance(i18NOption);
             _testflowInst = TestflowRunner.GetInstance();
             _context = _testflowInst.Context;
-
         }
 
         IModuleConfigData IController.ConfigData { get; set; }
