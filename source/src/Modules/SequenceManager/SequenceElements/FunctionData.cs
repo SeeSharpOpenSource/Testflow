@@ -37,6 +37,9 @@ namespace Testflow.SequenceManager.SequenceElements
         public string Instance { get; set; }
         public string Return { get; set; }
         public IArgument ReturnType { get; set; }
+
+        [XmlIgnore]
+        [SerializationIgnore]
         public IFuncInterfaceDescription Description { get; set; }
 
         public IFunctionData Clone()
@@ -61,6 +64,35 @@ namespace Testflow.SequenceManager.SequenceElements
                 Description = this.Description
             };
             return functionData;
+        }
+
+        public void Initialize(IFuncInterfaceDescription funcInterface)
+        {
+            ArgumentCollection argumentsTypes = new ArgumentCollection();
+            foreach (IArgumentDescription argumentDescription in funcInterface.Arguments)
+            {
+                Argument argumentData = new Argument();
+                argumentData.Initialize(argumentDescription);
+                argumentsTypes.Add(argumentData);
+            }
+
+            ParameterDataCollection parameters = new ParameterDataCollection();
+            foreach (IArgumentDescription argumentDescription in funcInterface.Arguments)
+            {
+                parameters.Add(new ParameterData());
+            }
+
+            Argument returnType = new Argument();
+            returnType.Initialize(funcInterface.Return);
+
+            Type = funcInterface.FuncType;
+            MethodName = funcInterface.Name;
+            ClassType = funcInterface.ClassType;
+            Description = funcInterface;
+            Instance = string.Empty;
+            Parameters = parameters;
+            ParameterType = argumentsTypes;
+            ReturnType = returnType;
         }
     }
 }

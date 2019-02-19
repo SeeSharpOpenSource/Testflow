@@ -7,6 +7,7 @@ using Testflow.Data.Sequence;
 using Testflow.Modules;
 using Testflow.SequenceManager.Common;
 using Testflow.SequenceManager.SequenceElements;
+using Testflow.SequenceManager.Serializer;
 using Testflow.Utility.I18nUtil;
 
 namespace Testflow.SequenceManager
@@ -51,12 +52,12 @@ namespace Testflow.SequenceManager
 
         public void RuntimeInitialize()
         {
-            throw new System.NotImplementedException();
+            return;
         }
 
         public void DesigntimeInitialize()
         {
-            throw new System.NotImplementedException();
+
         }
 
         public void ApplyConfig(IModuleConfigData configData)
@@ -67,117 +68,149 @@ namespace Testflow.SequenceManager
 
         public ITestProject CreateTestProject()
         {
-            throw new System.NotImplementedException();
+            return new TestProject();
         }
 
         public ISequenceGroup CreateSequenceGroup()
         {
-            throw new System.NotImplementedException();
+            return new SequenceGroup();
         }
 
         public ISequence CreateSequence()
         {
-            throw new System.NotImplementedException();
+            return new Sequence();
         }
 
         public ISequenceStep CreateSequenceStep()
         {
-            throw new System.NotImplementedException();
+            return new SequenceStep();
         }
 
         public IArgument CreateArugment()
         {
-            throw new System.NotImplementedException();
+            return new Argument();
         }
 
         public IFunctionData CreateFunctionData(IFuncInterfaceDescription funcInterface)
         {
-            throw new System.NotImplementedException();
+            FunctionData functionData = new FunctionData();
+            functionData.Initialize(funcInterface);
+            return functionData;
         }
 
         public ILoopCounter CreateLoopCounter()
         {
-            throw new System.NotImplementedException();
+            return new LoopCounter();
         }
 
         public IRetryCounter CreateRetryCounter()
         {
-            throw new System.NotImplementedException();
+            return new RetryCounter();
         }
 
         public ISequenceGroupParameter CreateSequenceGroupParameter()
         {
-            throw new System.NotImplementedException();
+            return new SequenceGroupParameter();
         }
 
         public ISequenceParameter CreateSequenceParameter()
         {
-            throw new System.NotImplementedException();
+            return new SequenceParameter();
         }
 
         public ISequenceStepParameter CreateSequenceStepParameter()
         {
-            throw new System.NotImplementedException();
+            return new SequenceStepParameter();
         }
 
         public IParameterData CreateParameterData(IArgument argument)
         {
-            throw new System.NotImplementedException();
+            return new ParameterData();
         }
 
         public ITypeData CreateTypeData()
         {
-            throw new System.NotImplementedException();
+            return new TypeData();
         }
 
         public IVariable CreateVarialbe()
         {
-            throw new System.NotImplementedException();
+            return new Variable();
         }
 
         public IAssemblyInfo CreateAssemblyInfo()
         {
-            throw new System.NotImplementedException();
+            return new AssemblyInfo();
         }
 
         public void Serialize(ITestProject project, SerializationTarget target, params string[] param)
         {
-            throw new System.NotImplementedException();
+            switch (target)
+            {
+                case SerializationTarget.File:
+                    SequenceSerializer.Serialize(param[0], project as TestProject);
+                    break;
+                case SerializationTarget.DataBase:
+                    throw new NotImplementedException();
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(target), target, null);
+            }
         }
 
         public void Serialize(ISequenceGroup sequenceGroup, SerializationTarget target, params string[] param)
         {
-            throw new System.NotImplementedException();
-        }
-
-        public void Serialize(SequenceGroup sequenceGroup, SerializationTarget target, params string[] param)
-        {
-            throw new System.NotImplementedException();
+            switch (target)
+            {
+                case SerializationTarget.File:
+                    SequenceSerializer.Serialize(param[0], sequenceGroup as SequenceGroup);
+                    break;
+                case SerializationTarget.DataBase:
+                    throw new NotImplementedException();
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(target), target, null);
+            }
         }
 
         public ITestProject LoadTestProject(SerializationTarget source, params string[] param)
         {
-            throw new System.NotImplementedException();
+            switch (source)
+            {
+                case SerializationTarget.File:
+                    return SequenceDeserializer.LoadTestProject(param[0], this.ConfigData);
+                    break;
+                case SerializationTarget.DataBase:
+                    throw new NotImplementedException();
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(source), source, null);
+            }
         }
 
         ISequenceGroup ISequenceManager.LoadSequenceGroup(SerializationTarget source, params string[] param)
         {
-            return DeserializeSequenceGroup(source, param);
+            switch (source)
+            {
+                case SerializationTarget.File:
+                    return SequenceDeserializer.LoadSequenceGroup(param[0], this.ConfigData);
+                    break;
+                case SerializationTarget.DataBase:
+                    throw new NotImplementedException();
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(source), source, null);
+            }
         }
 
         public void LoadParameter(ISequenceGroup sequenceGroup, bool forceLoad, params string[] param)
         {
-            throw new NotImplementedException();
-        }
 
-        public SequenceGroup DeserializeSequenceGroup(SerializationTarget source, params string[] param)
-        {
-            throw new System.NotImplementedException();
         }
 
         public void Dispose()
         {
-            throw new System.NotImplementedException();
+            // TODO 后期检查是否需要额外的Dispose方式
         }
     }
 }

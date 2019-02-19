@@ -67,6 +67,10 @@ namespace Testflow.SequenceManager.SequenceElements
 
         public void Initialize(ISequenceFlowContainer parent)
         {
+            if (Common.Utility.IsValidName(this.Name))
+            {
+                this.Name = string.Format(Constants.TestProjectNameFormat, 1);
+            }
             this.SequenceGroupLocations = new SequenceGroupLocationInfoCollection();
         }
 

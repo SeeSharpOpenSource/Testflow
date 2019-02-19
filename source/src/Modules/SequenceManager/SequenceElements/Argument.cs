@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Xml.Serialization;
 using Testflow.Data;
+using Testflow.Data.Description;
 using Testflow.Data.Sequence;
 using Testflow.SequenceManager.Common;
 
@@ -41,6 +42,14 @@ namespace Testflow.SequenceManager.SequenceElements
                 VariableType = this.VariableType
             };
             return argument;
+        }
+
+        public void Initialize(IArgumentDescription argumentDescription)
+        {
+            Modifier = argumentDescription.Modifier;
+            Name = argumentDescription.Name;
+            Type = argumentDescription.Type;
+            VariableType = argumentDescription.ArgumentType;
         }
     }
 }
