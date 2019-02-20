@@ -83,7 +83,7 @@ namespace Testflow.SequenceManager.Serializer
             catch (IOException ex)
             {
                 RollBackFilesIfFailed(serialziedFileList);
-                throw new TestflowRuntimeException(Constants.SerializeFailed, ex.Message, ex);
+                throw new TestflowRuntimeException(SequenceManagerErrorCode.SerializeFailed, ex.Message, ex);
             }
             catch (ApplicationException)
             {
@@ -135,7 +135,7 @@ namespace Testflow.SequenceManager.Serializer
             catch (IOException ex)
             {
                 RollBackFilesIfFailed(serialziedFileList);
-                throw new TestflowRuntimeException(Constants.SerializeFailed, ex.Message, ex);
+                throw new TestflowRuntimeException(SequenceManagerErrorCode.SerializeFailed, ex.Message, ex);
             }
             catch (ApplicationException)
             {
