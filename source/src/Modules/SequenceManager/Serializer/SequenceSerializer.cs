@@ -40,14 +40,14 @@ namespace Testflow.SequenceManager.Serializer
             {
                 Type[] extraTypes = typeSet.ToArray();
                 XmlSerializer testProjectSerializer = new XmlSerializer(testProjectType, extraTypes);
-                
+                InitSequenceGroupLocations(testProject, filePath);
                 using (FileStream fileStream = new FileStream(filePath, FileMode.OpenOrCreate))
                 {
                     testProjectSerializer.Serialize(fileStream, testProject);
                 }
                 serialziedFileList.Add(filePath);
+
                 FillParameterDataToSequenceData(testProject);
-                InitSequenceGroupLocations(testProject, filePath);
                 for (int i = 0; i < testProject.SequenceGroups.Count; i++)
                 {
                     SequenceGroup sequenceGroup = testProject.SequenceGroups[i] as SequenceGroup;

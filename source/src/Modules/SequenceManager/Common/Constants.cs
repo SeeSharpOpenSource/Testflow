@@ -34,15 +34,5 @@
 
         #endregion
 
-        #region 异常码定义
-
-        public const int SerializeFailed = -800;
-
-        public const int DeSerializeFailed = -801;
-
-        public const int InvalidFileType = -802;
-
-        #endregion
-
     }
 }

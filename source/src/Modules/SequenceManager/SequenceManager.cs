@@ -179,10 +179,15 @@ namespace Testflow.SequenceManager
 
         public ITestProject LoadTestProject(SerializationTarget source, params string[] param)
         {
+            bool forceLoad = false;
+            if (null != param[1])
+            {
+                bool.TryParse(param[1], out forceLoad);
+            }
             switch (source)
             {
                 case SerializationTarget.File:
-                    return SequenceDeserializer.LoadTestProject(param[0], this.ConfigData);
+                    return SequenceDeserializer.LoadTestProject(param[0], forceLoad, this.ConfigData);
                     break;
                 case SerializationTarget.DataBase:
                     throw new NotImplementedException();
