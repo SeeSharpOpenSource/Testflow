@@ -44,7 +44,7 @@ namespace Testflow.Dev.UtilityTest
                     Message = CreateTestMessage(i)
                 };
                 _messenger.Send(message, FormatterType.Xml);
-                Thread.Sleep(10);
+                Thread.Sleep(20);
                 Assert.AreEqual(0, _messenger.MessageCount);
             }
         }
