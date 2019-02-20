@@ -6,7 +6,7 @@ using Testflow.SequenceManager.Common;
 namespace Testflow.SequenceManager.SequenceElements
 {
     [Serializable]
-    internal class SequenceParameter : ISequenceParameter
+    public class SequenceParameter : ISequenceParameter
     {
         public SequenceParameter()
         {

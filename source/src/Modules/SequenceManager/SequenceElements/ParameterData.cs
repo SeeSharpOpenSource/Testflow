@@ -5,7 +5,7 @@ using Testflow.SequenceManager.Common;
 namespace Testflow.SequenceManager.SequenceElements
 {
     [Serializable]
-    internal class ParameterData : IParameterData
+    public class ParameterData : IParameterData
     {
         public ParameterData()
         {

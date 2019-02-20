@@ -5,7 +5,7 @@ using Testflow.SequenceManager.Common;
 namespace Testflow.SequenceManager.SequenceElements
 {
     [Serializable]
-    internal class RetryCounter : IRetryCounter
+    public class RetryCounter : IRetryCounter
     {
         public RetryCounter()
         {

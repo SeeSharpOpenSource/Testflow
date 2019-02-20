@@ -37,7 +37,7 @@ namespace Testflow.SequenceManager.SequenceElements
 
         public void Initialize(ISequenceFlowContainer parent)
         {
-            SequenceGroup sequenceGroup = this.Parent as SequenceGroup;
+            SequenceGroup sequenceGroup = parent as SequenceGroup;
             string[] existNames = (from sequence in sequenceGroup.Sequences
                 where !ReferenceEquals(sequence, this)
                 select sequence.Name).ToArray();

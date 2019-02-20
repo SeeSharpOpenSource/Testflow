@@ -5,7 +5,7 @@ using Testflow.SequenceManager.Common;
 namespace Testflow.SequenceManager.SequenceElements
 {
     [Serializable]
-    internal class LoopCounter : ILoopCounter
+    public class LoopCounter : ILoopCounter
     {
         public LoopCounter()
         {

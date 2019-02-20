@@ -7,7 +7,7 @@ using Testflow.SequenceManager.Common;
 namespace Testflow.SequenceManager.SequenceElements
 {
     [Serializable]
-    internal class VariableInitValueCollection : IList<IVariableInitValue>
+    public class VariableInitValueCollection : IList<IVariableInitValue>
     {
         private readonly List<IVariableInitValue> _innerCollection;
 

@@ -8,7 +8,7 @@ using Testflow.SequenceManager.Common;
 namespace Testflow.SequenceManager.SequenceElements
 {
     [Serializable]
-    internal class Argument : IArgument
+    public class Argument : IArgument
     {
         public Argument()
         {
