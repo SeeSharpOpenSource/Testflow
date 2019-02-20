@@ -13,7 +13,7 @@ namespace Testflow.SequenceManager.SequenceElements
 
         public VariableInitValueCollection()
         {
-            this._innerCollection = new List<IVariableInitValue>(Constants.UnverifiedTypeIndex);
+            this._innerCollection = new List<IVariableInitValue>(Constants.DefaultArgumentSize);
         }
 
         public IEnumerator<IVariableInitValue> GetEnumerator()

@@ -70,7 +70,7 @@ namespace Testflow.SequenceManager
         {
             TestProject testProject = new TestProject()
             {
-                ModelVersion = ConfigData.Version
+                ModelVersion = ConfigData.GetProperty<string>(Constants.VersionName)
             };
             return testProject;
         }
