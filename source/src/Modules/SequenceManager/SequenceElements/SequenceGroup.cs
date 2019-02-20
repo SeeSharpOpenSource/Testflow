@@ -77,7 +77,11 @@ namespace Testflow.SequenceManager.SequenceElements
                 this.Name = Common.Utility.GetDefaultName(existNames, Constants.SequenceGroupNameFormat, 0);
             }
 
-            this.Info = new SequenceGroupInfo();
+            this.Info = new SequenceGroupInfo()
+            {
+                Modified = true,
+                Version = testProject.ModelVersion
+            };
             this.Assemblies = new AssemblyInfoCollection();
             this.Available = true;
             this.TypeDatas = new TypeDataCollection();
