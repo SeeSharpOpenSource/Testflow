@@ -15,8 +15,12 @@ namespace Testflow.SequenceManager.SequenceElements
             this.SetUpParameters = null;
             this.SequenceParameters = null;
             this.TearDownParameters = null;
+            this.Name = string.Empty;
+            this.Description = string.Empty;
         }
 
+        public string Name { get; set; }
+        public string Description { get; set; }
         public ISequenceParameterInfo Info { get; set; }
         public IList<IVariableInitValue> VariableValues { get; set; }
         public ISequenceParameter SetUpParameters { get; set; }

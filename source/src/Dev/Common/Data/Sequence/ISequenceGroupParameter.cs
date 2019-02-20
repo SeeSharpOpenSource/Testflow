@@ -9,6 +9,16 @@ namespace Testflow.Data.Sequence
     public interface ISequenceGroupParameter : ISequenceDataContainer
     {
         /// <summary>
+        /// 参数类的名称
+        /// </summary>
+        string Name { get; set; }
+
+        /// <summary>
+        /// 参数类的描述信息
+        /// </summary>
+        string Description { get; set; }
+
+        /// <summary>
         /// 序列参数信息
         /// </summary>
         ISequenceParameterInfo Info { get; set; }
