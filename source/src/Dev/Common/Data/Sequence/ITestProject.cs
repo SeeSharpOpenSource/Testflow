@@ -14,6 +14,11 @@ namespace Testflow.Data.Sequence
         ITypeDataCollection TypeDatas { get; set; }
 
         /// <summary>
+        /// 模型版本号
+        /// </summary>
+        string ModelVersion { get; set; }
+
+        /// <summary>
         /// 测试序列组关联的所有程序集
         /// </summary>
         IAssemblyInfoCollection Assemblies { get; set; }

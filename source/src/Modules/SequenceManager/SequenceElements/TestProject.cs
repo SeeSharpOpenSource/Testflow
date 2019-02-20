@@ -26,6 +26,7 @@ namespace Testflow.SequenceManager.SequenceElements
             this.SequenceGroupLocations = null;
             this.TearDown = new Sequence();
             this.TearDownParameters = new SequenceParameter();
+            this.ModelVersion = string.Empty;
         }
 
         public string Name { get; set; }
@@ -40,6 +41,7 @@ namespace Testflow.SequenceManager.SequenceElements
         }
 
         public ITypeDataCollection TypeDatas { get; set; }
+        public string ModelVersion { get; set; }
 
         public IAssemblyInfoCollection Assemblies { get; set; }
 

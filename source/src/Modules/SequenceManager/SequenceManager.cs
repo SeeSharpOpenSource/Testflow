@@ -68,7 +68,11 @@ namespace Testflow.SequenceManager
 
         public ITestProject CreateTestProject()
         {
-            return new TestProject();
+            TestProject testProject = new TestProject()
+            {
+                ModelVersion = ConfigData.Version
+            };
+            return testProject;
         }
 
         public ISequenceGroup CreateSequenceGroup()
@@ -190,10 +194,15 @@ namespace Testflow.SequenceManager
 
         ISequenceGroup ISequenceManager.LoadSequenceGroup(SerializationTarget source, params string[] param)
         {
+            bool forceLoad = false;
+            if (null != param[1])
+            {
+                bool.TryParse(param[1], out forceLoad);
+            }
             switch (source)
             {
                 case SerializationTarget.File:
-                    return SequenceDeserializer.LoadSequenceGroup(param[0], this.ConfigData);
+                    return SequenceDeserializer.LoadSequenceGroup(param[0], forceLoad, this.ConfigData);
                     break;
                 case SerializationTarget.DataBase:
                     throw new NotImplementedException();
