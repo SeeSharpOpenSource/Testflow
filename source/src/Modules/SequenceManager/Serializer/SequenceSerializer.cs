@@ -346,9 +346,12 @@ namespace Testflow.SequenceManager.Serializer
 
         private static void VerifyType(ITypeDataCollection typeDatas, FunctionData functionData)
         {
-            if (null == functionData.ClassType)
+            if (functionData?.ClassType == null)
             {
-                functionData.ClassTypeIndex = Constants.UnverifiedTypeIndex;
+                if (null != functionData)
+                {
+                    functionData.ClassTypeIndex = Constants.UnverifiedTypeIndex;
+                }
                 return;
             }
             int index = typeDatas.IndexOf(functionData.ClassType);

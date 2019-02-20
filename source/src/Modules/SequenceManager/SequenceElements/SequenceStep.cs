@@ -50,11 +50,11 @@ namespace Testflow.SequenceManager.SequenceElements
         {
             if (parent is ISequence)
             {
-                InitializeSubStep(parent);
+                InitializeStep(parent);
             }
             else if (parent is ISequenceStep)
             {
-                InitializeStep(parent);
+                InitializeSubStep(parent);
             }
             else
             {
