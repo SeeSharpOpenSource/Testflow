@@ -4,6 +4,7 @@ using Testflow.SequenceManager.Common;
 
 namespace Testflow.SequenceManager.SequenceElements
 {
+    [GenericCollection(typeof(SequenceGroupLocationInfo))]
     public class SequenceGroupLocationInfoCollection : IList<SequenceGroupLocationInfo>
     {
         private readonly List<SequenceGroupLocationInfo> _innerCollection;

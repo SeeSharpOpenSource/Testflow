@@ -8,6 +8,7 @@ using Testflow.SequenceManager.Common;
 namespace Testflow.SequenceManager.SequenceElements
 {
     [Serializable]
+    [GenericCollection(typeof(TypeData))]
     public class TypeDataCollection : ITypeDataCollection
     {
         private readonly List<ITypeData> _innerCollection;

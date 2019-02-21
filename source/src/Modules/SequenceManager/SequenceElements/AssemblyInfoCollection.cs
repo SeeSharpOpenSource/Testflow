@@ -7,6 +7,7 @@ using Testflow.SequenceManager.Common;
 namespace Testflow.SequenceManager.SequenceElements
 {
     [Serializable]
+    [GenericCollection(typeof(AssemblyInfo))]
     public class AssemblyInfoCollection : IAssemblyInfoCollection
     {
         private readonly List<IAssemblyInfo> _innerCollection;
