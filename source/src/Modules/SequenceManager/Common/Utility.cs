@@ -187,6 +187,14 @@ namespace Testflow.SequenceManager.Common
             return $"{fileDirectory}{sequenceGroupName}{Path.DirectorySeparatorChar}{sequenceGroupName}.{CommonConst.SequenceFileExtension}";
         }
 
+        public static string GetSequenceGroupDirectory(string testProjectFilePath, int index)
+        {
+            int delimIndex = testProjectFilePath.LastIndexOf(Path.DirectorySeparatorChar);
+            string fileDirectory = testProjectFilePath.Substring(0, delimIndex + 1);
+            string sequenceGroupName = string.Format(Constants.SequenceGroupNameFormat, index);
+            return $"{fileDirectory}{sequenceGroupName}";
+        }
+
         public static void RefreshTypeIndex(ITestProject testProject)
         {
             foreach (IVariable variable in testProject.Variables)

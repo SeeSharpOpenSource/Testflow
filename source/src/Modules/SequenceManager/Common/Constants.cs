@@ -26,6 +26,8 @@
 
         public const string CopyPostfix = "-Copy";
 
+        public const string CollectionElemName = "Element";
+
         #region 参数名称
 
         public const string VersionName = "ModelVersion";

@@ -22,30 +22,12 @@ namespace Testflow.SequenceManager.Serializer
         public static void Serialize(string filePath, TestProject testProject)
         {
             VerifySequenceData(testProject);
-            HashSet<Type> typeSet = new HashSet<Type>();
-            const string sequenceElementNameSpace = "Testflow.SequenceManager.SequenceElements";
-            Type testProjectType = typeof (TestProject);
-            Type[] assemblyTypes = Assembly.GetAssembly(testProjectType).GetTypes();
-            
-            foreach (Type typeObj in assemblyTypes)
-            {
-                if (sequenceElementNameSpace.Equals(typeObj.Namespace))
-                {
-                    typeSet.Add(typeObj);
-                }
-            }
-            typeSet.Remove(testProjectType);
-            List<string> serialziedFileList = new List<string>(20);
+            List<string> serialziedFileList = new List<string>(10);
             try
             {
-                Type[] extraTypes = typeSet.ToArray();
-                XmlSerializer testProjectSerializer = new XmlSerializer(testProjectType, extraTypes);
                 InitSequenceGroupLocations(testProject, filePath);
-                using (FileStream fileStream = new FileStream(filePath, FileMode.OpenOrCreate))
-                {
-                    testProjectSerializer.Serialize(fileStream, testProject);
-                }
                 serialziedFileList.Add(filePath);
+                XmlWriterHelper.Write(testProject, filePath);
 
                 FillParameterDataToSequenceData(testProject);
                 for (int i = 0; i < testProject.SequenceGroups.Count; i++)
@@ -65,19 +47,18 @@ namespace Testflow.SequenceManager.Serializer
                     SequenceGroupParameter parameter = new SequenceGroupParameter();
                     parameter.Initialize(sequenceGroup);
                     FillParameterDataToSequenceData(sequenceGroup, parameter);
-                    
-                    XmlSerializer sequenceGroupSerializer = new XmlSerializer(typeof(SequenceGroup), extraTypes);
-                    XmlSerializer sequenceParamSerializer = new XmlSerializer(typeof(SequenceGroupParameter), extraTypes);
-                    using (FileStream fileStream = new FileStream(sequenceGroup.Info.SequenceGroupFile, FileMode.OpenOrCreate))
+                    // 创建sequenceGroupd的文件夹
+                    string directory = Common.Utility.GetSequenceGroupDirectory(filePath, i);
+                    if (!Directory.Exists(directory))
                     {
-                        serialziedFileList.Add(sequenceGroup.Info.SequenceGroupFile);
-                        sequenceGroupSerializer.Serialize(fileStream, sequenceGroup);
+                        Directory.CreateDirectory(directory);
                     }
-                    using (FileStream fileStream = new FileStream(sequenceGroup.Info.SequenceParamFile, FileMode.OpenOrCreate))
-                    {
-                        serialziedFileList.Add(sequenceGroup.Info.SequenceParamFile);
-                        sequenceParamSerializer.Serialize(fileStream, parameter);
-                    }
+
+                    serialziedFileList.Add(sequenceGroup.Info.SequenceGroupFile);
+                    XmlWriterHelper.Write(sequenceGroup, sequenceGroup.Info.SequenceGroupFile);
+
+                    serialziedFileList.Add(sequenceGroup.Info.SequenceParamFile);
+                    XmlWriterHelper.Write(parameter, sequenceGroup.Info.SequenceParamFile);
                 }
             }
             catch (IOException ex)
@@ -218,7 +199,7 @@ namespace Testflow.SequenceManager.Serializer
                     FillParameterDataToSequenceData(sequenceStep.SubSteps[i], parameter.SubStepParameters[i]);
                 }
             }
-            else
+            else if (null != sequenceStep.Function)
             {
                 parameter.Instance = sequenceStep.Function.Instance;
                 parameter.Return = sequenceStep.Function.Return;

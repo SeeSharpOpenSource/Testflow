@@ -68,7 +68,7 @@ namespace Testflow.SequenceManager.SequenceElements
             }
 
             IFunctionData functionData = sequenceStep.Function;
-            if (null != functionData.Parameters && functionData.Parameters.Count > 0)
+            if (functionData?.Parameters != null && functionData.Parameters.Count > 0)
             {
                 this.Parameters = functionData.Parameters;
             }
@@ -76,9 +76,11 @@ namespace Testflow.SequenceManager.SequenceElements
             {
                 this.Parameters = null;
             }
-
-            this.Return = functionData.Return;
-            this.Instance = functionData.Instance;
+            if (null != functionData)
+            {
+                this.Return = functionData.Return;
+                this.Instance = functionData.Instance;
+            }
         }
     }
 }

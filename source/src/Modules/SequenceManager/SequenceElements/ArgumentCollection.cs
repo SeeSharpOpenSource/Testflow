@@ -7,6 +7,7 @@ using Testflow.SequenceManager.Common;
 namespace Testflow.SequenceManager.SequenceElements
 {
     [Serializable]
+    [GenericCollection(typeof(Argument))]
     public class ArgumentCollection : IArgumentCollection
     {
         private readonly List<IArgument> _innerCollection;

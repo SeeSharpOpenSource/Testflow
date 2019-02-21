@@ -22,7 +22,7 @@ namespace Testflow.SequenceManager.SequenceElements
             this.SetUp = new Sequence();
             this.SetUpParameters = new SequenceParameter();
             this.SequenceGroups = new SequenceGroupCollection();
-            this.SequenceGroupParameters = new List<IParameterDataCollection>();
+            this.SequenceGroupParameters = new ParameterDataCollections();
             this.SequenceGroupLocations = null;
             this.TearDown = new Sequence();
             this.TearDownParameters = new SequenceParameter();
@@ -69,7 +69,7 @@ namespace Testflow.SequenceManager.SequenceElements
 
         public void Initialize(ISequenceFlowContainer parent)
         {
-            if (Common.Utility.IsValidName(this.Name))
+            if (!Common.Utility.IsValidName(this.Name))
             {
                 this.Name = string.Format(Constants.TestProjectNameFormat, 1);
             }

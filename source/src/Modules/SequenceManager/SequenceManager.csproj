@@ -41,6 +41,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Common\GenericCollectionAttribute.cs" />
     <Compile Include="Common\SerializationIgnoreAttribute.cs" />
     <Compile Include="Common\Utility.cs" />
     <Compile Include="Common\Constants.cs" />
@@ -64,6 +65,7 @@
     <Compile Include="SequenceElements\LoopCounter.cs" />
     <Compile Include="SequenceElements\ParameterData.cs" />
     <Compile Include="SequenceElements\ParameterDataCollection.cs" />
+    <Compile Include="SequenceElements\ParameterDataCollections.cs" />
     <Compile Include="SequenceElements\RetryCounter.cs" />
     <Compile Include="SequenceElements\Sequence.cs" />
     <Compile Include="SequenceElements\SequenceCollection.cs" />
@@ -93,6 +95,8 @@
     <Compile Include="ParameterManager\ParameterManagerBase.cs" />
     <Compile Include="Serializer\SequenceDeserializer.cs" />
     <Compile Include="Serializer\SequenceSerializer.cs" />
+    <Compile Include="Serializer\XmlReaderHelper.cs" />
+    <Compile Include="Serializer\XmlWriterHelper.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Dev\Common\Common.csproj">
