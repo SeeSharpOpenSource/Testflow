@@ -76,14 +76,20 @@ namespace Testflow.SequenceManager.Common
 
         public static string GetHashValue(string hashSource, Encoding encoding)
         {
-            string hashValue;
+            StringBuilder hashValue = new StringBuilder(256*2/8);
+            char[] decimalStrs = new char[] {'0', '1', '2', '3', '4', '5', '6', '7',
+                '8', '9', 'A', 'B', 'C', 'D', 'E', 'F', };
+
             using (SHA256 sha256 = SHA256.Create())
             {
                 byte[] sourceBytes = encoding.GetBytes(hashSource);
                 byte[] valueBytes = sha256.ComputeHash(sourceBytes);
-                hashValue = encoding.GetString(valueBytes);
+                foreach (byte byteData in valueBytes)
+                {
+                    hashValue.Append(decimalStrs[byteData >> 4]).Append(decimalStrs[byteData & 0x0F]);
+                }
             }
-            return hashValue;
+            return hashValue.ToString();
         }
 
         public static string GetHostInfo()

@@ -93,6 +93,7 @@ namespace Testflow.SequenceManager.SequenceElements
             this.SetUp = new Sequence();
             this.Sequences = new SequenceCollection();
             this.TearDown = new Sequence();
+            RefreshSignature();
         }
 
         public void RefreshSignature()
@@ -121,7 +122,7 @@ namespace Testflow.SequenceManager.SequenceElements
             featureInfo.Append(Name).Append(delim).Append(Info.CreationTime.ToString("datetimeFormat")).Append(delim).
                 Append(Info.ModifiedTime.ToString(datetimeFormat)).Append(delim).Append(hostInfo).Append(delim)
                 .Append(GetSequenceGroupFlowInfo());
-            return featureInfo.ToString();
+            return Common.Utility.GetHashValue(featureInfo.ToString(), Encoding.UTF8);
         }
 
         /// <summary>

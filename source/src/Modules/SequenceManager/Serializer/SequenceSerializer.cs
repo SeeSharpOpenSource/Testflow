@@ -47,6 +47,8 @@ namespace Testflow.SequenceManager.Serializer
                     SequenceGroupParameter parameter = new SequenceGroupParameter();
                     parameter.Initialize(sequenceGroup);
                     FillParameterDataToSequenceData(sequenceGroup, parameter);
+                    sequenceGroup.RefreshSignature();
+                    parameter.RefreshSignature(sequenceGroup);
                     // 创建sequenceGroupd的文件夹
                     string directory = Common.Utility.GetSequenceGroupDirectory(filePath, i);
                     if (!Directory.Exists(directory))
