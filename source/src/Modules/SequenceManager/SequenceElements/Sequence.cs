@@ -27,6 +27,8 @@ namespace Testflow.SequenceManager.SequenceElements
         [SerializationIgnore]
         public ISequenceFlowContainer Parent { get; set; }
 
+        [XmlIgnore]
+        [SerializationIgnore]
         public int Index { get; set; }
 
         public IVariableCollection Variables { get; set; }
@@ -38,17 +40,11 @@ namespace Testflow.SequenceManager.SequenceElements
         public void Initialize(ISequenceFlowContainer parent)
         {
             SequenceGroup sequenceGroup = parent as SequenceGroup;
-            string[] existNames = (from sequence in sequenceGroup.Sequences
-                where !ReferenceEquals(sequence, this)
-                select sequence.Name).ToArray();
-            if (!Common.Utility.IsValidName(this.Name))
-            {
-                this.Name = Common.Utility.GetDefaultName(existNames, Constants.SequenceNameFormat, 0);
-            }
             this.Description = string.Empty;
             this.Parent = parent;
             this.Variables = new VariableCollection();
             this.Steps = new SequenceStepCollection();
+            Common.Utility.SetElementName(this, sequenceGroup.Sequences);
         }
 
         ISequenceFlowContainer ICloneableClass<ISequenceFlowContainer>.Clone()

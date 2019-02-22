@@ -43,18 +43,7 @@ namespace Testflow.SequenceManager.Common
                 target.Add(data.Clone());
             }
         }
-
-        public static string GetDefaultName(string[] existNames, string nameFormat, int index)
-        {
-            // 索引号从0开始，命名从1开始，所以要先对index加1
-            string defaultName = string.Format(nameFormat, ++index);
-            while (existNames.Any(item => item.Equals(defaultName)))
-            {
-                defaultName = string.Format(nameFormat, ++index);
-            }
-            return defaultName;
-        }
-
+        
         public static bool IsValidName(string name, params string[] existNames)
         {
             return !string.IsNullOrWhiteSpace(name) && !existNames.Contains(name);
@@ -178,6 +167,58 @@ namespace Testflow.SequenceManager.Common
             return true;
         }
 
+        public static void SetElementName(ISequenceFlowContainer self, IEnumerable<ISequenceFlowContainer> existItems)
+        {
+            string[] existNames = new string[0];
+            if (null != existItems && null != self.Parent)
+            {
+                existNames = (from element in existItems
+                              where !ReferenceEquals(element, self)
+                              select element.Name).ToArray();
+            }
+            if (!IsValidName(self.Name, existNames))
+            {
+                string nameFormat = $"{self.GetType().Name}{{0}}";
+                int index = 0;
+                // 索引号从0开始，命名从1开始，所以要先对index加1
+                string defaultName = string.Format(nameFormat, ++index);
+                while (existNames.Any(item => item.Equals(defaultName)))
+                {
+                    defaultName = string.Format(nameFormat, ++index);
+                }
+                self.Name = defaultName;
+            }
+        }
+
+        public static void SetElementName<TDataType>(TDataType self, IEnumerable<TDataType> existItems)
+        {
+            const string name = "Name";
+            string[] existNames = new string[0];
+            PropertyInfo nameProperty = self.GetType().GetProperty(name, BindingFlags.Instance | BindingFlags.Public);
+            if (null == nameProperty)
+            {
+                return;
+            }
+            if (null != existItems)
+            {
+                existNames = (from element in existItems
+                              where !ReferenceEquals(element, self)
+                              select nameProperty.GetValue(element).ToString()).ToArray();
+            }
+            if (!IsValidName(nameProperty.GetValue(self).ToString(), existNames))
+            {
+                string nameFormat = $"{self.GetType().Name}{{0}}";
+                int index = 0;
+                // 索引号从0开始，命名从1开始，所以要先对index加1
+                string defaultName = string.Format(nameFormat, ++index);
+                while (existNames.Any(item => item.Equals(defaultName)))
+                {
+                    defaultName = string.Format(nameFormat, ++index);
+                }
+                nameProperty.SetValue(self, defaultName);
+            }
+        }
+
         public static string GetParameterFilePath(string sequenceFilePath)
         {
             const char fileExtensionDelim = '.';
@@ -189,16 +230,15 @@ namespace Testflow.SequenceManager.Common
         {
             int delimIndex = testProjectFilePath.LastIndexOf(Path.DirectorySeparatorChar);
             string fileDirectory = testProjectFilePath.Substring(0, delimIndex + 1);
-            string sequenceGroupName = string.Format(Constants.SequenceGroupNameFormat, index);
+            string sequenceGroupName = string.Format(Constants.SequenceGroupNameFormat, index + 1);
             return $"{fileDirectory}{sequenceGroupName}{Path.DirectorySeparatorChar}{sequenceGroupName}.{CommonConst.SequenceFileExtension}";
         }
 
-        public static string GetSequenceGroupDirectory(string testProjectFilePath, int index)
+        public static string GetSequenceGroupDirectory(string testProjectFilePath)
         {
             int delimIndex = testProjectFilePath.LastIndexOf(Path.DirectorySeparatorChar);
             string fileDirectory = testProjectFilePath.Substring(0, delimIndex + 1);
-            string sequenceGroupName = string.Format(Constants.SequenceGroupNameFormat, index);
-            return $"{fileDirectory}{sequenceGroupName}";
+            return fileDirectory;
         }
 
         public static void RefreshTypeIndex(ITestProject testProject)

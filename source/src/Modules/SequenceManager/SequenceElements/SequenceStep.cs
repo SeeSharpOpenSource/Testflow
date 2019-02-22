@@ -32,10 +32,14 @@ namespace Testflow.SequenceManager.SequenceElements
 
         public ISequenceStepCollection SubSteps { get; set; }
 
+        [XmlIgnore]
+        [SerializationIgnore]
         public int Index { get; set; }
 
         public IFunctionData Function { get; set; }
 
+        [XmlIgnore]
+        [SerializationIgnore]
         public bool HasSubSteps => (null != SubSteps && SubSteps.Count > 0);
 
         public bool BreakIfFailed { get; set; }
@@ -65,23 +69,15 @@ namespace Testflow.SequenceManager.SequenceElements
         private void InitializeStep(ISequenceFlowContainer parent)
         {
             ISequence sequence = parent as ISequence;
-            string[] existNames = (from step in sequence.Steps where !ReferenceEquals(step, this) select step.Name).ToArray();
-            if (Common.Utility.IsValidName(this.Name, existNames))
-            {
-                this.Name = Common.Utility.GetDefaultName(existNames, Constants.StepNameFormat, 0);
-            }
             this.Parent = parent;
+            Common.Utility.SetElementName(this, sequence.Steps);
         }
 
         private void InitializeSubStep(ISequenceFlowContainer parent)
         {
             ISequenceStep sequence = parent as ISequenceStep;
-            string[] existNames = (from step in sequence.SubSteps where !ReferenceEquals(step, this) select step.Name).ToArray();
-            if (Common.Utility.IsValidName(this.Name, existNames))
-            {
-                this.Name = Common.Utility.GetDefaultName(existNames, Constants.StepNameFormat, 0);
-            }
             this.Parent = parent;
+            Common.Utility.SetElementName(this, sequence.SubSteps);
         }
 
         ISequenceFlowContainer ICloneableClass<ISequenceFlowContainer>.Clone()

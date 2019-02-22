@@ -77,7 +77,9 @@ namespace Testflow.SequenceManager
 
         public ISequenceGroup CreateSequenceGroup()
         {
-            return new SequenceGroup();
+            SequenceGroup sequenceGroup = new SequenceGroup();
+            sequenceGroup.Info.Version = Version;
+            return sequenceGroup;
         }
 
         public ISequence CreateSequence()

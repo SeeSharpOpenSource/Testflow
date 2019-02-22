@@ -15,7 +15,7 @@ namespace Testflow.SequenceManager.SequenceElements
             this.CreateTime = DateTime.Now;
             this.ModifiedTime = DateTime.Now;
             this.Path = string.Empty;
-            this.Modified = false;
+            this.Modified = true;
         }
         public string Version { get; set; }
         public string Hash { get; set; }

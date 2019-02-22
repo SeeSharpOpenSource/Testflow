@@ -33,6 +33,7 @@ namespace Testflow.SequenceManager.SequenceElements
             {
                 return;
             }
+            Common.Utility.SetElementName(item, this);
             _innerCollection.Add(item);
         }
 

@@ -50,7 +50,7 @@ namespace Testflow.SequenceManager.Serializer
                     sequenceGroup.RefreshSignature();
                     parameter.RefreshSignature(sequenceGroup);
                     // 创建sequenceGroupd的文件夹
-                    string directory = Common.Utility.GetSequenceGroupDirectory(filePath, i);
+                    string directory = Common.Utility.GetSequenceGroupDirectory(sequenceGroup.Info.SequenceGroupFile);
                     if (!Directory.Exists(directory))
                     {
                         Directory.CreateDirectory(directory);

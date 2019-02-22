@@ -29,6 +29,7 @@ namespace Testflow.SequenceManager.SequenceElements
 
         public void Add(ISequenceStep item)
         {
+            Common.Utility.SetElementName(item, this);
             Common.Utility.AddAndRefreshIndex(_innerCollection, item);
         }
 
@@ -61,6 +62,7 @@ namespace Testflow.SequenceManager.SequenceElements
 
         public void Insert(int index, ISequenceStep item)
         {
+            Common.Utility.SetElementName(item, this);
             Common.Utility.InsertAndRefreshIndex(_innerCollection, item, index);
         }
 

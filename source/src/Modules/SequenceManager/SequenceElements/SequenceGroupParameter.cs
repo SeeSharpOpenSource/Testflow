@@ -10,7 +10,7 @@ namespace Testflow.SequenceManager.SequenceElements
     {
         public SequenceGroupParameter()
         {
-            this.Info = null;
+            this.Info = new SequenceParameterInfo();
             this.VariableValues = null;
             this.SetUpParameters = null;
             this.SequenceParameters = null;
@@ -70,16 +70,14 @@ namespace Testflow.SequenceManager.SequenceElements
         public void Initialize(ISequenceFlowContainer flowContainer)
         {
             ISequenceGroup sequenceGroup = flowContainer as ISequenceGroup;
-            this.Info = new SequenceParameterInfo()
-            {
-                Hash = sequenceGroup.Info.Hash,
-                Modified = false,
-                CreateTime = DateTime.Now,
-                ModifiedTime = DateTime.Now,
-                Path = sequenceGroup.Info.SequenceParamFile,
-                Version = sequenceGroup.Info.Version
-            };
+
+            this.Info.Hash = sequenceGroup.Info.Hash;
+            this.Info.Modified = true;
+            this.Info.ModifiedTime = DateTime.Now;
+            this.Info.Path = sequenceGroup.Info.SequenceParamFile;
+            this.Info.Version = sequenceGroup.Info.Version;
             this.VariableValues = new VariableInitValueCollection();
+
             foreach (IVariable variable in sequenceGroup.Variables)
             {
                 VariableInitValue variableInitValue = new VariableInitValue();

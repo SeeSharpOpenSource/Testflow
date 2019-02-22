@@ -19,7 +19,7 @@ namespace Testflow.SequenceManager.SequenceElements
             this.Name = string.Empty;
             this.Description = string.Empty;
             this.Parent = null;
-            this.Info = null;
+            this.Info = new SequenceGroupInfo();
             this.Assemblies = null;
             this.Available = true;
             this.TypeDatas = null;
@@ -64,24 +64,14 @@ namespace Testflow.SequenceManager.SequenceElements
         public void Initialize(ISequenceFlowContainer parent)
         {
             ITestProject testProject = parent as ITestProject;
-            string[] existNames = new string[0];
+            this.Parent = testProject;
+            Common.Utility.SetElementName(this, testProject?.SequenceGroups);
+            
+            Info.Modified = true;
             if (null != testProject)
             {
-                this.Parent = testProject;
-                existNames = (from sequenceGroup in testProject.SequenceGroups
-                                       where !ReferenceEquals(sequenceGroup, this)
-                                       select sequenceGroup.Name).ToArray();
+                Info.Version = testProject.ModelVersion;
             }
-            if (!Common.Utility.IsValidName(this.Name, existNames))
-            {
-                this.Name = Common.Utility.GetDefaultName(existNames, Constants.SequenceGroupNameFormat, 0);
-            }
-
-            this.Info = new SequenceGroupInfo()
-            {
-                Modified = true,
-                Version = testProject.ModelVersion
-            };
             this.Assemblies = new AssemblyInfoCollection();
             this.Available = true;
             this.TypeDatas = new TypeDataCollection();

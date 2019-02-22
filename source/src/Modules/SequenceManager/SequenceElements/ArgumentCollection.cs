@@ -29,6 +29,8 @@ namespace Testflow.SequenceManager.SequenceElements
 
         public void Add(IArgument item)
         {
+
+            Common.Utility.SetElementName(item, this);
             this._innerCollection.Add(item);
         }
 

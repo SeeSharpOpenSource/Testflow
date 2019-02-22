@@ -17,7 +17,7 @@ namespace Testflow.SequenceManager.SequenceElements
             this.ModifiedTime = DateTime.Now;
             this.SequenceGroupFile = string.Empty;
             this.SequenceParamFile = string.Empty;
-            this.Modified = false;
+            this.Modified = true;
         }
 
         public string Version { get; set; }
