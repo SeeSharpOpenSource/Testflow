@@ -108,19 +108,18 @@ namespace Testflow.SequenceManager.Serializer
                 return;
             }
             writer.WriteStartElement(dataName);
-
             if (elemType.IsClass && !typeof(string).Equals(elemType))
             {
                 foreach (object itemData in dataCollection)
                 {
-                    WriteClassData(Constants.CollectionElemName, itemData, writer);
+                    WriteClassData(elemType.Name, itemData, writer);
                 }
             }
             else
             {
                 foreach (object itemData in dataCollection)
                 {
-                    WriteValueData(Constants.CollectionElemName, itemData, writer);
+                    WriteValueData(elemType.Name, itemData, writer);
                 }
             }
             writer.WriteEndElement();

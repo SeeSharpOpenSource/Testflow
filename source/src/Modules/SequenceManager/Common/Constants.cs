@@ -26,7 +26,9 @@
 
         public const string CopyPostfix = "-Copy";
 
-        public const string CollectionElemName = "Element";
+        public const string ValueTypeName = "Value";
+
+//        public const string CollectionElemName = "Element";
 
         #region 参数名称
 

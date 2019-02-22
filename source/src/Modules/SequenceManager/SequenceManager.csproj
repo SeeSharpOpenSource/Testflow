@@ -93,6 +93,8 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SequenceManagerErrorCode.cs" />
     <Compile Include="ParameterManager\ParameterManagerBase.cs" />
+    <Compile Include="Serializer\Convertor\EnumConvertor.cs" />
+    <Compile Include="Serializer\Convertor\ValueConvertor.cs" />
     <Compile Include="Serializer\SequenceDeserializer.cs" />
     <Compile Include="Serializer\SequenceSerializer.cs" />
     <Compile Include="Serializer\XmlReaderHelper.cs" />

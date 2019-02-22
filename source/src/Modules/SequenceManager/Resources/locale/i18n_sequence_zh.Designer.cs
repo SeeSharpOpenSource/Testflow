@@ -61,6 +61,15 @@ namespace Testflow.SequenceManager.Resources.locale {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to 序列/数据文件中出现非法数据。.
+        /// </summary>
+        internal static string IllegalFileData {
+            get {
+                return ResourceManager.GetString("IllegalFileData", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to 无效的文件类型。.
         /// </summary>
         internal static string InvalidFileType {
