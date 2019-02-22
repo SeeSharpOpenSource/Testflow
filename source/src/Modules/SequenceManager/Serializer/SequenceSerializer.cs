@@ -1,17 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Reflection;
-using System.Xml.Serialization;
 using Testflow.Common;
 using Testflow.Data;
 using Testflow.Data.Sequence;
 using Testflow.Logger;
-using Testflow.Modules;
 using Testflow.SequenceManager.Common;
 using Testflow.SequenceManager.SequenceElements;
-using Testflow.Utility.I18nUtil;
 
 namespace Testflow.SequenceManager.Serializer
 {
@@ -25,10 +20,11 @@ namespace Testflow.SequenceManager.Serializer
             List<string> serialziedFileList = new List<string>(10);
             try
             {
+                // 初始化各个SequenceGroup的文件位置信息
                 InitSequenceGroupLocations(testProject, filePath);
                 serialziedFileList.Add(filePath);
                 XmlWriterHelper.Write(testProject, filePath);
-
+                // 将testProject当前配置的数据信息写入ParameterData中
                 FillParameterDataToSequenceData(testProject);
                 for (int i = 0; i < testProject.SequenceGroups.Count; i++)
                 {
@@ -46,6 +42,7 @@ namespace Testflow.SequenceManager.Serializer
                     }
                     SequenceGroupParameter parameter = new SequenceGroupParameter();
                     parameter.Initialize(sequenceGroup);
+                    // 将SequeneGroup配置的参数写入ParameterData中，用以序列化
                     FillParameterDataToSequenceData(sequenceGroup, parameter);
                     sequenceGroup.RefreshSignature();
                     parameter.RefreshSignature(sequenceGroup);
@@ -78,42 +75,23 @@ namespace Testflow.SequenceManager.Serializer
         public static void Serialize(string filePath, SequenceGroup sequenceGroup)
         {
             VerifySequenceData(sequenceGroup);
-            HashSet<Type> typeSet = new HashSet<Type>();
-            const string sequenceElementNameSpace = "Testflow.SequenceManager.SequenceElements";
             Type sequenceGroupType = typeof (SequenceGroup);
-            Type[] assemblyTypes = Assembly.GetAssembly(sequenceGroupType).GetTypes();
-            foreach (Type typeObj in assemblyTypes)
-            {
-                if (sequenceElementNameSpace.Equals(typeObj.Namespace))
-                {
-                    typeSet.Add(typeObj);
-                }
-            }
-            typeSet.Remove(typeof (TestProject));
-            typeSet.Remove(sequenceGroupType);
             sequenceGroup.Info.SequenceGroupFile = filePath;
             sequenceGroup.Info.SequenceParamFile = Common.Utility.GetParameterFilePath(filePath);
 
             SequenceGroupParameter parameter = new SequenceGroupParameter();
             parameter.Initialize(sequenceGroup);
+            // 将SequeneGroup配置的参数写入ParameterData中，用以序列化
             FillParameterDataToSequenceData(sequenceGroup, parameter);
 
             List<string> serialziedFileList = new List<string>(20);
             try
             {
-                Type[] extraTypes = typeSet.ToArray();
-                using (FileStream fileStream = new FileStream(filePath, FileMode.OpenOrCreate))
-                {
-                    serialziedFileList.Add(filePath);
-                    XmlSerializer serializer = new XmlSerializer(sequenceGroupType, extraTypes);
-                    serializer.Serialize(fileStream, sequenceGroup);
-                }
-                using (FileStream fileStream = new FileStream(sequenceGroup.Info.SequenceParamFile, FileMode.OpenOrCreate))
-                {
-                    serialziedFileList.Add(sequenceGroup.Info.SequenceParamFile);
-                    XmlSerializer serializer = new XmlSerializer(typeof(SequenceGroupParameter), extraTypes);
-                    serializer.Serialize(fileStream, sequenceGroup);
-                }
+                serialziedFileList.Add(filePath);
+                XmlWriterHelper.Write(sequenceGroup, sequenceGroup.Info.SequenceGroupFile);
+
+                serialziedFileList.Add(sequenceGroup.Info.SequenceParamFile);
+                XmlWriterHelper.Write(parameter, sequenceGroup.Info.SequenceParamFile);
             }
             catch (IOException ex)
             {

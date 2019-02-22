@@ -33,6 +33,8 @@ namespace Testflow.SequenceManager.SequenceElements
 
         public int ClassTypeIndex { get; set; }
         public IArgumentCollection ParameterType { get; set; }
+        [XmlIgnore]
+        [SerializationIgnore]
         public IParameterDataCollection Parameters { get; set; }
         public string Instance { get; set; }
         public string Return { get; set; }

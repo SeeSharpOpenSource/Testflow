@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Testflow.Data.Sequence;
 using Testflow.SequenceManager.Common;
 
@@ -29,7 +30,7 @@ namespace Testflow.SequenceManager.SequenceElements
 
         public void Add(IVariable item)
         {
-            if (_innerCollection.Contains(item))
+            if (_innerCollection.Any(existItem => existItem.Name.Equals(item)))
             {
                 return;
             }

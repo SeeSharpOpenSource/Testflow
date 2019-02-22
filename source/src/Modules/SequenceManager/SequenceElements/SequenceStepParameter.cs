@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Xml.Serialization;
 using Testflow.Data.Sequence;
 using Testflow.SequenceManager.Common;
 
@@ -16,7 +17,7 @@ namespace Testflow.SequenceManager.SequenceElements
             this.Instance = string.Empty;
             this.Return = string.Empty;
         }
-
+        
         public int Index { get; set; }
         public IList<ISequenceStepParameter> SubStepParameters { get; set; }
         public IParameterDataCollection Parameters { get; set; }

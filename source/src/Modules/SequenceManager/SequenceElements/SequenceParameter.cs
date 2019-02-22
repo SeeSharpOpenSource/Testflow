@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Xml.Serialization;
 using Testflow.Data.Sequence;
 using Testflow.SequenceManager.Common;
 
@@ -14,6 +15,7 @@ namespace Testflow.SequenceManager.SequenceElements
             this.StepParameters = null;
             this.VariableValues = null;
         }
+
         public int Index { get; set; }
         public IList<ISequenceStepParameter> StepParameters { get; set; }
         public IList<IVariableInitValue> VariableValues { get; set; }
@@ -34,7 +36,10 @@ namespace Testflow.SequenceManager.SequenceElements
             this.VariableValues = new VariableInitValueCollection();
             foreach (IVariable variable in sequence.Variables)
             {
-                VariableInitValue initValue = new VariableInitValue();
+                VariableInitValue initValue = new VariableInitValue()
+                {
+                    Name = variable.Name
+                };
                 initValue.Initialize(variable);
                 this.VariableValues.Add(initValue);
             }

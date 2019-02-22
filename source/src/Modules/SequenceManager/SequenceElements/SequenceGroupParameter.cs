@@ -80,7 +80,10 @@ namespace Testflow.SequenceManager.SequenceElements
 
             foreach (IVariable variable in sequenceGroup.Variables)
             {
-                VariableInitValue variableInitValue = new VariableInitValue();
+                VariableInitValue variableInitValue = new VariableInitValue()
+                {
+                    Name = variable.Name
+                };
                 variableInitValue.Initialize(variable);
                 this.VariableValues.Add(variableInitValue);
             }
