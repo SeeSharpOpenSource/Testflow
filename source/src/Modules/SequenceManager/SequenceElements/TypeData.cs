@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Xml.Serialization;
 using Testflow.Data;
+using Testflow.SequenceManager.Common;
 
 namespace Testflow.SequenceManager.SequenceElements
 {
@@ -10,6 +12,8 @@ namespace Testflow.SequenceManager.SequenceElements
         public string Namespace { get; set; }
         public string Name { get; set; }
 
+        [XmlIgnore]
+        [SerializationIgnore]
         public string FullName => $"{AssemblyName}_{Namespace}.{Name}";
 
         public override bool Equals(object obj)

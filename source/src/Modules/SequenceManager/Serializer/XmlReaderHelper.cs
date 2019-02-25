@@ -64,14 +64,96 @@ namespace Testflow.SequenceManager.Serializer
         }
 
 
-        public static void Read(SequenceGroup sequenceGroup, string filePath)
+        public static SequenceGroup ReadSequenceGroup(string filePath)
         {
-
+            if (!filePath.EndsWith($".{CommonConst.SequenceFileExtension}"))
+            {
+                I18N i18N = I18N.GetInstance(Constants.I18nName);
+                throw new TestflowDataException(SequenceManagerErrorCode.InvalidFileType, i18N.GetStr("InvalidFileType"));
+            }
+            XmlReader reader = null;
+            try
+            {
+                reader = CreateXmlReader(filePath);
+                Dictionary<string, Type> typeMapping = GetTypeMapping();
+                // 找到TestProject节点后跳出
+                while (reader.Read())
+                {
+                    if (XmlNodeType.Element != reader.NodeType)
+                    {
+                        continue;
+                    }
+                    if (typeof(SequenceGroup).Name.Equals(reader.Name))
+                    {
+                        break;
+                    }
+                }
+                SequenceGroup sequenceGroup = new SequenceGroup();
+                FillDataToObject(reader, sequenceGroup, typeMapping);
+                return sequenceGroup;
+            }
+            catch (ArgumentException ex)
+            {
+                LogService logService = LogService.GetLogService();
+                logService.Print(LogLevel.Error, CommonConst.PlatformLogSession, 0, ex);
+                throw new TestflowDataException(SequenceManagerErrorCode.DeSerializeFailed, ex.Message, ex);
+            }
+            catch (IOException ex)
+            {
+                LogService logService = LogService.GetLogService();
+                logService.Print(LogLevel.Error, CommonConst.PlatformLogSession, 0, ex);
+                throw new TestflowRuntimeException(SequenceManagerErrorCode.DeSerializeFailed, ex.Message, ex);
+            }
+            finally
+            {
+                reader?.Close();
+            }
         }
 
-        public static void Read(SequenceGroupParameter parameter, string filePaht)
+        public static SequenceGroupParameter ReadSequenceGroupParameter(string filePath)
         {
-
+            if (!filePath.EndsWith($".{CommonConst.SequenceDataFileExtension}"))
+            {
+                I18N i18N = I18N.GetInstance(Constants.I18nName);
+                throw new TestflowDataException(SequenceManagerErrorCode.InvalidFileType, i18N.GetStr("InvalidFileType"));
+            }
+            XmlReader reader = null;
+            try
+            {
+                reader = CreateXmlReader(filePath);
+                Dictionary<string, Type> typeMapping = GetTypeMapping();
+                // 找到TestProject节点后跳出
+                while (reader.Read())
+                {
+                    if (XmlNodeType.Element != reader.NodeType)
+                    {
+                        continue;
+                    }
+                    if (typeof(SequenceGroupParameter).Name.Equals(reader.Name))
+                    {
+                        break;
+                    }
+                }
+                SequenceGroupParameter parameter = new SequenceGroupParameter();
+                FillDataToObject(reader, parameter, typeMapping);
+                return parameter;
+            }
+            catch (ArgumentException ex)
+            {
+                LogService logService = LogService.GetLogService();
+                logService.Print(LogLevel.Error, CommonConst.PlatformLogSession, 0, ex);
+                throw new TestflowDataException(SequenceManagerErrorCode.DeSerializeFailed, ex.Message, ex);
+            }
+            catch (IOException ex)
+            {
+                LogService logService = LogService.GetLogService();
+                logService.Print(LogLevel.Error, CommonConst.PlatformLogSession, 0, ex);
+                throw new TestflowRuntimeException(SequenceManagerErrorCode.DeSerializeFailed, ex.Message, ex);
+            }
+            finally
+            {
+                reader?.Close();
+            }
         }
 
         // 处理一个类的所有属性反序列化
@@ -149,8 +231,6 @@ namespace Testflow.SequenceManager.Serializer
             }
         }
 
-        
-
         private static void FillDataToCollection(XmlReader reader, object objectData, Dictionary<string, Type> typeMapping, Type elementType, Type parentType)
         {
             const string addMethodName = "Add";
@@ -162,17 +242,11 @@ namespace Testflow.SequenceManager.Serializer
                 CallingConventions.Standard, new Type[] { genericType }, new ParameterModifier[0]);
             GenericCollectionAttribute collectionAttribute =
                     elementType.GetCustomAttribute<GenericCollectionAttribute>();
-            while (reader.Read())
+            reader.Read();
+            // xml层级等于或者小于父节点时说明集合已经遍历结束，停止遍历
+            // Reader的更新在Read
+            while (reader.Depth > currentDepth)
             {
-                // xml层级等于或者小于父节点时应该交给上一层的调用处理
-                if (reader.Depth <= currentDepth)
-                {
-                    if (reader.NodeType == XmlNodeType.EndElement)
-                    {
-                        reader.Read();
-                    }
-                    break;
-                }
                 // 如果不是节点或者是空节点或者是结束节点，则继续下一行读取
                 if (reader.NodeType != XmlNodeType.Element || (reader.IsEmptyElement && !reader.HasAttributes) ||
                     reader.NodeType == XmlNodeType.EndElement)
@@ -185,16 +259,18 @@ namespace Testflow.SequenceManager.Serializer
                     if (null != value)
                     {
                         object element = ValueConvertor.ReadData(elementType, value);
-                        addMethod.Invoke(objectData, new object[] {element});
+                        addMethod.Invoke(objectData, new object[] { element });
                     }
+                    // Value模式时需要手动去调整reader的位置
+                    reader.Read();
                 }
                 else
                 {
+                    // 填充集合或者类时，reader的shift在FillDataToObject和FillDataToCollection中调用
                     object element = CreateTypeInstance(typeMapping, elementType.Name);
                     if (null == collectionAttribute)
                     {
                         FillDataToObject(reader, element, typeMapping);
-                        
                     }
                     else
                     {
@@ -202,6 +278,11 @@ namespace Testflow.SequenceManager.Serializer
                     }
                     addMethod.Invoke(objectData, new object[] { element });
                 }
+            }
+            // 如果是endElement则直接跳过
+            if (reader.NodeType == XmlNodeType.EndElement)
+            {
+                reader.Read();
             }
         }
 
@@ -231,7 +312,14 @@ namespace Testflow.SequenceManager.Serializer
             }
             if (null != value)
             {
-                propertyInfo.SetValue(objectData, value);
+                try
+                {
+                    propertyInfo.SetValue(objectData, value);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex);
+                }
             }
         }
 
