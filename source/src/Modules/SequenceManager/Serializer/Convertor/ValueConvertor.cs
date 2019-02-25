@@ -21,6 +21,7 @@ namespace Testflow.SequenceManager.Serializer.Convertor
                 {typeof (ulong).Name, (valueStr) => ulong.Parse(valueStr)},
                 {typeof (byte).Name, (valueStr) => byte.Parse(valueStr)},
                 {typeof (char).Name, (valueStr) => char.Parse(valueStr)},
+                {typeof (bool).Name, (valueStr) => bool.Parse(valueStr) },
                 {typeof (DateTime).Name, (valueStr) => DateTime.Parse(valueStr)}
             };
         }
