@@ -75,7 +75,6 @@ namespace Testflow.SequenceManager.Serializer
         public static void Serialize(string filePath, SequenceGroup sequenceGroup)
         {
             VerifySequenceData(sequenceGroup);
-            Type sequenceGroupType = typeof (SequenceGroup);
             sequenceGroup.Info.SequenceGroupFile = filePath;
             sequenceGroup.Info.SequenceParamFile = Common.Utility.GetParameterFilePath(filePath);
 
@@ -200,13 +199,13 @@ namespace Testflow.SequenceManager.Serializer
             testProject.TypeDatas.Clear();
             foreach (IVariable variable in testProject.Variables)
             {
-                VerifyType(testProject.TypeDatas, variable as Variable);
+                VerifyTypeIndexes(testProject.TypeDatas, variable as Variable);
             }
             foreach (ISequenceGroup sequenceGroup in testProject.SequenceGroups)
             {
                 foreach (IArgument argument in sequenceGroup.Arguments)
                 {
-                    VerifyType(testProject.TypeDatas, argument as Argument);
+                    VerifyTypeIndexes(testProject.TypeDatas, argument as Argument);
                 }
             }
 
@@ -220,21 +219,21 @@ namespace Testflow.SequenceManager.Serializer
         {
             foreach (IVariable variable in sequenceGroup.Variables)
             {
-                VerifyType(sequenceGroup.TypeDatas, variable as Variable);
+                VerifyTypeIndexes(sequenceGroup.TypeDatas, variable as Variable);
             }
             foreach (IArgument argument in sequenceGroup.Arguments)
             {
-                VerifyType(sequenceGroup.TypeDatas, argument as Argument);
+                VerifyTypeIndexes(sequenceGroup.TypeDatas, argument as Argument);
             }
             foreach (ISequence sequence in sequenceGroup.Sequences)
             {
                 foreach (IVariable variable in sequence.Variables)
                 {
-                    VerifyType(sequenceGroup.TypeDatas, variable as Variable);
+                    VerifyTypeIndexes(sequenceGroup.TypeDatas, variable as Variable);
                 }
                 foreach (ISequenceStep sequenceStep in sequence.Steps)
                 {
-                    VerifyType(sequenceGroup.TypeDatas, sequenceStep);
+                    VerifyTypeIndexes(sequenceGroup.TypeDatas, sequenceStep);
                 }
             }
         }
@@ -258,22 +257,22 @@ namespace Testflow.SequenceManager.Serializer
             }
         }
 
-        private static void VerifyType(ITypeDataCollection typeDatas, ISequenceStep step)
+        private static void VerifyTypeIndexes(ITypeDataCollection typeDatas, ISequenceStep step)
         {
             if (step.HasSubSteps)
             {
                 foreach (ISequenceStep subStep in step.SubSteps)
                 {
-                    VerifyType(typeDatas, subStep);
+                    VerifyTypeIndexes(typeDatas, subStep);
                 }
             }
             else
             {
-                VerifyType(typeDatas, step.Function as FunctionData);
+                VerifyTypeIndexes(typeDatas, step.Function as FunctionData);
             }
         }
 
-        private static void VerifyType(ITypeDataCollection typeDatas, Variable variable)
+        private static void VerifyTypeIndexes(ITypeDataCollection typeDatas, Variable variable)
         {
             if (null == variable.Type || VariableType.Undefined == variable.VariableType)
             {
@@ -289,7 +288,7 @@ namespace Testflow.SequenceManager.Serializer
             variable.TypeIndex = index;
         }
 
-        private static void VerifyType(ITypeDataCollection typeDatas, Argument argument)
+        private static void VerifyTypeIndexes(ITypeDataCollection typeDatas, Argument argument)
         {
             if (null == argument.Type || VariableType.Undefined == argument.VariableType)
             {
@@ -305,7 +304,7 @@ namespace Testflow.SequenceManager.Serializer
             argument.TypeIndex = index;
         }
 
-        private static void VerifyType(ITypeDataCollection typeDatas, FunctionData functionData)
+        private static void VerifyTypeIndexes(ITypeDataCollection typeDatas, FunctionData functionData)
         {
             if (functionData?.ClassType == null)
             {
@@ -325,10 +324,10 @@ namespace Testflow.SequenceManager.Serializer
             functionData.ClassTypeIndex = index;
             foreach (IArgument argument in functionData.ParameterType)
             {
-                VerifyType(typeDatas, argument as Argument);
+                VerifyTypeIndexes(typeDatas, argument as Argument);
             }
 
-            VerifyType(typeDatas, functionData.ReturnType as Argument);
+            VerifyTypeIndexes(typeDatas, functionData.ReturnType as Argument);
         }
 
         #endregion
