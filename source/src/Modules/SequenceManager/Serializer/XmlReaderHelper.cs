@@ -226,7 +226,7 @@ namespace Testflow.SequenceManager.Serializer
                 else
                 {
                     FillDataToCollection(reader, propertyObject, typeMapping, collectionAttribute.GenericType,
-                        propertyInfo.PropertyType);
+                        propertyObject.GetType());
                 }
             }
         }
@@ -290,7 +290,7 @@ namespace Testflow.SequenceManager.Serializer
         private static Type GetRawGenericElementType(Type collectionType)
         {
             Type[] genericType = null;
-            while (null == genericType)
+            while (null == genericType || 0 == genericType.Length)
             {
                 collectionType = collectionType.GetInterfaces()[0];
                 genericType = collectionType.GetGenericArguments();
