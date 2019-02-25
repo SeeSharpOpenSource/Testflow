@@ -20,9 +20,9 @@ namespace Testflow.SequenceManagerTest
     [TestClass]
     public class SequenceSerializeTest
     {
-        public const string TestProjectPath = @"D:\testflow\test.tfproj";
-        public const string SequenceGroupPath = @"D:\testflow\SequenceGroup1\SequenceGroup1.tfseq";
-        public const string ParameterPath = @"D:\testflow\SequenceGroup1\SequenceGroup1.tfparam";
+        private const string TestProjectPath = @"D:\testflow\test.tfproj";
+        private const string SequenceGroupPath = @"D:\testflow\SequenceGroup1\SequenceGroup1.tfseq";
+        private const string ParameterPath = @"D:\testflow\SequenceGroup1\SequenceGroup1.tfparam";
 
         public SequenceSerializeTest()
         {

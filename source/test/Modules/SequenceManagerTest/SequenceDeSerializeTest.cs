@@ -20,6 +20,10 @@ namespace Testflow.SequenceManagerTest
     [TestClass]
     public class SequenceDeserializeTest
     {
+        private const string TestProjectPath = @"D:\testflow\test.tfproj";
+        private const string SequenceGroupPath = @"D:\testflow\SequenceGroup1\SequenceGroup1.tfseq";
+        private const string ParameterPath = @"D:\testflow\SequenceGroup1\SequenceGroup1.tfparam";
+
         public SequenceDeserializeTest()
         {
             _sequenceManager = SequenceManager.SequenceManager.GetInstance();
@@ -65,69 +69,27 @@ namespace Testflow.SequenceManagerTest
         //
 
         #endregion
-
-        [TestMethod]
-        public void TestXmlReadTestProject()
+        
+        [TestInitialize]
+        public void Initialize()
         {
-            TestProject testProject = XmlReaderHelper.ReadTestProject(SequenceSerializeTest.TestProjectPath);
-            Assert.AreEqual(testProject.Name, "TestProject1");
-            Assert.AreEqual(testProject.Description, "");
-            Assert.AreEqual(testProject.ModelVersion, "1.0.0");
-            Assert.AreEqual(testProject.SetUp.Name, "");
-            Assert.AreEqual(testProject.TearDown.Name, "");
-            Assert.AreEqual(testProject.SequenceGroupLocations.Count, 3);
-            Assert.AreEqual(testProject.SequenceGroupLocations[0].SequenceFilePath, SequenceSerializeTest.SequenceGroupPath);
-            Assert.AreEqual(testProject.SequenceGroupLocations[0].ParameterFilePath, SequenceSerializeTest.ParameterPath);
-        }
+            ITestProject testProject = _sequenceManager.CreateTestProject();
 
-        [TestMethod]
-        public void TestXmlReadSequenceGroup()
-        {
-            SequenceGroup sequenceGroup = XmlReaderHelper.ReadSequenceGroup(SequenceSerializeTest.SequenceGroupPath);
-            Assert.AreEqual(sequenceGroup.Name, "SequenceGroup1");
-            Assert.AreEqual(sequenceGroup.Info.Version, "1.0.0");
-            Assert.AreEqual(sequenceGroup.Info.SequenceGroupFile, SequenceSerializeTest.SequenceGroupPath);
-            Assert.AreEqual(sequenceGroup.Info.SequenceParamFile, SequenceSerializeTest.ParameterPath);
-            Assert.AreEqual(sequenceGroup.TypeDatas.Count, 2);
-            Assert.AreEqual(sequenceGroup.TypeDatas[0].AssemblyName, "TestAssemblyName");
-            Assert.AreEqual(sequenceGroup.TypeDatas[1].Name, "Double");
-            Assert.AreEqual(sequenceGroup.Sequences.Count, 3);
-            Assert.AreEqual(sequenceGroup.Sequences[0].Name, "Sequence1");
-            Assert.AreEqual(sequenceGroup.Sequences[0].Variables.Count, 3);
-            Assert.AreEqual(sequenceGroup.Sequences[0].Variables[0].VariableType, VariableType.Value);
-            Assert.AreEqual(sequenceGroup.Sequences[0].Variables[1].Name, "Variable2");
-            Assert.AreEqual(sequenceGroup.Sequences[0].Steps.Count, 3);
-            Assert.AreEqual(sequenceGroup.Sequences[0].Steps[0].Name, "SequenceStep1");
-            Assert.AreEqual(sequenceGroup.Sequences[0].Steps[0].HasSubSteps, false);
-            Assert.AreEqual(sequenceGroup.Sequences[0].Steps[0].Function.Type, FunctionType.InstanceFunction);
-            Assert.AreEqual(sequenceGroup.Sequences[0].Steps[0].Function.Instance, "Variable1");
-            Assert.AreEqual(sequenceGroup.Sequences[0].Steps[0].Function.Return, "Variable3");
-            Assert.AreEqual(sequenceGroup.Sequences[0].Steps[0].Function.MethodName, "Add");
-            Assert.AreEqual(sequenceGroup.Sequences[0].Steps[0].Function.ParameterType.Count, 2);
-            Assert.AreEqual(sequenceGroup.Sequences[0].Steps[0].Function.ParameterType[0].Name, "addSource");
-            Assert.AreEqual(sequenceGroup.Sequences[0].Steps[2].LoopCounter.Name, "LoopCounterDemo");
-            Assert.AreEqual(sequenceGroup.Sequences[0].Steps[0].RetryCounter.Name, "RetryCounterDemo");
-        }
+            testProject.Initialize(null);
 
-        [TestMethod]
-        public void TestXmlReadSequenceGroupParameter()
-        {
-            SequenceGroup sequenceGroup = XmlReaderHelper.ReadSequenceGroup(SequenceSerializeTest.SequenceGroupPath);
-            SequenceGroupParameter parameter =
-                XmlReaderHelper.ReadSequenceGroupParameter(SequenceSerializeTest.ParameterPath);
-            Assert.AreEqual(parameter.Info.Version, "1.0.0");
-            Assert.AreEqual(parameter.Info.Hash, sequenceGroup.Info.Hash);
-            Assert.AreEqual(parameter.SequenceParameters.Count, 3);
-            Assert.AreEqual(parameter.SequenceParameters[0].StepParameters.Count, 3);
-            Assert.AreEqual(parameter.SequenceParameters[0].StepParameters[0].Instance, "Variable1");
-            Assert.AreEqual(parameter.SequenceParameters[0].StepParameters[0].Return, "Variable3");
-        }
-
-        [TestMethod]
-        public void TestProjectDeSerialize()
-        {
+            Assert.AreEqual(testProject.ModelVersion, _configData.GetProperty<string>("ModelVersion"));
             ISequenceGroup sequenceGroup1 = _sequenceManager.CreateSequenceGroup();
-            sequenceGroup1.Initialize(null);
+            ISequenceGroup sequenceGroup2 = _sequenceManager.CreateSequenceGroup();
+            ISequenceGroup sequenceGroup3 = _sequenceManager.CreateSequenceGroup();
+            sequenceGroup1.Initialize(testProject);
+            testProject.SequenceGroups.Add(sequenceGroup1);
+
+
+            sequenceGroup2.Initialize(testProject);
+            testProject.SequenceGroups.Add(sequenceGroup2);
+
+            sequenceGroup3.Initialize(testProject);
+            testProject.SequenceGroups.Add(sequenceGroup3);
 
             ISequence sequence1 = _sequenceManager.CreateSequence();
             ISequence sequence2 = _sequenceManager.CreateSequence();
@@ -199,20 +161,71 @@ namespace Testflow.SequenceManagerTest
                 Name = "LoopCounterDemo"
             };
 
-            sequenceGroup1.Arguments.Add(new Argument()
-            {
-                Modifier = ArgumentModifier.None,
-                Name = "TestArgument",
-                Type = new TypeData()
-                {
-                    AssemblyName = "Assembly3",
-                    Name = "ArgumentDemo",
-                    Namespace = "Testflow.Test",
-                },
-                VariableType = VariableType.Value
-            });
+            _sequenceManager.Serialize(testProject, SerializationTarget.File, TestProjectPath);
+        }
 
-            _sequenceManager.Serialize(sequenceGroup1, SerializationTarget.File, @"D:\testflow\SequenceGroupTest\SequenceGroup.tfseq");
+
+        [TestMethod]
+        public void TestXmlReadTestProject()
+        {
+            TestProject testProject = XmlReaderHelper.ReadTestProject(TestProjectPath);
+            Assert.AreEqual(testProject.Name, "TestProject1");
+            Assert.AreEqual(testProject.Description, "");
+            Assert.AreEqual(testProject.ModelVersion, "1.0.0");
+            Assert.AreEqual(testProject.SetUp.Name, "");
+            Assert.AreEqual(testProject.TearDown.Name, "");
+            Assert.AreEqual(testProject.SequenceGroupLocations.Count, 3);
+            Assert.AreEqual(testProject.SequenceGroupLocations[0].SequenceFilePath, SequenceGroupPath);
+            Assert.AreEqual(testProject.SequenceGroupLocations[0].ParameterFilePath, ParameterPath);
+        }
+
+        [TestMethod]
+        public void TestXmlReadSequenceGroup()
+        {
+            SequenceGroup sequenceGroup = XmlReaderHelper.ReadSequenceGroup(SequenceGroupPath);
+            Assert.AreEqual(sequenceGroup.Name, "SequenceGroup1");
+            Assert.AreEqual(sequenceGroup.Info.Version, "1.0.0");
+            Assert.AreEqual(sequenceGroup.Info.SequenceGroupFile, SequenceGroupPath);
+            Assert.AreEqual(sequenceGroup.Info.SequenceParamFile, ParameterPath);
+            Assert.AreEqual(sequenceGroup.TypeDatas.Count, 2);
+            Assert.AreEqual(sequenceGroup.TypeDatas[0].AssemblyName, "TestAssemblyName");
+            Assert.AreEqual(sequenceGroup.TypeDatas[1].Name, "Double");
+            Assert.AreEqual(sequenceGroup.Sequences.Count, 3);
+            Assert.AreEqual(sequenceGroup.Sequences[0].Name, "Sequence1");
+            Assert.AreEqual(sequenceGroup.Sequences[0].Variables.Count, 3);
+            Assert.AreEqual(sequenceGroup.Sequences[0].Variables[0].VariableType, VariableType.Value);
+            Assert.AreEqual(sequenceGroup.Sequences[0].Variables[1].Name, "Variable2");
+            Assert.AreEqual(sequenceGroup.Sequences[0].Steps.Count, 3);
+            Assert.AreEqual(sequenceGroup.Sequences[0].Steps[0].Name, "SequenceStep1");
+            Assert.AreEqual(sequenceGroup.Sequences[0].Steps[0].HasSubSteps, false);
+            Assert.AreEqual(sequenceGroup.Sequences[0].Steps[0].Function.Type, FunctionType.InstanceFunction);
+            Assert.AreEqual(sequenceGroup.Sequences[0].Steps[0].Function.Instance, "Variable1");
+            Assert.AreEqual(sequenceGroup.Sequences[0].Steps[0].Function.Return, "Variable3");
+            Assert.AreEqual(sequenceGroup.Sequences[0].Steps[0].Function.MethodName, "Add");
+            Assert.AreEqual(sequenceGroup.Sequences[0].Steps[0].Function.ParameterType.Count, 2);
+            Assert.AreEqual(sequenceGroup.Sequences[0].Steps[0].Function.ParameterType[0].Name, "addSource");
+            Assert.AreEqual(sequenceGroup.Sequences[0].Steps[2].LoopCounter.Name, "LoopCounterDemo");
+            Assert.AreEqual(sequenceGroup.Sequences[0].Steps[0].RetryCounter.Name, "RetryCounterDemo");
+        }
+
+        [TestMethod]
+        public void TestXmlReadSequenceGroupParameter()
+        {
+            SequenceGroup sequenceGroup = XmlReaderHelper.ReadSequenceGroup(SequenceGroupPath);
+            SequenceGroupParameter parameter =
+                XmlReaderHelper.ReadSequenceGroupParameter(ParameterPath);
+            Assert.AreEqual(parameter.Info.Version, "1.0.0");
+            Assert.AreEqual(parameter.Info.Hash, sequenceGroup.Info.Hash);
+            Assert.AreEqual(parameter.SequenceParameters.Count, 3);
+            Assert.AreEqual(parameter.SequenceParameters[0].StepParameters.Count, 3);
+            Assert.AreEqual(parameter.SequenceParameters[0].StepParameters[0].Instance, "Variable1");
+            Assert.AreEqual(parameter.SequenceParameters[0].StepParameters[0].Return, "Variable3");
+        }
+
+        [TestMethod]
+        public void TestProjectDeSerialize()
+        {
+
         }
     }
 }
