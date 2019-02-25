@@ -16,7 +16,7 @@ namespace Testflow.SequenceManager.SequenceElements
             this.MethodName = string.Empty;
             this.ClassType = null;
             this.ClassTypeIndex = Constants.UnverifiedTypeIndex;
-            this.ParameterType = null;
+            this.ParameterType = new ArgumentCollection();
             this.Parameters = new ParameterDataCollection();
             this.Instance = string.Empty;
             this.Return = string.Empty;

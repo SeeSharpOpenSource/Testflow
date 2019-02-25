@@ -182,7 +182,7 @@ namespace Testflow.SequenceManager
         public ITestProject LoadTestProject(SerializationTarget source, params string[] param)
         {
             bool forceLoad = false;
-            if (null != param[1])
+            if (param.Length > 1 && null != param[1])
             {
                 bool.TryParse(param[1], out forceLoad);
             }
@@ -199,10 +199,10 @@ namespace Testflow.SequenceManager
             }
         }
 
-        ISequenceGroup ISequenceManager.LoadSequenceGroup(SerializationTarget source, params string[] param)
+        public ISequenceGroup LoadSequenceGroup(SerializationTarget source, params string[] param)
         {
             bool forceLoad = false;
-            if (null != param[1])
+            if (param.Length > 1 && null != param[1])
             {
                 bool.TryParse(param[1], out forceLoad);
             }

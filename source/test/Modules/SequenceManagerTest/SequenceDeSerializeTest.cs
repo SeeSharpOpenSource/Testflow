@@ -223,9 +223,22 @@ namespace Testflow.SequenceManagerTest
         }
 
         [TestMethod]
-        public void TestProjectDeSerialize()
+        public void TestProjectDeserialize()
         {
+            ITestProject testProject = _sequenceManager.LoadTestProject(SerializationTarget.File, TestProjectPath);
 
+            Assert.AreEqual(testProject.Name, "TestProject1");
+        }
+
+        [TestMethod]
+        public void SequenceGroupDeserialize()
+        {
+            ISequenceGroup sequenceGroup = _sequenceManager.LoadSequenceGroup(SerializationTarget.File, SequenceGroupPath);
+
+            Assert.AreEqual(sequenceGroup.Sequences[0].Steps[0].Function.ClassType, sequenceGroup.TypeDatas[0]);
+            Assert.AreEqual(sequenceGroup.Sequences[0].Steps[0].Function.ReturnType.Type, sequenceGroup.TypeDatas[1]);
+            Assert.AreEqual(sequenceGroup.Sequences[0].Steps[0].Function.ParameterType[0].Type, sequenceGroup.TypeDatas[1]);
+            Assert.AreEqual(sequenceGroup.Sequences[0].Steps[0].Function.ParameterType[1].Type, sequenceGroup.TypeDatas[1]);
         }
     }
 }

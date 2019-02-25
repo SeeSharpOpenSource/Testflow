@@ -20,15 +20,17 @@ namespace Testflow.SequenceManager.SequenceElements
             this.Description = string.Empty;
             this.Parent = null;
             this.Info = new SequenceGroupInfo();
-            this.Assemblies = null;
+
+            this.Assemblies = new AssemblyInfoCollection();
             this.Available = true;
-            this.TypeDatas = null;
-            this.Arguments = null;
-            this.Variables = null;
+            this.TypeDatas = new TypeDataCollection();
+            this.Arguments = new ArgumentCollection();
+            this.Variables = new VariableCollection();
+            // 该参数只在序列化时生成
             this.Parameters = null;
             this.ExecutionModel = ExecutionModel.SequentialExecution;
             this.SetUp = null;
-            this.Sequences = null;
+            this.Sequences = new SequenceCollection();
             this.TearDown = null;
         }
 
@@ -72,16 +74,11 @@ namespace Testflow.SequenceManager.SequenceElements
             {
                 Info.Version = testProject.ModelVersion;
             }
-            this.Assemblies = new AssemblyInfoCollection();
             this.Available = true;
-            this.TypeDatas = new TypeDataCollection();
-            this.Arguments = new ArgumentCollection();
-            this.Variables = new VariableCollection();
             // 该参数只在序列化时生成
             this.Parameters = null;
             this.ExecutionModel = ExecutionModel.SequentialExecution;
             this.SetUp = new Sequence();
-            this.Sequences = new SequenceCollection();
             this.TearDown = new Sequence();
             RefreshSignature();
         }

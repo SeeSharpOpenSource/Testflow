@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Reflection;
-using System.Xml.Serialization;
+﻿using System.IO;
 using Testflow.Common;
 using Testflow.Data.Sequence;
 using Testflow.Logger;
@@ -20,133 +15,62 @@ namespace Testflow.SequenceManager.Serializer
 
         public static TestProject LoadTestProject(string filePath, bool forceLoad, IModuleConfigData envInfo)
         {
-            HashSet<Type> typeSet = new HashSet<Type>();
-            const string sequenceElementNameSpace = "Testflow.SequenceManager.SequenceElements";
-            Type testProjectType = typeof (TestProject);
-            Type[] assemblyTypes = Assembly.GetAssembly(testProjectType).GetTypes();
-            foreach (Type typeObj in assemblyTypes)
-            {
-                if (sequenceElementNameSpace.Equals(typeObj.Namespace))
-                {
-                    typeSet.Add(typeObj);
-                }
-            }
-            typeSet.Remove(testProjectType);
             if (!filePath.EndsWith($".{CommonConst.TestGroupFileExtension}"))
             {
                 I18N i18N = I18N.GetInstance(Constants.I18nName);
                 throw new TestflowRuntimeException(SequenceManagerErrorCode.InvalidFileType, i18N.GetStr("InvalidFileType"));
             }
-            try
+            TestProject testProject = null;
+            testProject = XmlReaderHelper.ReadTestProject(filePath);
+            CheckModelVersion(testProject.ModelVersion, envInfo);
+            foreach (ISequenceGroup sequenceGroup in testProject.SequenceGroups)
             {
-                TestProject testProject = null;
-                Type[] extraTypes = typeSet.ToArray();
-                using (FileStream fileStream = new FileStream(filePath, FileMode.Open))
-                {
-                    XmlSerializer serializer = new XmlSerializer(testProjectType, extraTypes);
-                    testProject = serializer.Deserialize(fileStream) as TestProject;
-                    CheckModelVersion(testProject.ModelVersion, envInfo);
-                    foreach (ISequenceGroup sequenceGroup in testProject.SequenceGroups)
-                    {
-                        CheckModelVersion(sequenceGroup.Info.Version, envInfo);
-                    }
-                }
+                CheckModelVersion(sequenceGroup.Info.Version, envInfo);
+            }
+            foreach (SequenceGroupLocationInfo sequenceGroupLocation in testProject.SequenceGroupLocations)
+            {
+                SequenceGroup sequenceGroup = null;
 
-                foreach (SequenceGroupLocationInfo sequenceGroupLocation in testProject.SequenceGroupLocations)
+                if (File.Exists(sequenceGroupLocation.SequenceFilePath))
                 {
-                    SequenceGroup sequenceGroup = null;
-                    
-                    if (File.Exists(sequenceGroupLocation.SequenceFilePath))
-                    {
-                        using (FileStream stream = new FileStream(sequenceGroupLocation.SequenceFilePath, FileMode.Open))
-                        {
-                            XmlSerializer sequenceGroupSerializer = new XmlSerializer(typeof(SequenceGroup), extraTypes);
-                            sequenceGroup = sequenceGroupSerializer.Deserialize(stream) as SequenceGroup;
-                            sequenceGroup.Parent = testProject;
-                        }
-                        SequenceGroupParameter parameter = null;
-                        using (FileStream fileStream = new FileStream(sequenceGroup.Info.SequenceParamFile, FileMode.OpenOrCreate))
-                        {
-                            XmlSerializer sequenceParamSerializer = new XmlSerializer(typeof(SequenceGroupParameter), extraTypes);
-                            parameter = sequenceParamSerializer.Deserialize(fileStream) as SequenceGroupParameter;
-                        }
-                        if (!forceLoad && !sequenceGroup.Info.Hash.Equals(parameter.Info.Hash))
-                        {
-                            I18N i18N = I18N.GetInstance(Constants.I18nName);
-                            throw new TestflowDataException(SequenceManagerErrorCode.UnmatchedFileHash, i18N.GetStr("UnmatchedHash"));
-                        }
-                        sequenceGroup.Parameters = parameter;
-                        SetParameterToSequenceData(sequenceGroup, parameter);
-                    }
-                    else
-                    {
-                        LogService logService = LogService.GetLogService();
-                        logService.Print(LogLevel.Warn, CommonConst.PlatformLogSession, 0, "Sequence group file not exist.");
-                        sequenceGroup = new SequenceGroup();
-                        sequenceGroup.Initialize(testProject);
-                        sequenceGroup.Available = false;
-                    }
-                    testProject.SequenceGroups.Add(sequenceGroup);
+                    sequenceGroup = LoadSequenceGroup(sequenceGroupLocation.SequenceFilePath, forceLoad, envInfo);
+                    sequenceGroup.Parent = testProject;
                 }
-                
-                return testProject;
+                else
+                {
+                    LogService logService = LogService.GetLogService();
+                    logService.Print(LogLevel.Warn, CommonConst.PlatformLogSession, 0, "Sequence group file not exist.");
+                    sequenceGroup = new SequenceGroup();
+                    sequenceGroup.Initialize(testProject);
+                    sequenceGroup.Info.SequenceGroupFile = sequenceGroupLocation.SequenceFilePath;
+                    sequenceGroup.Available = false;
+                }
+                testProject.SequenceGroups.Add(sequenceGroup);
             }
-            catch (IOException ex)
-            {
-                LogService logService = LogService.GetLogService();
-                logService.Print(LogLevel.Warn, CommonConst.PlatformLogSession, 0, ex, "Load test project failed.");
-                throw new TestflowRuntimeException(SequenceManagerErrorCode.SerializeFailed, ex.Message, ex);
-            }
+            VerifyTypeDatas(testProject);
+
+            return testProject;
         }
 
         public static SequenceGroup LoadSequenceGroup(string filePath, bool forceLoad, IModuleConfigData envInfo)
         {
-            HashSet<Type> typeSet = new HashSet<Type>();
-            const string sequenceElementNameSpace = "Testflow.SequenceManager.SequenceElements";
-            Type sequenceGroupType = typeof (TestProject);
-            Type[] assemblyTypes = Assembly.GetAssembly(sequenceGroupType).GetTypes();
-            foreach (Type typeObj in assemblyTypes)
-            {
-                if (sequenceElementNameSpace.Equals(typeObj.Namespace))
-                {
-                    typeSet.Add(typeObj);
-                }
-            }
-            typeSet.Remove(typeof (TestProject));
-            typeSet.Remove(sequenceGroupType);
             if (!filePath.EndsWith($".{CommonConst.SequenceFileExtension}"))
             {
                 I18N i18N = I18N.GetInstance(Constants.I18nName);
                 throw new TestflowDataException(SequenceManagerErrorCode.InvalidFileType, i18N.GetStr("InvalidFileType"));
             }
-            try
+            SequenceGroup sequenceGroup = XmlReaderHelper.ReadSequenceGroup(filePath);
+            SequenceGroupParameter parameter =
+                XmlReaderHelper.ReadSequenceGroupParameter(sequenceGroup.Info.SequenceParamFile);
+            if (!forceLoad && !sequenceGroup.Info.Hash.Equals(parameter.Info.Hash))
             {
-                Type[] extraTypes = typeSet.ToArray();
-                SequenceGroup sequenceGroup = null;
-                using (FileStream fileStream = new FileStream(filePath, FileMode.Open))
-                {
-                    XmlSerializer serializer = new XmlSerializer(sequenceGroupType, extraTypes);
-                    sequenceGroup = serializer.Deserialize(fileStream) as SequenceGroup;
-                }
-                SequenceGroupParameter parameter = null;
-                using (FileStream fileStream = new FileStream(sequenceGroup.Info.SequenceParamFile, FileMode.OpenOrCreate))
-                {
-                    XmlSerializer sequenceParamSerializer = new XmlSerializer(typeof(SequenceGroupParameter), extraTypes);
-                    parameter = sequenceParamSerializer.Deserialize(fileStream) as SequenceGroupParameter;
-                }
-                if (!forceLoad && !sequenceGroup.Info.Hash.Equals(parameter.Info.Hash))
-                {
-                    I18N i18N = I18N.GetInstance(Constants.I18nName);
-                    throw new TestflowDataException(SequenceManagerErrorCode.UnmatchedFileHash, i18N.GetStr("UnmatchedHash"));
-                }
-                sequenceGroup.Parameters = parameter;
-                SetParameterToSequenceData(sequenceGroup, parameter);
-                return sequenceGroup;
+                I18N i18N = I18N.GetInstance(Constants.I18nName);
+                throw new TestflowDataException(SequenceManagerErrorCode.UnmatchedFileHash, i18N.GetStr("UnmatchedHash"));
             }
-            catch (IOException ex)
-            {
-                throw new TestflowRuntimeException(SequenceManagerErrorCode.SerializeFailed, ex.Message, ex);
-            }
+            sequenceGroup.Parameters = parameter;
+            SetParameterToSequenceData(sequenceGroup, parameter);
+            VerifyTypeDatas(sequenceGroup);
+            return sequenceGroup;
         }
 
         #endregion
@@ -180,7 +104,7 @@ namespace Testflow.SequenceManager.Serializer
             for (int i = 0; i < sequenece.Variables.Count; i++)
             {
                 IVariable variable = sequenece.Variables[i];
-                if (!variable.Name.Equals(parameter.VariableValues[i].Value))
+                if (!variable.Name.Equals(parameter.VariableValues[i].Name))
                 {
                     LogService logService = LogService.GetLogService();
                     logService.Print(LogLevel.Warn, CommonConst.PlatformLogSession, 0,
@@ -206,11 +130,99 @@ namespace Testflow.SequenceManager.Serializer
                     SetParameterToSequenceData(sequenecStep.SubSteps[i], parameter.SubStepParameters[i]);
                 }
             }
-            else
+            else if (null != sequenecStep.Function)
             {
                 sequenecStep.Function.Parameters = parameter.Parameters;
                 sequenecStep.Function.Instance = parameter.Instance;
                 sequenecStep.Function.Return = parameter.Return;
+            }
+        }
+
+        private static void VerifyTypeDatas(TestProject testProject)
+        {
+            VerifyTypeDatas(testProject.Variables, testProject.TypeDatas);
+            VerifyTypeDatas(testProject.SetUp, testProject.TypeDatas);
+            VerifyTypeDatas(testProject.TearDown, testProject.TypeDatas);
+        }
+
+        private static void VerifyTypeDatas(ISequenceGroup sequenceGroup)
+        {
+            VerifyTypeDatas(sequenceGroup.Arguments, sequenceGroup.TypeDatas);
+            VerifyTypeDatas(sequenceGroup.Variables, sequenceGroup.TypeDatas);
+            VerifyTypeDatas(sequenceGroup.SetUp, sequenceGroup.TypeDatas);
+            foreach (ISequence sequence in sequenceGroup.Sequences)
+            {
+                VerifyTypeDatas(sequence, sequenceGroup.TypeDatas);
+            }
+            VerifyTypeDatas(sequenceGroup.TearDown, sequenceGroup.TypeDatas);
+        }
+
+        private static void VerifyTypeDatas(ISequence sequence, ITypeDataCollection typeDatas)
+        {
+            VerifyTypeDatas(sequence.Variables, typeDatas);
+            foreach (ISequenceStep sequenceStep in sequence.Steps)
+            {
+                VerifyTypeDatas(sequenceStep, typeDatas);
+            }
+        }
+
+        private static void VerifyTypeDatas(ISequenceStep sequenceStep, ITypeDataCollection typeDatas)
+        {
+            if (sequenceStep.HasSubSteps)
+            {
+                foreach (ISequenceStep subStep in sequenceStep.SubSteps)
+                {
+                    VerifyTypeDatas(subStep, typeDatas);
+                }
+            }
+            else
+            {
+                FunctionData functionData = sequenceStep.Function as FunctionData;
+                if (null == functionData)
+                {
+                    return;
+                }
+                if (Constants.UnverifiedTypeIndex != functionData.ClassTypeIndex)
+                {
+                    functionData.ClassType = typeDatas[functionData.ClassTypeIndex];
+                }
+                Argument returnType = functionData.ReturnType as Argument;
+                if (null != returnType && Constants.UnverifiedTypeIndex != returnType.TypeIndex)
+                {
+                    returnType.Type = typeDatas[returnType.TypeIndex];
+                }
+                foreach (IArgument rawArgument in functionData.ParameterType)
+                {
+                    Argument argument = rawArgument as Argument;
+                    if (Constants.UnverifiedTypeIndex != argument.TypeIndex)
+                    {
+                        argument.Type = typeDatas[argument.TypeIndex];
+                    }
+                }
+            }
+        }
+
+        private static void VerifyTypeDatas(IArgumentCollection variables, ITypeDataCollection typeDatas)
+        {
+            foreach (IArgument rawArguments in variables)
+            {
+                Argument argument = rawArguments as Argument;
+                if (Constants.UnverifiedTypeIndex != argument.TypeIndex)
+                {
+                    argument.Type = typeDatas[argument.TypeIndex];
+                }
+            }
+        }
+
+        private static void VerifyTypeDatas(IVariableCollection variables, ITypeDataCollection typeDatas)
+        {
+            foreach (IVariable rawVariable in variables)
+            {
+                Variable variable = rawVariable as Variable;
+                if (Constants.UnverifiedTypeIndex != variable.TypeIndex)
+                {
+                    variable.Type = typeDatas[variable.TypeIndex];
+                }
             }
         }
 
