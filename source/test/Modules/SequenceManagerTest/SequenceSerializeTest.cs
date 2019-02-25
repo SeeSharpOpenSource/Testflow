@@ -20,6 +20,10 @@ namespace Testflow.SequenceManagerTest
     [TestClass]
     public class SequenceSerializeTest
     {
+        public const string TestProjectPath = @"D:\testflow\test.tfproj";
+        public const string SequenceGroupPath = @"D:\testflow\SequenceGroup1\SequenceGroup1.tfseq";
+        public const string ParameterPath = @"D:\testflow\SequenceGroup1\SequenceGroup1.tfparam";
+
         public SequenceSerializeTest()
         {
             _sequenceManager = SequenceManager.SequenceManager.GetInstance();
@@ -157,7 +161,7 @@ namespace Testflow.SequenceManagerTest
                 Name = "LoopCounterDemo"
             };
 
-            _sequenceManager.Serialize(testProject, SerializationTarget.File, @"D:\testflow\test.tfproj");
+            _sequenceManager.Serialize(testProject, SerializationTarget.File, TestProjectPath);
         }
 
         [TestMethod]
