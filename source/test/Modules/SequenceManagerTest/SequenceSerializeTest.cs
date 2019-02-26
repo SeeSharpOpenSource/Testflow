@@ -2,6 +2,7 @@
 using System.Text;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Testflow.Common;
 using Testflow.Data;
@@ -11,6 +12,7 @@ using Testflow.Modules;
 using Testflow.SequenceManager;
 using Testflow.SequenceManager.SequenceElements;
 using Testflow.Utility.Collections;
+using Moq;
 
 namespace Testflow.SequenceManagerTest
 {
@@ -26,6 +28,12 @@ namespace Testflow.SequenceManagerTest
 
         public SequenceSerializeTest()
         {
+            Type runnerType = typeof(TestflowRunner);
+            TestflowRunnerOptions option = new TestflowRunnerOptions();
+            FieldInfo fieldInfo = runnerType.GetField("_runnerInst", BindingFlags.Static | BindingFlags.NonPublic);
+            FakeTestflowRunner fakeTestflowRunner = new FakeTestflowRunner(option);
+            fieldInfo.SetValue(null, fakeTestflowRunner);
+
             _sequenceManager = SequenceManager.SequenceManager.GetInstance();
             _configData = new TestConfigData();
             _configData.InitExtendProperties();
@@ -83,7 +91,6 @@ namespace Testflow.SequenceManagerTest
             ISequenceGroup sequenceGroup3 = _sequenceManager.CreateSequenceGroup();
             sequenceGroup1.Initialize(testProject);
             testProject.SequenceGroups.Add(sequenceGroup1);
-
 
             sequenceGroup2.Initialize(testProject);
             testProject.SequenceGroups.Add(sequenceGroup2);

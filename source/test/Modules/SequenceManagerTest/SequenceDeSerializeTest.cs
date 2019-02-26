@@ -1,16 +1,11 @@
 ﻿using System;
-using System.Text;
-using System.Collections.Generic;
-using System.Linq;
+using System.Reflection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Testflow.Common;
 using Testflow.Data;
-using Testflow.Data.Description;
 using Testflow.Data.Sequence;
-using Testflow.Modules;
 using Testflow.SequenceManager.SequenceElements;
 using Testflow.SequenceManager.Serializer;
-using Testflow.Utility.Collections;
 
 namespace Testflow.SequenceManagerTest
 {
@@ -26,6 +21,12 @@ namespace Testflow.SequenceManagerTest
 
         public SequenceDeserializeTest()
         {
+            Type runnerType = typeof(TestflowRunner);
+            TestflowRunnerOptions option = new TestflowRunnerOptions();
+            FieldInfo fieldInfo = runnerType.GetField("_runnerInst", BindingFlags.Static | BindingFlags.NonPublic);
+            FakeTestflowRunner fakeTestflowRunner = new FakeTestflowRunner(option);
+            fieldInfo.SetValue(null, fakeTestflowRunner);
+
             _sequenceManager = SequenceManager.SequenceManager.GetInstance();
             _configData = new TestConfigData();
             _configData.InitExtendProperties();
