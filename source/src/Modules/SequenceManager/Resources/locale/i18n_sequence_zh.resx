@@ -129,6 +129,9 @@
   <data name="InvalidModelVersion" xml:space="preserve">
     <value>非法的模型版本号{0}。</value>
   </data>
+  <data name="UndeclaredVariable" xml:space="preserve">
+    <value> 序列”{1}“使用了未经声明的变量”{0}“。</value>
+  </data>
   <data name="UnmatchedData" xml:space="preserve">
     <value>序列信息和序列参数配置不匹配。</value>
   </data>

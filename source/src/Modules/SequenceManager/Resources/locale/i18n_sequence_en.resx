@@ -129,6 +129,9 @@
   <data name="InvalidModelVersion" xml:space="preserve">
     <value>Invalid model version:{0}.</value>
   </data>
+  <data name="UndeclaredVariable" xml:space="preserve">
+    <value>Undeclared variable '{0}' in sequence {1}.</value>
+  </data>
   <data name="UnmatchedData" xml:space="preserve">
     <value>The sequence infomation and sequence parameters are unmatched.</value>
   </data>

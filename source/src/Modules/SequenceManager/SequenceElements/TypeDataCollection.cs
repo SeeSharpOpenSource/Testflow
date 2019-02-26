@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Testflow.Data;
 using Testflow.Data.Sequence;
 using Testflow.SequenceManager.Common;
@@ -72,6 +73,18 @@ namespace Testflow.SequenceManager.SequenceElements
         public void RemoveAt(int index)
         {
             this._innerCollection.RemoveAt(index);
+        }
+
+        public ITypeData GetTypeData(string typeName, string namespaceStr = null)
+        {
+            if (string.IsNullOrWhiteSpace(namespaceStr))
+            {
+                return _innerCollection.FirstOrDefault(item => item.Name.Equals(typeName));
+            }
+            else
+            {
+                return _innerCollection.FirstOrDefault(item => namespaceStr.Equals($"{namespaceStr}.{item.Name}"));
+            }
         }
 
         public ITypeData this[int index]

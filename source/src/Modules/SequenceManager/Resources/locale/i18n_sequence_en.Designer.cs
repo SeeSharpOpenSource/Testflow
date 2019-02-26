@@ -97,6 +97,15 @@ namespace Testflow.SequenceManager.Resources.locale {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Undeclared variable &apos;{0}&apos; in sequence {1}..
+        /// </summary>
+        internal static string UndeclaredVariable {
+            get {
+                return ResourceManager.GetString("UndeclaredVariable", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The sequence infomation and sequence parameters are unmatched..
         /// </summary>
         internal static string UnmatchedData {

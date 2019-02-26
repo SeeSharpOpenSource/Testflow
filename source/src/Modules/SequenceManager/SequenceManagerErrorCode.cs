@@ -15,5 +15,7 @@
         public const int UnmatchedFileHash = -805;
 
         public const int TypeDataError = -806;
+
+        public const int VariableError = -807;
     }
 }

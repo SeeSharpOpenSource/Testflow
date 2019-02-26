@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Testflow.Common;
 using Testflow.Data;
@@ -13,7 +14,7 @@ namespace Testflow.SequenceManager
 {
     internal class TypeMaintainer
     {
-        private IComInterfaceManager _comInterfaceManager;
+        private readonly IComInterfaceManager _comInterfaceManager;
 
         public TypeMaintainer()
         {
@@ -26,7 +27,10 @@ namespace Testflow.SequenceManager
         /// </summary>
         public void VerifyVariableTypes(ITestProject testProject)
         {
-            
+            VariableTreeTable variableTree = new VariableTreeTable(null);
+            variableTree.Push(testProject.Variables);
+            VerifyVariableTypes(testProject.SetUp, variableTree);
+            VerifyVariableTypes(testProject.TearDown, variableTree);
         }
         
         /// <summary>
@@ -34,24 +38,215 @@ namespace Testflow.SequenceManager
         /// </summary>
         public void VerifyVariableTypes(ISequenceGroup sequenceGroup)
         {
+            VariableTreeTable variableTree = new VariableTreeTable(sequenceGroup.Arguments);
+            variableTree.Push(sequenceGroup.Variables);
+            VerifyVariableTypes(sequenceGroup.SetUp, variableTree);
+            VerifyVariableTypes(sequenceGroup.TearDown, variableTree);
+        }
 
+        private void VerifyVariableTypes(ISequence sequence, VariableTreeTable variableTree)
+        {
+            variableTree.Push(sequence.Variables);
+            foreach (ISequenceStep sequenceStep in sequence.Steps)
+            {
+                VerifyVariableTypes(sequenceStep, variableTree);
+            }
+            variableTree.Pop();
+        }
+
+        private void VerifyVariableTypes(ISequenceStep sequenceStep, VariableTreeTable variableTree)
+        {
+            if (!string.IsNullOrWhiteSpace(sequenceStep.LoopCounter?.CounterVariable))
+            {
+                Type varType = typeof(int);
+                ITypeData typeData = _comInterfaceManager.GetTypeByName(varType.Name, varType.Namespace);
+                IVariable variable = variableTree.GetVariable(sequenceStep.LoopCounter.CounterVariable);
+                // Argument不能作为遍历变量
+                if (null != variable)
+                {
+                    variable.Type = typeData;
+                }
+                else
+                {
+                    ThrowIfVariableNotFound(sequenceStep.LoopCounter.CounterVariable, sequenceStep);
+                }
+            }
+
+            if (!string.IsNullOrWhiteSpace(sequenceStep.RetryCounter?.CounterVariable))
+            {
+                Type varType = typeof(int);
+                ITypeData typeData = _comInterfaceManager.GetTypeByName(varType.Name, varType.Namespace);
+                IVariable variable = variableTree.GetVariable(sequenceStep.RetryCounter.CounterVariable);
+                // Argument不能作为遍历变量
+                if (null != variable)
+                {
+                    variable.Type = typeData;
+                }
+                else
+                {
+                    ThrowIfVariableNotFound(sequenceStep.RetryCounter.CounterVariable, sequenceStep);
+                }
+            }
+
+            if (sequenceStep.HasSubSteps)
+            {
+                foreach (ISequenceStep subStep in sequenceStep.SubSteps)
+                {
+                    VerifyVariableTypes(subStep, variableTree);
+                }
+            }
+            else if (null != sequenceStep.Function)
+            {
+                IFunctionData functionData = sequenceStep.Function;
+                if (string.IsNullOrWhiteSpace(functionData.Instance))
+                {
+                    SetVariableAndArgumentType(functionData.Instance, functionData.ClassType, variableTree, sequenceStep);
+                }
+                if (string.IsNullOrWhiteSpace(functionData.Return))
+                {
+                    SetVariableAndArgumentType(functionData.Return, functionData.ReturnType.Type, variableTree, sequenceStep);
+                }
+                for (int i = 0; i < functionData.ParameterType.Count; i++)
+                {
+                    IParameterData parameterValue = functionData.Parameters[i];
+                    if (parameterValue.ParameterType == ParameterType.Variable && 
+                        string.IsNullOrWhiteSpace(parameterValue.Value))
+                    {
+                        SetVariableAndArgumentType(parameterValue.Value, functionData.ParameterType[i].Type, variableTree,
+                            sequenceStep);
+                    }
+                }
+            }
+        }
+
+        public void SetVariableAndArgumentType(string variableName, ITypeData type, VariableTreeTable variableTree, 
+            ISequenceFlowContainer parent)
+        {
+            IVariable variable;
+            IArgument argument;
+            if (null != (variable = variableTree.GetVariable(variableName)))
+            {
+                variable.Type = type;
+            }
+            else if (null != (argument = variableTree.GetArgument(variableName)))
+            {
+                argument.Type = type;
+            }
+            else
+            {
+                ThrowIfVariableNotFound(variableName, parent);
+            }
+        }
+
+        private void ThrowIfVariableNotFound(string variableName, ISequenceFlowContainer parent)
+        {
+            LogService logService = LogService.GetLogService();
+            logService.Print(LogLevel.Warn, CommonConst.PlatformLogSession, 0,
+                $"Undeclared variable '{0}' in sequence '{parent.Name}'");
+            I18N i18N = I18N.GetInstance(Constants.I18nName);
+            throw new TestflowDataException(SequenceManagerErrorCode.VariableError,
+                i18N.GetFStr("UndeclaredVariable", variableName, parent.Name));
         }
 
         /// <summary>
         /// 初始化变量和参数的类型数据
         /// </summary>
-        public void VerifyVariableTypes(ISequenceFlowContainer flowContainer, IVariable variable)
+        public bool VerifyVariableType(ISequenceFlowContainer flowContainer, IVariable variable, TypeDataCollection typeDatas)
         {
+            if (flowContainer is ITestProject)
+            {
+                ITestProject testProject = flowContainer as ITestProject;
+                return VerifyVariableInSequence(testProject.SetUp, variable, typeDatas) ||
+                       VerifyVariableInSequence(testProject.TearDown, variable, typeDatas);
 
+            }
+            else if (flowContainer is ISequenceGroup)
+            {
+                ISequenceGroup sequenceGroup = flowContainer as ISequenceGroup;
+                if (VerifyVariableInSequence(sequenceGroup.SetUp, variable, typeDatas) ||
+                    VerifyVariableInSequence(sequenceGroup.TearDown, variable, typeDatas))
+                {
+                    return true;
+                }
+                return sequenceGroup.Sequences.Any(sequence => VerifyVariableInSequence(sequence, variable, typeDatas));
+            }
+            else if (flowContainer is ISequence)
+            {
+                return VerifyVariableInSequence(flowContainer as ISequence, variable, typeDatas);
+            }
+            else if (flowContainer is ISequenceStep)
+            {
+                return VerifyVariableInSequenceStep(flowContainer as ISequenceStep, variable, typeDatas);
+            }
+            return false;
         }
         
-        /// <summary>
-        /// 初始化变量和参数的类型数据
-        /// </summary>
-        public void VerifyVariableTypes(ISequenceFlowContainer flowContainer, IArgument argument)
+        private bool VerifyVariableInSequence(ISequence sequence, IVariable variable, TypeDataCollection typeDatas)
         {
-
+            if (sequence.Variables.Any(var => var.Name.Equals(variable.Name)))
+            {
+                return false;
+            }
+            foreach (ISequenceStep sequenceStep in sequence.Steps)
+            {
+                bool verified = VerifyVariableInSequenceStep(sequenceStep, variable, typeDatas);
+                if (verified)
+                {
+                    return true;
+                }
+            }
+            return false;
         }
+
+        private bool VerifyVariableInSequenceStep(ISequenceStep sequenceStep, IVariable variable, TypeDataCollection typeDatas)
+        {
+            if ((null != sequenceStep.LoopCounter && variable.Name.Equals(sequenceStep.LoopCounter.CounterVariable)) ||
+                    (null != sequenceStep.RetryCounter) && variable.Name.Equals(sequenceStep.RetryCounter.CounterVariable))
+            {
+                Type varType = typeof(int);
+                ITypeData typeData = typeDatas.GetTypeData(varType.Name);
+                if (null == typeData)
+                {
+                    variable.Type = _comInterfaceManager.GetTypeByName(varType.Name, varType.Namespace);
+                }
+                return true;
+            }
+            if (sequenceStep.HasSubSteps)
+            {
+                foreach (ISequenceStep subStep in sequenceStep.SubSteps)
+                {
+                    bool verified = VerifyVariableInSequenceStep(subStep, variable, typeDatas);
+                    if (verified)
+                    {
+                        return true;
+                    }
+                }
+            }
+            else if (null != sequenceStep.Function)
+            {
+                IFunctionData functionData = sequenceStep.Function;
+                if (variable.Name.Equals(functionData.Instance))
+                {
+                    variable.Type = functionData.ClassType;
+                    return true;
+                }
+                if (variable.Name.Equals(functionData.Return))
+                {
+                    variable.Type = functionData.ReturnType.Type;
+                    return true;
+                }
+                IParameterData parameter = functionData.Parameters.FirstOrDefault
+                    (item => item.ParameterType == ParameterType.Variable && variable.Name.Equals(item.Value));
+                if (null != parameter)
+                {
+                    variable.Type = functionData.ParameterType[parameter.Index].Type;
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        #region 更新TypeDatas和Assemblies，删除无用的、增加被依赖的
 
         public void RefreshUsedAssemblyAndType(ITestProject testProject)
         {
@@ -183,15 +378,18 @@ namespace Testflow.SequenceManager
                 if (null == assemblyInfo)
                 {
                     LogService logService = LogService.GetLogService();
-                    logService.Print(LogLevel.Error, CommonConst.PlatformLogSession, 0, 
+                    logService.Print(LogLevel.Error, CommonConst.PlatformLogSession, 0,
                         $"Unloaded assembly '{assemblyName}' used.");
                     I18N i18N = I18N.GetInstance(Constants.I18nName);
-                    throw new TestflowDataException(SequenceManagerErrorCode.TypeDataError, 
+                    throw new TestflowDataException(SequenceManagerErrorCode.TypeDataError,
                         i18N.GetFStr("InvalidAssemblyUsed", assemblyName));
                 }
                 assemblies.Add(assemblyInfo);
             }
-            
+
         }
+
+        #endregion
+
     }
 }

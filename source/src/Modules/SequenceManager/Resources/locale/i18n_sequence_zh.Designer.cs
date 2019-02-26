@@ -97,6 +97,15 @@ namespace Testflow.SequenceManager.Resources.locale {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to  序列”{1}“使用了未经声明的变量”{0}“。.
+        /// </summary>
+        internal static string UndeclaredVariable {
+            get {
+                return ResourceManager.GetString("UndeclaredVariable", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to 序列信息和序列参数配置不匹配。.
         /// </summary>
         internal static string UnmatchedData {
