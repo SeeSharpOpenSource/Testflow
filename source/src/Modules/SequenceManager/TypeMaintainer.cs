@@ -31,6 +31,13 @@ namespace Testflow.SequenceManager
             variableTree.Push(testProject.Variables);
             VerifyVariableTypes(testProject.SetUp, variableTree);
             VerifyVariableTypes(testProject.TearDown, variableTree);
+            foreach (ISequenceGroup sequenceGroup in testProject.SequenceGroups)
+            {
+                if (null != sequenceGroup && sequenceGroup.Available)
+                {
+                    VerifyVariableTypes(sequenceGroup);
+                }
+            }
         }
         
         /// <summary>
@@ -258,10 +265,18 @@ namespace Testflow.SequenceManager
             RefreshUsedTypeDatas(testProject.TypeDatas, typeDatas);
 
             HashSet<string> assemblyNames = new HashSet<string>();
-            RefreshUsedAssemblies(testProject.Assemblies, assemblyNames);
             foreach (ITypeData typeData in typeDatas)
             {
                 assemblyNames.Add(typeData.AssemblyName);
+            }
+            RefreshUsedAssemblies(testProject.Assemblies, assemblyNames);
+
+            foreach (ISequenceGroup sequenceGroup in testProject.SequenceGroups)
+            {
+                if (null != sequenceGroup && sequenceGroup.Available)
+                {
+                    RefreshUsedAssemblyAndType(sequenceGroup);
+                }
             }
         }
 
@@ -280,11 +295,11 @@ namespace Testflow.SequenceManager
             RefreshUsedTypeDatas(sequenceGroup.TypeDatas, typeDatas);
 
             HashSet<string> assemblyNames = new HashSet<string>();
-            RefreshUsedAssemblies(sequenceGroup.Assemblies, assemblyNames);
             foreach (ITypeData typeData in typeDatas)
             {
                 assemblyNames.Add(typeData.AssemblyName);
             }
+            RefreshUsedAssemblies(sequenceGroup.Assemblies, assemblyNames);
         }
 
         private void AddVariableTypeDatas(HashSet<ITypeData> typeDatas, IVariableCollection variables)
@@ -342,7 +357,7 @@ namespace Testflow.SequenceManager
 
         private void RefreshUsedTypeDatas(ITypeDataCollection typeDatas, HashSet<ITypeData> usedTypeDatas)
         {
-            for (int i = typeDatas.Count - 1; i <= 0; i++)
+            for (int i = typeDatas.Count - 1; i >= 0; i++)
             {
                 if (usedTypeDatas.Contains(typeDatas[i]))
                 {
@@ -359,7 +374,7 @@ namespace Testflow.SequenceManager
 
         private void RefreshUsedAssemblies(IAssemblyInfoCollection assemblies, HashSet<string> usedAssembly)
         {
-            for (int i = assemblies.Count - 1; i <= 0; i++)
+            for (int i = assemblies.Count - 1; i >= 0; i++)
             {
                 if (usedAssembly.Contains(assemblies[i].AssemblyName))
                 {
@@ -374,7 +389,7 @@ namespace Testflow.SequenceManager
                 {
                     return;
                 }
-                assemblyInfo = _comInterfaceManager.GetComInterfaceByName(assemblyName).Assembly;
+                assemblyInfo = _comInterfaceManager.GetComInterfaceByName(assemblyName)?.Assembly;
                 if (null == assemblyInfo)
                 {
                     LogService logService = LogService.GetLogService();
