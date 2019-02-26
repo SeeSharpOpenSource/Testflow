@@ -119,7 +119,7 @@ namespace Testflow.SequenceManager
             }
         }
 
-        public void SetVariableAndArgumentType(string variableName, ITypeData type, VariableTreeTable variableTree, 
+        private void SetVariableAndArgumentType(string variableName, ITypeData type, VariableTreeTable variableTree, 
             ISequenceFlowContainer parent)
         {
             IVariable variable;
