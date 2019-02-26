@@ -16,6 +16,13 @@ namespace Testflow.Modules
         IComInterfaceDescription GetComInterfaceByName(string assemblyName);
 
         /// <summary>
+        /// 使用类型名获取TypeData
+        /// </summary>
+        /// <param name="typename">类型名称</param>
+        /// <param name="namespaceStr">命名空间</param>
+        ITypeData GetTypeByName(string typename, string namespaceStr);
+
+        /// <summary>
         /// 根据组件的索引号获取对应的接口描述信息
         /// </summary>
         /// <param name="componentId"></param>
