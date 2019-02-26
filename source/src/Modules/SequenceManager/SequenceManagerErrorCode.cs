@@ -13,5 +13,7 @@
         public const int InvalidModelVersion = -804;
 
         public const int UnmatchedFileHash = -805;
+
+        public const int TypeDataError = -806;
     }
 }

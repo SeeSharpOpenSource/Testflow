@@ -70,6 +70,15 @@ namespace Testflow.SequenceManager.Resources.locale {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Unregistered assembly &apos;{0}&apos; is used..
+        /// </summary>
+        internal static string InvalidAssemblyUsed {
+            get {
+                return ResourceManager.GetString("InvalidAssemblyUsed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Invalid file type..
         /// </summary>
         internal static string InvalidFileType {

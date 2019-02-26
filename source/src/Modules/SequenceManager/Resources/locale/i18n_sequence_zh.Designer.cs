@@ -70,6 +70,15 @@ namespace Testflow.SequenceManager.Resources.locale {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to 使用了未经加载的程序集： ”{0}“。.
+        /// </summary>
+        internal static string InvalidAssemblyUsed {
+            get {
+                return ResourceManager.GetString("InvalidAssemblyUsed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to 无效的文件类型。.
         /// </summary>
         internal static string InvalidFileType {
