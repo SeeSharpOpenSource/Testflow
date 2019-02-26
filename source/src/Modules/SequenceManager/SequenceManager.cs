@@ -16,6 +16,7 @@ namespace Testflow.SequenceManager
     {
         private static SequenceManager _instance = null;
         private static object _instLock = new object();
+        private readonly TypeMaintainer _typeMaintainer;
 
         public static SequenceManager GetInstance()
         {
@@ -45,6 +46,7 @@ namespace Testflow.SequenceManager
 
             this.ConfigData = null;
             this.Version = string.Empty;
+            _typeMaintainer = new TypeMaintainer();
         }
 
         public IModuleConfigData ConfigData { get; set; }
@@ -52,7 +54,7 @@ namespace Testflow.SequenceManager
 
         public void RuntimeInitialize()
         {
-            return;
+
         }
 
         public void DesigntimeInitialize()
@@ -149,12 +151,14 @@ namespace Testflow.SequenceManager
             return new AssemblyInfo();
         }
 
-        public void Serialize(ITestProject project, SerializationTarget target, params string[] param)
+        public void Serialize(ITestProject testProject, SerializationTarget target, params string[] param)
         {
             switch (target)
             {
                 case SerializationTarget.File:
-                    SequenceSerializer.Serialize(param[0], project as TestProject);
+                    _typeMaintainer.VerifyVariableTypes(testProject);
+                    _typeMaintainer.RefreshUsedAssemblyAndType(testProject);
+                    SequenceSerializer.Serialize(param[0], testProject as TestProject);
                     break;
                 case SerializationTarget.DataBase:
                     throw new NotImplementedException();
@@ -169,6 +173,8 @@ namespace Testflow.SequenceManager
             switch (target)
             {
                 case SerializationTarget.File:
+                    _typeMaintainer.VerifyVariableTypes(sequenceGroup);
+                    _typeMaintainer.RefreshUsedAssemblyAndType(sequenceGroup);
                     SequenceSerializer.Serialize(param[0], sequenceGroup as SequenceGroup);
                     break;
                 case SerializationTarget.DataBase:
@@ -221,7 +227,9 @@ namespace Testflow.SequenceManager
 
         public void LoadParameter(ISequenceGroup sequenceGroup, bool forceLoad, params string[] param)
         {
-
+            SequenceGroup sequenceGroupObj = sequenceGroup as SequenceGroup;
+            sequenceGroupObj.RefreshSignature();
+            SequenceDeserializer.LoadParameter(sequenceGroupObj, param[0], forceLoad);
         }
 
         public void Dispose()

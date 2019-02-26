@@ -73,6 +73,19 @@ namespace Testflow.SequenceManager.Serializer
             return sequenceGroup;
         }
 
+        public static void LoadParameter(SequenceGroup sequenceGroup, string filePath, bool forceLoad)
+        {
+            SequenceGroupParameter parameter = XmlReaderHelper.ReadSequenceGroupParameter(filePath);
+            if (!forceLoad && !sequenceGroup.Info.Hash.Equals(parameter.Info.Hash))
+            {
+                I18N i18N = I18N.GetInstance(Constants.I18nName);
+                throw new TestflowDataException(SequenceManagerErrorCode.UnmatchedFileHash, i18N.GetStr("UnmatchedHash"));
+            }
+            sequenceGroup.Parameters = parameter;
+            SetParameterToSequenceData(sequenceGroup, parameter);
+            VerifyTypeDatas(sequenceGroup);
+        }
+
         #endregion
 
         private static void SetParameterToSequenceData(ISequenceGroup sequenecGroup, ISequenceGroupParameter parameter)
