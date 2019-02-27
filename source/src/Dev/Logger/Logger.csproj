@@ -47,6 +47,7 @@
   <ItemGroup>
     <Compile Include="Constants.cs" />
     <Compile Include="ILogAppender.cs" />
+    <Compile Include="ModuleErrorCode.cs" />
     <Compile Include="PlatformLogSession.cs" />
     <Compile Include="LogMessage.cs" />
     <Compile Include="LogService.cs" />

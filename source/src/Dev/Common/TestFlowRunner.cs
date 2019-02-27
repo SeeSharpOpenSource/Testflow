@@ -61,7 +61,7 @@ namespace Testflow
                 if (null != _runnerInst)
                 {
                     I18N i18N = I18N.GetInstance(CommonConst.I18nName);
-                    throw new TestflowInternalException(TestflowErrorCode.InternalError, i18N.GetStr("PlatformNotInitialized"));
+                    throw new TestflowInternalException(CommonErrorCode.InternalError, i18N.GetStr("PlatformNotInitialized"));
                 }
             }
             return _runnerInst;

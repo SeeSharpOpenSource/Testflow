@@ -48,7 +48,7 @@ namespace Testflow.Logger
                     break;
                 default:
                     I18N i18N = I18N.GetInstance(Constants.I18NName);
-                    throw new TestflowRuntimeException(Constants.InvalidLogArgument, i18N.GetStr("InvalidLogArgument"));
+                    throw new TestflowRuntimeException(ModuleErrorCode.InvalidLogArgument, i18N.GetStr("InvalidLogArgument"));
                     break;
             }
         }
@@ -74,7 +74,7 @@ namespace Testflow.Logger
                     break;
                 default:
                     I18N i18N = I18N.GetInstance(Constants.I18NName);
-                    throw new TestflowRuntimeException(Constants.InvalidLogArgument, i18N.GetStr("InvalidLogArgument"));
+                    throw new TestflowRuntimeException(ModuleErrorCode.InvalidLogArgument, i18N.GetStr("InvalidLogArgument"));
                     break;
             }
         }

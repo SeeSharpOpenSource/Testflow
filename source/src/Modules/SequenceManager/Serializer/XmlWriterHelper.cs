@@ -142,7 +142,7 @@ namespace Testflow.SequenceManager.Serializer
             {
                 LogService logService = LogService.GetLogService();
                 logService.Print(LogLevel.Error, CommonConst.PlatformLogSession, 0, ex, ex.Message);
-                throw new TestflowRuntimeException(SequenceManagerErrorCode.SerializeFailed, ex.Message, ex);
+                throw new TestflowRuntimeException(ModuleErrorCode.SerializeFailed, ex.Message, ex);
             }
         }
 
@@ -157,7 +157,7 @@ namespace Testflow.SequenceManager.Serializer
             {
                 LogService logService = LogService.GetLogService();
                 logService.Print(LogLevel.Error, CommonConst.PlatformLogSession, 0, ex, ex.Message);
-                throw new TestflowRuntimeException(SequenceManagerErrorCode.SerializeFailed, ex.Message, ex);
+                throw new TestflowRuntimeException(ModuleErrorCode.SerializeFailed, ex.Message, ex);
             }
         }
     }

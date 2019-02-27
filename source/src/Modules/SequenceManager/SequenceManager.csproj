@@ -90,7 +90,7 @@
     <Compile Include="SequenceElements\VariableInitValueCollection.cs" />
     <Compile Include="SequenceManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SequenceManagerErrorCode.cs" />
+    <Compile Include="ModuleErrorCode.cs" />
     <Compile Include="Serializer\Convertor\EnumConvertor.cs" />
     <Compile Include="Serializer\Convertor\ValueConvertor.cs" />
     <Compile Include="Serializer\SequenceDeserializer.cs" />

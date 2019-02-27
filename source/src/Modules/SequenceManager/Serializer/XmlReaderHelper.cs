@@ -23,7 +23,7 @@ namespace Testflow.SequenceManager.Serializer
             if (!filePath.EndsWith($".{CommonConst.TestGroupFileExtension}"))
             {
                 I18N i18N = I18N.GetInstance(Constants.I18nName);
-                throw new TestflowDataException(SequenceManagerErrorCode.InvalidFileType, i18N.GetStr("InvalidFileType"));
+                throw new TestflowDataException(ModuleErrorCode.InvalidFileType, i18N.GetStr("InvalidFileType"));
             }
             XmlReader reader = null;
             try
@@ -50,13 +50,13 @@ namespace Testflow.SequenceManager.Serializer
             {
                 LogService logService = LogService.GetLogService();
                 logService.Print(LogLevel.Error, CommonConst.PlatformLogSession, 0, ex);
-                throw new TestflowDataException(SequenceManagerErrorCode.DeSerializeFailed, ex.Message, ex);
+                throw new TestflowDataException(ModuleErrorCode.DeSerializeFailed, ex.Message, ex);
             }
             catch (IOException ex)
             {
                 LogService logService = LogService.GetLogService();
                 logService.Print(LogLevel.Error, CommonConst.PlatformLogSession, 0, ex);
-                throw new TestflowRuntimeException(SequenceManagerErrorCode.DeSerializeFailed, ex.Message, ex);
+                throw new TestflowRuntimeException(ModuleErrorCode.DeSerializeFailed, ex.Message, ex);
             }
             finally
             {
@@ -70,7 +70,7 @@ namespace Testflow.SequenceManager.Serializer
             if (!filePath.EndsWith($".{CommonConst.SequenceFileExtension}"))
             {
                 I18N i18N = I18N.GetInstance(Constants.I18nName);
-                throw new TestflowDataException(SequenceManagerErrorCode.InvalidFileType, i18N.GetStr("InvalidFileType"));
+                throw new TestflowDataException(ModuleErrorCode.InvalidFileType, i18N.GetStr("InvalidFileType"));
             }
             XmlReader reader = null;
             try
@@ -97,13 +97,13 @@ namespace Testflow.SequenceManager.Serializer
             {
                 LogService logService = LogService.GetLogService();
                 logService.Print(LogLevel.Error, CommonConst.PlatformLogSession, 0, ex);
-                throw new TestflowDataException(SequenceManagerErrorCode.DeSerializeFailed, ex.Message, ex);
+                throw new TestflowDataException(ModuleErrorCode.DeSerializeFailed, ex.Message, ex);
             }
             catch (IOException ex)
             {
                 LogService logService = LogService.GetLogService();
                 logService.Print(LogLevel.Error, CommonConst.PlatformLogSession, 0, ex);
-                throw new TestflowRuntimeException(SequenceManagerErrorCode.DeSerializeFailed, ex.Message, ex);
+                throw new TestflowRuntimeException(ModuleErrorCode.DeSerializeFailed, ex.Message, ex);
             }
             finally
             {
@@ -116,7 +116,7 @@ namespace Testflow.SequenceManager.Serializer
             if (!filePath.EndsWith($".{CommonConst.SequenceDataFileExtension}"))
             {
                 I18N i18N = I18N.GetInstance(Constants.I18nName);
-                throw new TestflowDataException(SequenceManagerErrorCode.InvalidFileType, i18N.GetStr("InvalidFileType"));
+                throw new TestflowDataException(ModuleErrorCode.InvalidFileType, i18N.GetStr("InvalidFileType"));
             }
             XmlReader reader = null;
             try
@@ -143,13 +143,13 @@ namespace Testflow.SequenceManager.Serializer
             {
                 LogService logService = LogService.GetLogService();
                 logService.Print(LogLevel.Error, CommonConst.PlatformLogSession, 0, ex);
-                throw new TestflowDataException(SequenceManagerErrorCode.DeSerializeFailed, ex.Message, ex);
+                throw new TestflowDataException(ModuleErrorCode.DeSerializeFailed, ex.Message, ex);
             }
             catch (IOException ex)
             {
                 LogService logService = LogService.GetLogService();
                 logService.Print(LogLevel.Error, CommonConst.PlatformLogSession, 0, ex);
-                throw new TestflowRuntimeException(SequenceManagerErrorCode.DeSerializeFailed, ex.Message, ex);
+                throw new TestflowRuntimeException(ModuleErrorCode.DeSerializeFailed, ex.Message, ex);
             }
             finally
             {
@@ -216,7 +216,7 @@ namespace Testflow.SequenceManager.Serializer
                     !typeMapping.ContainsKey(propertyTypeName))
                 {
                     I18N i18N = I18N.GetInstance(Constants.I18nName);
-                    throw new TestflowDataException(SequenceManagerErrorCode.DeSerializeFailed, 
+                    throw new TestflowDataException(ModuleErrorCode.DeSerializeFailed, 
                         i18N.GetStr("IllegalFileData"));
                 }
                 object propertyObject = CreateTypeInstance(typeMapping, propertyTypeName);
@@ -345,7 +345,7 @@ namespace Testflow.SequenceManager.Serializer
             {
                 LogService logService = LogService.GetLogService();
                 logService.Print(LogLevel.Error, CommonConst.PlatformLogSession, 0, ex, ex.Message);
-                throw new TestflowRuntimeException(SequenceManagerErrorCode.SerializeFailed, ex.Message, ex);
+                throw new TestflowRuntimeException(ModuleErrorCode.SerializeFailed, ex.Message, ex);
             }
         }
 

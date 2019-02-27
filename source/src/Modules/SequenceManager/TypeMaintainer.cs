@@ -151,7 +151,7 @@ namespace Testflow.SequenceManager
             logService.Print(LogLevel.Warn, CommonConst.PlatformLogSession, 0,
                 $"Undeclared variable '{0}' in sequence '{parent.Name}'");
             I18N i18N = I18N.GetInstance(Constants.I18nName);
-            throw new TestflowDataException(SequenceManagerErrorCode.VariableError,
+            throw new TestflowDataException(ModuleErrorCode.VariableError,
                 i18N.GetFStr("UndeclaredVariable", variableName, parent.Name));
         }
 
@@ -396,7 +396,7 @@ namespace Testflow.SequenceManager
                     logService.Print(LogLevel.Error, CommonConst.PlatformLogSession, 0,
                         $"Unloaded assembly '{assemblyName}' used.");
                     I18N i18N = I18N.GetInstance(Constants.I18nName);
-                    throw new TestflowDataException(SequenceManagerErrorCode.TypeDataError,
+                    throw new TestflowDataException(ModuleErrorCode.TypeDataError,
                         i18N.GetFStr("InvalidAssemblyUsed", assemblyName));
                 }
                 assemblies.Add(assemblyInfo);

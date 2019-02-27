@@ -37,7 +37,7 @@ namespace Testflow.Common.I18nUtil
             I18NOption fitKey = _i18nEntities.Keys.First(option => i18nName.Equals(option.Name));
             if (null == fitKey)
             {
-                throw new TestflowRuntimeException(TestflowErrorCode.I18nRuntimeError, GetResourceItem("NotInitialized"));
+                throw new TestflowRuntimeException(CommonErrorCode.I18nRuntimeError, GetResourceItem("NotInitialized"));
             }
             return _i18nEntities[fitKey];
         }
@@ -94,7 +94,7 @@ namespace Testflow.Common.I18nUtil
             else
             {
                 string msgFormat = GetResourceItem("UnsupportedLanguage");
-                throw new TestflowRuntimeException(TestflowErrorCode.I18nRuntimeError, string.Format(msgFormat, languageName));
+                throw new TestflowRuntimeException(CommonErrorCode.I18nRuntimeError, string.Format(msgFormat, languageName));
             }
             string resourceFullName = null;
             // 修改国际化为使用反射获取资源文件配置
@@ -110,7 +110,7 @@ namespace Testflow.Common.I18nUtil
             if (null == resourceFullName)
             {
                 string msgFormat = GetResourceItem("ResourceNotExist");
-                throw new TestflowRuntimeException(TestflowErrorCode.I18nRuntimeError, string.Format(msgFormat, resourceShortName));
+                throw new TestflowRuntimeException(CommonErrorCode.I18nRuntimeError, string.Format(msgFormat, resourceShortName));
             }
             this._resourceManager = new ResourceManager(resourceFullName, option.Assembly);
         }
@@ -139,7 +139,7 @@ namespace Testflow.Common.I18nUtil
             if (null == msgFormat)
             {
                 string errFormat = GetResourceItem("ItemNotExist");
-                throw new TestflowRuntimeException(TestflowErrorCode.I18nRuntimeError, errFormat);
+                throw new TestflowRuntimeException(CommonErrorCode.I18nRuntimeError, errFormat);
             }
             return string.Format(msgFormat, param);
         }

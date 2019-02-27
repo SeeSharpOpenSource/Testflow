@@ -18,7 +18,7 @@ namespace Testflow.SequenceManager.Serializer
             if (!filePath.EndsWith($".{CommonConst.TestGroupFileExtension}"))
             {
                 I18N i18N = I18N.GetInstance(Constants.I18nName);
-                throw new TestflowRuntimeException(SequenceManagerErrorCode.InvalidFileType, i18N.GetStr("InvalidFileType"));
+                throw new TestflowRuntimeException(ModuleErrorCode.InvalidFileType, i18N.GetStr("InvalidFileType"));
             }
             TestProject testProject = null;
             testProject = XmlReaderHelper.ReadTestProject(filePath);
@@ -57,7 +57,7 @@ namespace Testflow.SequenceManager.Serializer
             if (!filePath.EndsWith($".{CommonConst.SequenceFileExtension}"))
             {
                 I18N i18N = I18N.GetInstance(Constants.I18nName);
-                throw new TestflowDataException(SequenceManagerErrorCode.InvalidFileType, i18N.GetStr("InvalidFileType"));
+                throw new TestflowDataException(ModuleErrorCode.InvalidFileType, i18N.GetStr("InvalidFileType"));
             }
             SequenceGroup sequenceGroup = XmlReaderHelper.ReadSequenceGroup(filePath);
             SequenceGroupParameter parameter =
@@ -65,7 +65,7 @@ namespace Testflow.SequenceManager.Serializer
             if (!forceLoad && !sequenceGroup.Info.Hash.Equals(parameter.Info.Hash))
             {
                 I18N i18N = I18N.GetInstance(Constants.I18nName);
-                throw new TestflowDataException(SequenceManagerErrorCode.UnmatchedFileHash, i18N.GetStr("UnmatchedHash"));
+                throw new TestflowDataException(ModuleErrorCode.UnmatchedFileHash, i18N.GetStr("UnmatchedHash"));
             }
             sequenceGroup.Parameters = parameter;
             SetParameterToSequenceData(sequenceGroup, parameter);
@@ -79,7 +79,7 @@ namespace Testflow.SequenceManager.Serializer
             if (!forceLoad && !sequenceGroup.Info.Hash.Equals(parameter.Info.Hash))
             {
                 I18N i18N = I18N.GetInstance(Constants.I18nName);
-                throw new TestflowDataException(SequenceManagerErrorCode.UnmatchedFileHash, i18N.GetStr("UnmatchedHash"));
+                throw new TestflowDataException(ModuleErrorCode.UnmatchedFileHash, i18N.GetStr("UnmatchedHash"));
             }
             sequenceGroup.Parameters = parameter;
             SetParameterToSequenceData(sequenceGroup, parameter);
@@ -99,7 +99,7 @@ namespace Testflow.SequenceManager.Serializer
                     logService.Print(LogLevel.Warn, CommonConst.PlatformLogSession, 0, 
                         $"Variable{variable.Name} {sequenecGroup.Name} value in parameter data is invalid.");
                     I18N i18N = I18N.GetInstance(Constants.I18nName);
-                    throw new TestflowDataException(SequenceManagerErrorCode.UnmatchedParameter, i18N.GetStr("UnmatchedData"));
+                    throw new TestflowDataException(ModuleErrorCode.UnmatchedParameter, i18N.GetStr("UnmatchedData"));
                 }
                 variable.Value = parameter.VariableValues[i].Value;
             }
@@ -123,7 +123,7 @@ namespace Testflow.SequenceManager.Serializer
                     logService.Print(LogLevel.Warn, CommonConst.PlatformLogSession, 0,
                         $"Variable{variable.Name} {sequenece.Name} value in parameter data is invalid.");
                     I18N i18N = I18N.GetInstance(Constants.I18nName);
-                    throw new TestflowDataException(SequenceManagerErrorCode.UnmatchedParameter, i18N.GetStr("UnmatchedData"));
+                    throw new TestflowDataException(ModuleErrorCode.UnmatchedParameter, i18N.GetStr("UnmatchedData"));
                 }
                 variable.Value = parameter.VariableValues[i].Value;
             }
@@ -255,7 +255,7 @@ namespace Testflow.SequenceManager.Serializer
                 int envVersionId = int.Parse(envVersionElem[i]);
                 if (versionId > envVersionId)
                 {
-                    throw new TestflowDataException(SequenceManagerErrorCode.InvalidModelVersion, 
+                    throw new TestflowDataException(ModuleErrorCode.InvalidModelVersion, 
                         i18N.GetStr("InvalidModelVersion"));
                 }
             }
@@ -263,7 +263,7 @@ namespace Testflow.SequenceManager.Serializer
             {
                 if (int.Parse(versionElem[i]) > 0)
                 {
-                    throw new TestflowDataException(SequenceManagerErrorCode.InvalidModelVersion,
+                    throw new TestflowDataException(ModuleErrorCode.InvalidModelVersion,
                         i18N.GetStr("InvalidModelVersion"));
                 }
             }

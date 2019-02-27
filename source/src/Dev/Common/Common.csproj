@@ -47,7 +47,7 @@
     <Compile Include="Common\IPropertyExtendable.cs" />
     <Compile Include="Common\LogLevel.cs" />
     <Compile Include="Common\ProgressIndicator.cs" />
-    <Compile Include="Common\TestflowErrorCode.cs" />
+    <Compile Include="Common\CommonErrorCode.cs" />
     <Compile Include="Data\ArgumentModifier.cs" />
     <Compile Include="Data\Description\IClassInterfaceDescription.cs" />
     <Compile Include="Data\Description\IDescriptionData.cs" />

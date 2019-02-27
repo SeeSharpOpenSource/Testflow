@@ -43,6 +43,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Collections\SerializableMap.cs" />
+    <Compile Include="ModuleErrorCode.cs" />
     <Compile Include="UtilityConstants.cs" />
     <Compile Include="I18nUtil\I18N.cs" />
     <Compile Include="I18nUtil\I18NOption.cs" />
