@@ -4,6 +4,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Testflow.Common;
 using Testflow.Data;
 using Testflow.Data.Sequence;
+using Testflow.SequenceManager;
 using Testflow.SequenceManager.SequenceElements;
 using Testflow.SequenceManager.Serializer;
 
@@ -18,6 +19,7 @@ namespace Testflow.SequenceManagerTest
         private const string TestProjectPath = @"D:\testflow\test.tfproj";
         private const string SequenceGroupPath = @"D:\testflow\SequenceGroup1\SequenceGroup1.tfseq";
         private const string ParameterPath = @"D:\testflow\SequenceGroup1\SequenceGroup1.tfparam";
+        private const string TestParameterPath = @"D:\testflow\SequenceGroupTest\SequenceGroup.tfparam";
 
         public SequenceDeserializeTest()
         {
@@ -240,6 +242,22 @@ namespace Testflow.SequenceManagerTest
             Assert.AreEqual(sequenceGroup.Sequences[0].Steps[0].Function.ReturnType.Type, sequenceGroup.TypeDatas[1]);
             Assert.AreEqual(sequenceGroup.Sequences[0].Steps[0].Function.ParameterType[0].Type, sequenceGroup.TypeDatas[1]);
             Assert.AreEqual(sequenceGroup.Sequences[0].Steps[0].Function.ParameterType[1].Type, sequenceGroup.TypeDatas[1]);
+        }
+
+        [TestMethod]
+        public void ParameterDeserializer()
+        {
+            ISequenceGroup sequenceGroup = _sequenceManager.LoadSequenceGroup(SerializationTarget.File, SequenceGroupPath);
+            try
+            {
+                _sequenceManager.LoadParameter(sequenceGroup, false, TestParameterPath);
+                Assert.Fail();
+            }
+            catch (TestflowDataException ex)
+            {
+                Assert.AreEqual(ex.ErrorCode, ModuleErrorCode.UnmatchedFileHash);
+            }
+            _sequenceManager.LoadParameter(sequenceGroup, true, TestParameterPath);
         }
     }
 }
