@@ -16,6 +16,8 @@ namespace Testflow.SequenceManager.Serializer
 
         public static void Serialize(string filePath, TestProject testProject)
         {
+            filePath = Common.Utility.GetAbsolutePath(filePath, Directory.GetCurrentDirectory());
+
             VerifySequenceData(testProject);
             List<string> serialziedFileList = new List<string>(10);
             try
@@ -29,16 +31,19 @@ namespace Testflow.SequenceManager.Serializer
                 for (int i = 0; i < testProject.SequenceGroups.Count; i++)
                 {
                     SequenceGroup sequenceGroup = testProject.SequenceGroups[i] as SequenceGroup;
-                    if (!Common.Utility.IsValidPath(sequenceGroup.Info.SequenceGroupFile))
+                    string sequenceGroupPath = Common.Utility.GetAbsolutePath(sequenceGroup.Info.SequenceGroupFile, filePath);
+                    string parameterFilePath = Common.Utility.GetAbsolutePath(sequenceGroup.Info.SequenceParamFile, sequenceGroupPath); ;
+                    if (!Common.Utility.IsValidFilePath(sequenceGroupPath))
                     {
-                        sequenceGroup.Info.SequenceGroupFile = Common.Utility.GetSequenceGroupPath(filePath, i);
-                        sequenceGroup.Info.SequenceParamFile =
-                            Common.Utility.GetParameterFilePath(sequenceGroup.Info.SequenceGroupFile);
+                        sequenceGroupPath = Common.Utility.GetSequenceGroupPath(filePath, i);
+                        sequenceGroup.Info.SequenceGroupFile = Common.Utility.GetRelativePath(sequenceGroupPath, filePath);
+                        parameterFilePath = Common.Utility.GetParameterFilePath(sequenceGroupPath);
+                        sequenceGroup.Info.SequenceParamFile = Common.Utility.GetRelativePath(parameterFilePath, sequenceGroupPath);
                     }
-                    else if (!Common.Utility.IsValidPath(sequenceGroup.Info.SequenceParamFile))
+                    else if (!Common.Utility.IsValidFilePath(parameterFilePath))
                     {
-                        sequenceGroup.Info.SequenceParamFile =
-                            Common.Utility.GetParameterFilePath(sequenceGroup.Info.SequenceGroupFile);
+                        parameterFilePath = Common.Utility.GetParameterFilePath(sequenceGroupPath);
+                        sequenceGroup.Info.SequenceParamFile = Common.Utility.GetRelativePath(parameterFilePath, sequenceGroupPath);
                     }
                     SequenceGroupParameter parameter = new SequenceGroupParameter();
                     parameter.Initialize(sequenceGroup);
@@ -47,17 +52,17 @@ namespace Testflow.SequenceManager.Serializer
                     sequenceGroup.RefreshSignature();
                     parameter.RefreshSignature(sequenceGroup);
                     // 创建sequenceGroupd的文件夹
-                    string directory = Common.Utility.GetSequenceGroupDirectory(sequenceGroup.Info.SequenceGroupFile);
+                    string directory = Common.Utility.GetSequenceGroupDirectory(sequenceGroupPath);
                     if (!Directory.Exists(directory))
                     {
                         Directory.CreateDirectory(directory);
                     }
 
-                    serialziedFileList.Add(sequenceGroup.Info.SequenceGroupFile);
-                    XmlWriterHelper.Write(sequenceGroup, sequenceGroup.Info.SequenceGroupFile);
+                    serialziedFileList.Add(sequenceGroupPath);
+                    XmlWriterHelper.Write(sequenceGroup, sequenceGroupPath);
 
-                    serialziedFileList.Add(sequenceGroup.Info.SequenceParamFile);
-                    XmlWriterHelper.Write(parameter, sequenceGroup.Info.SequenceParamFile);
+                    serialziedFileList.Add(parameterFilePath);
+                    XmlWriterHelper.Write(parameter, parameterFilePath);
                 }
             }
             catch (IOException ex)
@@ -74,6 +79,8 @@ namespace Testflow.SequenceManager.Serializer
 
         public static void Serialize(string filePath, SequenceGroup sequenceGroup)
         {
+            filePath = Common.Utility.GetAbsolutePath(filePath, Directory.GetCurrentDirectory());
+
             VerifySequenceData(sequenceGroup);
             sequenceGroup.Info.SequenceGroupFile = filePath;
             sequenceGroup.Info.SequenceParamFile = Common.Utility.GetParameterFilePath(filePath);
@@ -111,16 +118,21 @@ namespace Testflow.SequenceManager.Serializer
             for (int i = 0; i < sequenceGroups.Count; i++)
             {
                 ISequenceGroup sequenceGroup = sequenceGroups[i];
-                if (!Common.Utility.IsValidPath(sequenceGroup.Info.SequenceGroupFile))
+                string sequenceGroupPath = Common.Utility.GetAbsolutePath(sequenceGroup.Info.SequenceGroupFile,
+                    testProjectPath);
+                string parameterPath = Common.Utility.GetAbsolutePath(sequenceGroup.Info.SequenceParamFile,
+                    testProjectPath);
+                if (!Common.Utility.IsValidFilePath(sequenceGroupPath))
                 {
-                    sequenceGroup.Info.SequenceGroupFile = Common.Utility.GetSequenceGroupPath(testProjectPath, i);
-                    sequenceGroup.Info.SequenceParamFile =
-                        Common.Utility.GetParameterFilePath(sequenceGroup.Info.SequenceGroupFile);
+                    sequenceGroupPath = Common.Utility.GetSequenceGroupPath(testProjectPath, i);
+                    parameterPath = Common.Utility.GetParameterFilePath(sequenceGroupPath);
+                    sequenceGroup.Info.SequenceGroupFile = Common.Utility.GetRelativePath(sequenceGroupPath, testProjectPath);
+                    sequenceGroup.Info.SequenceParamFile = Common.Utility.GetRelativePath(parameterPath, sequenceGroupPath);
                 }
-                else if (!Common.Utility.IsValidPath(sequenceGroup.Info.SequenceParamFile))
+                else if (!Common.Utility.IsValidFilePath(sequenceGroup.Info.SequenceParamFile))
                 {
-                    sequenceGroup.Info.SequenceParamFile =
-                        Common.Utility.GetParameterFilePath(sequenceGroup.Info.SequenceGroupFile);
+                    parameterPath = Common.Utility.GetParameterFilePath(sequenceGroupPath);
+                    sequenceGroup.Info.SequenceParamFile = Common.Utility.GetRelativePath(parameterPath, sequenceGroupPath);
                 }
                 SequenceGroupLocationInfo locationInfo = new SequenceGroupLocationInfo()
                 {

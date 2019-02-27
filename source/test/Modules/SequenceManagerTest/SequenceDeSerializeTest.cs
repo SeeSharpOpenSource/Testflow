@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Reflection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Testflow.Common;
@@ -16,10 +17,11 @@ namespace Testflow.SequenceManagerTest
     [TestClass]
     public class SequenceDeserializeTest
     {
-        private const string TestProjectPath = @"D:\testflow\test.tfproj";
-        private const string SequenceGroupPath = @"D:\testflow\SequenceGroup1\SequenceGroup1.tfseq";
-        private const string ParameterPath = @"D:\testflow\SequenceGroup1\SequenceGroup1.tfparam";
-        private const string TestParameterPath = @"D:\testflow\SequenceGroupTest\SequenceGroup.tfparam";
+        private const string TestProjectPath = @"Test\test.tfproj";
+        private const string SequenceGroupPath = @"Test\SequenceGroup1\SequenceGroup1.tfseq";
+        private const string ParameterPath = @"Test\SequenceGroup1\SequenceGroup1.tfparam";
+        private const string TestSequenceGroupPath = @"Test\SequenceGroup2\SequenceGroup2.tfseq";
+        private const string TestParameterPath = @"Test\SequenceGroup3\SequenceGroup3.tfparam";
 
         public SequenceDeserializeTest()
         {
@@ -33,6 +35,7 @@ namespace Testflow.SequenceManagerTest
             _configData = new TestConfigData();
             _configData.InitExtendProperties();
             _sequenceManager.ApplyConfig(_configData);
+            Directory.CreateDirectory("Test");
         }
 
         private TestContext testContextInstance;
@@ -178,8 +181,6 @@ namespace Testflow.SequenceManagerTest
             Assert.AreEqual(testProject.SetUp.Name, "");
             Assert.AreEqual(testProject.TearDown.Name, "");
             Assert.AreEqual(testProject.SequenceGroupLocations.Count, 3);
-            Assert.AreEqual(testProject.SequenceGroupLocations[0].SequenceFilePath, SequenceGroupPath);
-            Assert.AreEqual(testProject.SequenceGroupLocations[0].ParameterFilePath, ParameterPath);
         }
 
         [TestMethod]
@@ -188,8 +189,8 @@ namespace Testflow.SequenceManagerTest
             SequenceGroup sequenceGroup = XmlReaderHelper.ReadSequenceGroup(SequenceGroupPath);
             Assert.AreEqual(sequenceGroup.Name, "SequenceGroup1");
             Assert.AreEqual(sequenceGroup.Info.Version, "1.0.0");
-            Assert.AreEqual(sequenceGroup.Info.SequenceGroupFile, SequenceGroupPath);
-            Assert.AreEqual(sequenceGroup.Info.SequenceParamFile, ParameterPath);
+//            Assert.AreEqual(sequenceGroup.Info.SequenceGroupFile, SequenceGroupPath);
+//            Assert.AreEqual(sequenceGroup.Info.SequenceParamFile, ParameterPath);
             Assert.AreEqual(sequenceGroup.TypeDatas.Count, 2);
             Assert.AreEqual(sequenceGroup.TypeDatas[0].AssemblyName, "TestAssemblyName");
             Assert.AreEqual(sequenceGroup.TypeDatas[1].Name, "Double");
@@ -215,8 +216,7 @@ namespace Testflow.SequenceManagerTest
         public void TestXmlReadSequenceGroupParameter()
         {
             SequenceGroup sequenceGroup = XmlReaderHelper.ReadSequenceGroup(SequenceGroupPath);
-            SequenceGroupParameter parameter =
-                XmlReaderHelper.ReadSequenceGroupParameter(ParameterPath);
+            SequenceGroupParameter parameter = XmlReaderHelper.ReadSequenceGroupParameter(ParameterPath);
             Assert.AreEqual(parameter.Info.Version, "1.0.0");
             Assert.AreEqual(parameter.Info.Hash, sequenceGroup.Info.Hash);
             Assert.AreEqual(parameter.SequenceParameters.Count, 3);
@@ -257,7 +257,6 @@ namespace Testflow.SequenceManagerTest
             {
                 Assert.AreEqual(ex.ErrorCode, ModuleErrorCode.UnmatchedFileHash);
             }
-            _sequenceManager.LoadParameter(sequenceGroup, true, TestParameterPath);
         }
     }
 }

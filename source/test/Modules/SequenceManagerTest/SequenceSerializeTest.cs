@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Text;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -22,9 +23,9 @@ namespace Testflow.SequenceManagerTest
     [TestClass]
     public class SequenceSerializeTest
     {
-        private const string TestProjectPath = @"D:\testflow\test.tfproj";
-        private const string SequenceGroupPath = @"D:\testflow\SequenceGroup1\SequenceGroup1.tfseq";
-        private const string ParameterPath = @"D:\testflow\SequenceGroup1\SequenceGroup1.tfparam";
+        private const string TestProjectPath = @"Test\test.tfproj";
+        private const string SequenceGroupPath = @"Test\SequenceGroup1\SequenceGroup1.tfseq";
+        private const string ParameterPath = @"Test\SequenceGroup1\SequenceGroup1.tfparam";
 
         public SequenceSerializeTest()
         {
@@ -38,6 +39,8 @@ namespace Testflow.SequenceManagerTest
             _configData = new TestConfigData();
             _configData.InitExtendProperties();
             _sequenceManager.ApplyConfig(_configData);
+
+            Directory.CreateDirectory("Test");
         }
 
         private TestContext testContextInstance;

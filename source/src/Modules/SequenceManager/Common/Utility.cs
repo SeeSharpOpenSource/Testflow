@@ -6,6 +6,7 @@ using System.Management;
 using System.Reflection;
 using System.Security.Cryptography;
 using System.Text;
+using System.Text.RegularExpressions;
 using Testflow.Common;
 using Testflow.Data.Sequence;
 using Testflow.SequenceManager.SequenceElements;
@@ -49,18 +50,18 @@ namespace Testflow.SequenceManager.Common
             return !string.IsNullOrWhiteSpace(name) && !existNames.Contains(name);
         }
 
-        public static bool IsValidPath(string filePath)
+        public static bool IsValidFilePath(string filePath)
         {
             if (string.IsNullOrWhiteSpace(filePath))
             {
                 return false;
             }
-            if (Directory.Exists(filePath))
+            if (File.Exists(filePath))
             {
                 return true;
             }
             int pathIndex = filePath.LastIndexOf(Path.DirectorySeparatorChar);
-            return Directory.Exists(filePath.Substring(0, pathIndex));
+            return Directory.Exists(filePath.Substring(0, pathIndex)) && IsFile(filePath);
         }
 
         public static string GetHashValue(string hashSource, Encoding encoding)
@@ -219,28 +220,6 @@ namespace Testflow.SequenceManager.Common
             }
         }
 
-        public static string GetParameterFilePath(string sequenceFilePath)
-        {
-            const char fileExtensionDelim = '.';
-            int delimIndex = sequenceFilePath.LastIndexOf(fileExtensionDelim);
-            return sequenceFilePath.Substring(0, delimIndex + 1) + CommonConst.SequenceDataFileExtension;
-        }
-
-        public static string GetSequenceGroupPath(string testProjectFilePath, int index)
-        {
-            int delimIndex = testProjectFilePath.LastIndexOf(Path.DirectorySeparatorChar);
-            string fileDirectory = testProjectFilePath.Substring(0, delimIndex + 1);
-            string sequenceGroupName = string.Format(Constants.SequenceGroupNameFormat, index + 1);
-            return $"{fileDirectory}{sequenceGroupName}{Path.DirectorySeparatorChar}{sequenceGroupName}.{CommonConst.SequenceFileExtension}";
-        }
-
-        public static string GetSequenceGroupDirectory(string testProjectFilePath)
-        {
-            int delimIndex = testProjectFilePath.LastIndexOf(Path.DirectorySeparatorChar);
-            string fileDirectory = testProjectFilePath.Substring(0, delimIndex + 1);
-            return fileDirectory;
-        }
-
         public static void RefreshTypeIndex(ITestProject testProject)
         {
             foreach (IVariable variable in testProject.Variables)
@@ -309,5 +288,201 @@ namespace Testflow.SequenceManager.Common
             Argument argumentObj = argument as Argument;
             argumentObj.TypeIndex = typeDataCollection.IndexOf(argumentObj.Type);
         }
+
+        public static string GetParameterFilePath(string sequenceFilePath)
+        {
+            const char fileExtensionDelim = '.';
+            int delimIndex = sequenceFilePath.LastIndexOf(fileExtensionDelim);
+            return sequenceFilePath.Substring(0, delimIndex + 1) + CommonConst.SequenceDataFileExtension;
+        }
+
+        public static string GetSequenceGroupPath(string testProjectFilePath, int index)
+        {
+            int delimIndex = testProjectFilePath.LastIndexOf(Path.DirectorySeparatorChar);
+            string fileDirectory = testProjectFilePath.Substring(0, delimIndex + 1);
+            string sequenceGroupName = string.Format(Constants.SequenceGroupNameFormat, index + 1);
+            return $"{fileDirectory}{sequenceGroupName}{Path.DirectorySeparatorChar}{sequenceGroupName}.{CommonConst.SequenceFileExtension}";
+        }
+
+        public static string GetSequenceGroupDirectory(string testProjectFilePath)
+        {
+            int delimIndex = testProjectFilePath.LastIndexOf(Path.DirectorySeparatorChar);
+            string fileDirectory = testProjectFilePath.Substring(0, delimIndex + 1);
+            return fileDirectory;
+        }
+
+        public static string GetAbsolutePath(string path, string referencePath)
+        {
+            // 取上级目录的字符串
+            const string parentDirStr = "..";
+            char dirDelim = Path.DirectorySeparatorChar;
+            string regexFormat = dirDelim.Equals('\\') ? 
+                $"^(([a-zA-z]:)?{dirDelim}{dirDelim})" : 
+                $"^(([a-zA-z]:)?{dirDelim})";
+            // 绝对路径匹配模式，如果匹配则path已经是绝对路径
+            Regex regex = new Regex(regexFormat);
+            if (0 != regex.Matches(path).Count)
+            {
+                return path;
+            }
+            if (0 == regex.Matches(referencePath).Count)
+            {
+                referencePath = GetAbsolutePath(referencePath, Directory.GetCurrentDirectory());
+            }
+            //如果不是已分隔符结尾说明相对路径是文件，需要切割为完整路径
+            if (IsFile(referencePath))
+            {
+                int index = referencePath.LastIndexOf(dirDelim);
+                referencePath = referencePath.Substring(0, index);
+            }
+            //如果目录结尾不包含文件夹分隔符则手动添加
+            if (referencePath.EndsWith(dirDelim.ToString()))
+            {
+                referencePath = referencePath.Remove(referencePath.Length - 1);
+            }
+            if (!path.StartsWith($"{parentDirStr}{dirDelim}"))
+            {
+                return referencePath + dirDelim + path;
+            }
+
+            bool isFilePath = IsFile(path);
+            string fileName = string.Empty;
+            if (isFilePath)
+            {
+                int index = path.LastIndexOf(dirDelim);
+                fileName = path.Substring(index + 1, path.Length - index - 1);
+                path = path.Substring(0, index);
+            }
+            // 如果最后一个是文件夹分隔符，则删除分隔符
+            if (path.EndsWith(dirDelim.ToString()))
+            {
+                path = path.Remove(referencePath.Length - 1, 1);
+            }
+            // 取上级目录的次数
+            int upLevelCount = 0;
+            StringBuilder absolutePath = new StringBuilder(100);
+            string[] pathElems = path.Split(dirDelim);
+            string[] refPathElems = referencePath.Split(dirDelim);
+            for (int i = 0; i < pathElems.Length; i++)
+            {
+                if (!parentDirStr.Equals(pathElems[i]))
+                {
+                    upLevelCount = i;
+                    break;
+                }
+            }
+            for (int i = 0; i < refPathElems.Length - upLevelCount; i++)
+            {
+                absolutePath.Append(refPathElems[i]).Append(dirDelim);
+            }
+            for (int i = upLevelCount; i < pathElems.Length; i++)
+            {
+                absolutePath.Append(pathElems[i]).Append(dirDelim);
+            }
+            // 如果PathElemes不是文件夹，删除最后一个分隔符
+//            if (pathElems.Length > 0 && !path.EndsWith(dirDelim.ToString()))
+            if (pathElems.Length > 0 && absolutePath.Length > 0)
+            {
+                absolutePath.Remove(absolutePath.Length - 1, 1);
+            }
+            if (isFilePath)
+            {
+                absolutePath.Append(dirDelim).Append(fileName);
+            }
+            return absolutePath.ToString();
+        }
+
+        public static string GetRelativePath(string path, string referencePath)
+        {
+            // 取上级目录的字符串
+            const string parentDirStr = "..";
+            char dirDelim = Path.DirectorySeparatorChar;
+            // 绝对路径匹配模式，如果匹配则path已经是绝对路径
+            string regexFormat = dirDelim.Equals('\\') ?
+                $"^(([a-zA-z]:)?{dirDelim}{dirDelim})" :
+                $"^(([a-zA-z]:)?{dirDelim})";
+            Regex regex = new Regex(regexFormat);
+            if (0 == regex.Matches(referencePath).Count)
+            {
+                referencePath = GetAbsolutePath(referencePath, Directory.GetCurrentDirectory());
+            }
+            //如果不是已分隔符结尾说明相对路径是文件，需要切割为完整路径
+            if (IsFile(referencePath))
+            {
+                int index = referencePath.LastIndexOf(dirDelim);
+                referencePath = referencePath.Substring(0, index);
+            }
+            // 如果最后一个是文件夹分隔符，则删除分隔符
+            if (referencePath.EndsWith(dirDelim.ToString()))
+            {
+                referencePath = referencePath.Remove(referencePath.Length - 1, 1);
+            }
+            bool isFilePath = IsFile(path);
+            string fileName = string.Empty;
+            if (isFilePath)
+            {
+                int index = path.LastIndexOf(dirDelim);
+                fileName = path.Substring(index + 1, path.Length - index - 1);
+                path = path.Substring(0, index);
+            }
+            // 如果最后一个是文件夹分隔符，则删除分隔符
+            if (path.EndsWith(dirDelim.ToString()))
+            {
+                path = path.Remove(referencePath.Length - 1, 1);
+            }
+
+            //path也是绝对路径
+            string[] pathElems = path.Split(dirDelim);
+            string[] refPathElems = referencePath.Split(dirDelim);
+            StringBuilder relativePath = new StringBuilder(100);
+            int checkLength = pathElems.Length > refPathElems.Length ? refPathElems.Length : pathElems.Length;
+            int diffIndex = checkLength;
+            for (int i = 0; i < checkLength; i++)
+            {
+                if (!pathElems[i].Equals(refPathElems[i]))
+                {
+                    diffIndex = i;
+                    break;
+                }
+            }
+            if (0 == diffIndex)
+            {
+                return path;
+            }
+            for (int refIndex = diffIndex; refIndex < refPathElems.Length; refIndex++)
+            {
+                relativePath.Append(parentDirStr).Append(dirDelim);
+            }
+            for (int pathIndex = diffIndex; pathIndex < pathElems.Length; pathIndex++)
+            {
+                relativePath.Append(pathElems[pathIndex]).Append(dirDelim);
+            }
+            // 删除最后一个分隔符
+//            if (pathElems.Length > 0 && !path.EndsWith(dirDelim.ToString()))
+            if (pathElems.Length > 0 && relativePath.Length > 0)
+            {
+                relativePath.Remove(relativePath.Length - 1, 1);
+            }
+            if (isFilePath)
+            {
+                if (relativePath.Length > 0)
+                {
+                    relativePath.Append(dirDelim);
+                }
+                relativePath.Append(fileName);
+            }
+            return relativePath.ToString();
+        }
+
+        public static bool IsFile(string path)
+        {
+            return path.Contains(".") || File.Exists(path);
+        }
+
+        public static bool IsDirectory(string path)
+        {
+            return Directory.Exists(path);
+        }
+
     }
 }
