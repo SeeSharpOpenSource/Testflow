@@ -41,7 +41,7 @@ namespace Testflow.SequenceManager.Serializer
                 }
                 else
                 {
-                    LogService logService = LogService.GetLogService();
+                    ILogService logService = TestflowRunner.GetInstance().LogService;
                     logService.Print(LogLevel.Warn, CommonConst.PlatformLogSession, 0, "Sequence group file not exist.");
                     sequenceGroup = new SequenceGroup();
                     sequenceGroup.Initialize(testProject);
@@ -102,7 +102,7 @@ namespace Testflow.SequenceManager.Serializer
                 IVariable variable = sequenecGroup.Variables[i];
                 if (!variable.Name.Equals(parameter.VariableValues[i].Value))
                 {
-                    LogService logService = LogService.GetLogService();
+                    ILogService logService = TestflowRunner.GetInstance().LogService;
                     logService.Print(LogLevel.Warn, CommonConst.PlatformLogSession, 0, 
                         $"Variable{variable.Name} {sequenecGroup.Name} value in parameter data is invalid.");
                     I18N i18N = I18N.GetInstance(Constants.I18nName);
@@ -126,7 +126,7 @@ namespace Testflow.SequenceManager.Serializer
                 IVariable variable = sequenece.Variables[i];
                 if (!variable.Name.Equals(parameter.VariableValues[i].Name))
                 {
-                    LogService logService = LogService.GetLogService();
+                    ILogService logService = TestflowRunner.GetInstance().LogService;
                     logService.Print(LogLevel.Warn, CommonConst.PlatformLogSession, 0,
                         $"Variable{variable.Name} {sequenece.Name} value in parameter data is invalid.");
                     I18N i18N = I18N.GetInstance(Constants.I18nName);

@@ -28,39 +28,33 @@ namespace Testflow.Logger
         private static readonly object _instLock = new object();
 
         /// <summary>
-        /// 获取LogService实例
+        /// 创建日志服务实例
         /// </summary>
-        public static LogService GetLogService()
+        public LogService()
         {
             if (null != _inst)
             {
-                return _inst;
+                I18N i18N = I18N.GetInstance(Constants.I18NName);
+                throw new TestflowRuntimeException(CommonErrorCode.InternalError, i18N.GetStr("InstAlreadyExist"));
             }
             lock (_instLock)
             {
                 Thread.MemoryBarrier();
                 if (null != _inst)
                 {
-                    return _inst;
+                    I18N i18N = I18N.GetInstance(Constants.I18NName);
+                    throw new TestflowRuntimeException(CommonErrorCode.InternalError, i18N.GetStr("InstAlreadyExist"));
                 }
-                _inst = new LogService();
+                _runtimeLogSessions = new Dictionary<int, LocalLogSession>(Constants.DefaultLogStreamSize);
+                I18NOption i18NOption = new I18NOption(this.GetType().Assembly, "i18n_logger_zh", "i18n_logger_en")
+                {
+                    Name = Constants.I18NName
+                };
+                _i18N = I18N.GetInstance(i18NOption);
+                _testflowInst = TestflowRunner.GetInstance();
+                _context = _testflowInst.Context;
+                _inst = this;
             }
-            return _inst;
-        }
-
-        /// <summary>
-        /// 创建日志服务实例
-        /// </summary>
-        private LogService()
-        {
-            _runtimeLogSessions = new Dictionary<int, LocalLogSession>(Constants.DefaultLogStreamSize);
-            I18NOption i18NOption = new I18NOption(this.GetType().Assembly, "i18n_logger_zh", "i18n_logger_en")
-            {
-                Name = Constants.I18NName
-            };
-            _i18N = I18N.GetInstance(i18NOption);
-            _testflowInst = TestflowRunner.GetInstance();
-            _context = _testflowInst.Context;
         }
 
         IModuleConfigData IController.ConfigData { get; set; }

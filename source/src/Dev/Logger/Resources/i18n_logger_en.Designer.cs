@@ -70,6 +70,15 @@ namespace Testflow.Logger.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to A log service instance already exist..
+        /// </summary>
+        internal static string InstAlreadyExist {
+            get {
+                return ResourceManager.GetString("InstAlreadyExist", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Invalid Logger argument..
         /// </summary>
         internal static string InvalidLogArgument {

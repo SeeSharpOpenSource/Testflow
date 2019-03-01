@@ -7,6 +7,7 @@ using System.Xml;
 using System.Xml.Serialization;
 using Testflow.Common;
 using Testflow.Logger;
+using Testflow.Modules;
 using Testflow.SequenceManager.Common;
 
 namespace Testflow.SequenceManager.Serializer
@@ -140,7 +141,7 @@ namespace Testflow.SequenceManager.Serializer
             }
             catch (IOException ex)
             {
-                LogService logService = LogService.GetLogService();
+                ILogService logService = TestflowRunner.GetInstance().LogService;
                 logService.Print(LogLevel.Error, CommonConst.PlatformLogSession, 0, ex, ex.Message);
                 throw new TestflowRuntimeException(ModuleErrorCode.SerializeFailed, ex.Message, ex);
             }
@@ -155,7 +156,7 @@ namespace Testflow.SequenceManager.Serializer
             }
             catch (IOException ex)
             {
-                LogService logService = LogService.GetLogService();
+                ILogService logService = TestflowRunner.GetInstance().LogService;
                 logService.Print(LogLevel.Error, CommonConst.PlatformLogSession, 0, ex, ex.Message);
                 throw new TestflowRuntimeException(ModuleErrorCode.SerializeFailed, ex.Message, ex);
             }

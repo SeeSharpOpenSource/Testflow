@@ -120,6 +120,9 @@
   <data name="IllegalFileData" xml:space="preserve">
     <value>Illegal data exist in sequence/parameter file.</value>
   </data>
+  <data name="InstAlreadyExist" xml:space="preserve">
+    <value>A sequence manager instance already exist.</value>
+  </data>
   <data name="InvalidAssemblyUsed" xml:space="preserve">
     <value>Unregistered assembly '{0}' is used.</value>
   </data>

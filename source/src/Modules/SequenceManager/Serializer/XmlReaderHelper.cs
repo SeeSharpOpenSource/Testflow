@@ -9,6 +9,7 @@ using Testflow.Common;
 using Testflow.Data;
 using Testflow.Data.Sequence;
 using Testflow.Logger;
+using Testflow.Modules;
 using Testflow.SequenceManager.Common;
 using Testflow.SequenceManager.SequenceElements;
 using Testflow.SequenceManager.Serializer.Convertor;
@@ -48,13 +49,13 @@ namespace Testflow.SequenceManager.Serializer
             }
             catch (ArgumentException ex)
             {
-                LogService logService = LogService.GetLogService();
+                ILogService logService = TestflowRunner.GetInstance().LogService;
                 logService.Print(LogLevel.Error, CommonConst.PlatformLogSession, 0, ex);
                 throw new TestflowDataException(ModuleErrorCode.DeSerializeFailed, ex.Message, ex);
             }
             catch (IOException ex)
             {
-                LogService logService = LogService.GetLogService();
+                ILogService logService = TestflowRunner.GetInstance().LogService;
                 logService.Print(LogLevel.Error, CommonConst.PlatformLogSession, 0, ex);
                 throw new TestflowRuntimeException(ModuleErrorCode.DeSerializeFailed, ex.Message, ex);
             }
@@ -95,13 +96,13 @@ namespace Testflow.SequenceManager.Serializer
             }
             catch (ArgumentException ex)
             {
-                LogService logService = LogService.GetLogService();
+                ILogService logService = TestflowRunner.GetInstance().LogService;
                 logService.Print(LogLevel.Error, CommonConst.PlatformLogSession, 0, ex);
                 throw new TestflowDataException(ModuleErrorCode.DeSerializeFailed, ex.Message, ex);
             }
             catch (IOException ex)
             {
-                LogService logService = LogService.GetLogService();
+                ILogService logService = TestflowRunner.GetInstance().LogService;
                 logService.Print(LogLevel.Error, CommonConst.PlatformLogSession, 0, ex);
                 throw new TestflowRuntimeException(ModuleErrorCode.DeSerializeFailed, ex.Message, ex);
             }
@@ -141,13 +142,13 @@ namespace Testflow.SequenceManager.Serializer
             }
             catch (ArgumentException ex)
             {
-                LogService logService = LogService.GetLogService();
+                ILogService logService = TestflowRunner.GetInstance().LogService;
                 logService.Print(LogLevel.Error, CommonConst.PlatformLogSession, 0, ex);
                 throw new TestflowDataException(ModuleErrorCode.DeSerializeFailed, ex.Message, ex);
             }
             catch (IOException ex)
             {
-                LogService logService = LogService.GetLogService();
+                ILogService logService = TestflowRunner.GetInstance().LogService;
                 logService.Print(LogLevel.Error, CommonConst.PlatformLogSession, 0, ex);
                 throw new TestflowRuntimeException(ModuleErrorCode.DeSerializeFailed, ex.Message, ex);
             }
@@ -343,7 +344,7 @@ namespace Testflow.SequenceManager.Serializer
             }
             catch (IOException ex)
             {
-                LogService logService = LogService.GetLogService();
+                ILogService logService = TestflowRunner.GetInstance().LogService;
                 logService.Print(LogLevel.Error, CommonConst.PlatformLogSession, 0, ex, ex.Message);
                 throw new TestflowRuntimeException(ModuleErrorCode.SerializeFailed, ex.Message, ex);
             }

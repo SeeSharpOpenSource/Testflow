@@ -18,35 +18,32 @@ namespace Testflow.SequenceManager
         private static object _instLock = new object();
         private readonly TypeMaintainer _typeMaintainer;
 
-        public static SequenceManager GetInstance()
+        public SequenceManager()
         {
             if (null != _instance)
             {
-                return _instance;
+                I18N i18N = I18N.GetInstance(Constants.I18nName);
+                throw new TestflowRuntimeException(CommonErrorCode.InternalError, i18N.GetStr("InstAlreadyExist"));
             }
             lock (_instLock)
             {
                 Thread.MemoryBarrier();
                 if (null != _instance)
                 {
-                    return _instance;
+                    I18N i18N = I18N.GetInstance(Constants.I18nName);
+                    throw new TestflowRuntimeException(CommonErrorCode.InternalError, i18N.GetStr("InstAlreadyExist"));
                 }
-                _instance = new SequenceManager();
-                return _instance;
+                I18NOption i18NOption = new I18NOption(this.GetType().Assembly, "i18n_sequence_zh", "i18n_sequence_en")
+                {
+                    Name = Constants.I18nName
+                };
+                I18N.InitInstance(i18NOption);
+
+                this.ConfigData = null;
+                this.Version = string.Empty;
+                _typeMaintainer = new TypeMaintainer();
+                _instance = this;
             }
-        }
-
-        private SequenceManager()
-        {
-            I18NOption i18NOption = new I18NOption(this.GetType().Assembly, "i18n_sequence_zh", "i18n_sequence_en")
-            {
-                Name = Constants.I18nName
-            };
-            I18N.InitInstance(i18NOption);
-
-            this.ConfigData = null;
-            this.Version = string.Empty;
-            _typeMaintainer = new TypeMaintainer();
         }
 
         public IModuleConfigData ConfigData { get; set; }

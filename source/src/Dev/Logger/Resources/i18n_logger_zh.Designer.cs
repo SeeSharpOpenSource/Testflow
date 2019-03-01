@@ -70,6 +70,15 @@ namespace Testflow.Logger.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to 已存在日志服务实例。.
+        /// </summary>
+        internal static string InstAlreadyExist {
+            get {
+                return ResourceManager.GetString("InstAlreadyExist", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to 非法的日志参数。.
         /// </summary>
         internal static string InvalidLogArgument {

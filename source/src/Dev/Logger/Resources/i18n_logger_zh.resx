@@ -120,6 +120,9 @@
   <data name="InitQueueFailed" xml:space="preserve">
     <value>初始化日志消息队列失败。</value>
   </data>
+  <data name="InstAlreadyExist" xml:space="preserve">
+    <value>已存在日志服务实例。</value>
+  </data>
   <data name="InvalidLogArgument" xml:space="preserve">
     <value>非法的日志参数。</value>
   </data>

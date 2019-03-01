@@ -120,6 +120,9 @@
   <data name="InitQueueFailed" xml:space="preserve">
     <value>Initialize log message queue failed.</value>
   </data>
+  <data name="InstAlreadyExist" xml:space="preserve">
+    <value>A log service instance already exist.</value>
+  </data>
   <data name="InvalidLogArgument" xml:space="preserve">
     <value>Invalid Logger argument.</value>
   </data>

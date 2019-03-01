@@ -147,7 +147,7 @@ namespace Testflow.SequenceManager
 
         private void ThrowIfVariableNotFound(string variableName, ISequenceFlowContainer parent)
         {
-            LogService logService = LogService.GetLogService();
+            ILogService logService = TestflowRunner.GetInstance().LogService;
             logService.Print(LogLevel.Warn, CommonConst.PlatformLogSession, 0,
                 $"Undeclared variable '{0}' in sequence '{parent.Name}'");
             I18N i18N = I18N.GetInstance(Constants.I18nName);
@@ -392,7 +392,7 @@ namespace Testflow.SequenceManager
                 assemblyInfo = _comInterfaceManager.GetComInterfaceByName(assemblyName)?.Assembly;
                 if (null == assemblyInfo)
                 {
-                    LogService logService = LogService.GetLogService();
+                    ILogService logService = TestflowRunner.GetInstance().LogService;
                     logService.Print(LogLevel.Error, CommonConst.PlatformLogSession, 0,
                         $"Unloaded assembly '{assemblyName}' used.");
                     I18N i18N = I18N.GetInstance(Constants.I18nName);

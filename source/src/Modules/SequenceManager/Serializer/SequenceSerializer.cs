@@ -5,6 +5,7 @@ using Testflow.Common;
 using Testflow.Data;
 using Testflow.Data.Sequence;
 using Testflow.Logger;
+using Testflow.Modules;
 using Testflow.SequenceManager.Common;
 using Testflow.SequenceManager.SequenceElements;
 
@@ -262,7 +263,7 @@ namespace Testflow.SequenceManager.Serializer
                     }
                     catch (IOException ex)
                     {
-                        LogService logService = LogService.GetLogService();
+                        ILogService logService = TestflowRunner.GetInstance().LogService;
                         logService.Print(LogLevel.Warn, CommonConst.PlatformLogSession, 0, ex, "Roll back file failed.");
                     }
                 }

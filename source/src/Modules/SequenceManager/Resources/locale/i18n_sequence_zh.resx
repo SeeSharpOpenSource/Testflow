@@ -120,6 +120,9 @@
   <data name="IllegalFileData" xml:space="preserve">
     <value>序列/数据文件中出现非法数据。</value>
   </data>
+  <data name="InstAlreadyExist" xml:space="preserve">
+    <value>已存在序列管理实例。</value>
+  </data>
   <data name="InvalidAssemblyUsed" xml:space="preserve">
     <value>使用了未经加载的程序集： ”{0}“。</value>
   </data>

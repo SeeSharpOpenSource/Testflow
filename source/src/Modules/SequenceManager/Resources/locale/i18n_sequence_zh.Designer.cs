@@ -70,6 +70,15 @@ namespace Testflow.SequenceManager.Resources.locale {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to 已存在序列管理实例。.
+        /// </summary>
+        internal static string InstAlreadyExist {
+            get {
+                return ResourceManager.GetString("InstAlreadyExist", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to 使用了未经加载的程序集： ”{0}“。.
         /// </summary>
         internal static string InvalidAssemblyUsed {

@@ -70,6 +70,15 @@ namespace Testflow.SequenceManager.Resources.locale {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to A sequence manager instance already exist..
+        /// </summary>
+        internal static string InstAlreadyExist {
+            get {
+                return ResourceManager.GetString("InstAlreadyExist", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Unregistered assembly &apos;{0}&apos; is used..
         /// </summary>
         internal static string InvalidAssemblyUsed {

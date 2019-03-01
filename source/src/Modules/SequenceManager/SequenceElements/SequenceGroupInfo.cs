@@ -10,7 +10,7 @@ namespace Testflow.SequenceManager.SequenceElements
     {
         public SequenceGroupInfo()
         {
-            SequenceManager sequenceManager = SequenceManager.GetInstance();
+            SequenceManager sequenceManager = new SequenceManager();
             this.Version = sequenceManager.Version;
             this._hash = string.Empty;
             this.CreationTime = DateTime.Now;

@@ -35,7 +35,7 @@ namespace Testflow.SequenceManagerTest
             FakeTestflowRunner fakeTestflowRunner = new FakeTestflowRunner(option);
             fieldInfo.SetValue(null, fakeTestflowRunner);
 
-            _sequenceManager = SequenceManager.SequenceManager.GetInstance();
+            _sequenceManager = new SequenceManager.SequenceManager();
             _configData = new TestConfigData();
             _configData.InitExtendProperties();
             _sequenceManager.ApplyConfig(_configData);
