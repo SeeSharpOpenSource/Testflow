@@ -40,7 +40,49 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Common\Constants.cs" />
+    <Compile Include="Common\ModuleUtil.cs" />
+    <Compile Include="Data\CallStack.cs" />
+    <Compile Include="EngineHandle.cs" />
+    <Compile Include="Events\EventsDispatcher.cs" />
+    <Compile Include="ModuleErrorCode.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Resources\locale\i18n_engineCore_en.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>i18n_engineCore_en.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Resources\locale\i18n_engineCore_zh.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>i18n_engineCore_zh.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Events\SessionEventHandle.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Dev\Common\Common.csproj">
+      <Project>{1681cdd7-0cc2-49d2-9e82-7b03b52db283}</Project>
+      <Name>Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Dev\Logger\Logger.csproj">
+      <Project>{dc3cd3de-1b8e-4847-b752-63352f35f1e2}</Project>
+      <Name>Logger</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Dev\Utility\Utility.csproj">
+      <Project>{35105702-e8d2-4465-a118-687b6c85c466}</Project>
+      <Name>Utility</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\locale\i18n_engineCore_en.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>i18n_engineCore_en.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\locale\i18n_engineCore_zh.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>i18n_engineCore_zh.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
