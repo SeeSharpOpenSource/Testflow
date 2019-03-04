@@ -9,6 +9,12 @@ namespace Testflow.Runtime
     public class RuntimeDelegate
     {
         /// <summary>
+        /// 测试生成过程中的委托
+        /// </summary>
+        /// <param name="generationInfo">测试生成状态信息</param>
+        public delegate void TestGenerationAction(ITestGenerationInfo generationInfo);
+
+        /// <summary>
         /// 状态数据获取后的委托
         /// </summary>
         /// <param name="statusInfo">获取的运行时状态信息</param>

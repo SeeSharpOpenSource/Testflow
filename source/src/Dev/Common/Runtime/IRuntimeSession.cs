@@ -28,6 +28,11 @@ namespace Testflow.Runtime
         #region Status相关事件
 
         /// <summary>
+        /// 整个测试工程的测试开始时触发
+        /// </summary>
+        event RuntimeDelegate.StatusReceivedAction TestStart;
+
+        /// <summary>
         /// Events raised when a sequence is start and host receive runtime stauts information. Asynchronous event.
         /// </summary>
         event RuntimeDelegate.StatusReceivedAction SequenceStarted;
