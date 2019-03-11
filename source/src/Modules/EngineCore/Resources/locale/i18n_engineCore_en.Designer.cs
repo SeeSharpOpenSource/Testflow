@@ -61,6 +61,24 @@ namespace Testflow.EngineCore.Resources.locale {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Event enqueue operation time out..
+        /// </summary>
+        internal static string EventEnqueueTimeOut {
+            get {
+                return ResourceManager.GetString("EventEnqueueTimeOut", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The event queue is overflow..
+        /// </summary>
+        internal static string EventQueueOverflow {
+            get {
+                return ResourceManager.GetString("EventQueueOverflow", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Incorrect delegate type &quot;{0}&quot;..
         /// </summary>
         internal static string IncorrectDelegate {

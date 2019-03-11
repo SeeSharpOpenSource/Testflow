@@ -61,6 +61,24 @@ namespace Testflow.EngineCore.Resources.locale {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to 事件入列超时。.
+        /// </summary>
+        internal static string EventEnqueueTimeOut {
+            get {
+                return ResourceManager.GetString("EventEnqueueTimeOut", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 事件队列已溢出。.
+        /// </summary>
+        internal static string EventQueueOverflow {
+            get {
+                return ResourceManager.GetString("EventQueueOverflow", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to 错误的委托类型：{0}。.
         /// </summary>
         internal static string IncorrectDelegate {

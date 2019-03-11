@@ -117,6 +117,12 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="EventEnqueueTimeOut" xml:space="preserve">
+    <value>事件入列超时。</value>
+  </data>
+  <data name="EventQueueOverflow" xml:space="preserve">
+    <value>事件队列已溢出。</value>
+  </data>
   <data name="IncorrectDelegate" xml:space="preserve">
     <value>错误的委托类型：{0}。</value>
   </data>
