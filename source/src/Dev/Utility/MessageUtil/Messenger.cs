@@ -43,7 +43,7 @@ namespace Testflow.Utility.MessageUtil
         }
 
         /// <summary>
-        /// 使用option获取已配置的信使类，如果不存在抛出异常
+        /// 使用option获取已配置的信使类
         /// </summary>
         public static Messenger GetMessenger(MessengerOption option)
         {
