@@ -10,7 +10,7 @@ namespace Testflow.Runtime
         /// <summary>
         /// 测试生成状态信息
         /// </summary>
-        IDictionary<int, ISequenceGenerationInfo> GenerationInfos { get; }
+        IList<ISequenceGenerationInfo> GenerationInfos { get; }
 
         /// <summary>
         /// 事件对应的SequenceGroup索引号

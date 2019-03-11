@@ -25,8 +25,8 @@ namespace Testflow.Runtime
         /// 测试序列组执行结束后的委托
         /// </summary>
         /// <param name="statistics">执行结束后的统计信息</param>
-        /// <param name="sequenceGroup">执行结束的sequenceGroup对象</param>
-        public delegate void TestSessionOverAction(ITestResultCollection statistics, ISequenceGroup sequenceGroup);
+        /// <param name="sequenceGroupIndex">执行结束的sequenceGroup的索引</param>
+        public delegate void TestSessionOverAction(ITestResultCollection statistics, int sequenceGroupIndex);
 
         /// <summary>
         /// 断点命中后的委托
