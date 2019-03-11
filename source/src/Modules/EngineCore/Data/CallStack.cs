@@ -17,6 +17,7 @@ namespace Testflow.EngineCore.Data
 
         public int SequenceGroupIndex { get; internal set; }
         public int SequenceIndex { get; internal set; }
+
         public IList<int> StepStack { get; internal set; }
 
         public static CallStack GetStack(ISequenceStep step)
