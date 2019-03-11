@@ -42,9 +42,21 @@
   <ItemGroup>
     <Compile Include="Common\Constants.cs" />
     <Compile Include="Common\ModuleUtil.cs" />
+    <Compile Include="Common\MQIgnoreAttribute.cs" />
+    <Compile Include="Common\SerializableList.cs" />
     <Compile Include="Data\CallStack.cs" />
+    <Compile Include="Data\EventInvokeInfo.cs" />
+    <Compile Include="Data\EventQueue.cs" />
+    <Compile Include="Data\GenerationData\SequenceGenerationInfo.cs" />
+    <Compile Include="Data\GenerationData\TestGenerationInfo.cs" />
+    <Compile Include="Data\RuntimeStatusInfo.cs" />
+    <Compile Include="Data\TestResultCollection.cs" />
     <Compile Include="EngineHandle.cs" />
     <Compile Include="Events\EventsDispatcher.cs" />
+    <Compile Include="Generators\ITestGenerator.cs" />
+    <Compile Include="Messages\MessageBase.cs" />
+    <Compile Include="Messages\StatusReceivedMessage.cs" />
+    <Compile Include="Messages\TestGenerationMessage.cs" />
     <Compile Include="ModuleErrorCode.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Resources\locale\i18n_engineCore_en.Designer.cs">
@@ -58,6 +70,8 @@
       <DependentUpon>i18n_engineCore_zh.resx</DependentUpon>
     </Compile>
     <Compile Include="Events\SessionEventHandle.cs" />
+    <Compile Include="RuntimeContainer\IRuntimeContainer.cs" />
+    <Compile Include="RuntimeEngine.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Dev\Common\Common.csproj">
@@ -73,7 +87,10 @@
       <Name>Utility</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Debugger\" />
+    <Folder Include="Generators\DotNetGenerator\" />
+  </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\locale\i18n_engineCore_en.resx">
       <Generator>ResXFileCodeGenerator</Generator>
