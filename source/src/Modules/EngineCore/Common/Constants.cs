@@ -1,14 +1,20 @@
-﻿namespace Testflow.EngineCore.Common
+﻿using System;
+
+namespace Testflow.EngineCore.Common
 {
     internal static class Constants
     {
         public const int DefaultRuntimeSize = 10;
         public const string I18nName = "engineCore";
+        public const int DefaultEventsQueueSize = 512;
+        public const int MaxEventsQueueSize = 12800;
 
         public const int UnverifiedSequenceIndex = -1;
 
         public const int TestProjectSessionId = -1;
+        public const int EventQueueTimeOut = 500;
 
+        public const string MsgQueueName = @".\Private$\TestflowEventQueue";
 
         #region 事件名称
 
