@@ -3,34 +3,50 @@ using System.Collections.Generic;
 using Testflow.Common;
 using Testflow.Data.Sequence;
 using Testflow.EngineCore.Common;
+using Testflow.EngineCore.Data;
 using Testflow.Runtime;
 using Testflow.Utility.I18nUtil;
+using Testflow.Utility.MessageUtil;
 
 namespace Testflow.EngineCore.Events
 {
     internal class EventsDispatcher
     {
         private readonly Dictionary<int, SessionEventHandle> _events;
+        private readonly Messenger _messenger;
 
-        public EventsDispatcher()
+        public EventsDispatcher(EventQueue eventQueue)
         {
             _events = new Dictionary<int, SessionEventHandle>(Constants.DefaultRuntimeSize);
+            this.AsyncDispatch = true;
+            // 不配置TargetType，因为每次都需要手动传入
+            MessengerOption option = new MessengerOption(Constants.MsgQueueName);
+            this._messenger = Messenger.GetMessenger(option);
         }
 
-        public void InitEventsHandler(ITestProject testProject)
-        {
-            _events.Add(Constants.TestProjectSessionId, new SessionEventHandle(Constants.TestProjectSessionId));
-            for (int i = 0; i < testProject.SequenceGroups.Count; i++)
-            {
-                _events.Add(i, new SessionEventHandle(i));
-            }
-        }
+        public bool AsyncDispatch { get; set; }
 
         public bool IsTestProjectEvent => _events.ContainsKey(Constants.TestProjectSessionId);
 
-        public void InitEventHander(ISequenceGroup sequenceGroup)
+        public void InitEventsHandler(ISequenceFlowContainer sequenceContainer)
         {
-            _events.Add(0, new SessionEventHandle(0));
+            if (sequenceContainer is ITestProject)
+            {
+                ITestProject testProject = (ITestProject)sequenceContainer;
+                _events.Add(Constants.TestProjectSessionId, new SessionEventHandle(Constants.TestProjectSessionId));
+                for (int i = 0; i < testProject.SequenceGroups.Count; i++)
+                {
+                    _events.Add(i, new SessionEventHandle(i));
+                }
+            }
+            else if (sequenceContainer is ISequenceGroup)
+            {
+                _events.Add(0, new SessionEventHandle(0));
+            }
+            else
+            {
+                throw new InvalidOperationException();
+            }
         }
 
         public void Register(Delegate callBack, int session, string eventName)
@@ -69,19 +85,17 @@ namespace Testflow.EngineCore.Events
             }
         }
 
-        private SessionEventHandle GetSessionEventHandle(int session)
+        public void Start()
         {
-            if (_events.ContainsKey(session) || null == _events[session])
-            {
-                I18N i18N = I18N.GetInstance(Constants.I18nName);
-                throw new TestflowRuntimeException(ModuleErrorCode.UnexistSession,
-                    i18N.GetFStr("UnexistSession", session.ToString()));
-            }
-            SessionEventHandle eventHandle = _events[session];
-            return eventHandle;
+            // TODO 
         }
 
-        public void InvokeEvent(string eventName, int sessionId, params object[] eventParams)
+        public void Stop()
+        {
+            // TODO
+        }
+
+        private void InvokeEvent(string eventName, int sessionId, params object[] eventParams)
         {
             SessionEventHandle eventHandle = GetSessionEventHandle(sessionId);
             switch (eventName)
@@ -121,6 +135,23 @@ namespace Testflow.EngineCore.Events
                         i18N.GetFStr("UnexistEvent", eventName));
                     break;
             }
+        }
+
+        public void Clear()
+        {
+            this._events.Clear();
+        }
+
+        private SessionEventHandle GetSessionEventHandle(int session)
+        {
+            if (_events.ContainsKey(session) || null == _events[session])
+            {
+                I18N i18N = I18N.GetInstance(Constants.I18nName);
+                throw new TestflowRuntimeException(ModuleErrorCode.UnexistSession,
+                    i18N.GetFStr("UnexistSession", session.ToString()));
+            }
+            SessionEventHandle eventHandle = _events[session];
+            return eventHandle;
         }
     }
 }

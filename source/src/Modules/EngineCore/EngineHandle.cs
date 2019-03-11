@@ -43,7 +43,6 @@ namespace Testflow.EngineCore
 
         public void RuntimeInitialize()
         {
-            throw new NotImplementedException();
         }
 
         public void DesigntimeInitialize()
