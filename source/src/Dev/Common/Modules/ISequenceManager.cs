@@ -151,6 +151,37 @@ namespace Testflow.Modules
         /// <param name="param">额外参数，如果是文件需要传入文件路径</param>
         void LoadParameter(ISequenceGroup sequenceGroup, bool forceLoad, params string[] param);
 
+        /// <summary>
+        /// 运行时序列化
+        /// </summary>
+        /// <param name="testProject">待序列化的TestProject</param>
+        string RuntimeSerialize(ITestProject testProject);
+
+        /// <summary>
+        /// 运行时序列化
+        /// </summary>
+        /// <param name="sequenceGroup">待序列化的SequenceGroup</param>
+        string RuntimeSerialize(ISequenceGroup sequenceGroup);
+
+        /// <summary>
+        /// 运行时序列化
+        /// </summary>
+        /// <param name="parameter">待序列化的Parameter</param>
+        string RuntimeSerialize(ISequenceGroupParameter parameter);
+
+        /// <summary>
+        /// 运行时反序列化
+        /// </summary>
+        /// <param name="testProjectStr">待反序列化的TestProject</param>
+        ITestProject RuntimeDeserialize(string testProjectStr);
+
+        /// <summary>
+        /// 运行时反序列化
+        /// </summary>
+        /// <param name="sequenceGroupStr">待反序列化的SequecneGroup</param>
+        /// <param name="parameterStr">待反序列化的Parameter</param>
+        ISequenceGroup RuntimeDeserialize(string sequenceGroupStr, string parameterStr);
+
         #endregion
 
     }
