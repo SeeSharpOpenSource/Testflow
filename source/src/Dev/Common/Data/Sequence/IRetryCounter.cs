@@ -6,7 +6,7 @@ namespace Testflow.Data.Sequence
     /// <summary>
     /// 重试计数器
     /// </summary>
-    public interface IRetryCounter : ICloneableClass<IRetryCounter>
+    public interface IRetryCounter : ICloneableClass<IRetryCounter>, ISequenceElement
     {
         /// <summary>
         /// 重试计数变量名称

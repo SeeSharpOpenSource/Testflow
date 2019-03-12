@@ -8,7 +8,7 @@ namespace Testflow.Data.Sequence
     /// <summary>
     /// 参数类，描述FunctionData的接口
     /// </summary>
-    public interface IArgument : ICloneableClass<IArgument>
+    public interface IArgument : ICloneableClass<IArgument>, ISequenceElement
     {
         /// <summary>
         /// 参数类

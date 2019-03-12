@@ -8,7 +8,7 @@ namespace Testflow.Data.Sequence
     /// <summary>
     /// 保存测试序列组相关信息的接口
     /// </summary>
-    public interface ISequenceGroupInfo : ICloneableClass<ISequenceGroupInfo>
+    public interface ISequenceGroupInfo : ICloneableClass<ISequenceGroupInfo>, ISequenceElement
     {
         /// <summary>
         /// 测试序列组的格式版本

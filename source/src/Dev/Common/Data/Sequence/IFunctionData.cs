@@ -9,7 +9,7 @@ namespace Testflow.Data.Sequence
     /// <summary>
     /// 保存一个步骤中调用的方法信息
     /// </summary>
-    public interface IFunctionData : ICloneableClass<IFunctionData>
+    public interface IFunctionData : ICloneableClass<IFunctionData>, ISequenceElement
     {
         /// <summary>
         /// 方法类型

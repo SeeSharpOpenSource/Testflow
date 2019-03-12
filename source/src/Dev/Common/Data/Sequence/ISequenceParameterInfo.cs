@@ -6,7 +6,7 @@ namespace Testflow.Data.Sequence
     /// <summary>
     /// 序列参数配置相关信息
     /// </summary>
-    public interface ISequenceParameterInfo
+    public interface ISequenceParameterInfo : ISequenceElement
     {
         /// <summary>
         /// 序列参数的格式版本

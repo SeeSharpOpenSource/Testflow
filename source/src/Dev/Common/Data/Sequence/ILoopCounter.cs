@@ -6,7 +6,7 @@ namespace Testflow.Data.Sequence
     /// <summary>
     /// Testflow的计数器
     /// </summary>
-    public interface ILoopCounter : ICloneableClass<ILoopCounter>
+    public interface ILoopCounter : ICloneableClass<ILoopCounter>, ISequenceElement
     {
         /// <summary>
         /// 计数器迭代变量名称

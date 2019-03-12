@@ -8,21 +8,21 @@
         /// <summary>
         /// 正常运行
         /// </summary>
-        Normal,
+        Normal = 0,
 
         /// <summary>
         /// 跳过该步骤
         /// </summary>
-        Skip,
+        Skip = 1,
 
         /// <summary>
         /// 强制成功
         /// </summary>
-        ForceSuccess,
+        ForceSuccess = 2,
 
         /// <summary>
         /// 强制失败
         /// </summary>
-        ForceFailed
+        ForceFailed = 3
     }
 }
