@@ -164,23 +164,16 @@ namespace Testflow.Modules
         string RuntimeSerialize(ISequenceGroup sequenceGroup);
 
         /// <summary>
-        /// 运行时序列化
-        /// </summary>
-        /// <param name="parameter">待序列化的Parameter</param>
-        string RuntimeSerialize(ISequenceGroupParameter parameter);
-
-        /// <summary>
         /// 运行时反序列化
         /// </summary>
         /// <param name="testProjectStr">待反序列化的TestProject</param>
-        ITestProject RuntimeDeserialize(string testProjectStr);
+        ITestProject RuntimeDeserializeTestProject(string testProjectStr);
 
         /// <summary>
         /// 运行时反序列化
         /// </summary>
         /// <param name="sequenceGroupStr">待反序列化的SequecneGroup</param>
-        /// <param name="parameterStr">待反序列化的Parameter</param>
-        ISequenceGroup RuntimeDeserialize(string sequenceGroupStr, string parameterStr);
+        ISequenceGroup RuntimeDeserializeSequenceGroup(string sequenceGroupStr);
 
         #endregion
 
