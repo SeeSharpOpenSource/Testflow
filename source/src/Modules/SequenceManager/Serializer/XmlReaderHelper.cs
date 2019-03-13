@@ -247,7 +247,7 @@ namespace Testflow.SequenceManager.Serializer
             int currentDepth = reader.Depth;
             bool isValueType = elementType.IsValueType || typeof (string).Equals(elementType) || elementType.IsEnum;
 //            Type genericType = rawType.GetGenericArguments()[0];
-            Type genericType = GetRawGenericElementType(parentType);
+            Type genericType = Common.Utility.GetRawGenericElementType(parentType);
             MethodInfo addMethod = parentType.GetMethod(addMethodName, BindingFlags.Instance | BindingFlags.Public, null,
                 CallingConventions.Standard, new Type[] { genericType }, new ParameterModifier[0]);
             GenericCollectionAttribute collectionAttribute =
@@ -300,19 +300,6 @@ namespace Testflow.SequenceManager.Serializer
                 reader.Read();
             }
         }
-
-        // 获取集合类中接口的原始接口类型，例如通过IList<string>的类型获取string类型
-        private static Type GetRawGenericElementType(Type collectionType)
-        {
-            Type[] genericType = null;
-            while (null == genericType || 0 == genericType.Length)
-            {
-                collectionType = collectionType.GetInterfaces()[0];
-                genericType = collectionType.GetGenericArguments();
-            }
-            return genericType[0];
-        }
-
         private static void FillValueToObject(PropertyInfo propertyInfo, object objectData, string attribute)
         {
             Type propertyType = propertyInfo.PropertyType;

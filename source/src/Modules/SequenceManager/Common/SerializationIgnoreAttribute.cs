@@ -2,6 +2,9 @@
 
 namespace Testflow.SequenceManager.Common
 {
+    /// <summary>
+    /// 标记某个类在序列化保存时是否被忽略
+    /// </summary>
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Property)]
     internal class SerializationIgnoreAttribute : Attribute
     {

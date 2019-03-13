@@ -48,7 +48,12 @@ namespace Testflow.SequenceManager
             VariableTreeTable variableTree = new VariableTreeTable(sequenceGroup.Arguments);
             variableTree.Push(sequenceGroup.Variables);
             VerifyVariableTypes(sequenceGroup.SetUp, variableTree);
+            foreach (ISequence sequence in sequenceGroup.Sequences)
+            {
+                VerifyVariableTypes(sequence, variableTree);
+            }
             VerifyVariableTypes(sequenceGroup.TearDown, variableTree);
+            variableTree.Pop();
         }
 
         private void VerifyVariableTypes(ISequence sequence, VariableTreeTable variableTree)
@@ -105,11 +110,11 @@ namespace Testflow.SequenceManager
             else if (null != sequenceStep.Function)
             {
                 IFunctionData functionData = sequenceStep.Function;
-                if (string.IsNullOrWhiteSpace(functionData.Instance))
+                if (!string.IsNullOrWhiteSpace(functionData.Instance))
                 {
                     SetVariableAndArgumentType(functionData.Instance, functionData.ClassType, variableTree, sequenceStep);
                 }
-                if (string.IsNullOrWhiteSpace(functionData.Return))
+                if (!string.IsNullOrWhiteSpace(functionData.Return))
                 {
                     SetVariableAndArgumentType(functionData.Return, functionData.ReturnType.Type, variableTree, sequenceStep);
                 }
@@ -117,7 +122,7 @@ namespace Testflow.SequenceManager
                 {
                     IParameterData parameterValue = functionData.Parameters[i];
                     if (parameterValue.ParameterType == ParameterType.Variable && 
-                        string.IsNullOrWhiteSpace(parameterValue.Value))
+                        !string.IsNullOrWhiteSpace(parameterValue.Value))
                     {
                         SetVariableAndArgumentType(parameterValue.Value, functionData.ParameterType[i].Type, variableTree,
                             sequenceStep);

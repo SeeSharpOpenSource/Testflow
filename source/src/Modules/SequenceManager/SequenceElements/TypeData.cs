@@ -9,6 +9,13 @@ namespace Testflow.SequenceManager.SequenceElements
     [Serializable]
     public class TypeData : ITypeData
     {
+        public TypeData()
+        {
+            this.AssemblyName = string.Empty;
+            this.Namespace = string.Empty;
+            this.Name = string.Empty;
+        }
+
         public string AssemblyName { get; set; }
         public string Namespace { get; set; }
         public string Name { get; set; }
@@ -34,9 +41,18 @@ namespace Testflow.SequenceManager.SequenceElements
             return FullName.GetHashCode();
         }
 
+        #region 序列化声明及反序列化构造
+
+        public TypeData(SerializationInfo info, StreamingContext context)
+        {
+            Common.Utility.FillDeserializationInfo(info, this, this.GetType());
+        }
+
         public void GetObjectData(SerializationInfo info, StreamingContext context)
         {
             Common.Utility.FillSerializationInfo(info, this);
         }
+
+        #endregion
     }
 }

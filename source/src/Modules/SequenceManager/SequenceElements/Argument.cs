@@ -54,9 +54,18 @@ namespace Testflow.SequenceManager.SequenceElements
             VariableType = argumentDescription.ArgumentType;
         }
 
+        #region 序列化声明及反序列化构造
+
+        public Argument(SerializationInfo info, StreamingContext context)
+        {
+            Common.Utility.FillDeserializationInfo(info, this, this.GetType());
+        }
+
         public void GetObjectData(SerializationInfo info, StreamingContext context)
         {
             Common.Utility.FillSerializationInfo(info, this);
         }
+
+        #endregion
     }
 }

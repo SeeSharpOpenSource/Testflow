@@ -111,9 +111,18 @@ namespace Testflow.SequenceManager.SequenceElements
             this.TearDownParameters.Initialize(sequenceGroup.TearDown);
         }
 
+        #region 序列化声明及反序列化构造
+
+        public SequenceGroupParameter(SerializationInfo info, StreamingContext context)
+        {
+            Common.Utility.FillDeserializationInfo(info, this, this.GetType());
+        }
+
         public void GetObjectData(SerializationInfo info, StreamingContext context)
         {
             Common.Utility.FillSerializationInfo(info, this);
         }
+
+        #endregion
     }
 }

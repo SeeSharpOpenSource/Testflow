@@ -28,7 +28,7 @@ namespace Testflow.SequenceManager.Common
 
         public IVariable GetVariable(string variableName)
         {
-            for (int i = _variableStack.Count - 1; i >= 0; i++)
+            for (int i = _variableStack.Count - 1; i >= 0; i--)
             {
                 IVariable variable = _variableStack[i].FirstOrDefault(item => item.Name.Equals(variableName));
                 if (null != variable)

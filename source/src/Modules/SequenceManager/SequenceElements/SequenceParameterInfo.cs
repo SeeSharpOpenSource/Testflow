@@ -28,9 +28,18 @@ namespace Testflow.SequenceManager.SequenceElements
         [SerializationIgnore]
         public bool Modified { get; set; }
 
+        #region 序列化声明及反序列化构造
+
+        public SequenceParameterInfo(SerializationInfo info, StreamingContext context)
+        {
+            Common.Utility.FillDeserializationInfo(info, this, this.GetType());
+        }
+
         public void GetObjectData(SerializationInfo info, StreamingContext context)
         {
             Common.Utility.FillSerializationInfo(info, this);
         }
+
+        #endregion
     }
 }

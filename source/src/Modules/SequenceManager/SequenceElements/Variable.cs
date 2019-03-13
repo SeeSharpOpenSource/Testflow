@@ -82,9 +82,18 @@ namespace Testflow.SequenceManager.SequenceElements
             return variable;
         }
 
+        #region 序列化声明及反序列化构造
+
+        public Variable(SerializationInfo info, StreamingContext context)
+        {
+            Common.Utility.FillDeserializationInfo(info, this, this.GetType());
+        }
+
         public void GetObjectData(SerializationInfo info, StreamingContext context)
         {
             Common.Utility.FillSerializationInfo(info, this);
         }
+
+        #endregion
     }
 }

@@ -6,7 +6,7 @@ namespace Testflow.SequenceManager.Serializer
 {
     internal class SequenceJsonConvertor : JsonConverter
     {
-        public override bool CanRead => true;
+        public override bool CanRead => false;
 
         public override bool CanWrite => false;
 

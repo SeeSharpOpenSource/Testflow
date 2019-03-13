@@ -231,11 +231,15 @@ namespace Testflow.SequenceManager
 
         public string RuntimeSerialize(ITestProject testProject)
         {
+            _typeMaintainer.VerifyVariableTypes(testProject);
+            _typeMaintainer.RefreshUsedAssemblyAndType(testProject);
             return SequenceSerializer.ToJson(testProject as TestProject);
         }
 
         public string RuntimeSerialize(ISequenceGroup sequenceGroup)
         {
+            _typeMaintainer.VerifyVariableTypes(sequenceGroup);
+            _typeMaintainer.RefreshUsedAssemblyAndType(sequenceGroup);
             return SequenceSerializer.ToJson(sequenceGroup as SequenceGroup);
         }
 

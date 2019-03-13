@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -16,6 +17,8 @@ namespace Testflow.SequenceManager.Common
 {
     internal static class Utility
     {
+        #region Collection Utils
+
         public static void CloneDataCollection<TDataType>(IList<TDataType> source, IList<TDataType> target)
             where TDataType : ISequenceDataContainer
         {
@@ -45,7 +48,9 @@ namespace Testflow.SequenceManager.Common
                 target.Add(data.Clone());
             }
         }
-        
+
+        #endregion
+
         public static bool IsValidName(string name, params string[] existNames)
         {
             return !string.IsNullOrWhiteSpace(name) && !existNames.Contains(name);
@@ -65,11 +70,16 @@ namespace Testflow.SequenceManager.Common
             return Directory.Exists(filePath.Substring(0, pathIndex)) && IsFile(filePath);
         }
 
+        #region Hash Calculation
+
         public static string GetHashValue(string hashSource, Encoding encoding)
         {
             StringBuilder hashValue = new StringBuilder(256*2/8);
-            char[] decimalStrs = new char[] {'0', '1', '2', '3', '4', '5', '6', '7',
-                '8', '9', 'A', 'B', 'C', 'D', 'E', 'F', };
+            char[] decimalStrs = new char[]
+            {
+                '0', '1', '2', '3', '4', '5', '6', '7',
+                '8', '9', 'A', 'B', 'C', 'D', 'E', 'F',
+            };
 
             using (SHA256 sha256 = SHA256.Create())
             {
@@ -100,6 +110,10 @@ namespace Testflow.SequenceManager.Common
             }
             return $"{hostName}/{systemVersion}/{mac}";
         }
+
+        #endregion
+
+        #region Collection Operation
 
         private const string IndexPropertName = "Index";
 
@@ -169,14 +183,18 @@ namespace Testflow.SequenceManager.Common
             return true;
         }
 
+        #endregion
+
+        #region Element Name Generation
+
         public static void SetElementName(ISequenceFlowContainer self, IEnumerable<ISequenceFlowContainer> existItems)
         {
             string[] existNames = new string[0];
             if (null != existItems && null != self.Parent)
             {
                 existNames = (from element in existItems
-                              where !ReferenceEquals(element, self)
-                              select element.Name).ToArray();
+                    where !ReferenceEquals(element, self)
+                    select element.Name).ToArray();
             }
             if (!IsValidName(self.Name, existNames))
             {
@@ -204,10 +222,10 @@ namespace Testflow.SequenceManager.Common
             if (null != existItems)
             {
                 existNames = (from element in existItems
-                              where !ReferenceEquals(element, self)
-                              select nameProperty.GetValue(element).ToString()).ToArray();
+                    where !ReferenceEquals(element, self)
+                    select nameProperty.GetValue(element).ToString()).ToArray();
             }
-            if (!IsValidName(nameProperty.GetValue(self).ToString(), existNames))
+            if (null == nameProperty.GetValue(self) || !IsValidName(nameProperty.GetValue(self).ToString(), existNames))
             {
                 string nameFormat = $"{self.GetType().Name}{{0}}";
                 int index = 0;
@@ -221,6 +239,10 @@ namespace Testflow.SequenceManager.Common
             }
         }
 
+        #endregion
+
+        #region Type Related
+        
         public static void RefreshTypeIndex(ITestProject testProject)
         {
             foreach (IVariable variable in testProject.Variables)
@@ -290,6 +312,22 @@ namespace Testflow.SequenceManager.Common
             argumentObj.TypeIndex = typeDataCollection.IndexOf(argumentObj.Type);
         }
 
+        // 获取集合类中接口的原始接口类型，例如通过IList<string>的类型获取string类型
+        public static Type GetRawGenericElementType(Type collectionType)
+        {
+            Type[] genericType = null;
+            while (null == genericType || 0 == genericType.Length)
+            {
+                collectionType = collectionType.GetInterfaces()[0];
+                genericType = collectionType.GetGenericArguments();
+            }
+            return genericType[0];
+        }
+
+        #endregion
+
+        #region Path Operation
+
         public static string GetParameterFilePath(string sequenceFilePath)
         {
             const char fileExtensionDelim = '.';
@@ -302,7 +340,8 @@ namespace Testflow.SequenceManager.Common
             int delimIndex = testProjectFilePath.LastIndexOf(Path.DirectorySeparatorChar);
             string fileDirectory = testProjectFilePath.Substring(0, delimIndex + 1);
             string sequenceGroupName = string.Format(Constants.SequenceGroupNameFormat, index + 1);
-            return $"{fileDirectory}{sequenceGroupName}{Path.DirectorySeparatorChar}{sequenceGroupName}.{CommonConst.SequenceFileExtension}";
+            return
+                $"{fileDirectory}{sequenceGroupName}{Path.DirectorySeparatorChar}{sequenceGroupName}.{CommonConst.SequenceFileExtension}";
         }
 
         public static string GetSequenceGroupDirectory(string testProjectFilePath)
@@ -317,9 +356,9 @@ namespace Testflow.SequenceManager.Common
             // 取上级目录的字符串
             const string parentDirStr = "..";
             char dirDelim = Path.DirectorySeparatorChar;
-            string regexFormat = dirDelim.Equals('\\') ? 
-                $"^(([a-zA-z]:)?{dirDelim}{dirDelim})" : 
-                $"^(([a-zA-z]:)?{dirDelim})";
+            string regexFormat = dirDelim.Equals('\\')
+                ? $"^(([a-zA-z]:)?{dirDelim}{dirDelim})"
+                : $"^(([a-zA-z]:)?{dirDelim})";
             // 绝对路径匹配模式，如果匹配则path已经是绝对路径
             Regex regex = new Regex(regexFormat);
             if (0 != regex.Matches(path).Count)
@@ -399,9 +438,9 @@ namespace Testflow.SequenceManager.Common
             const string parentDirStr = "..";
             char dirDelim = Path.DirectorySeparatorChar;
             // 绝对路径匹配模式，如果匹配则path已经是绝对路径
-            string regexFormat = dirDelim.Equals('\\') ?
-                $"^(([a-zA-z]:)?{dirDelim}{dirDelim})" :
-                $"^(([a-zA-z]:)?{dirDelim})";
+            string regexFormat = dirDelim.Equals('\\')
+                ? $"^(([a-zA-z]:)?{dirDelim}{dirDelim})"
+                : $"^(([a-zA-z]:)?{dirDelim})";
             Regex regex = new Regex(regexFormat);
             if (0 == regex.Matches(referencePath).Count)
             {
@@ -485,10 +524,14 @@ namespace Testflow.SequenceManager.Common
             return Directory.Exists(path);
         }
 
+        #endregion
+
+        #region Serialization
+
         public static void FillSerializationInfo(SerializationInfo info, object obj)
         {
             Type objType = obj.GetType();
-            Assembly assembly = Assembly.GetAssembly(typeof(Utility));
+            Assembly assembly = Assembly.GetAssembly(typeof (Utility));
             info.AssemblyName = assembly.GetName().Name;
             info.FullTypeName = $"{objType.Namespace}.{objType.Name}";
 
@@ -510,5 +553,94 @@ namespace Testflow.SequenceManager.Common
                 info.AddValue(propertyInfo.Name, value, propertyType);
             }
         }
+
+        public static void FillDeserializationInfo(SerializationInfo info, object obj, Type type)
+        {
+            foreach (PropertyInfo propertyInfo in type.GetProperties())
+            {
+                RuntimeSerializeIgnoreAttribute ignoreAttribute =
+                    propertyInfo.GetCustomAttribute<RuntimeSerializeIgnoreAttribute>();
+                if (null != ignoreAttribute && ignoreAttribute.Ignore)
+                {
+                    continue;
+                }
+                Type propertyType = propertyInfo.PropertyType;
+                // 如果包含RuntimeType属性则说明该属性使用了某个指定的实现类型而非当前属性的类型
+                RuntimeTypeAttribute runtimeType;
+                if (null != (runtimeType = propertyInfo.GetCustomAttribute<RuntimeTypeAttribute>()))
+                {
+                    propertyType = runtimeType.RealType;
+                }
+
+                //如果包含该属性说明是集合类型，需要特殊处理
+                GenericCollectionAttribute genericAttribute = propertyType.GetCustomAttribute<GenericCollectionAttribute>();
+
+                if (null == genericAttribute)
+                {
+                    object propertyValue = info.GetValue(propertyInfo.Name, propertyType);
+                    if (null != propertyValue)
+                    {
+                        propertyInfo.SetValue(obj, propertyValue);
+                    }
+                }
+                else
+                {
+                    Type elementType = GetRawGenericElementType(propertyType);
+                    if (null == elementType)
+                    {
+                        throw new InvalidOperationException();
+                    }
+                    const string addMethodName = "Add";
+                    
+                    MethodInfo addMethod = propertyType.GetMethod(addMethodName, BindingFlags.Instance | BindingFlags.Public, null,
+                            CallingConventions.Standard, new Type[] { elementType }, new ParameterModifier[0]);
+                    // 构造类型为List<RealType>的临时集合去获取json的值
+                    Type typeCollection = typeof(List<>);
+                    Type tmpCollectionType = typeCollection.MakeGenericType(genericAttribute.GenericType);
+                    object tmpCollection = info.GetValue(propertyInfo.Name, tmpCollectionType);
+
+                    object propertyValue = null;
+                    if (null != tmpCollection)
+                    {
+                        ConstructorInfo propertyConstructor =
+                        propertyType.GetConstructor(BindingFlags.Instance | BindingFlags.Public, null, new Type[0], null);
+                        propertyValue = propertyConstructor.Invoke(new object[0]);
+                        foreach (object item in tmpCollection as IEnumerable)
+                        {
+                            addMethod.Invoke(propertyValue, new object[] { item });
+                        }
+                    }
+                    propertyInfo.SetValue(obj, propertyValue);
+                }
+            }
+        }
+//
+//        public static void FillCollectionDeserializationInfo(SerializationInfo info, object obj, Type type)
+//        {
+//            const string addMethodName = "Add";
+//            Type[] arguments = type.GetGenericArguments();
+//            if (0 == arguments.Length)
+//            {
+//                throw new InvalidOperationException();
+//            }
+//            Type elementType = arguments[0];
+//            Type realElementType = arguments[0];
+//            GenericCollectionAttribute genericAttribute;
+//            if (null != (genericAttribute = elementType.GetCustomAttribute<GenericCollectionAttribute>()))
+//            {
+//                realElementType = genericAttribute.GenericType;
+//            }
+//            MethodInfo addMethod = type.GetMethod(addMethodName, BindingFlags.Instance | BindingFlags.Public, null,
+//                CallingConventions.Standard, new Type[] { elementType }, new ParameterModifier[0]);
+//
+//            SerializationInfoEnumerator enumerator = info.GetEnumerator();
+//            while (enumerator.MoveNext())
+//            {
+//                info.get
+//            }
+//        }
+
+        #endregion
+
     }
 }

@@ -45,6 +45,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Common\RuntimeElementTypeAttribute.cs" />
     <Compile Include="Common\RuntimeSerializeIgnoreAttribute.cs" />
     <Compile Include="Common\RuntimeTypeAttribute.cs" />
     <Compile Include="Common\VariableTreeTable.cs" />
