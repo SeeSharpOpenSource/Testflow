@@ -89,9 +89,9 @@ namespace Testflow.EngineCore.Events
             SequenceOver?.Invoke(statusinfo, stack);
         }
 
-        internal void OnTestOver(ITestResultCollection statistics, ISequenceGroup sequencegroup)
+        internal void OnTestOver(ITestResultCollection statistics, int sequencegroupIndex)
         {
-            TestOver?.Invoke(statistics, sequencegroup);
+            TestOver?.Invoke(statistics, sequencegroupIndex);
         }
 
         internal void OnBreakPointHitted(ISequenceDebugger debugger, IDebugInformation information)

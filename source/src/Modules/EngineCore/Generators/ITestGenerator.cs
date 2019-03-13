@@ -1,12 +1,12 @@
 ﻿using Testflow.Data.Sequence;
-using Testflow.EngineCore.RuntimeContainer;
+using Testflow.EngineCore.Container;
 
 namespace Testflow.EngineCore.Generators
 {
     internal interface ITestGenerator
     {
-        IRuntimeContainer Generate(ITestProject testProject, params object[] param);
+        RuntimeContainer Generate(ITestProject testProject, params object[] param);
 
-        IRuntimeContainer Generate(ISequenceGroup sequenceGroup, params object[] param);
+        RuntimeContainer Generate(ISequenceGroup sequenceGroup, params object[] param);
     }
 }

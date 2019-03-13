@@ -10,5 +10,6 @@ namespace Testflow.EngineCore
         public const int IncorrectParamType = 4 | CommonErrorCode.EngineCoreErrorMask;
         public const int EventTimeOut = 5 | CommonErrorCode.EngineCoreErrorMask;
         public const int EventsTooMany = 6 | CommonErrorCode.EngineCoreErrorMask;
+        public const int SequenceDataError = 7 | CommonErrorCode.EngineCoreErrorMask;
     }
 }

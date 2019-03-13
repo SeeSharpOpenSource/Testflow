@@ -97,6 +97,15 @@ namespace Testflow.EngineCore.Resources.locale {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to 带有入参的SequenceGroup必须和父级的TestProject同时运行。.
+        /// </summary>
+        internal static string UnexistArgumentSource {
+            get {
+                return ResourceManager.GetString("UnexistArgumentSource", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to 不存在的会话事件：&quot;{0}&quot;。.
         /// </summary>
         internal static string UnexistEvent {

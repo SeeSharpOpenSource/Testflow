@@ -129,6 +129,9 @@
   <data name="IncorrectParamType" xml:space="preserve">
     <value>The type of event parameter should be "{0}".</value>
   </data>
+  <data name="UnexistArgumentSource" xml:space="preserve">
+    <value>SequenceGroup with input arguments cannot run with out test project.</value>
+  </data>
   <data name="UnexistEvent" xml:space="preserve">
     <value>Unexist session event "{0}".</value>
   </data>

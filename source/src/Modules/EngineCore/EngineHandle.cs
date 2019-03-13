@@ -16,6 +16,13 @@ namespace Testflow.EngineCore
 
         public EngineHandle()
         {
+            I18NOption i18NOption = new I18NOption(typeof (EngineHandle).Assembly, "i18n_engineCore_zh.resx",
+                "i18n_engineCore_en.resx")
+            {
+                Name = Constants.I18nName
+            };
+            I18N.InitInstance(i18NOption);
+
             if (null != _instance)
             {
                 I18N i18N = I18N.GetInstance(Constants.I18nName);
@@ -29,14 +36,10 @@ namespace Testflow.EngineCore
                     I18N i18N = I18N.GetInstance(Constants.I18nName);
                     throw new TestflowRuntimeException(CommonErrorCode.InternalError, i18N.GetStr("InstAlreadyExist"));
                 }
-                I18NOption i18NOption = new I18NOption(typeof (EngineHandle).Assembly, "i18n_engineCore_zh.resx",
-                    "i18n_engineCore_en.resx")
-                {
-                    Name = Constants.I18nName
-                };
-                I18N.InitInstance(i18NOption);
                 _instance = this;
             }
+
+            
         }
 
         public IModuleConfigData ConfigData { get; set; }

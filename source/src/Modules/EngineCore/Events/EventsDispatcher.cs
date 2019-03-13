@@ -122,8 +122,10 @@ namespace Testflow.EngineCore.Events
                         ModuleUtil.GetParamValue<ICallStack>(eventParams, 1));
                     break;
                 case Constants.TestOver:
+//                    eventHandle.OnTestOver(ModuleUtil.GetParamValue<ITestResultCollection>(eventParams, 0),
+//                        ModuleUtil.GetParamValue<ISequenceGroup>(eventParams, 1));
                     eventHandle.OnTestOver(ModuleUtil.GetParamValue<ITestResultCollection>(eventParams, 0),
-                        ModuleUtil.GetParamValue<ISequenceGroup>(eventParams, 1));
+                        (int)eventParams[1]);
                     break;
                 case Constants.BreakPointHitted:
                     eventHandle.OnBreakPointHitted(ModuleUtil.GetParamValue<ISequenceDebugger>(eventParams, 0),

@@ -97,6 +97,15 @@ namespace Testflow.EngineCore.Resources.locale {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to SequenceGroup with input arguments cannot run with out test project..
+        /// </summary>
+        internal static string UnexistArgumentSource {
+            get {
+                return ResourceManager.GetString("UnexistArgumentSource", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Unexist session event &quot;{0}&quot;..
         /// </summary>
         internal static string UnexistEvent {

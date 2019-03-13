@@ -41,7 +41,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Common\Constants.cs" />
+    <Compile Include="Common\ModuleGlobalInfo.cs" />
     <Compile Include="Common\ModuleUtil.cs" />
+    <Compile Include="Common\ModuleUtility.cs" />
     <Compile Include="Common\MQIgnoreAttribute.cs" />
     <Compile Include="Common\SerializableList.cs" />
     <Compile Include="Data\CallStack.cs" />
@@ -54,6 +56,7 @@
     <Compile Include="EngineHandle.cs" />
     <Compile Include="Events\EventsDispatcher.cs" />
     <Compile Include="Generators\ITestGenerator.cs" />
+    <Compile Include="Generators\RuntimeTarget.cs" />
     <Compile Include="Messages\MessageBase.cs" />
     <Compile Include="Messages\StatusReceivedMessage.cs" />
     <Compile Include="Messages\TestGenerationMessage.cs" />
@@ -70,7 +73,7 @@
       <DependentUpon>i18n_engineCore_zh.resx</DependentUpon>
     </Compile>
     <Compile Include="Events\SessionEventHandle.cs" />
-    <Compile Include="RuntimeContainer\IRuntimeContainer.cs" />
+    <Compile Include="Container\RuntimeContainer.cs" />
     <Compile Include="RuntimeEngine.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -89,7 +92,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Debugger\" />
-    <Folder Include="Generators\DotNetGenerator\" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\locale\i18n_engineCore_en.resx">
