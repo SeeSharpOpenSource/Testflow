@@ -145,6 +145,10 @@ namespace Testflow.SequenceManagerTest
             sequence1.Variables.Add(varialbe3);
             varialbe3.Value = "30";
 
+            IVariable varialbe4 = _sequenceManager.CreateVarialbe();
+            varialbe4.Initialize(sequence1);
+            sequence1.Variables.Add(varialbe4);
+
             IFunctionData functionData = _sequenceManager.CreateFunctionData(new TestFuncDescription());
             sequenceStep1.Function = functionData;
             sequenceStep3.Function = functionData;
@@ -153,7 +157,7 @@ namespace Testflow.SequenceManagerTest
 
             sequenceStep1.RetryCounter = new RetryCounter()
             {
-                CounterVariable = "varialbe1",
+                CounterVariable = "Variable4",
                 MaxRetryTimes = 10,
                 Name = "RetryCounterDemo",
                 RetryEnabled = true
@@ -257,6 +261,12 @@ namespace Testflow.SequenceManagerTest
             {
                 Assert.AreEqual(ex.ErrorCode, ModuleErrorCode.UnmatchedFileHash);
             }
+        }
+
+        [TestCleanup]
+        public void TearDown()
+        {
+            _sequenceManager.Dispose();
         }
     }
 }

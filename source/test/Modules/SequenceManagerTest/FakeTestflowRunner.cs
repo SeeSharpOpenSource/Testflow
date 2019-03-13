@@ -23,6 +23,7 @@ namespace Testflow.SequenceManagerTest
 
             AddMockAssemblies(mock, "TestAssemblyName", "TestDemoPath");
             AddMockAssemblies(mock, "Assembly3", "TestDemoPath");
+            AddMockAssemblies(mock, "mscorlib", "SystemPath");
         }
 
         private void AddMockTypeData(Mock<IComInterfaceManager> mockObj, string typeName, string namespaceStr, string assemblyName)
