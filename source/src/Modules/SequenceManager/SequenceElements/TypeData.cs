@@ -14,6 +14,7 @@ namespace Testflow.SequenceManager.SequenceElements
 
         [XmlIgnore]
         [SerializationIgnore]
+        [RuntimeSerializeIgnore]
         public string FullName => $"{AssemblyName}_{Namespace}.{Name}";
 
         public override bool Equals(object obj)

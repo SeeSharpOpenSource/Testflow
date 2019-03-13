@@ -3,7 +3,7 @@
 namespace Testflow.SequenceManager.Common
 {
     [AttributeUsage(AttributeTargets.Class)]
-    public class GenericCollectionAttribute : Attribute
+    internal class GenericCollectionAttribute : Attribute
     {
         public Type GenericType { get; }
 

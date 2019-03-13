@@ -20,19 +20,24 @@ namespace Testflow.SequenceManager.SequenceElements
             this.Steps = new SequenceStepCollection();
             this.Behavior = RunBehavior.Normal;
         }
+        [RuntimeSerializeIgnore]
         public string Name { get; set; }
+        [RuntimeSerializeIgnore]
         public string Description { get; set; }
 
         [XmlIgnore]
         [SerializationIgnore]
+        [RuntimeSerializeIgnore]
         public ISequenceFlowContainer Parent { get; set; }
 
         [XmlIgnore]
         [SerializationIgnore]
         public int Index { get; set; }
 
+        [RuntimeType(typeof(VariableCollection))]
         public IVariableCollection Variables { get; set; }
 
+        [RuntimeType(typeof(SequenceStepCollection))]
         public ISequenceStepCollection Steps { get; set; }
 
         public RunBehavior Behavior { get; set; }

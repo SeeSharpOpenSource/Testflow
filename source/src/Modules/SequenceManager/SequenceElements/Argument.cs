@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.Serialization;
 using System.Xml.Serialization;
 using Testflow.Data;
 using Testflow.Data.Description;
@@ -23,6 +24,7 @@ namespace Testflow.SequenceManager.SequenceElements
 
         [XmlIgnore]
         [SerializationIgnore]
+        [RuntimeSerializeIgnore]
         public ITypeData Type { get; set; }
 
         public int TypeIndex { get; set; }
@@ -50,6 +52,11 @@ namespace Testflow.SequenceManager.SequenceElements
             Name = argumentDescription.Name;
             Type = argumentDescription.Type;
             VariableType = argumentDescription.ArgumentType;
+        }
+
+        public void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            
         }
     }
 }

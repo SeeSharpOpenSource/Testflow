@@ -1,8 +1,10 @@
 ﻿using System;
+using Testflow.SequenceManager.Common;
 
 namespace Testflow.SequenceManager.SequenceElements
 {
     [Serializable]
+    [RuntimeSerializeIgnore]
     public class SequenceGroupLocationInfo
     {
         public SequenceGroupLocationInfo()

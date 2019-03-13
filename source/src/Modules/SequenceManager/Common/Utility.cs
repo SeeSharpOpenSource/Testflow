@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Management;
 using System.Reflection;
+using System.Runtime.Serialization;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -484,5 +485,30 @@ namespace Testflow.SequenceManager.Common
             return Directory.Exists(path);
         }
 
+        public static void FillSerializationInfo(SerializationInfo info, object obj)
+        {
+            Type objType = obj.GetType();
+            Assembly assembly = Assembly.GetAssembly(typeof(Utility));
+            info.AssemblyName = assembly.GetName().Name;
+            info.FullTypeName = $"{objType.Namespace}.{objType.Name}";
+
+            foreach (PropertyInfo propertyInfo in objType.GetProperties())
+            {
+                RuntimeSerializeIgnoreAttribute ignoreAttribute =
+                    propertyInfo.GetCustomAttribute<RuntimeSerializeIgnoreAttribute>();
+                if (null == ignoreAttribute || ignoreAttribute.Ignore)
+                {
+                    continue;
+                }
+                object value = propertyInfo.GetValue(obj);
+                Type propertyType = propertyInfo.PropertyType;
+                // 如果是类类型且不为null，则获取真实的类型
+                if (propertyType.IsClass && null != value)
+                {
+                    propertyType = value.GetType();
+                }
+                info.AddValue(propertyInfo.Name, value, propertyType);
+            }
+        }
     }
 }

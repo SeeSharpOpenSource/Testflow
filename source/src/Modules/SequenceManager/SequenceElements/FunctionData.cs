@@ -29,19 +29,24 @@ namespace Testflow.SequenceManager.SequenceElements
 
         [XmlIgnore]
         [SerializationIgnore]
+        [RuntimeSerializeIgnore]
         public ITypeData ClassType { get; set; }
 
         public int ClassTypeIndex { get; set; }
+        [RuntimeType(typeof(ArgumentCollection))]
         public IArgumentCollection ParameterType { get; set; }
         [XmlIgnore]
         [SerializationIgnore]
+        [RuntimeSerializeIgnore]
         public IParameterDataCollection Parameters { get; set; }
         public string Instance { get; set; }
         public string Return { get; set; }
+        [RuntimeType(typeof(Argument))]
         public IArgument ReturnType { get; set; }
 
         [XmlIgnore]
         [SerializationIgnore]
+        [RuntimeSerializeIgnore]
         public IFuncInterfaceDescription Description { get; set; }
 
         public IFunctionData Clone()

@@ -22,8 +22,10 @@ namespace Testflow.SequenceManager.SequenceElements
 
         [XmlIgnore]
         [SerializationIgnore]
+        [RuntimeSerializeIgnore]
         public bool Available { get; set; }
 
+        [RuntimeSerializeIgnore]
         public string Version { get; set; }
 
         public override bool Equals(object item)

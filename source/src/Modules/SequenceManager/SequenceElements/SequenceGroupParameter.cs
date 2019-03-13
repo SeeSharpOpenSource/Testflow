@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Testflow.Data.Sequence;
+using Testflow.SequenceManager.Common;
 
 namespace Testflow.SequenceManager.SequenceElements
 {
@@ -18,13 +19,19 @@ namespace Testflow.SequenceManager.SequenceElements
             this.Name = string.Empty;
             this.Description = string.Empty;
         }
-
+        [RuntimeSerializeIgnore]
         public string Name { get; set; }
+        [RuntimeSerializeIgnore]
         public string Description { get; set; }
+        [RuntimeSerializeIgnore]
         public ISequenceParameterInfo Info { get; set; }
+        [RuntimeType(typeof(VariableInitValueCollection))]
         public IList<IVariableInitValue> VariableValues { get; set; }
+        [RuntimeType(typeof(SequenceParameter))]
         public ISequenceParameter SetUpParameters { get; set; }
+        [RuntimeType(typeof(SequenceParameterCollection))]
         public IList<ISequenceParameter> SequenceParameters { get; set; }
+        [RuntimeType(typeof(SequenceParameter))]
         public ISequenceParameter TearDownParameters { get; set; }
 
         public void RefreshSignature(SequenceGroup parent)

@@ -34,33 +34,46 @@ namespace Testflow.SequenceManager.SequenceElements
             this.TearDown = null;
         }
 
+        [RuntimeSerializeIgnore]
         public string Name { get; set; }
+        [RuntimeSerializeIgnore]
         public string Description { get; set; }
 
         [XmlIgnore]
         [SerializationIgnore]
+        [RuntimeSerializeIgnore]
         public ISequenceFlowContainer Parent { get; set; }
 
+        [RuntimeSerializeIgnore]
         public ISequenceGroupInfo Info { get; set; }
 
+        [RuntimeType(typeof(AssemblyInfoCollection))]
         public IAssemblyInfoCollection Assemblies { get; set; }
 
+        [RuntimeSerializeIgnore]
         public bool Available { get; set; }
 
+        [RuntimeType(typeof(TypeDataCollection))]
         public ITypeDataCollection TypeDatas { get; set; }
 
+        [RuntimeType(typeof(ArgumentCollection))]
         public IArgumentCollection Arguments { get; set; }
 
+        [RuntimeType(typeof(VariableCollection))]
         public IVariableCollection Variables { get; set; }
 
+        [RuntimeSerializeIgnore]
         public ISequenceGroupParameter Parameters { get; set; }
 
         public ExecutionModel ExecutionModel { get; set; }
 
+        [RuntimeType(typeof(Sequence))]
         public ISequence SetUp { get; set; }
 
+        [RuntimeType(typeof(SequenceCollection))]
         public ISequenceCollection Sequences { get; set; }
 
+        [RuntimeType(typeof(Sequence))]
         public ISequence TearDown { get; set; }
 
         public void Initialize(ISequenceFlowContainer parent)

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.Serialization;
 using System.Xml.Serialization;
 using Testflow.Data;
 using Testflow.Data.Sequence;
@@ -29,42 +30,58 @@ namespace Testflow.SequenceManager.SequenceElements
             this.ModelVersion = string.Empty;
         }
 
+        [RuntimeSerializeIgnore]
         public string Name { get; set; }
+        [RuntimeSerializeIgnore]
         public string Description { get; set; }
 
         [XmlIgnore]
         [SerializationIgnore]
+        [RuntimeSerializeIgnore]
         public ISequenceFlowContainer Parent
         {
             get { return null; }
             set { throw new InvalidOperationException(); }
         }
 
+        [RuntimeType(typeof(TypeDataCollection))]
         public ITypeDataCollection TypeDatas { get; set; }
+
+        [RuntimeSerializeIgnore]
         public string ModelVersion { get; set; }
 
+        [RuntimeType(typeof(AssemblyInfoCollection))]
         public IAssemblyInfoCollection Assemblies { get; set; }
 
         public ExecutionModel ExecutionModel { get; set; }
 
+        [RuntimeType(typeof(VariableCollection))]
         public IVariableCollection Variables { get; set; }
 
+        [RuntimeType(typeof(VariableInitValueCollection))]
         public IList<IVariableInitValue> VariableValues { get; set; }
 
+        [RuntimeType(typeof(Sequence))]
         public ISequence SetUp { get; set; }
 
+        [RuntimeType(typeof(SequenceParameter))]
         public ISequenceParameter SetUpParameters { get; set; }
 
         [XmlIgnore]
         [SerializationIgnore]
+        [RuntimeSerializeIgnore]
         public ISequenceGroupCollection SequenceGroups { get; set; }
 
+        [RuntimeSerializeIgnore]
         public SequenceGroupLocationInfoCollection SequenceGroupLocations { get; set; }
 
+        [RuntimeType(typeof(ParameterDataCollections))]
         public IList<IParameterDataCollection> SequenceGroupParameters { get; set; }
 
+        [RuntimeType(typeof(Sequence))]
         public ISequence TearDown { get; set; }
 
+        [RuntimeType(typeof(SequenceParameter))]
         public ISequenceParameter TearDownParameters { get; set; }
 
         public void Initialize(ISequenceFlowContainer parent)

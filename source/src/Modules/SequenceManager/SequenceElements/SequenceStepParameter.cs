@@ -19,7 +19,9 @@ namespace Testflow.SequenceManager.SequenceElements
         }
         
         public int Index { get; set; }
+        [RuntimeType(typeof(SequenceStepParameterCollection))]
         public IList<ISequenceStepParameter> SubStepParameters { get; set; }
+        [RuntimeType(typeof(ParameterDataCollection))]
         public IParameterDataCollection Parameters { get; set; }
         public string Instance { get; set; }
         public string Return { get; set; }

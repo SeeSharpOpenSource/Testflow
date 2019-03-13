@@ -26,10 +26,12 @@ namespace Testflow.SequenceManager.SequenceElements
 
         [XmlIgnore]
         [SerializationIgnore]
+        [RuntimeSerializeIgnore]
         public ITypeData Type { get; set; }
 
         public int TypeIndex { get; set; }
         public VariableType VariableType { get; set; }
+        [RuntimeSerializeIgnore]
         public string Description { get; set; }
         public RecordLevel LogRecordLevel { get; set; }
         public RecordLevel ReportRecordLevel { get; set; }
@@ -41,6 +43,7 @@ namespace Testflow.SequenceManager.SequenceElements
 
         [XmlIgnore]
         [SerializationIgnore]
+        [RuntimeSerializeIgnore]
         public ISequenceFlowContainer Parent { get; set; }
 
         public void Initialize(ISequenceFlowContainer parent)

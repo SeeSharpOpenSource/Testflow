@@ -6,6 +6,7 @@ using Testflow.SequenceManager.Common;
 namespace Testflow.SequenceManager.SequenceElements
 {
     [Serializable]
+    [RuntimeSerializeIgnore]
     public class SequenceParameterInfo : ISequenceParameterInfo
     {
         public SequenceParameterInfo()

@@ -23,31 +23,39 @@ namespace Testflow.SequenceManager.SequenceElements
             this.LoopCounter = null;
             this.RetryCounter = null;
         }
+        [RuntimeSerializeIgnore]
         public string Name { get; set; }
+        [RuntimeSerializeIgnore]
         public string Description { get; set; }
 
         [XmlIgnore]
         [SerializationIgnore]
+        [RuntimeSerializeIgnore]
         public ISequenceFlowContainer Parent { get; set; }
 
+        [RuntimeType(typeof(SequenceStepCollection))]
         public ISequenceStepCollection SubSteps { get; set; }
 
         [XmlIgnore]
         [SerializationIgnore]
         public int Index { get; set; }
 
+        [RuntimeType(typeof(FunctionData))]
         public IFunctionData Function { get; set; }
 
         [XmlIgnore]
         [SerializationIgnore]
+        [RuntimeSerializeIgnore]
         public bool HasSubSteps => (null != SubSteps && SubSteps.Count > 0);
 
         public bool BreakIfFailed { get; set; }
 
         public RunBehavior Behavior { get; set; }
 
+        [RuntimeType(typeof(LoopCounter))]
         public ILoopCounter LoopCounter { get; set; }
 
+        [RuntimeType(typeof(RetryCounter))]
         public IRetryCounter RetryCounter { get; set; }
 
         public void Initialize(ISequenceFlowContainer parent)
