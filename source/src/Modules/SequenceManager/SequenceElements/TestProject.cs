@@ -2,13 +2,16 @@
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 using System.Xml.Serialization;
+using Newtonsoft.Json;
 using Testflow.Data;
 using Testflow.Data.Sequence;
 using Testflow.SequenceManager.Common;
+using Testflow.SequenceManager.Serializer;
 
 namespace Testflow.SequenceManager.SequenceElements
 {
     [Serializable]
+    [JsonConverter(typeof(SequenceJsonConvertor))]
     public class TestProject : ITestProject
     {
         public TestProject()

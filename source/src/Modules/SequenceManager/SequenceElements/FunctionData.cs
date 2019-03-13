@@ -37,7 +37,7 @@ namespace Testflow.SequenceManager.SequenceElements
         public IArgumentCollection ParameterType { get; set; }
         [XmlIgnore]
         [SerializationIgnore]
-        [RuntimeSerializeIgnore]
+        [RuntimeType(typeof(ParameterDataCollection))]
         public IParameterDataCollection Parameters { get; set; }
         public string Instance { get; set; }
         public string Return { get; set; }

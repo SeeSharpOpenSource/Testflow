@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using Newtonsoft.Json;
 using Testflow.Common;
 using Testflow.Data.Sequence;
 using Testflow.Logger;
@@ -91,6 +92,22 @@ namespace Testflow.SequenceManager.Serializer
             sequenceGroup.Parameters = parameter;
             SetParameterToSequenceData(sequenceGroup, parameter);
             VerifyTypeDatas(sequenceGroup);
+        }
+
+        public static TestProject LoadTestProjectFromJson(string jsonStr)
+        {
+            SequenceJsonConvertor convertor = new SequenceJsonConvertor();
+            TestProject testProject = JsonConvert.DeserializeObject<TestProject>(jsonStr, convertor);
+            VerifyTypeDatas(testProject);
+            return testProject;
+        }
+
+        public static SequenceGroup LoadSequenceGroupFromJson(string jsonStr)
+        {
+            SequenceJsonConvertor convertor = new SequenceJsonConvertor();
+            SequenceGroup sequenceGroup = JsonConvert.DeserializeObject<SequenceGroup>(jsonStr, convertor);
+            VerifyTypeDatas(sequenceGroup);
+            return sequenceGroup;
         }
 
         #endregion

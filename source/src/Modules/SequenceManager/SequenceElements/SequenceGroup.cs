@@ -2,16 +2,19 @@
 using System.Linq;
 using System.Text;
 using System.Xml.Serialization;
+using Newtonsoft.Json;
 using Testflow.Common;
 using Testflow.Data;
 using Testflow.Data.Sequence;
 using Testflow.SequenceManager.Common;
+using Testflow.SequenceManager.Serializer;
 using Testflow.Utility;
 using Testflow.Utility.I18nUtil;
 
 namespace Testflow.SequenceManager.SequenceElements
 {
     [Serializable]
+    [JsonConverter(typeof(SequenceJsonConvertor))]
     public class SequenceGroup : ISequenceGroup
     {
         public SequenceGroup()

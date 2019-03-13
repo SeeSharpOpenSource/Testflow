@@ -101,6 +101,7 @@
     <Compile Include="Serializer\Convertor\ValueConvertor.cs" />
     <Compile Include="Serializer\SequenceDeserializer.cs" />
     <Compile Include="Serializer\SequenceSerializer.cs" />
+    <Compile Include="Serializer\SequenceJsonConvertor.cs" />
     <Compile Include="Serializer\XmlReaderHelper.cs" />
     <Compile Include="Serializer\XmlWriterHelper.cs" />
     <Compile Include="TypeMaintainer.cs" />

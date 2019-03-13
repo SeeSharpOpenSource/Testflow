@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using Newtonsoft.Json;
 using Testflow.Common;
 using Testflow.Data;
 using Testflow.Data.Sequence;
@@ -110,6 +111,27 @@ namespace Testflow.SequenceManager.Serializer
                 RollBackFilesIfFailed(serialziedFileList);
                 throw;
             }
+        }
+
+        public static string ToJson(TestProject testProject)
+        {
+            // 目前该方法还会同时核查下级SequenceGroup的数据，后续优化
+            VerifySequenceData(testProject);
+            JsonSerializerSettings settings = new JsonSerializerSettings()
+            {
+                NullValueHandling = NullValueHandling.Ignore
+            };
+            return JsonConvert.SerializeObject(testProject, settings);
+        }
+
+        public static string ToJson(SequenceGroup sequenceGroup)
+        {
+            VerifySequenceData(sequenceGroup);
+            JsonSerializerSettings settings = new JsonSerializerSettings()
+            {
+                NullValueHandling = NullValueHandling.Ignore
+            };
+            return JsonConvert.SerializeObject(sequenceGroup, settings);
         }
 
         private static void InitSequenceGroupLocations(TestProject testProject, string testProjectPath)

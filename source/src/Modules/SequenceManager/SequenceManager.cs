@@ -229,6 +229,26 @@ namespace Testflow.SequenceManager
             SequenceDeserializer.LoadParameter(sequenceGroupObj, param[0], forceLoad);
         }
 
+        public string RuntimeSerialize(ITestProject testProject)
+        {
+            return SequenceSerializer.ToJson(testProject as TestProject);
+        }
+
+        public string RuntimeSerialize(ISequenceGroup sequenceGroup)
+        {
+            return SequenceSerializer.ToJson(sequenceGroup as SequenceGroup);
+        }
+
+        public ITestProject RuntimeDeserializeTestProject(string testProjectStr)
+        {
+            return SequenceDeserializer.LoadTestProjectFromJson(testProjectStr);
+        }
+
+        public ISequenceGroup RuntimeDeserializeSequenceGroup(string sequenceGroupStr)
+        {
+            return SequenceDeserializer.LoadSequenceGroupFromJson(sequenceGroupStr);
+        }
+
         public void Dispose()
         {
             // TODO 后期检查是否需要额外的Dispose方式
