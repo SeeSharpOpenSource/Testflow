@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.Serialization;
 using System.Xml.Serialization;
 using Testflow.Data.Sequence;
 using Testflow.SequenceManager.Common;
@@ -26,5 +27,10 @@ namespace Testflow.SequenceManager.SequenceElements
         [XmlIgnore]
         [SerializationIgnore]
         public bool Modified { get; set; }
+
+        public void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            Common.Utility.FillSerializationInfo(info, this);
+        }
     }
 }

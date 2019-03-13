@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.Serialization;
 using System.Xml.Serialization;
 using Testflow.Data.Sequence;
 using Testflow.SequenceManager.Common;
@@ -11,8 +12,6 @@ namespace Testflow.SequenceManager.SequenceElements
     {
         public SequenceGroupInfo()
         {
-            SequenceManager sequenceManager = new SequenceManager();
-            this.Version = sequenceManager.Version;
             this._hash = string.Empty;
             this.CreationTime = DateTime.Now;
             this.ModifiedTime = DateTime.Now;
@@ -50,6 +49,11 @@ namespace Testflow.SequenceManager.SequenceElements
                 Modified = false
             };
             return sequenceGroupInfo;
+        }
+
+        public void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            Common.Utility.FillSerializationInfo(info, this);
         }
     }
 }

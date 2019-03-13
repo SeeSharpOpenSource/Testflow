@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.Serialization;
 using System.Xml.Serialization;
 using Testflow.Data;
 using Testflow.SequenceManager.Common;
@@ -41,6 +42,11 @@ namespace Testflow.SequenceManager.SequenceElements
         public override int GetHashCode()
         {
             return $"{AssemblyName}.{Version}".GetHashCode();
+        }
+
+        public void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            Common.Utility.FillSerializationInfo(info, this);
         }
     }
 }

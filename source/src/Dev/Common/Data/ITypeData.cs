@@ -1,12 +1,14 @@
 ﻿using System;
+using System.Runtime.Serialization;
 using System.Xml.Serialization;
+using Testflow.Data.Sequence;
 
 namespace Testflow.Data
 {
     /// <summary>
     /// 保存类型信息
     /// </summary>
-    public interface ITypeData
+    public interface ITypeData : ISequenceElement
     {
 //        /// <summary>
 //        /// 类型数据在当前容器中的索引

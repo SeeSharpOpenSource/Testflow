@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.Serialization;
 using System.Xml.Serialization;
 using Testflow.Data;
 using Testflow.Data.Sequence;
@@ -79,6 +80,11 @@ namespace Testflow.SequenceManager.SequenceElements
                     throw new ArgumentOutOfRangeException();
             }
             return variable;
+        }
+
+        public void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            Common.Utility.FillSerializationInfo(info, this);
         }
     }
 }

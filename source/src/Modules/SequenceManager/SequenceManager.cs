@@ -251,7 +251,7 @@ namespace Testflow.SequenceManager
 
         public void Dispose()
         {
-            // TODO 后期检查是否需要额外的Dispose方式
+            _instance = null;
         }
     }
 }

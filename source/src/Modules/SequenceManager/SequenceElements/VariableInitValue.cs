@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.Serialization;
 using Testflow.Data.Sequence;
 
 namespace Testflow.SequenceManager.SequenceElements
@@ -29,6 +30,11 @@ namespace Testflow.SequenceManager.SequenceElements
         public void Initialize(ISequenceFlowContainer parent)
         {
             // ignore
+        }
+
+        public void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            Common.Utility.FillSerializationInfo(info, this);
         }
     }
 }

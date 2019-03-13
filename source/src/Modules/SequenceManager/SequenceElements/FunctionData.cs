@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.Serialization;
 using System.Xml.Serialization;
 using Testflow.Data;
 using Testflow.Data.Description;
@@ -100,6 +101,11 @@ namespace Testflow.SequenceManager.SequenceElements
             Parameters = parameters;
             ParameterType = argumentsTypes;
             ReturnType = returnType;
+        }
+
+        public void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            Common.Utility.FillSerializationInfo(info, this);
         }
     }
 }

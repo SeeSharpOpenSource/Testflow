@@ -14,7 +14,7 @@ namespace Testflow.SequenceManager.Common
 
         public RuntimeSerializeIgnoreAttribute()
         {
-            this.Ignore = false;
+            this.Ignore = true;
         }
 
     }

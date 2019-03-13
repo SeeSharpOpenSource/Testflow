@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.Serialization;
 using Testflow.Data.Sequence;
 using Testflow.SequenceManager.Common;
 
@@ -108,6 +109,11 @@ namespace Testflow.SequenceManager.SequenceElements
 
             this.TearDownParameters = new SequenceParameter();
             this.TearDownParameters.Initialize(sequenceGroup.TearDown);
+        }
+
+        public void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            Common.Utility.FillSerializationInfo(info, this);
         }
     }
 }

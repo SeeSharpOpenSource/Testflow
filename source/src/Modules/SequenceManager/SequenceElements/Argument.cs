@@ -56,7 +56,7 @@ namespace Testflow.SequenceManager.SequenceElements
 
         public void GetObjectData(SerializationInfo info, StreamingContext context)
         {
-            
+            Common.Utility.FillSerializationInfo(info, this);
         }
     }
 }

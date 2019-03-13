@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Xml.Serialization;
 using Newtonsoft.Json;
@@ -198,6 +199,11 @@ namespace Testflow.SequenceManager.SequenceElements
             };
             sequenceGroup.RefreshSignature();
             return sequenceGroup;
+        }
+
+        public void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            Common.Utility.FillSerializationInfo(info, this);
         }
     }
 }

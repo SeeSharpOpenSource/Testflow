@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Xml.Serialization;
 using Testflow.Common;
 using Testflow.Data.Sequence;
@@ -111,6 +112,11 @@ namespace Testflow.SequenceManager.SequenceElements
                 RetryCounter = this.RetryCounter?.Clone(),
             };
             return sequenceStep;
+        }
+
+        public void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            Common.Utility.FillSerializationInfo(info, this);
         }
     }
 }

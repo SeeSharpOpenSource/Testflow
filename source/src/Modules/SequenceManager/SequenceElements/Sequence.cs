@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Xml.Serialization;
 using Testflow.Common;
 using Testflow.Data.Sequence;
@@ -71,6 +72,11 @@ namespace Testflow.SequenceManager.SequenceElements
                 Behavior = this.Behavior
             };
             return sequence;
+        }
+
+        public void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            Common.Utility.FillSerializationInfo(info, this);
         }
     }
 }

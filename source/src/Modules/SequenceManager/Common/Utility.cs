@@ -496,7 +496,7 @@ namespace Testflow.SequenceManager.Common
             {
                 RuntimeSerializeIgnoreAttribute ignoreAttribute =
                     propertyInfo.GetCustomAttribute<RuntimeSerializeIgnoreAttribute>();
-                if (null == ignoreAttribute || ignoreAttribute.Ignore)
+                if (null != ignoreAttribute && ignoreAttribute.Ignore)
                 {
                     continue;
                 }

@@ -100,5 +100,10 @@ namespace Testflow.SequenceManager.SequenceElements
         {
             throw new InvalidOperationException();
         }
+
+        public void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            Common.Utility.FillSerializationInfo(info, this);
+        }
     }
 }

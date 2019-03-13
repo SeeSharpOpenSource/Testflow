@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.Serialization;
 using Testflow.Data.Sequence;
 using Testflow.SequenceManager.Common;
 
@@ -30,6 +31,11 @@ namespace Testflow.SequenceManager.SequenceElements
                 CounterVariable = string.Empty
             };
             return loopCounter;
+        }
+
+        public void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            Common.Utility.FillSerializationInfo(info, this);
         }
     }
 }

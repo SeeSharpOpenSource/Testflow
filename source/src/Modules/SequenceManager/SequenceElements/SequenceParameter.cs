@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.Serialization;
 using System.Xml.Serialization;
 using Testflow.Data.Sequence;
 using Testflow.SequenceManager.Common;
@@ -50,6 +51,11 @@ namespace Testflow.SequenceManager.SequenceElements
         public ISequenceDataContainer Clone()
         {
             throw new System.NotImplementedException();
+        }
+
+        public void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            Common.Utility.FillSerializationInfo(info, this);
         }
     }
 }
