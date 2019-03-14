@@ -4,6 +4,7 @@ namespace Testflow.EngineCore.Common
 {
     internal static class Constants
     {
+        public const string LocalHostAddr = "127.0.0.1";
         public const int DefaultSequenceCapacaity = 10;
         public const int DefaultRuntimeSize = 10;
         public const string I18nName = "engineCore";
@@ -14,6 +15,8 @@ namespace Testflow.EngineCore.Common
 
         public const int TestProjectSessionId = -1;
         public const int EventQueueTimeOut = 500;
+
+        public const int OperationTimeout = 1000;
 
         public const string MsgQueueName = @".\Private$\TestflowEventQueue";
 

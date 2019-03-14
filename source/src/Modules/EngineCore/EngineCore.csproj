@@ -60,9 +60,13 @@
     <Compile Include="Events\EventsDispatcher.cs" />
     <Compile Include="Generators\ITestGenerator.cs" />
     <Compile Include="Generators\RuntimeTarget.cs" />
+    <Compile Include="Message\AsyncMsgTransceiver.cs" />
+    <Compile Include="Message\IMessageConsumer.cs" />
     <Compile Include="Message\Messages\ControlMessage.cs" />
     <Compile Include="Message\Messages\DebugMessage.cs" />
     <Compile Include="Message\Messages\MessageBase.cs" />
+    <Compile Include="Message\SyncMsgTransceiver.cs" />
+    <Compile Include="Message\MessageTransceiver.cs" />
     <Compile Include="Message\MessageType.cs" />
     <Compile Include="Message\Messages\RmtGenMessage.cs" />
     <Compile Include="Message\Messages\StatusMessage.cs" />

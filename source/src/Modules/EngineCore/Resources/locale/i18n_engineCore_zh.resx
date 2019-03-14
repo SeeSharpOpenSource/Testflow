@@ -117,6 +117,9 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="CannotSendWhenDeactive" xml:space="preserve">
+    <value>信使处于非激活状态时不能执行消息发送。</value>
+  </data>
   <data name="EventEnqueueTimeOut" xml:space="preserve">
     <value>事件入列超时。</value>
   </data>
@@ -129,6 +132,9 @@
   <data name="IncorrectParamType" xml:space="preserve">
     <value>事件参数类型应为”{0}“。</value>
   </data>
+  <data name="OperatoinTimeout" xml:space="preserve">
+    <value>操作超时。</value>
+  </data>
   <data name="UnexistArgumentSource" xml:space="preserve">
     <value>带有入参的SequenceGroup必须和父级的TestProject同时运行。</value>
   </data>
@@ -137,5 +143,8 @@
   </data>
   <data name="UnexistSession" xml:space="preserve">
     <value>不存在ID为”{0}“的运行时会话。</value>
+  </data>
+  <data name="UnregisteredMessage" xml:space="preserve">
+    <value>未注册的消息类型：“{0}”。</value>
   </data>
 </root>

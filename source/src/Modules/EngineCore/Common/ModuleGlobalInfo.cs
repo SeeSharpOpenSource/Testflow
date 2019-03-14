@@ -12,9 +12,17 @@ namespace Testflow.EngineCore.Common
     {
         public IModuleConfigData ConfigData { get; set; }
 
-        public I18N I18N => I18N.GetInstance(Constants.I18nName);
+        public I18N I18N { get; }
 
-        public ILogService LogService { get; set; }
+        public ILogService LogService { get; }
+
+        public ModuleGlobalInfo(IModuleConfigData configData)
+        {
+            TestflowRunner testflowRunner = TestflowRunner.GetInstance();
+            this.I18N = I18N.GetInstance(Constants.I18nName);
+            this.LogService = testflowRunner.LogService;
+            this.ConfigData = configData;
+        }
 
         public void Dispose()
         {

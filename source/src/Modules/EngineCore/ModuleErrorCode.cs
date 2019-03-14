@@ -11,5 +11,8 @@ namespace Testflow.EngineCore
         public const int EventTimeOut = 5 | CommonErrorCode.EngineCoreErrorMask;
         public const int EventsTooMany = 6 | CommonErrorCode.EngineCoreErrorMask;
         public const int SequenceDataError = 7 | CommonErrorCode.EngineCoreErrorMask;
+        public const int OperationTimeout = 8 | CommonErrorCode.EngineCoreErrorMask;
+        public const int InvalidOperation = 9 | CommonErrorCode.EngineCoreErrorMask;
+        public const int UnregisteredMessage = 10 | CommonErrorCode.EngineCoreErrorMask;
     }
 }

@@ -61,6 +61,15 @@ namespace Testflow.EngineCore.Resources.locale {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Cannot send message when messenger is deactivated.
+        /// </summary>
+        internal static string CannotSendWhenDeactive {
+            get {
+                return ResourceManager.GetString("CannotSendWhenDeactive", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Event enqueue operation time out..
         /// </summary>
         internal static string EventEnqueueTimeOut {
@@ -97,6 +106,15 @@ namespace Testflow.EngineCore.Resources.locale {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Operation timeout..
+        /// </summary>
+        internal static string OperatoinTimeout {
+            get {
+                return ResourceManager.GetString("OperatoinTimeout", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to SequenceGroup with input arguments cannot run with out test project..
         /// </summary>
         internal static string UnexistArgumentSource {
@@ -120,6 +138,15 @@ namespace Testflow.EngineCore.Resources.locale {
         internal static string UnexistSession {
             get {
                 return ResourceManager.GetString("UnexistSession", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unregistered message type: {0}..
+        /// </summary>
+        internal static string UnregisteredMessage {
+            get {
+                return ResourceManager.GetString("UnregisteredMessage", resourceCulture);
             }
         }
     }

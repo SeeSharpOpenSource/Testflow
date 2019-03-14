@@ -61,6 +61,15 @@ namespace Testflow.EngineCore.Resources.locale {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to 信使处于非激活状态时不能执行消息发送。.
+        /// </summary>
+        internal static string CannotSendWhenDeactive {
+            get {
+                return ResourceManager.GetString("CannotSendWhenDeactive", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to 事件入列超时。.
         /// </summary>
         internal static string EventEnqueueTimeOut {
@@ -97,6 +106,15 @@ namespace Testflow.EngineCore.Resources.locale {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to 操作超时。.
+        /// </summary>
+        internal static string OperatoinTimeout {
+            get {
+                return ResourceManager.GetString("OperatoinTimeout", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to 带有入参的SequenceGroup必须和父级的TestProject同时运行。.
         /// </summary>
         internal static string UnexistArgumentSource {
@@ -120,6 +138,15 @@ namespace Testflow.EngineCore.Resources.locale {
         internal static string UnexistSession {
             get {
                 return ResourceManager.GetString("UnexistSession", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 未注册的消息类型：“{0}”。.
+        /// </summary>
+        internal static string UnregisteredMessage {
+            get {
+                return ResourceManager.GetString("UnregisteredMessage", resourceCulture);
             }
         }
     }
