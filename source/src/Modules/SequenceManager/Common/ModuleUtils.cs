@@ -15,7 +15,7 @@ using Testflow.SequenceManager.SequenceElements;
 
 namespace Testflow.SequenceManager.Common
 {
-    internal static class Utility
+    internal static class ModuleUtils
     {
         #region Collection Utils
 
@@ -531,7 +531,7 @@ namespace Testflow.SequenceManager.Common
         public static void FillSerializationInfo(SerializationInfo info, object obj)
         {
             Type objType = obj.GetType();
-            Assembly assembly = Assembly.GetAssembly(typeof (Utility));
+            Assembly assembly = Assembly.GetAssembly(typeof (ModuleUtils));
             info.AssemblyName = assembly.GetName().Name;
             info.FullTypeName = $"{objType.Namespace}.{objType.Name}";
 
@@ -544,9 +544,13 @@ namespace Testflow.SequenceManager.Common
                     continue;
                 }
                 object value = propertyInfo.GetValue(obj);
+                if (null == value)
+                {
+                    continue;
+                }
                 Type propertyType = propertyInfo.PropertyType;
                 // 如果是类类型且不为null，则获取真实的类型
-                if (propertyType.IsClass && null != value)
+                if (propertyType.IsClass)
                 {
                     propertyType = value.GetType();
                 }

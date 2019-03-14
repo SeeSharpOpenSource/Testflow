@@ -36,12 +36,12 @@ namespace Testflow.SequenceManager.SequenceElements
 
         public VariableInitValue(SerializationInfo info, StreamingContext context)
         {
-            Common.Utility.FillDeserializationInfo(info, this, this.GetType());
+            Common.ModuleUtils.FillDeserializationInfo(info, this, GetType());
         }
 
         public void GetObjectData(SerializationInfo info, StreamingContext context)
         {
-            Common.Utility.FillSerializationInfo(info, this);
+            Common.ModuleUtils.FillSerializationInfo(info, this);
         }
 
         #endregion

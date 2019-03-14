@@ -29,8 +29,8 @@ namespace Testflow.SequenceManager.SequenceElements
 
         public void Add(ISequenceStep item)
         {
-            Common.Utility.SetElementName(item, this);
-            Common.Utility.AddAndRefreshIndex(_innerCollection, item);
+            ModuleUtils.SetElementName(item, this);
+            ModuleUtils.AddAndRefreshIndex(_innerCollection, item);
         }
 
         public void Clear()
@@ -50,7 +50,7 @@ namespace Testflow.SequenceManager.SequenceElements
 
         public bool Remove(ISequenceStep item)
         {
-            return Common.Utility.RemoveAndRefreshIndex(_innerCollection, item);
+            return ModuleUtils.RemoveAndRefreshIndex(_innerCollection, item);
         }
 
         public int Count => _innerCollection.Count;
@@ -62,13 +62,13 @@ namespace Testflow.SequenceManager.SequenceElements
 
         public void Insert(int index, ISequenceStep item)
         {
-            Common.Utility.SetElementName(item, this);
-            Common.Utility.InsertAndRefreshIndex(_innerCollection, item, index);
+            ModuleUtils.SetElementName(item, this);
+            ModuleUtils.InsertAndRefreshIndex(_innerCollection, item, index);
         }
 
         public void RemoveAt(int index)
         {
-            Common.Utility.RemoveAtAndRefreshIndex(_innerCollection, index);
+            ModuleUtils.RemoveAtAndRefreshIndex(_innerCollection, index);
         }
 
         public ISequenceStep this[int index]

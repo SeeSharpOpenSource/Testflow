@@ -32,14 +32,14 @@ namespace Testflow.SequenceManager.SequenceElements
             if (null != this.SubStepParameters)
             {
                 subStepParameters = new SequenceStepParameterCollection();
-                Common.Utility.CloneDataCollection(this.SubStepParameters, subStepParameters);
+                ModuleUtils.CloneDataCollection(this.SubStepParameters, subStepParameters);
             }
 
             ParameterDataCollection dataCollection = null;
             if (null != Parameters)
             {
                 dataCollection = new ParameterDataCollection();
-                Common.Utility.CloneCollection(Parameters, dataCollection);
+                ModuleUtils.CloneCollection(Parameters, dataCollection);
             }
 
             SequenceStepParameter stepParameter = new SequenceStepParameter()
@@ -91,12 +91,12 @@ namespace Testflow.SequenceManager.SequenceElements
 
         public SequenceStepParameter(SerializationInfo info, StreamingContext context)
         {
-            Common.Utility.FillDeserializationInfo(info, this, this.GetType());
+            ModuleUtils.FillDeserializationInfo(info, this, this.GetType());
         }
 
         public void GetObjectData(SerializationInfo info, StreamingContext context)
         {
-            Common.Utility.FillSerializationInfo(info, this);
+            ModuleUtils.FillSerializationInfo(info, this);
         }
 
         #endregion

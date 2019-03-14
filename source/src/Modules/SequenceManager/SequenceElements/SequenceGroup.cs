@@ -84,7 +84,7 @@ namespace Testflow.SequenceManager.SequenceElements
         {
             ITestProject testProject = parent as ITestProject;
             this.Parent = testProject;
-            Common.Utility.SetElementName(this, testProject?.SequenceGroups);
+            ModuleUtils.SetElementName(this, testProject?.SequenceGroups);
             
             Info.Modified = true;
             if (null != testProject)
@@ -121,12 +121,12 @@ namespace Testflow.SequenceManager.SequenceElements
         {
             const string datetimeFormat = "yyyy-mm-dd-hh-MM-ss-fff";
             const string delim = "_";
-            string hostInfo = Common.Utility.GetHostInfo();
+            string hostInfo = ModuleUtils.GetHostInfo();
             StringBuilder featureInfo = new StringBuilder(4000);
             featureInfo.Append(Name).Append(delim).Append(Info.CreationTime.ToString("datetimeFormat")).Append(delim).
                 Append(Info.ModifiedTime.ToString(datetimeFormat)).Append(delim).Append(hostInfo).Append(delim)
                 .Append(GetSequenceGroupFlowInfo());
-            return Common.Utility.GetHashValue(featureInfo.ToString(), Encoding.UTF8);
+            return ModuleUtils.GetHashValue(featureInfo.ToString(), Encoding.UTF8);
         }
 
         /// <summary>
@@ -168,10 +168,10 @@ namespace Testflow.SequenceManager.SequenceElements
             }
 
             ArgumentCollection arguments = new ArgumentCollection();
-            Common.Utility.CloneCollection(this.Arguments, arguments);
+            ModuleUtils.CloneCollection(this.Arguments, arguments);
 
             VariableCollection variables = new VariableCollection();
-            Common.Utility.CloneFlowCollection(this.Variables, variables);
+            ModuleUtils.CloneFlowCollection(this.Variables, variables);
 
             // SequenceGroupParameter只在序列化时使用
             // Parameters只有在序列化时才会生成，在加载完成后会被删除
@@ -179,7 +179,7 @@ namespace Testflow.SequenceManager.SequenceElements
                 null : this.Parameters.Clone() as ISequenceGroupParameter;
 
             SequenceCollection sequenceCollection = new SequenceCollection();
-            Common.Utility.CloneFlowCollection(this.Sequences, sequenceCollection);
+            ModuleUtils.CloneFlowCollection(this.Sequences, sequenceCollection);
 
             SequenceGroup sequenceGroup = new SequenceGroup()
             {
@@ -205,12 +205,12 @@ namespace Testflow.SequenceManager.SequenceElements
 
         public SequenceGroup(SerializationInfo info, StreamingContext context)
         {
-            Common.Utility.FillDeserializationInfo(info, this, this.GetType());
+            ModuleUtils.FillDeserializationInfo(info, this, this.GetType());
         }
 
         public void GetObjectData(SerializationInfo info, StreamingContext context)
         {
-            Common.Utility.FillSerializationInfo(info, this);
+            ModuleUtils.FillSerializationInfo(info, this);
         }
 
         #endregion

@@ -59,10 +59,10 @@ namespace Testflow.SequenceManager.SequenceElements
             };
 
             VariableInitValueCollection initValueCollection = new VariableInitValueCollection();
-            Common.Utility.CloneDataCollection(this.VariableValues, initValueCollection);
+            ModuleUtils.CloneDataCollection(this.VariableValues, initValueCollection);
 
             SequenceParameterCollection sequenceParameterCollection = new SequenceParameterCollection();
-            Common.Utility.CloneDataCollection(this.SequenceParameters, sequenceParameterCollection);
+            ModuleUtils.CloneDataCollection(this.SequenceParameters, sequenceParameterCollection);
 
             SequenceGroupParameter parameter = new SequenceGroupParameter()
             {
@@ -115,12 +115,12 @@ namespace Testflow.SequenceManager.SequenceElements
 
         public SequenceGroupParameter(SerializationInfo info, StreamingContext context)
         {
-            Common.Utility.FillDeserializationInfo(info, this, this.GetType());
+            ModuleUtils.FillDeserializationInfo(info, this, this.GetType());
         }
 
         public void GetObjectData(SerializationInfo info, StreamingContext context)
         {
-            Common.Utility.FillSerializationInfo(info, this);
+            ModuleUtils.FillSerializationInfo(info, this);
         }
 
         #endregion

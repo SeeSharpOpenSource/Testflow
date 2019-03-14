@@ -57,12 +57,12 @@ namespace Testflow.SequenceManager.SequenceElements
 
         public SequenceParameter(SerializationInfo info, StreamingContext context)
         {
-            Common.Utility.FillDeserializationInfo(info, this, this.GetType());
+            ModuleUtils.FillDeserializationInfo(info, this, this.GetType());
         }
 
         public void GetObjectData(SerializationInfo info, StreamingContext context)
         {
-            Common.Utility.FillSerializationInfo(info, this);
+            ModuleUtils.FillSerializationInfo(info, this);
         }
 
         #endregion

@@ -16,7 +16,7 @@ namespace Testflow.SequenceManager.Serializer
 
         public static TestProject LoadTestProject(string filePath, bool forceLoad, IModuleConfigData envInfo)
         {
-            filePath = Common.Utility.GetAbsolutePath(filePath, Directory.GetCurrentDirectory());
+            filePath = ModuleUtils.GetAbsolutePath(filePath, Directory.GetCurrentDirectory());
 
             if (!filePath.EndsWith($".{CommonConst.TestGroupFileExtension}"))
             {
@@ -34,7 +34,7 @@ namespace Testflow.SequenceManager.Serializer
             {
                 SequenceGroup sequenceGroup = null;
 
-                string sequenceGroupFile = Common.Utility.GetAbsolutePath(sequenceGroupLocation.SequenceFilePath, filePath);
+                string sequenceGroupFile = ModuleUtils.GetAbsolutePath(sequenceGroupLocation.SequenceFilePath, filePath);
                 if (File.Exists(sequenceGroupFile))
                 {
                     sequenceGroup = LoadSequenceGroup(sequenceGroupFile, forceLoad, envInfo);
@@ -58,7 +58,7 @@ namespace Testflow.SequenceManager.Serializer
 
         public static SequenceGroup LoadSequenceGroup(string filePath, bool forceLoad, IModuleConfigData envInfo)
         {
-            filePath = Common.Utility.GetAbsolutePath(filePath, Directory.GetCurrentDirectory());
+            filePath = ModuleUtils.GetAbsolutePath(filePath, Directory.GetCurrentDirectory());
 
             if (!filePath.EndsWith($".{CommonConst.SequenceFileExtension}"))
             {
@@ -66,7 +66,7 @@ namespace Testflow.SequenceManager.Serializer
                 throw new TestflowDataException(ModuleErrorCode.InvalidFileType, i18N.GetStr("InvalidFileType"));
             }
             SequenceGroup sequenceGroup = XmlReaderHelper.ReadSequenceGroup(filePath);
-            string sequenceParamFile = Common.Utility.GetAbsolutePath(sequenceGroup.Info.SequenceParamFile, filePath);
+            string sequenceParamFile = ModuleUtils.GetAbsolutePath(sequenceGroup.Info.SequenceParamFile, filePath);
             SequenceGroupParameter parameter =
                 XmlReaderHelper.ReadSequenceGroupParameter(sequenceParamFile);
             if (!forceLoad && !sequenceGroup.Info.Hash.Equals(parameter.Info.Hash))
@@ -82,7 +82,7 @@ namespace Testflow.SequenceManager.Serializer
 
         public static void LoadParameter(SequenceGroup sequenceGroup, string filePath, bool forceLoad)
         {
-            filePath = Common.Utility.GetAbsolutePath(filePath, Directory.GetCurrentDirectory());
+            filePath = ModuleUtils.GetAbsolutePath(filePath, Directory.GetCurrentDirectory());
             SequenceGroupParameter parameter = XmlReaderHelper.ReadSequenceGroupParameter(filePath);
             if (!forceLoad && !sequenceGroup.Info.Hash.Equals(parameter.Info.Hash))
             {

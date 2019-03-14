@@ -53,10 +53,10 @@ namespace Testflow.SequenceManager.SequenceElements
         public IFunctionData Clone()
         {
             ArgumentCollection parameterType = new ArgumentCollection();
-            Common.Utility.CloneCollection(ParameterType, parameterType);
+            ModuleUtils.CloneCollection(ParameterType, parameterType);
 
             ParameterDataCollection parameters = new ParameterDataCollection();
-            Common.Utility.CloneCollection(Parameters, parameters);
+            ModuleUtils.CloneCollection(Parameters, parameters);
 
             FunctionData functionData = new FunctionData()
             {
@@ -107,12 +107,12 @@ namespace Testflow.SequenceManager.SequenceElements
 
         public FunctionData(SerializationInfo info, StreamingContext context)
         {
-            Common.Utility.FillDeserializationInfo(info, this, this.GetType());
+            ModuleUtils.FillDeserializationInfo(info, this, this.GetType());
         }
 
         public void GetObjectData(SerializationInfo info, StreamingContext context)
         {
-            Common.Utility.FillSerializationInfo(info, this);
+            ModuleUtils.FillSerializationInfo(info, this);
         }
 
         #endregion

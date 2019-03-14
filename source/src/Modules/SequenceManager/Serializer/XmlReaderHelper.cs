@@ -247,7 +247,7 @@ namespace Testflow.SequenceManager.Serializer
             int currentDepth = reader.Depth;
             bool isValueType = elementType.IsValueType || typeof (string).Equals(elementType) || elementType.IsEnum;
 //            Type genericType = rawType.GetGenericArguments()[0];
-            Type genericType = Common.Utility.GetRawGenericElementType(parentType);
+            Type genericType = ModuleUtils.GetRawGenericElementType(parentType);
             MethodInfo addMethod = parentType.GetMethod(addMethodName, BindingFlags.Instance | BindingFlags.Public, null,
                 CallingConventions.Standard, new Type[] { genericType }, new ParameterModifier[0]);
             GenericCollectionAttribute collectionAttribute =

@@ -29,7 +29,7 @@ namespace Testflow.SequenceManager.SequenceElements
 
         public void Add(IParameterDataCollection item)
         {
-            Common.Utility.AddAndRefreshIndex(this._innerCollection, item);
+            ModuleUtils.AddAndRefreshIndex(this._innerCollection, item);
         }
 
         public void Clear()

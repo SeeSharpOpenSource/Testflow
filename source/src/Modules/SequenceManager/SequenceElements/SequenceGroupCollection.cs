@@ -33,7 +33,7 @@ namespace Testflow.SequenceManager.SequenceElements
             {
                 return;
             }
-            Common.Utility.SetElementName(item, this);
+            ModuleUtils.SetElementName(item, this);
             this._innerCollection.Add(item);
             
         }
@@ -71,7 +71,7 @@ namespace Testflow.SequenceManager.SequenceElements
             {
                 return;
             }
-            Common.Utility.SetElementName(item, this);
+            ModuleUtils.SetElementName(item, this);
             _innerCollection.Insert(index, item);
         }
 

@@ -50,16 +50,16 @@ namespace Testflow.SequenceManager.SequenceElements
             this.Parent = parent;
             this.Variables = new VariableCollection();
             this.Steps = new SequenceStepCollection();
-            Common.Utility.SetElementName(this, sequenceGroup.Sequences);
+            ModuleUtils.SetElementName(this, sequenceGroup.Sequences);
         }
 
         ISequenceFlowContainer ICloneableClass<ISequenceFlowContainer>.Clone()
         {
             VariableCollection variables = new VariableCollection();
-            Common.Utility.CloneFlowCollection(this.Variables, variables);
+            ModuleUtils.CloneFlowCollection(this.Variables, variables);
 
             SequenceStepCollection stepCollection = new SequenceStepCollection();
-            Common.Utility.CloneFlowCollection(this.Steps, stepCollection);
+            ModuleUtils.CloneFlowCollection(this.Steps, stepCollection);
 
             Sequence sequence = new Sequence()
             {
@@ -78,12 +78,12 @@ namespace Testflow.SequenceManager.SequenceElements
 
         public Sequence(SerializationInfo info, StreamingContext context)
         {
-            Common.Utility.FillDeserializationInfo(info, this, this.GetType());
+            ModuleUtils.FillDeserializationInfo(info, this, this.GetType());
         }
 
         public void GetObjectData(SerializationInfo info, StreamingContext context)
         {
-            Common.Utility.FillSerializationInfo(info, this);
+            ModuleUtils.FillSerializationInfo(info, this);
         }
 
         #endregion

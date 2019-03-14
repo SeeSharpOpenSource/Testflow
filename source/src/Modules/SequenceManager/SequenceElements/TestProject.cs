@@ -89,7 +89,7 @@ namespace Testflow.SequenceManager.SequenceElements
 
         public void Initialize(ISequenceFlowContainer parent)
         {
-            if (!Common.Utility.IsValidName(this.Name))
+            if (!ModuleUtils.IsValidName(this.Name))
             {
                 this.Name = string.Format(Constants.TestProjectNameFormat, 1);
             }
@@ -105,12 +105,12 @@ namespace Testflow.SequenceManager.SequenceElements
 
         public TestProject(SerializationInfo info, StreamingContext context)
         {
-            Common.Utility.FillDeserializationInfo(info, this, this.GetType());
+            ModuleUtils.FillDeserializationInfo(info, this, this.GetType());
         }
 
         public void GetObjectData(SerializationInfo info, StreamingContext context)
         {
-            Common.Utility.FillSerializationInfo(info, this);
+            ModuleUtils.FillSerializationInfo(info, this);
         }
 
         #endregion
