@@ -13,6 +13,7 @@ namespace Testflow.EngineCore.Message
     {
         public static MessageTransceiver GetTransceiver(ModuleGlobalInfo globalInfo, bool isSyncMessenger)
         {
+            // TODO 目前只实现了同步处理方式，异步处理后期实现
             if (isSyncMessenger)
             {
                 return new SyncMsgTransceiver(globalInfo);

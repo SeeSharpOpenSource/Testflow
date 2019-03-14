@@ -52,6 +52,7 @@
     <Compile Include="Data\EventInvokeInfo.cs" />
     <Compile Include="Data\EventQueue.cs" />
     <Compile Include="Data\SequenceGenerationInfo.cs" />
+    <Compile Include="Data\SyncResourceInfo.cs" />
     <Compile Include="Data\TestGenerationInfo.cs" />
     <Compile Include="Data\PerformanceData.cs" />
     <Compile Include="Data\RuntimeStatusInfo.cs" />
@@ -65,9 +66,10 @@
     <Compile Include="Message\Messages\ControlMessage.cs" />
     <Compile Include="Message\Messages\DebugMessage.cs" />
     <Compile Include="Message\Messages\MessageBase.cs" />
+    <Compile Include="Message\Messages\ResourceSyncMessage.cs" />
+    <Compile Include="Message\MessageType.cs" />
     <Compile Include="Message\SyncMsgTransceiver.cs" />
     <Compile Include="Message\MessageTransceiver.cs" />
-    <Compile Include="Message\MessageType.cs" />
     <Compile Include="Message\Messages\RmtGenMessage.cs" />
     <Compile Include="Message\Messages\StatusMessage.cs" />
     <Compile Include="Message\Messages\TestGenMessage.cs" />
@@ -86,6 +88,8 @@
     <Compile Include="Events\SessionEventHandle.cs" />
     <Compile Include="Container\RuntimeContainer.cs" />
     <Compile Include="RuntimeEngine.cs" />
+    <Compile Include="StatusManage\RuntimeStatusManager.cs" />
+    <Compile Include="SyncManage\SynchronousManager.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Dev\Common\Common.csproj">
@@ -103,8 +107,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Debugger\" />
-    <Folder Include="StatusManage\" />
-    <Folder Include="SyncManage\" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\locale\i18n_engineCore_en.resx">
