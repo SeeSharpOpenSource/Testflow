@@ -141,7 +141,7 @@ namespace Testflow.Utility.MessageUtil
         /// 接收信息，未添加高阶参数配置，后续再更新
         /// </summary>
         /// <param name="targetTypes">目标数据类型</param>
-        internal abstract IMessage Receive(params Type[] targetTypes);
+        public abstract IMessage Receive(params Type[] targetTypes);
 
         /// <summary>
         /// 发送消息，未添加高阶配置，后续再更新

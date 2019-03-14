@@ -14,7 +14,7 @@ namespace Testflow.Utility.MessageUtil.Messengers
 
         public override int MessageCount => _messageQueue.GetAllMessages().Length;
 
-        internal override IMessage Receive(params Type[] targetTypes)
+        public override IMessage Receive(params Type[] targetTypes)
         {
             if (!_messageQueue.CanRead)
             {
