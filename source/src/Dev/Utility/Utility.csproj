@@ -42,6 +42,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Collections\Convertor\EnumConvertor.cs" />
+    <Compile Include="Collections\Convertor\ValueConvertor.cs" />
     <Compile Include="Collections\SerializableMap.cs" />
     <Compile Include="ModuleErrorCode.cs" />
     <Compile Include="UtilityConstants.cs" />

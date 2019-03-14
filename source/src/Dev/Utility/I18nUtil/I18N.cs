@@ -136,7 +136,7 @@ namespace Testflow.Utility.I18nUtil
         /// <returns>国际化后的字符串</returns>
         public string GetStr(string labelKey)
         {
-            return _resourceManager.GetString(labelKey);
+            return _resourceManager.GetString(labelKey) ?? labelKey;
         }
 
         /// <summary>
@@ -147,13 +147,15 @@ namespace Testflow.Utility.I18nUtil
         /// <returns>国际化后的字符串</returns>
         public string GetFStr(string labelKey, params string[] param)
         {
+            const string joinChar = "_";
             string msgFormat = _resourceManager.GetString(labelKey);
-            if (null == msgFormat)
-            {
-                string errFormat = GetResourceItem("ItemNotExist");
-                throw new TestflowRuntimeException(ModuleErrorCode.I18nRuntimeError, errFormat);
-            }
-            return string.Format(msgFormat, param);
+//            if (null == msgFormat)
+//            {
+//                string errFormat = GetResourceItem("ItemNotExist");
+//                throw new TestflowRuntimeException(ModuleErrorCode.I18nRuntimeError, errFormat);
+//            }
+            return null != msgFormat ? string.Format(msgFormat, param) : 
+                labelKey + joinChar + string.Join(joinChar, param);
         }
 
         public void Dispose()

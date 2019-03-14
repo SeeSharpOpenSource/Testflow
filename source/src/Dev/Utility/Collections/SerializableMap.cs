@@ -1,20 +1,49 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Xml;
 using System.Xml.Schema;
 using Testflow.Common;
+using Testflow.Utility.Collections.Convertor;
 
 namespace Testflow.Utility.Collections
 {
+    /// <summary>
+    /// 可序列化的Map集合
+    /// </summary>
     public class SerializableMap<TKey, TValue> : ISerializableMap<TKey, TValue>
     {
         private readonly Dictionary<TKey, TValue> _innerCollection;
 
+        /// <summary>
+        /// 创建序列化Map的实例
+        /// </summary>
         public SerializableMap(int capacity)
         {
             this._innerCollection = new Dictionary<TKey, TValue>(capacity);
+        }
+
+        public SerializableMap(SerializationInfo info, StreamingContext context)
+        {
+            this._innerCollection = new Dictionary<TKey, TValue>(UtilityConstants.DefaultEntityCount);
+            SerializationInfoEnumerator enumerator = info.GetEnumerator();
+            while (enumerator.MoveNext())
+            {
+                TKey key;
+                Type keyType = typeof(TKey);
+                if (keyType.IsEnum)
+                {
+                    key = (TKey)EnumConvertor.ReadData(keyType, enumerator.Name);
+                }
+                else
+                {
+                    key = (TKey) ValueConvertor.ReadData(keyType, enumerator.Name);
+                }
+                this._innerCollection.Add(key, (TValue) enumerator.Value);
+            }
         }
 
         public IEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator()
