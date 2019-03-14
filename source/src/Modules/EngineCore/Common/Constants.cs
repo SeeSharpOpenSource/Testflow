@@ -4,6 +4,7 @@ namespace Testflow.EngineCore.Common
 {
     internal static class Constants
     {
+        public const int DefaultSequenceCapacaity = 10;
         public const int DefaultRuntimeSize = 10;
         public const string I18nName = "engineCore";
         public const int DefaultEventsQueueSize = 512;

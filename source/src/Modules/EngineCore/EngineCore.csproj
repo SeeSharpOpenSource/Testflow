@@ -45,21 +45,28 @@
     <Compile Include="Common\ModuleUtil.cs" />
     <Compile Include="Common\ModuleUtility.cs" />
     <Compile Include="Common\MQIgnoreAttribute.cs" />
-    <Compile Include="Common\SerializableList.cs" />
+    <Compile Include="Common\RunnerType.cs" />
+    <Compile Include="Common\TestGenState.cs" />
     <Compile Include="Data\CallStack.cs" />
+    <Compile Include="Data\DebugData.cs" />
     <Compile Include="Data\EventInvokeInfo.cs" />
     <Compile Include="Data\EventQueue.cs" />
-    <Compile Include="Data\GenerationData\SequenceGenerationInfo.cs" />
-    <Compile Include="Data\GenerationData\TestGenerationInfo.cs" />
+    <Compile Include="Data\SequenceGenerationInfo.cs" />
+    <Compile Include="Data\TestGenerationInfo.cs" />
+    <Compile Include="Data\PerformanceData.cs" />
     <Compile Include="Data\RuntimeStatusInfo.cs" />
     <Compile Include="Data\TestResultCollection.cs" />
     <Compile Include="EngineHandle.cs" />
     <Compile Include="Events\EventsDispatcher.cs" />
     <Compile Include="Generators\ITestGenerator.cs" />
     <Compile Include="Generators\RuntimeTarget.cs" />
+    <Compile Include="Messages\ControlMessage.cs" />
+    <Compile Include="Messages\DebugMessage.cs" />
     <Compile Include="Messages\MessageBase.cs" />
-    <Compile Include="Messages\StatusReceivedMessage.cs" />
-    <Compile Include="Messages\TestGenerationMessage.cs" />
+    <Compile Include="Messages\MessageType.cs" />
+    <Compile Include="Messages\RmtGenMessage.cs" />
+    <Compile Include="Messages\StatusMessage.cs" />
+    <Compile Include="Messages\TestGenMessage.cs" />
     <Compile Include="ModuleErrorCode.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Resources\locale\i18n_engineCore_en.Designer.cs">
@@ -92,6 +99,8 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Debugger\" />
+    <Folder Include="StatusManage\" />
+    <Folder Include="SyncManage\" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\locale\i18n_engineCore_en.resx">

@@ -1,12 +1,13 @@
 ﻿using System.Collections.Generic;
 using System.Runtime.Remoting.Contexts;
+using System.Runtime.Serialization;
 using Testflow.Data.Sequence;
 using Testflow.EngineCore.Common;
 using Testflow.Runtime;
 
 namespace Testflow.EngineCore.Data
 {
-    public class CallStack : ICallStack
+    public class CallStack : ICallStack, ISerializable
     {
         public CallStack()
         {
@@ -49,6 +50,20 @@ namespace Testflow.EngineCore.Data
             ITestProject testProject = (ITestProject) sequenceGroup.Parent;
             callStack.SequenceGroupIndex = testProject.SequenceGroups.IndexOf(sequenceGroup);
             return callStack;
+        }
+
+        public CallStack(SerializationInfo info, StreamingContext context)
+        {
+            this.SequenceGroupIndex = (int) info.GetValue("SequenceGroupIndex", typeof(int));
+            this.SequenceIndex = (int) info.GetValue("SequenceIndex", typeof(int));
+            this.StepStack = info.GetValue("StepStack", typeof(List<int>)) as List<int>;
+        }
+
+        public void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            info.AddValue("SequenceGroupIndex", SequenceGroupIndex);
+            info.AddValue("SequenceIndex", SequenceIndex);
+            info.AddValue("StepStack", StepStack, typeof(List<int>));
         }
     }
 }

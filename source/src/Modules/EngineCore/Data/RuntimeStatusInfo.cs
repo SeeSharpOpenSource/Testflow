@@ -38,12 +38,6 @@ namespace Testflow.EngineCore.Data
             this.RawCallStack = new CallStack();
         }
 
-
-
-
-
-
-
         public void InitExtendProperties()
         {
             throw new NotImplementedException();

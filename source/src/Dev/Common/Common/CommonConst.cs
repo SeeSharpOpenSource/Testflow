@@ -40,6 +40,14 @@
 
         internal const string I18nName = "LoggerI18N";
 
+        /// <summary>
+        /// 平台日志会话id
+        /// </summary>
         public const int PlatformLogSession = -1;
+
+        /// <summary>
+        /// 测试工程的会话id
+        /// </summary>
+        public const int TestGroupSession = -1;
     }
 }
