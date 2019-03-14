@@ -1,7 +1,7 @@
 ﻿using System.Runtime.Serialization;
 using Testflow.EngineCore.Common;
 
-namespace Testflow.EngineCore.Messages
+namespace Testflow.EngineCore.Message.Messages
 {
     public class TestGenMessage : MessageBase
     {

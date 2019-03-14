@@ -2,7 +2,7 @@
 using System.Runtime.Serialization;
 using Testflow.EngineCore.Common;
 
-namespace Testflow.EngineCore.Messages
+namespace Testflow.EngineCore.Message.Messages
 {
     /// <summary>
     /// 远程运行器生成消息

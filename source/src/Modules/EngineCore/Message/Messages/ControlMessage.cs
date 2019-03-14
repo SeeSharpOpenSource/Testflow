@@ -1,10 +1,8 @@
-﻿
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Runtime.Serialization;
 using Testflow.EngineCore.Common;
 
-namespace Testflow.EngineCore.Messages
+namespace Testflow.EngineCore.Message.Messages
 {
     public class ControlMessage : MessageBase
     {

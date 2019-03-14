@@ -3,7 +3,7 @@ using System.Runtime.Serialization;
 using Testflow.Common;
 using Testflow.Utility.MessageUtil;
 
-namespace Testflow.EngineCore.Messages
+namespace Testflow.EngineCore.Message.Messages
 {
     /// <summary>
     /// 运行时消息基类

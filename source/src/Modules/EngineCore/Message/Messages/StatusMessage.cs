@@ -1,9 +1,8 @@
-﻿using System;
-using System.Runtime.Serialization;
+﻿using System.Runtime.Serialization;
 using Testflow.EngineCore.Data;
 using Testflow.Runtime;
 
-namespace Testflow.EngineCore.Messages
+namespace Testflow.EngineCore.Message.Messages
 {
     public class StatusMessage : MessageBase
     {

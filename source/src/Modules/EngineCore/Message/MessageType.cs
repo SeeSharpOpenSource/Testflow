@@ -1,4 +1,4 @@
-﻿namespace Testflow.EngineCore.Messages
+﻿namespace Testflow.EngineCore.Message
 {
     /// <summary>
     /// 消息类型
