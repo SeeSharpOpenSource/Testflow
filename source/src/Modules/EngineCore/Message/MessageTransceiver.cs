@@ -11,9 +11,9 @@ namespace Testflow.EngineCore.Message
 {
     internal abstract class MessageTransceiver : IDisposable
     {
-        public static MessageTransceiver GetTransceiver(ModuleGlobalInfo globalInfo, bool isSyncDispatch)
+        public static MessageTransceiver GetTransceiver(ModuleGlobalInfo globalInfo, bool isSyncMessenger)
         {
-            if (isSyncDispatch)
+            if (isSyncMessenger)
             {
                 return new SyncMsgTransceiver(globalInfo);
             }

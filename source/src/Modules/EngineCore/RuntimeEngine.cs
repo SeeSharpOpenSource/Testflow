@@ -1,17 +1,22 @@
 ﻿using Testflow.Data.Sequence;
+using Testflow.EngineCore.Common;
 using Testflow.EngineCore.Data;
 using Testflow.EngineCore.Events;
+using Testflow.EngineCore.Message;
+using Testflow.Modules;
 
 namespace Testflow.EngineCore
 {
     internal class RuntimeEngine
     {
-        private readonly EventsDispatcher _eventsDispatcher;
+        private readonly ModuleGlobalInfo _globalInfo;
+        private readonly MessageTransceiver _messageTransceiver;
 
-        public RuntimeEngine()
+        public RuntimeEngine(IModuleConfigData configData)
         {
-            EventQueue eventQueue = new EventQueue();
-            this._eventsDispatcher = new EventsDispatcher(eventQueue);
+            _globalInfo = new ModuleGlobalInfo(configData);
+            bool isSyncMessenger = _globalInfo.ConfigData.GetProperty<bool>("EngineSyncMessenger");
+            _messageTransceiver = MessageTransceiver.GetTransceiver(_globalInfo, isSyncMessenger);
         }
 
         public void Initialize(ISequenceFlowContainer sequenceContainer)
@@ -21,11 +26,12 @@ namespace Testflow.EngineCore
 
         public void Clear()
         {
-            _eventsDispatcher.Clear();
+
         }
 
         public void Start()
         {
+
         }
 
         public void Stop()
