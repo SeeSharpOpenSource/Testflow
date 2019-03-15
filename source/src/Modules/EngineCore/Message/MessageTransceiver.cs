@@ -24,7 +24,8 @@ namespace Testflow.EngineCore.Message
             }
         }
 
-        protected Messenger Messenger;
+        protected readonly Messenger UpLinkMessenger;
+        protected readonly Messenger DownLinkMessenger;
 
         private byte _activated = 0;
         protected bool Activated
@@ -47,21 +48,31 @@ namespace Testflow.EngineCore.Message
         protected MessageTransceiver(ModuleGlobalInfo globalInfo)
         {
             this.GlobalInfo = globalInfo;
+            // 创建上行队列
             FormatterType = GlobalInfo.ConfigData.GetProperty<FormatterType>("EngineQueueFormat");
-            MessengerOption option = new MessengerOption(Constants.MsgQueueName, typeof (ControlMessage),
+            MessengerOption receiveOption = new MessengerOption(Constants.UpLinkMQName, typeof (ControlMessage),
                 typeof (DebugMessage), typeof (RmtGenMessage), typeof (StatusMessage), typeof (TestGenMessage))
             {
                 Type = MessengerType.MSMQ,
                 HostAddress = Constants.LocalHostAddr,
                 ReceiveType = ReceiveType.Synchronous
             };
-            Messenger = Messenger.GetMessenger(option);
-            this.OperationLock = new SpinLock();
+            UpLinkMessenger = Messenger.GetMessenger(receiveOption);
             this._consumers = new Dictionary<string, IMessageConsumer>(Constants.DefaultRuntimeSize);
+            // 创建下行队列
+            MessengerOption sendOption = new MessengerOption(Constants.DownLinkMQName, typeof(ControlMessage),
+                typeof(DebugMessage), typeof(RmtGenMessage), typeof(StatusMessage), typeof(TestGenMessage))
+            {
+                Type = MessengerType.MSMQ,
+                HostAddress = Constants.LocalHostAddr,
+                ReceiveType = ReceiveType.Synchronous
+            };
+            DownLinkMessenger = Messenger.GetMessenger(sendOption);
+            this.OperationLock = new SpinLock();
         }
 
-        protected abstract void StartReceive();
-        protected abstract void StopReceive();
+        protected abstract void Start();
+        protected abstract void Stop();
         protected abstract void SendMessage(MessageBase message);
 
         public void AddConsumer(string messageType, IMessageConsumer consumer)
@@ -82,8 +93,8 @@ namespace Testflow.EngineCore.Message
                     return;
                 }
                 // TODO 目前只实现功能，未添加状态监控等功能，后期有时间再处理
-                StartReceive();
-                Messenger.Clear();
+                Start();
+                UpLinkMessenger.Clear();
                 Activated = true;
             }
             finally
@@ -104,9 +115,9 @@ namespace Testflow.EngineCore.Message
                 {
                     return;
                 }
-                StartReceive();
-                StopReceive();
-                Messenger.Clear();
+                Start();
+                Stop();
+                UpLinkMessenger.Clear();
                 Activated = false;
             }
             finally
@@ -156,7 +167,8 @@ namespace Testflow.EngineCore.Message
 
         public virtual void Dispose()
         {
-            Messenger.Dispose();
+            UpLinkMessenger.Dispose();
+            DownLinkMessenger.Dispose();
         }
     }
 }

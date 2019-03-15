@@ -18,7 +18,8 @@ namespace Testflow.EngineCore.Common
 
         public const int OperationTimeout = 1000;
 
-        public const string MsgQueueName = @".\Private$\TestflowEventQueue";
+        public const string UpLinkMQName = @".\Private$\TestflowUpLinkQueue";
+        public const string DownLinkMQName = @".\Private$\TestflowDownLinkQueue";
 
         #region 事件名称
 

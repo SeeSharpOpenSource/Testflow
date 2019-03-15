@@ -47,6 +47,7 @@
     <Compile Include="Common\MQIgnoreAttribute.cs" />
     <Compile Include="Common\RunnerType.cs" />
     <Compile Include="Common\TestGenState.cs" />
+    <Compile Include="Core\EngineFlowController.cs" />
     <Compile Include="Data\CallStack.cs" />
     <Compile Include="Data\DebugData.cs" />
     <Compile Include="Data\EventInvokeInfo.cs" />
@@ -57,6 +58,7 @@
     <Compile Include="Data\PerformanceData.cs" />
     <Compile Include="Data\RuntimeStatusInfo.cs" />
     <Compile Include="Data\TestResultCollection.cs" />
+    <Compile Include="Debugger\DebugManager.cs" />
     <Compile Include="EngineHandle.cs" />
     <Compile Include="Events\EventsDispatcher.cs" />
     <Compile Include="Generators\ITestGenerator.cs" />
@@ -105,9 +107,7 @@
       <Name>Utility</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Debugger\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <EmbeddedResource Include="Resources\locale\i18n_engineCore_en.resx">
       <Generator>ResXFileCodeGenerator</Generator>

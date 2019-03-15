@@ -13,15 +13,11 @@ namespace Testflow.EngineCore.Events
     internal class EventsDispatcher
     {
         private readonly Dictionary<int, SessionEventHandle> _events;
-        private readonly Messenger _messenger;
 
         public EventsDispatcher(EventQueue eventQueue)
         {
             _events = new Dictionary<int, SessionEventHandle>(Constants.DefaultRuntimeSize);
             this.AsyncDispatch = true;
-            // 不配置TargetType，因为每次都需要手动传入
-            MessengerOption option = new MessengerOption(Constants.MsgQueueName);
-            this._messenger = Messenger.GetMessenger(option);
         }
 
         public bool AsyncDispatch { get; set; }

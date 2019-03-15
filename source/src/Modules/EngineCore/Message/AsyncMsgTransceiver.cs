@@ -9,12 +9,12 @@ namespace Testflow.EngineCore.Message
         {
         }
 
-        protected override void StartReceive()
+        protected override void Start()
         {
             throw new System.NotImplementedException();
         }
 
-        protected override void StopReceive()
+        protected override void Stop()
         {
             throw new System.NotImplementedException();
         }
