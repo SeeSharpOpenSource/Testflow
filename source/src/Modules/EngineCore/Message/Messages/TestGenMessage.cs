@@ -3,6 +3,9 @@ using Testflow.EngineCore.Common;
 
 namespace Testflow.EngineCore.Message.Messages
 {
+    /// <summary>
+    /// 测试生成报告消息
+    /// </summary>
     public class TestGenMessage : MessageBase
     {
         public int SequenecIndex { get; set; }

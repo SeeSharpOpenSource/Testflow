@@ -4,6 +4,9 @@ using Testflow.Runtime;
 
 namespace Testflow.EngineCore.Message.Messages
 {
+    /// <summary>
+    /// 状态报告消息
+    /// </summary>
     public class StatusMessage : MessageBase
     {
         public CallStack Stack { get; set; }

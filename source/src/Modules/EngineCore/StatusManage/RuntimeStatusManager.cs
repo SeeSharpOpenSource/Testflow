@@ -4,6 +4,9 @@ using IMessageConsumer = Testflow.EngineCore.Message.IMessageConsumer;
 
 namespace Testflow.EngineCore.StatusManage
 {
+    /// <summary>
+    /// 运行时所有测试的状态管理
+    /// </summary>
     internal class RuntimeStatusManager : IMessageConsumer
     {
         private readonly ModuleGlobalInfo _globalInfo;

@@ -4,6 +4,9 @@ using Testflow.EngineCore.Common;
 
 namespace Testflow.EngineCore.Message.Messages
 {
+    /// <summary>
+    /// 引擎控制消息
+    /// </summary>
     public class ControlMessage : MessageBase
     {
         public ControlMessage(string name, int id, params string[] extraParams) : base(name, id, MessageType.Ctrl)

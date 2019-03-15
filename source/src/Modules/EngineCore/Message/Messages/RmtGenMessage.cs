@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Runtime.Serialization;
 using Testflow.EngineCore.Common;
+using Testflow.EngineCore.Data;
 
 namespace Testflow.EngineCore.Message.Messages
 {
@@ -15,6 +16,16 @@ namespace Testflow.EngineCore.Message.Messages
             this.Sequence = sequence;
             this.Params = new Dictionary<string, string>(Constants.DefaultRuntimeSize);
         }
+
+        /// <summary>
+        /// 测试运行主机的信息
+        /// </summary>
+        public HostInfo RunnerHost { get; set; }
+
+        /// <summary>
+        /// 测试引擎主机的信息
+        /// </summary>
+        public HostInfo MasterHost { get; set; }
 
         /// <summary>
         /// 序列的类型
@@ -36,6 +47,8 @@ namespace Testflow.EngineCore.Message.Messages
             this.SequenceType = (RunnerType) info.GetValue("SequenceType", typeof (RunnerType));
             this.Sequence = (string) info.GetValue("Sequence", typeof (string));
             this.Params = info.GetValue("Params", typeof (Dictionary<string, string>)) as Dictionary<string, string>;
+            this.MasterHost = info.GetValue("MasterHost", typeof (HostInfo)) as HostInfo;
+            this.RunnerHost = info.GetValue("RunnerHost", typeof (HostInfo)) as HostInfo;
         }
 
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
@@ -44,6 +57,14 @@ namespace Testflow.EngineCore.Message.Messages
             info.AddValue("SequenceType", SequenceType);
             info.AddValue("Sequence", Sequence);
             info.AddValue("Params", Params);
+            if (null != this.RunnerHost)
+            {
+                info.AddValue("RunnerHost", RunnerHost);
+            }
+            if (null != MasterHost)
+            {
+                info.AddValue("MasterHost", MasterHost);
+            }
         }
     }
 }

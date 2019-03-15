@@ -10,6 +10,9 @@ using Testflow.Utility.MessageUtil;
 
 namespace Testflow.EngineCore.Events
 {
+    /// <summary>
+    /// 外部消息分发
+    /// </summary>
     internal class EventsDispatcher
     {
         private readonly Dictionary<int, SessionEventHandle> _events;

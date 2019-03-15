@@ -9,6 +9,9 @@ using Testflow.Utility.I18nUtil;
 
 namespace Testflow.EngineCore
 {
+    /// <summary>
+    /// 运行时引擎的对外接口
+    /// </summary>
     public class EngineHandle : IEngineController
     {
         private static EngineHandle _instance;

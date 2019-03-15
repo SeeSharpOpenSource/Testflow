@@ -3,6 +3,9 @@ using Testflow.EngineCore.Data;
 
 namespace Testflow.EngineCore.Message.Messages
 {
+    /// <summary>
+    /// 调试数据消息
+    /// </summary>
     public class DebugMessage : MessageBase
     {
         public DebugMessage(string name, int id, CallStack stack) : base(name, id, MessageType.Debug)

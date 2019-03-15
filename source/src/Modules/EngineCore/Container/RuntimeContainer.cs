@@ -1,15 +1,17 @@
 ﻿using Testflow.Common;
 using Testflow.Data.Sequence;
 using Testflow.EngineCore.Common;
-using Testflow.EngineCore.Generators;
 using Testflow.Logger;
 using Testflow.Utility.I18nUtil;
 
 namespace Testflow.EngineCore.Container
 {
+    /// <summary>
+    /// 测试运行时容器
+    /// </summary>
     internal abstract class RuntimeContainer
     {
-        public static void CreateContainer(ISequenceFlowContainer sequence, int index, RuntimeTarget target,
+        public static void CreateContainer(ISequenceFlowContainer sequence, int index, RuntimePlatform platform,
             ModuleGlobalInfo globalInfo, params object[] extraParam)
         {
 

@@ -3,6 +3,9 @@ using Testflow.EngineCore.Data;
 
 namespace Testflow.EngineCore.Message.Messages
 {
+    /// <summary>
+    /// 资源同步消息请求
+    /// </summary>
     public class ResourceSyncMessage : MessageBase
     {
         public SyncResourceInfo SyncInfo { get; set; }

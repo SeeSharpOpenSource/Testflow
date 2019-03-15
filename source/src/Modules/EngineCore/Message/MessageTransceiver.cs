@@ -9,6 +9,9 @@ using Testflow.Utility.MessageUtil;
 
 namespace Testflow.EngineCore.Message
 {
+    /// <summary>
+    /// 消息收发器，维护引擎侧的所有消息的吞吐
+    /// </summary>
     internal abstract class MessageTransceiver : IDisposable
     {
         public static MessageTransceiver GetTransceiver(ModuleGlobalInfo globalInfo, bool isSyncMessenger)

@@ -6,6 +6,9 @@ using Testflow.Utility.MessageUtil;
 
 namespace Testflow.EngineCore.Message
 {
+    /// <summary>
+    /// 同步消息收发器
+    /// </summary>
     internal class SyncMsgTransceiver : MessageTransceiver
     {
         private Thread _receiveThread;

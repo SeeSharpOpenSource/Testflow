@@ -61,8 +61,10 @@
     <Compile Include="Debugger\DebugManager.cs" />
     <Compile Include="EngineHandle.cs" />
     <Compile Include="Events\EventsDispatcher.cs" />
-    <Compile Include="Generators\ITestGenerator.cs" />
-    <Compile Include="Generators\RuntimeTarget.cs" />
+    <Compile Include="TestMaintain\ITestEntityMaintainer.cs" />
+    <Compile Include="TestMaintain\LocalTestEntityMaintainer.cs" />
+    <Compile Include="Data\HostInfo.cs" />
+    <Compile Include="Common\RuntimeTarget.cs" />
     <Compile Include="Message\AsyncMsgTransceiver.cs" />
     <Compile Include="Message\IMessageConsumer.cs" />
     <Compile Include="Message\Messages\ControlMessage.cs" />
@@ -92,6 +94,7 @@
     <Compile Include="RuntimeEngine.cs" />
     <Compile Include="StatusManage\RuntimeStatusManager.cs" />
     <Compile Include="SyncManage\SynchronousManager.cs" />
+    <Compile Include="TestMaintain\RemoteTestEntityMaintainer.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Dev\Common\Common.csproj">
