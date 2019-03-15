@@ -53,6 +53,11 @@
         /// <summary>
         /// 已中止状态
         /// </summary>
-        Abort = 9
+        Abort = 9,
+
+        /// <summary>
+        /// 运行时崩溃
+        /// </summary>
+        Collapsed = 10
     }
 }
