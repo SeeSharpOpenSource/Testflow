@@ -18,8 +18,9 @@ namespace Testflow.EngineCore.Common
 
         public ILogService LogService { get; }
 
-        private int _state;
+        public TestflowRunner TestflowRunner { get; }
 
+        private int _state;
         public RuntimeState State
         {
             get { return (RuntimeState) _state; }
@@ -31,9 +32,9 @@ namespace Testflow.EngineCore.Common
 
         public ModuleGlobalInfo(IModuleConfigData configData)
         {
-            TestflowRunner testflowRunner = TestflowRunner.GetInstance();
+            TestflowRunner = TestflowRunner.GetInstance();
             this.I18N = I18N.GetInstance(Constants.I18nName);
-            this.LogService = testflowRunner.LogService;
+            this.LogService = TestflowRunner.LogService;
             this.ConfigData = configData;
             this._state = (int) RuntimeState.Idle;
         }
