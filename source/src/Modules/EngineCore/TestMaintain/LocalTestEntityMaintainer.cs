@@ -3,6 +3,7 @@ using Testflow.Data.Sequence;
 using Testflow.EngineCore.Common;
 using Testflow.EngineCore.Container;
 using Testflow.EngineCore.Data;
+using Testflow.EngineCore.Message.Messages;
 
 namespace Testflow.EngineCore.TestMaintain
 {
@@ -25,7 +26,8 @@ namespace Testflow.EngineCore.TestMaintain
 
         public RuntimeContainer Generate(ITestProject testProject, params object[] param)
         {
-            throw new System.NotImplementedException();
+            RmtGenMessage rmtGenMessage = new RmtGenMessage();
+            string sequenceStr = _globalInfo.TestflowRunner.SequenceManager.RuntimeSerialize(testProject);
         }
 
         public RuntimeContainer Generate(ISequenceGroup sequenceGroup, params object[] param)

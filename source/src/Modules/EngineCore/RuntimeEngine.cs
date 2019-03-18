@@ -22,7 +22,6 @@ namespace Testflow.EngineCore
     {
         private readonly ModuleGlobalInfo _globalInfo;
 
-        private readonly MessageTransceiver _messageTransceiver;
 
         private readonly RuntimeStatusManager _statusManager;
         private readonly DebugManager _debugManager;
@@ -36,8 +35,9 @@ namespace Testflow.EngineCore
             bool isSyncMessenger = _globalInfo.ConfigData.GetProperty<bool>("EngineSyncMessenger");
             // TODO 暂时写死使用LocalTestMaintainer
             _testsMaintainer = new LocalTestEntityMaintainer(_globalInfo);
-
-            _messageTransceiver = MessageTransceiver.GetTransceiver(_globalInfo, isSyncMessenger);
+            // 初始化消息收发器
+            MessageTransceiver messageTransceiver = MessageTransceiver.GetTransceiver(_globalInfo, isSyncMessenger);
+            _globalInfo.RuntimeInitialize(messageTransceiver);
 
             _controller = new EngineFlowController(_globalInfo);
             _statusManager = new RuntimeStatusManager(_globalInfo);
@@ -49,11 +49,11 @@ namespace Testflow.EngineCore
         private void InitializeMessageConsumers()
         {
             //RmtGen消息由远端接收，所以无需分发
-            _messageTransceiver.AddConsumer(MessageType.Ctrl.ToString(), _controller);
-            _messageTransceiver.AddConsumer(MessageType.Status.ToString(), _statusManager);
-            _messageTransceiver.AddConsumer(MessageType.TestGen.ToString(), _statusManager);
-            _messageTransceiver.AddConsumer(MessageType.Debug.ToString(), _debugManager);
-            _messageTransceiver.AddConsumer(MessageType.Sync.ToString(), _syncManager);
+            _globalInfo.MessageTransceiver.AddConsumer(MessageType.Ctrl.ToString(), _controller);
+            _globalInfo.MessageTransceiver.AddConsumer(MessageType.Status.ToString(), _statusManager);
+            _globalInfo.MessageTransceiver.AddConsumer(MessageType.TestGen.ToString(), _statusManager);
+            _globalInfo.MessageTransceiver.AddConsumer(MessageType.Debug.ToString(), _debugManager);
+            _globalInfo.MessageTransceiver.AddConsumer(MessageType.Sync.ToString(), _syncManager);
         }
 
         public void Initialize(ISequenceFlowContainer sequenceContainer)
