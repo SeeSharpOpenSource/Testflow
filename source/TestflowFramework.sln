@@ -73,6 +73,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RuntimeServiceTest", "test\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestflowLoaderTest", "test\TestflowLoaderTest\TestflowLoaderTest.csproj", "{733667BA-3610-41C6-BC39-BDB1DAC7F413}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RemoteRunner", "RemoteRunner\RemoteRunner.csproj", "{858F9B24-13DC-4043-9E25-F14DD77564D1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -187,6 +189,10 @@ Global
 		{733667BA-3610-41C6-BC39-BDB1DAC7F413}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{733667BA-3610-41C6-BC39-BDB1DAC7F413}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{733667BA-3610-41C6-BC39-BDB1DAC7F413}.Release|Any CPU.Build.0 = Release|Any CPU
+		{858F9B24-13DC-4043-9E25-F14DD77564D1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{858F9B24-13DC-4043-9E25-F14DD77564D1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{858F9B24-13DC-4043-9E25-F14DD77564D1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{858F9B24-13DC-4043-9E25-F14DD77564D1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -225,5 +231,6 @@ Global
 		{8EB6A7B7-1B26-4474-80E3-4F46918BE9CB} = {F966C156-8961-432E-82DD-FE4DCC193E45}
 		{963E9DB0-2367-441E-8915-782F9E8C9050} = {F966C156-8961-432E-82DD-FE4DCC193E45}
 		{733667BA-3610-41C6-BC39-BDB1DAC7F413} = {AA67EC51-E2E3-49A5-9DC3-C1EFC2EAB0E3}
+		{858F9B24-13DC-4043-9E25-F14DD77564D1} = {040DD94F-D203-46A8-B4B9-C1B7566216E8}
 	EndGlobalSection
 EndGlobal
