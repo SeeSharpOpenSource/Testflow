@@ -13,16 +13,34 @@ namespace Testflow.EngineCore.TestMaintain
     /// </summary>
     internal class LocalTestEntityMaintainer : ITestEntityMaintainer
     {
-        private ModuleGlobalInfo _globalInfo;
+        private readonly ModuleGlobalInfo _globalInfo;
+        private Dictionary<int, RuntimeContainer> _runtimeContainers;
 
         public LocalTestEntityMaintainer(ModuleGlobalInfo globalInfo)
         {
             _globalInfo = globalInfo;
+            this._runtimeContainers = new Dictionary<int, RuntimeContainer>(Constants.DefaultRuntimeSize);
         }
 
-        public void CreateHosts(IList<HostInfo> runnerHosts)
+        /// <summary>
+        /// 连接运行主机端
+        /// </summary>
+        public void ConnectHost(HostInfo runnerHosts)
         {
-            throw new System.NotImplementedException();
+            // ignore
+        }
+
+        /// <summary>
+        /// 释放远程主机端的连接
+        /// </summary>
+        public void DisconnectHost(int sessionId)
+        {
+            // ignore
+        }
+
+        public void FreeHost(int id)
+        {
+            // ignore
         }
 
         public RuntimeContainer Generate(ITestProject testProject, params object[] param)
@@ -36,11 +54,6 @@ namespace Testflow.EngineCore.TestMaintain
         }
 
         public void FreeHosts()
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void FreeHost(int id)
         {
             throw new System.NotImplementedException();
         }

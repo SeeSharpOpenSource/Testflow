@@ -46,6 +46,12 @@ namespace Testflow.EngineCore
             InitializeMessageConsumers();
         }
 
+        public RuntimeStatusManager StatusManager => _statusManager;
+        public DebugManager DebugManager => _debugManager;
+        public ITestEntityMaintainer TestMaintainer => _testsMaintainer;
+        public SynchronousManager SyncManager => _syncManager;
+        public EngineFlowController Controller => _controller;
+
         private void InitializeMessageConsumers()
         {
             //RmtGen消息由远端接收，所以无需分发

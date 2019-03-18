@@ -50,7 +50,7 @@
     <Compile Include="Core\EngineFlowController.cs" />
     <Compile Include="Data\CallStack.cs" />
     <Compile Include="Data\DebugData.cs" />
-    <Compile Include="Data\EventInvokeInfo.cs" />
+    <Compile Include="Data\MessageInfo.cs" />
     <Compile Include="Data\EventQueue.cs" />
     <Compile Include="Data\SequenceGenerationInfo.cs" />
     <Compile Include="Data\SyncResourceInfo.cs" />
@@ -61,6 +61,8 @@
     <Compile Include="Debugger\DebugManager.cs" />
     <Compile Include="EngineHandle.cs" />
     <Compile Include="Events\EventsDispatcher.cs" />
+    <Compile Include="TestMaintain\Container\AppDomainRuntimeContainer.cs" />
+    <Compile Include="TestMaintain\Container\ProcessRuntimeContainer.cs" />
     <Compile Include="TestMaintain\ITestEntityMaintainer.cs" />
     <Compile Include="TestMaintain\LocalTestEntityMaintainer.cs" />
     <Compile Include="Data\HostInfo.cs" />

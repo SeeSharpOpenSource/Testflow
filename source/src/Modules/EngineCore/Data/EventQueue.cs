@@ -8,16 +8,16 @@ namespace Testflow.EngineCore.Data
 {
     internal class EventQueue
     {
-        private readonly Queue<EventInvokeInfo> _events;
+        private readonly Queue<MessageInfo> _events;
         private SpinLock _queueLock;
 
         public EventQueue()
         {
-            _events = new Queue<EventInvokeInfo>(Constants.DefaultEventsQueueSize);
+            _events = new Queue<MessageInfo>(Constants.DefaultEventsQueueSize);
             _queueLock = new SpinLock();
         }
 
-        public void Enqueue(EventInvokeInfo item)
+        public void Enqueue(MessageInfo item)
         {
             bool getLock = GetLock();
             if (_events.Count >= Constants.MaxEventsQueueSize)
@@ -30,10 +30,10 @@ namespace Testflow.EngineCore.Data
             ReleaseLock(getLock);
         }
 
-        public EventInvokeInfo Dequeue()
+        public MessageInfo Dequeue()
         {
             bool getLock = GetLock();
-            EventInvokeInfo item = null;
+            MessageInfo item = null;
             if (_events.Count > 0)
             {
                 item = _events.Dequeue();

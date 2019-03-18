@@ -2,7 +2,7 @@
 
 namespace Testflow.EngineCore.Data
 {
-    public class EventInvokeInfo : IMessage
+    internal class MessageInfo : IMessage
     {
         public int Id { get; }
 

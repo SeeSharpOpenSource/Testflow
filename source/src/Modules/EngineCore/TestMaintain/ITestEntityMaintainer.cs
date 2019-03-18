@@ -11,14 +11,14 @@ namespace Testflow.EngineCore.TestMaintain
     /// </summary>
     internal interface ITestEntityMaintainer : IMessageHandler
     {
-        void CreateHosts(IList<HostInfo> runnerHosts);
+        void ConnectHost(HostInfo runnerHosts);
+
+        void DisconnectHost(int sessionId);
+
+        void FreeHosts();
 
         RuntimeContainer Generate(ITestProject testProject, params object[] param);
 
         RuntimeContainer Generate(ISequenceGroup sequenceGroup, params object[] param);
-
-        void FreeHosts();
-
-        void FreeHost(int id);
     }
 }

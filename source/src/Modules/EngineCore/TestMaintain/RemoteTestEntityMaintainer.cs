@@ -2,6 +2,7 @@
 using Testflow.Data.Sequence;
 using Testflow.EngineCore.Data;
 using Testflow.EngineCore.TestMaintain.Container;
+using Testflow.Utility.MessageUtil;
 
 namespace Testflow.EngineCore.TestMaintain
 {
@@ -10,7 +11,7 @@ namespace Testflow.EngineCore.TestMaintain
     /// </summary>
     internal class RemoteTestEntityMaintainer : ITestEntityMaintainer
     {
-        public void CreateHosts(IList<HostInfo> runnerHosts)
+        public void ConnectHosts(IList<HostInfo> runnerHosts)
         {
             throw new System.NotImplementedException();
         }
@@ -31,6 +32,16 @@ namespace Testflow.EngineCore.TestMaintain
         }
 
         public void FreeHost(int id)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void HandleMessage(IMessage message)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void AddToQueue(IMessage message)
         {
             throw new System.NotImplementedException();
         }
