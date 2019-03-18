@@ -41,7 +41,7 @@ namespace Testflow.EngineCore.Message
             }
         }
 
-        private readonly Dictionary<string, IMessageConsumer> _consumers;
+        private readonly Dictionary<string, IMessageHandler> _consumers;
 
         protected SpinLock OperationLock;
 
@@ -61,7 +61,7 @@ namespace Testflow.EngineCore.Message
                 ReceiveType = ReceiveType.Synchronous
             };
             UpLinkMessenger = Messenger.GetMessenger(receiveOption);
-            this._consumers = new Dictionary<string, IMessageConsumer>(Constants.DefaultRuntimeSize);
+            this._consumers = new Dictionary<string, IMessageHandler>(Constants.DefaultRuntimeSize);
             // 创建下行队列
             MessengerOption sendOption = new MessengerOption(Constants.DownLinkMQName, typeof(ControlMessage),
                 typeof(DebugMessage), typeof(RmtGenMessage), typeof(StatusMessage), typeof(TestGenMessage))
@@ -78,9 +78,9 @@ namespace Testflow.EngineCore.Message
         protected abstract void Stop();
         protected abstract void SendMessage(MessageBase message);
 
-        public void AddConsumer(string messageType, IMessageConsumer consumer)
+        public void AddConsumer(string messageType, IMessageHandler handler)
         {
-            _consumers.Add(messageType, consumer);
+            _consumers.Add(messageType, handler);
         }
 
         /// <summary>
@@ -141,7 +141,7 @@ namespace Testflow.EngineCore.Message
             SendMessage(message);
         }
 
-        protected IMessageConsumer GetConsumer(IMessage message)
+        protected IMessageHandler GetConsumer(IMessage message)
         {
             string messageType = message.GetType().Name;
             if (!_consumers.ContainsKey(messageType))

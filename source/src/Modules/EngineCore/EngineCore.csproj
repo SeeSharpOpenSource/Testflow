@@ -66,7 +66,7 @@
     <Compile Include="Data\HostInfo.cs" />
     <Compile Include="Common\RuntimeTarget.cs" />
     <Compile Include="Message\AsyncMsgTransceiver.cs" />
-    <Compile Include="Message\IMessageConsumer.cs" />
+    <Compile Include="Message\IMessageHandler.cs" />
     <Compile Include="Message\Messages\ControlMessage.cs" />
     <Compile Include="Message\Messages\DebugMessage.cs" />
     <Compile Include="Message\Messages\MessageBase.cs" />
@@ -90,7 +90,7 @@
       <DependentUpon>i18n_engineCore_zh.resx</DependentUpon>
     </Compile>
     <Compile Include="Events\SessionEventHandle.cs" />
-    <Compile Include="Container\RuntimeContainer.cs" />
+    <Compile Include="TestMaintain\Container\RuntimeContainer.cs" />
     <Compile Include="RuntimeEngine.cs" />
     <Compile Include="StatusManage\RuntimeStatusManager.cs" />
     <Compile Include="SyncManage\SynchronousManager.cs" />

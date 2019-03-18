@@ -1,13 +1,13 @@
 ﻿using Testflow.EngineCore.Common;
+using Testflow.EngineCore.Message;
 using Testflow.Utility.MessageUtil;
-using IMessageConsumer = Testflow.EngineCore.Message.IMessageConsumer;
 
 namespace Testflow.EngineCore.Core
 {
     /// <summary>
     /// 实现引擎的运行时流程管理功能
     /// </summary>
-    internal class EngineFlowController : IMessageConsumer
+    internal class EngineFlowController : IMessageHandler
     {
         private readonly ModuleGlobalInfo _globalInfo;
         public EngineFlowController(ModuleGlobalInfo globalInfo)

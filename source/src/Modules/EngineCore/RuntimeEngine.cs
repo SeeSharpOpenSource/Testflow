@@ -54,6 +54,7 @@ namespace Testflow.EngineCore
             _globalInfo.MessageTransceiver.AddConsumer(MessageType.TestGen.ToString(), _statusManager);
             _globalInfo.MessageTransceiver.AddConsumer(MessageType.Debug.ToString(), _debugManager);
             _globalInfo.MessageTransceiver.AddConsumer(MessageType.Sync.ToString(), _syncManager);
+            _globalInfo.MessageTransceiver.AddConsumer(MessageType.RmtGen.ToString(), _testsMaintainer);
         }
 
         public void Initialize(ISequenceFlowContainer sequenceContainer)

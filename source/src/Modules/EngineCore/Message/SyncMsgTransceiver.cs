@@ -49,8 +49,8 @@ namespace Testflow.EngineCore.Message
             while (!_cancellation.IsCancellationRequested)
             {
                 IMessage message = UpLinkMessenger.Receive();
-                IMessageConsumer consumer = GetConsumer(message);
-                consumer.HandleMessage(message);
+                IMessageHandler handler = GetConsumer(message);
+                handler.HandleMessage(message);
             }
         }
         

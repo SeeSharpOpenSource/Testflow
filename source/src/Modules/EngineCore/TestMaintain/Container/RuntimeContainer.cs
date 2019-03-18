@@ -1,10 +1,8 @@
 ﻿using Testflow.Common;
 using Testflow.Data.Sequence;
 using Testflow.EngineCore.Common;
-using Testflow.Logger;
-using Testflow.Utility.I18nUtil;
 
-namespace Testflow.EngineCore.Container
+namespace Testflow.EngineCore.TestMaintain.Container
 {
     /// <summary>
     /// 测试运行时容器

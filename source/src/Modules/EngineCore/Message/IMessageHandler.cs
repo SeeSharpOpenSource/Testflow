@@ -2,7 +2,7 @@
 
 namespace Testflow.EngineCore.Message
 {
-    internal interface IMessageConsumer
+    internal interface IMessageHandler
     {
         /// <summary>
         /// 同步处理消息

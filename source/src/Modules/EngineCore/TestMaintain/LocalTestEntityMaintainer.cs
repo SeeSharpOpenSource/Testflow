@@ -1,9 +1,10 @@
 ﻿using System.Collections.Generic;
 using Testflow.Data.Sequence;
 using Testflow.EngineCore.Common;
-using Testflow.EngineCore.Container;
 using Testflow.EngineCore.Data;
 using Testflow.EngineCore.Message.Messages;
+using Testflow.EngineCore.TestMaintain.Container;
+using Testflow.Utility.MessageUtil;
 
 namespace Testflow.EngineCore.TestMaintain
 {
@@ -26,7 +27,6 @@ namespace Testflow.EngineCore.TestMaintain
 
         public RuntimeContainer Generate(ITestProject testProject, params object[] param)
         {
-            RmtGenMessage rmtGenMessage = new RmtGenMessage();
             string sequenceStr = _globalInfo.TestflowRunner.SequenceManager.RuntimeSerialize(testProject);
         }
 
@@ -41,6 +41,16 @@ namespace Testflow.EngineCore.TestMaintain
         }
 
         public void FreeHost(int id)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void HandleMessage(IMessage message)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void AddToQueue(IMessage message)
         {
             throw new System.NotImplementedException();
         }

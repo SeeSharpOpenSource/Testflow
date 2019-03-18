@@ -1,13 +1,13 @@
 ﻿using Testflow.EngineCore.Common;
+using Testflow.EngineCore.Message;
 using Testflow.Utility.MessageUtil;
-using IMessageConsumer = Testflow.EngineCore.Message.IMessageConsumer;
 
 namespace Testflow.EngineCore.StatusManage
 {
     /// <summary>
     /// 运行时所有测试的状态管理
     /// </summary>
-    internal class RuntimeStatusManager : IMessageConsumer
+    internal class RuntimeStatusManager : IMessageHandler
     {
         private readonly ModuleGlobalInfo _globalInfo;
 
