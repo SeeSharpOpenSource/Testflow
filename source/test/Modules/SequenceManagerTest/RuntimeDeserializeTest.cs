@@ -39,5 +39,11 @@ namespace Testflow.SequenceManagerTest
         {
             ISequenceGroup sequenceGroup = _sequenceManager.RuntimeDeserializeSequenceGroup(JsonStrResource.sequenceGroup1Json);
         }
+
+        [TestCleanup]
+        public void TearDown()
+        {
+            _sequenceManager.Dispose();
+        }
     }
 }

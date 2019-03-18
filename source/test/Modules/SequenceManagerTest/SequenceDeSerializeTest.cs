@@ -195,12 +195,12 @@ namespace Testflow.SequenceManagerTest
             Assert.AreEqual(sequenceGroup.Info.Version, "1.0.0");
 //            Assert.AreEqual(sequenceGroup.Info.SequenceGroupFile, SequenceGroupPath);
 //            Assert.AreEqual(sequenceGroup.Info.SequenceParamFile, ParameterPath);
-            Assert.AreEqual(sequenceGroup.TypeDatas.Count, 2);
+            Assert.AreEqual(sequenceGroup.TypeDatas.Count, 3);
             Assert.AreEqual(sequenceGroup.TypeDatas[0].AssemblyName, "TestAssemblyName");
-            Assert.AreEqual(sequenceGroup.TypeDatas[1].Name, "Double");
+            Assert.AreEqual(sequenceGroup.TypeDatas[1].Name, "Int32");
             Assert.AreEqual(sequenceGroup.Sequences.Count, 3);
             Assert.AreEqual(sequenceGroup.Sequences[0].Name, "Sequence1");
-            Assert.AreEqual(sequenceGroup.Sequences[0].Variables.Count, 3);
+            Assert.AreEqual(sequenceGroup.Sequences[0].Variables.Count, 4);
             Assert.AreEqual(sequenceGroup.Sequences[0].Variables[0].VariableType, VariableType.Value);
             Assert.AreEqual(sequenceGroup.Sequences[0].Variables[1].Name, "Variable2");
             Assert.AreEqual(sequenceGroup.Sequences[0].Steps.Count, 3);
@@ -243,9 +243,9 @@ namespace Testflow.SequenceManagerTest
             ISequenceGroup sequenceGroup = _sequenceManager.LoadSequenceGroup(SerializationTarget.File, SequenceGroupPath);
 
             Assert.AreEqual(sequenceGroup.Sequences[0].Steps[0].Function.ClassType, sequenceGroup.TypeDatas[0]);
-            Assert.AreEqual(sequenceGroup.Sequences[0].Steps[0].Function.ReturnType.Type, sequenceGroup.TypeDatas[1]);
-            Assert.AreEqual(sequenceGroup.Sequences[0].Steps[0].Function.ParameterType[0].Type, sequenceGroup.TypeDatas[1]);
-            Assert.AreEqual(sequenceGroup.Sequences[0].Steps[0].Function.ParameterType[1].Type, sequenceGroup.TypeDatas[1]);
+            Assert.AreEqual(sequenceGroup.Sequences[0].Steps[0].Function.ReturnType.Type, sequenceGroup.TypeDatas[2]);
+            Assert.AreEqual(sequenceGroup.Sequences[0].Steps[0].Function.ParameterType[0].Type, sequenceGroup.TypeDatas[2]);
+            Assert.AreEqual(sequenceGroup.Sequences[0].Steps[0].Function.ParameterType[1].Type, sequenceGroup.TypeDatas[2]);
         }
 
         [TestMethod]
