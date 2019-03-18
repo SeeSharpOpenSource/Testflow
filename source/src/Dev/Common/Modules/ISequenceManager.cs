@@ -177,5 +177,20 @@ namespace Testflow.Modules
 
         #endregion
 
+        #region 序列数据操作
+
+        /// <summary>
+        /// 生效序列数据，处理所有连带配置
+        /// </summary>
+        void ValidateSequenceData(ITestProject testProject);
+
+        /// <summary>
+        /// 生效序列数据，处理所有连带配置
+        /// </summary>
+        void ValidateSequenceData(ISequenceGroup sequenceGroup);
+
+        #endregion
+
+
     }
 }

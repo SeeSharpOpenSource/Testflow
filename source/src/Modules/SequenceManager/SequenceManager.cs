@@ -253,6 +253,18 @@ namespace Testflow.SequenceManager
             return SequenceDeserializer.LoadSequenceGroupFromJson(sequenceGroupStr);
         }
 
+        public void ValidateSequenceData(ITestProject testProject)
+        {
+            _typeMaintainer.VerifyVariableTypes(testProject);
+            _typeMaintainer.RefreshUsedAssemblyAndType(testProject); ;
+        }
+
+        public void ValidateSequenceData(ISequenceGroup sequenceGroup)
+        {
+            _typeMaintainer.VerifyVariableTypes(sequenceGroup);
+            _typeMaintainer.RefreshUsedAssemblyAndType(sequenceGroup); ;
+        }
+
         public void Dispose()
         {
             _instance = null;
