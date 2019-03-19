@@ -24,6 +24,16 @@ namespace Testflow.Utility.MessageUtil.Messengers
             return message?.Body as IMessage;
         }
 
+        public override IMessage Peak(params Type[] targetTypes)
+        {
+            if (!_messageQueue.CanRead)
+            {
+                return null;
+            }
+            Message message = _messageQueue.Peek();
+            return message?.Body as IMessage;
+        }
+
         public override bool Send(IMessage message, FormatterType format, params Type[] targetTypes)
         {
             if (!_messageQueue.CanWrite)

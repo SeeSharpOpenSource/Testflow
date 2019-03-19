@@ -144,6 +144,13 @@ namespace Testflow.Utility.MessageUtil
         public abstract IMessage Receive(params Type[] targetTypes);
 
         /// <summary>
+        /// 查看当前Message但是不取出
+        /// </summary>
+        /// <param name="targetTypes"></param>
+        /// <returns></returns>
+        public abstract IMessage Peak(params Type[] targetTypes);
+
+        /// <summary>
         /// 发送消息，未添加高阶配置，后续再更新
         /// </summary>
         /// <param name="message">待发送的消息</param>
