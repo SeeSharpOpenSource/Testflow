@@ -1,11 +1,10 @@
 ﻿using System.Collections.Generic;
-using System.Runtime.Remoting.Contexts;
 using System.Runtime.Serialization;
+using Testflow.CoreCommon.Common;
 using Testflow.Data.Sequence;
-using Testflow.MasterCore.Common;
 using Testflow.Runtime;
 
-namespace Testflow.MasterCore.Data
+namespace Testflow.CoreCommon.Data
 {
     public class CallStack : ICallStack, ISerializable
     {

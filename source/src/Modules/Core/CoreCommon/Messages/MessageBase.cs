@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Runtime.Serialization;
 using Testflow.Common;
+using Testflow.CoreCommon.Common;
 using Testflow.Utility.MessageUtil;
 
-namespace Testflow.MasterCore.Message.Messages
+namespace Testflow.CoreCommon.Messages
 {
     /// <summary>
     /// 运行时消息基类

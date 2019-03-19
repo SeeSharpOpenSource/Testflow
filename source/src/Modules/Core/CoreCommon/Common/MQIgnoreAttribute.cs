@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Testflow.MasterCore.Common
+namespace Testflow.CoreCommon.Common
 {
     [AttributeUsage(AttributeTargets.Property)]
     public class MQIgnoreAttribute : Attribute

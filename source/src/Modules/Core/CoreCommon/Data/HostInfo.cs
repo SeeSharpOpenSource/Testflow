@@ -1,7 +1,7 @@
 ﻿using System.Runtime.Serialization;
-using Testflow.MasterCore.Common;
+using Testflow.CoreCommon.Common;
 
-namespace Testflow.MasterCore.Data
+namespace Testflow.CoreCommon.Data
 {
     public class HostInfo : ISerializable
     {

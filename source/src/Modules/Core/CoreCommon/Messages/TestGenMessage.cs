@@ -1,7 +1,7 @@
 ﻿using System.Runtime.Serialization;
-using Testflow.MasterCore.Common;
+using Testflow.CoreCommon.Common;
 
-namespace Testflow.MasterCore.Message.Messages
+namespace Testflow.CoreCommon.Messages
 {
     /// <summary>
     /// 测试生成报告消息

@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Threading;
 using Testflow.Common;
-using Testflow.MasterCore.Common;
+using Testflow.CoreCommon.Common;
 using Testflow.Utility.I18nUtil;
 
-namespace Testflow.MasterCore.Data
+namespace Testflow.CoreCommon.Data
 {
     public class EventQueue : IDisposable
     {

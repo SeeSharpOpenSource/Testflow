@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
+using Testflow.CoreCommon.Data;
 using Testflow.Data.Sequence;
-using Testflow.MasterCore.Data;
 using Testflow.MasterCore.TestMaintain.Container;
 using Testflow.Utility.MessageUtil;
 

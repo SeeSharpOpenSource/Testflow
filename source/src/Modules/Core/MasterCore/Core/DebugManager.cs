@@ -1,7 +1,6 @@
-﻿using Testflow.MasterCore.Common;
-using Testflow.MasterCore.Data;
+﻿using Testflow.CoreCommon.Data;
+using Testflow.MasterCore.Common;
 using Testflow.MasterCore.Message;
-using Testflow.MasterCore.Message.Messages;
 using Testflow.Utility.MessageUtil;
 
 namespace Testflow.MasterCore.Core

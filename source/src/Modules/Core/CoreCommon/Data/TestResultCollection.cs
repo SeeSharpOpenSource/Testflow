@@ -1,4 +1,4 @@
-﻿namespace Testflow.MasterCore.Data
+﻿namespace Testflow.CoreCommon.Data
 {
     public class TestResultCollection
     {

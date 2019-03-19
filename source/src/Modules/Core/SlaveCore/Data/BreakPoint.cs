@@ -1,4 +1,4 @@
-﻿using Testflow.MasterCore.Data;
+﻿using Testflow.CoreCommon.Data;
 
 namespace Testflow.RemoteRunner.Data
 {

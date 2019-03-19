@@ -42,7 +42,6 @@
   <ItemGroup>
     <Compile Include="Common\Constants.cs" />
     <Compile Include="Data\BreakPoint.cs" />
-    <Compile Include="ModuleErrorCode.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

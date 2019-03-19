@@ -1,5 +1,6 @@
 ﻿using System;
 using Testflow.Common;
+using Testflow.CoreCommon.Common;
 using Testflow.Data.Sequence;
 using Testflow.MasterCore.TestMaintain;
 using Testflow.MasterCore.Common;

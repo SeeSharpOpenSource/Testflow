@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using Testflow.Common;
+using Testflow.CoreCommon;
+using Testflow.CoreCommon.Data;
 using Testflow.Data.Sequence;
 using Testflow.MasterCore.Common;
-using Testflow.MasterCore.Data;
 using Testflow.Runtime;
 using Testflow.Utility.I18nUtil;
 using Testflow.Utility.MessageUtil;

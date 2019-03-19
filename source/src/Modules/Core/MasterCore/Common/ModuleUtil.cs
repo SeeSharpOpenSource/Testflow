@@ -1,5 +1,6 @@
 ﻿using System;
 using Testflow.Common;
+using Testflow.CoreCommon;
 using Testflow.Utility.I18nUtil;
 
 namespace Testflow.MasterCore.Common

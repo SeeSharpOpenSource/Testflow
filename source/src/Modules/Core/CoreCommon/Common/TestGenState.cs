@@ -1,4 +1,4 @@
-﻿namespace Testflow.MasterCore.Common
+﻿namespace Testflow.CoreCommon.Common
 {
     /// <summary>
     /// 测试生成状态
@@ -8,26 +8,26 @@
         /// <summary>
         /// 空闲状态
         /// </summary>
-        Idle,
+        Idle = 0,
 
         /// <summary>
         /// 开始生成
         /// </summary>
-        Start,
+        Start = 1,
 
         /// <summary>
         /// 正在执行
         /// </summary>
-        Processing,
+        Processing = 2,
 
         /// <summary>
         /// 结束
         /// </summary>
-        Over,
+        Over = 3,
 
         /// <summary>
         /// 错误
         /// </summary>
-        Error
+        Error = 4
     }
 }

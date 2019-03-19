@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using Testflow.Common;
-using Testflow.MasterCore.Common;
+using Testflow.CoreCommon.Common;
 using Testflow.Runtime;
 using Testflow.Utility.Collections;
 
-namespace Testflow.MasterCore.Data
+namespace Testflow.CoreCommon.Data
 {
     public class RuntimeStatusInfo : IRuntimeStatusInfo
     {

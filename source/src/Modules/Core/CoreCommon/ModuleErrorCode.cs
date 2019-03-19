@@ -1,6 +1,6 @@
 ﻿using Testflow.Common;
 
-namespace Testflow.MasterCore
+namespace Testflow.CoreCommon
 {
     public static class ModuleErrorCode
     {

@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using System.Threading;
 using Testflow.Common;
+using Testflow.CoreCommon;
+using Testflow.CoreCommon.Messages;
 using Testflow.MasterCore.Common;
-using Testflow.MasterCore.Message.Messages;
 using Testflow.Utility.I18nUtil;
 using Testflow.Utility.MessageUtil;
 

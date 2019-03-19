@@ -1,4 +1,4 @@
-﻿namespace Testflow.MasterCore.Common
+﻿namespace Testflow.CoreCommon.Common
 {
     /// <summary>
     /// 运行容器中的数据类型

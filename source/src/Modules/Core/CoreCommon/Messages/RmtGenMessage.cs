@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Runtime.Serialization;
-using Testflow.MasterCore.Common;
-using Testflow.MasterCore.Data;
+using Testflow.CoreCommon.Common;
+using Testflow.CoreCommon.Data;
 
-namespace Testflow.MasterCore.Message.Messages
+namespace Testflow.CoreCommon.Messages
 {
     /// <summary>
     /// 远程运行器生成消息

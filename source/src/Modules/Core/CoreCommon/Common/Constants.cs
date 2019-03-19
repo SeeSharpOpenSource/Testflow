@@ -1,8 +1,6 @@
-﻿using System;
-
-namespace Testflow.MasterCore.Common
+﻿namespace Testflow.CoreCommon.Common
 {
-    internal static class Constants
+    public static class Constants
     {
         public const string LocalHostAddr = "127.0.0.1";
         public const int DefaultSequenceCapacaity = 10;

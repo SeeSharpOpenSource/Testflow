@@ -1,7 +1,8 @@
 ﻿using System.Runtime.Serialization;
-using Testflow.MasterCore.Data;
+using Testflow.CoreCommon.Common;
+using Testflow.CoreCommon.Data;
 
-namespace Testflow.MasterCore.Message.Messages
+namespace Testflow.CoreCommon.Messages
 {
     /// <summary>
     /// 资源同步消息请求

@@ -1,4 +1,4 @@
-﻿namespace Testflow.MasterCore.Common
+﻿namespace Testflow.CoreCommon.Common
 {
     public enum RuntimePlatform
     {

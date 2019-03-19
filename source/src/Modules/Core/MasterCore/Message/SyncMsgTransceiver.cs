@@ -1,7 +1,7 @@
 ﻿using System.Threading;
 using Testflow.Common;
+using Testflow.CoreCommon.Messages;
 using Testflow.MasterCore.Common;
-using Testflow.MasterCore.Message.Messages;
 using Testflow.Utility.MessageUtil;
 
 namespace Testflow.MasterCore.Message

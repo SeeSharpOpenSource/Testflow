@@ -1,6 +1,6 @@
 ﻿using System.Runtime.Serialization;
 
-namespace Testflow.MasterCore.Data
+namespace Testflow.CoreCommon.Data
 {
     public class PerformanceData : ISerializable
     {

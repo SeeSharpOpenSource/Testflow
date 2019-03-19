@@ -1,5 +1,5 @@
-﻿using Testflow.MasterCore.Common;
-using Testflow.MasterCore.Message.Messages;
+﻿using Testflow.CoreCommon.Messages;
+using Testflow.MasterCore.Common;
 
 namespace Testflow.MasterCore.Message
 {

@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Runtime.Serialization;
-using Testflow.MasterCore.Common;
+using Testflow.CoreCommon.Common;
 
-namespace Testflow.MasterCore.Message.Messages
+namespace Testflow.CoreCommon.Messages
 {
     /// <summary>
     /// 引擎控制消息

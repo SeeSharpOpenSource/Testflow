@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using Testflow.Common;
-using Testflow.MasterCore.Common;
+using Testflow.CoreCommon.Common;
 using Testflow.Runtime;
 
-namespace Testflow.MasterCore.Data
+namespace Testflow.CoreCommon.Data
 {
     public class SequenceGenerationInfo : ISequenceGenerationInfo, ICloneableClass<ISequenceGenerationInfo>
     {
