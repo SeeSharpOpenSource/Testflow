@@ -1,6 +1,7 @@
 ﻿using System;
 using Testflow.Common;
 using Testflow.CoreCommon;
+using Testflow.Data.Sequence;
 using Testflow.Utility.I18nUtil;
 
 namespace Testflow.MasterCore.Common
@@ -31,6 +32,15 @@ namespace Testflow.MasterCore.Common
             }
 
             return paramValueObject;
+        }
+
+        public static int GetSessionId(ITestProject testProject, ISequenceGroup sequenceGroup)
+        {
+            if (null == testProject)
+            {
+                return 0;
+            }
+            return testProject.SequenceGroups.IndexOf(sequenceGroup);
         }
     }
 }

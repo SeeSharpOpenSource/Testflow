@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Testflow.CoreCommon.Common;
 using Testflow.CoreCommon.Data;
 using Testflow.Data.Sequence;
 using Testflow.MasterCore.Message;
@@ -15,10 +16,14 @@ namespace Testflow.MasterCore.TestMaintain
 
         void DisconnectHost(int sessionId);
 
+        void StartHost();
+
         void FreeHosts();
 
-        RuntimeContainer Generate(ITestProject testProject, params object[] param);
+        RuntimeContainer Generate(ITestProject testProject, RuntimePlatform platform, params object[] param);
 
-        RuntimeContainer Generate(ISequenceGroup sequenceGroup, params object[] param);
+        RuntimeContainer Generate(ISequenceGroup sequenceGroup, RuntimePlatform platform, params object[] param);
+
+        void SendTestGenMessage(int session, string sequenceData);
     }
 }

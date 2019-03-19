@@ -30,6 +30,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\packages\Newtonsoft.Json.12.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -92,8 +96,14 @@
       <Project>{97802083-7497-483f-9e2b-7f05cdaa4124}</Project>
       <Name>CoreCommon</Name>
     </ProjectReference>
+    <ProjectReference Include="..\SlaveCore\SlaveCore.csproj">
+      <Project>{858f9b24-13dc-4043-9e25-f14dd77564d1}</Project>
+      <Name>SlaveCore</Name>
+    </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\locale\i18n_engineCore_en.resx">
       <Generator>ResXFileCodeGenerator</Generator>

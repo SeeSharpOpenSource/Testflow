@@ -5,13 +5,13 @@ namespace Testflow.MasterCore.TestMaintain.Container
 {
     internal class ProcessRuntimeContainer : RuntimeContainer
     {
-        public ProcessRuntimeContainer(ISequenceFlowContainer sequence, ModuleGlobalInfo globalInfo,
-            params object[] extraParam) : base(sequence, globalInfo)
+        public ProcessRuntimeContainer(int session, ModuleGlobalInfo globalInfo,
+            params object[] extraParam) : base(session, globalInfo)
         {
              // TODO
         }
 
-        public override void Initialize()
+        public override void Start(string startConfigData)
         {
             throw new System.NotImplementedException();
         }

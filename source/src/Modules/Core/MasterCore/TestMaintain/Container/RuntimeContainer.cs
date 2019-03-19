@@ -2,6 +2,7 @@
 using Testflow.Common;
 using Testflow.CoreCommon;
 using Testflow.CoreCommon.Common;
+using Testflow.CoreCommon.Messages;
 using Testflow.Data.Sequence;
 using Testflow.MasterCore.Common;
 
@@ -12,36 +13,32 @@ namespace Testflow.MasterCore.TestMaintain.Container
     /// </summary>
     internal abstract class RuntimeContainer : IDisposable
     {
-        public static RuntimeContainer CreateContainer(ISequenceFlowContainer sequence, int index, RuntimePlatform platform,
+        public static RuntimeContainer CreateContainer(int session, RuntimePlatform platform,
             ModuleGlobalInfo globalInfo, params object[] extraParam)
         {
             switch (platform)
             {
                 case RuntimePlatform.Clr:
-                    return new AppDomainRuntimeContainer(sequence, globalInfo, extraParam);
+                    return new AppDomainRuntimeContainer(session, globalInfo, extraParam);
                     break;
                 case RuntimePlatform.Common:
-                    return new ProcessRuntimeContainer(sequence, globalInfo, extraParam);
+                    return new ProcessRuntimeContainer(session, globalInfo, extraParam);
                     break;
                 default:
                     throw new ArgumentException();
             }
         }
 
-        protected readonly ISequenceFlowContainer Sequence;
+        public int Session { get; }
+        protected ModuleGlobalInfo GlobalInfo { get; }
 
-        protected RuntimeContainer(ISequenceFlowContainer sequence, ModuleGlobalInfo globalInfo)
+        protected RuntimeContainer(int session, ModuleGlobalInfo globalInfo)
         {
-            ISequenceGroup sequenceGroup = sequence as ISequenceGroup;
-            // 如果是SequenceGroup并且还有入参，则必须和包含上级TestProject一起运行
-            if (null != sequenceGroup && null == sequenceGroup.Parent && 0 != sequenceGroup.Arguments.Count)
-            {
-                ModuleUtility.LogAndRaiseDataException(LogLevel.Error, "SequenceGroup with input arguments cannot run with out test project.", ModuleErrorCode.SequenceDataError, null, "UnexistArgumentSource");
-            }
-            this.Sequence = sequence;
+            this.Session = session;
+            this.GlobalInfo = globalInfo;
         }
 
-        public abstract void Initialize();
+        public abstract void Start(string startConfigData);
 
         public abstract void Dispose();
     }

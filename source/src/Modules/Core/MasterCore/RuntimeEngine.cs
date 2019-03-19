@@ -68,7 +68,9 @@ namespace Testflow.MasterCore
 
         public void Start()
         {
-
+            _statusManager.Start();
+            _syncManager.Start();
+            _controller.Start();
         }
 
         public void Stop()

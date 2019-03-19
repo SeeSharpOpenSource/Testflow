@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Threading;
 using Testflow.Common;
 using Testflow.CoreCommon.Common;
 using Testflow.Data.Sequence;
 using Testflow.MasterCore.Common;
 using Testflow.MasterCore.Message;
 using Testflow.MasterCore.TestMaintain;
+using Testflow.Modules;
 using Testflow.Runtime;
 using Testflow.Utility.MessageUtil;
 
@@ -18,7 +20,7 @@ namespace Testflow.MasterCore.Core
         private readonly ModuleGlobalInfo _globalInfo;
         private readonly ITestEntityMaintainer _testsMaintainer;
         private readonly DebugManager _debugManager;
-        
+        private ISequenceFlowContainer _sequenceData;
 
         public EngineFlowController(ModuleGlobalInfo globalInfo)
         {
@@ -31,9 +33,11 @@ namespace Testflow.MasterCore.Core
             }
         }
 
-        RuntimeType RuntimeType => _globalInfo.ConfigData.GetProperty<RuntimeType>("RuntimeType");
+        public RuntimeType RuntimeType => _globalInfo.ConfigData.GetProperty<RuntimeType>("RuntimeType");
 
-        private bool EnableDebug => RuntimeType.Debug == RuntimeType;
+        public bool EnableDebug => RuntimeType.Debug == RuntimeType;
+
+        public DebugManager Debugger => _debugManager;
 
         public void RegisterMessageHandler()
         {
@@ -44,10 +48,12 @@ namespace Testflow.MasterCore.Core
 
         public void Initialize(ISequenceFlowContainer sequenceContainer)
         {
+            _sequenceData = sequenceContainer;
             GenerateTestMaintainer(sequenceContainer);
         }
 
         // TODO 暂时是一个失败，所有的都停止操作，后续优化为状态控制
+        // TODO 目标平台暂时写死
         private void GenerateTestMaintainer(ISequenceFlowContainer sequenceContainer)
         {
             try
@@ -55,20 +61,26 @@ namespace Testflow.MasterCore.Core
                 if (sequenceContainer is ITestProject)
                 {
                     ITestProject testProject = (ITestProject) sequenceContainer;
-                    _testsMaintainer.Generate(testProject);
+                    _testsMaintainer.Generate(testProject, RuntimePlatform.Clr);
                     foreach (ISequenceGroup sequenceGroup in testProject.SequenceGroups)
                     {
-                        _testsMaintainer.Generate(sequenceGroup);
+                        _testsMaintainer.Generate(sequenceGroup, RuntimePlatform.Clr);
                     }
                 }
                 else if (sequenceContainer is ISequenceGroup)
                 {
-                    _testsMaintainer.Generate((ISequenceGroup) sequenceContainer);
+                    _testsMaintainer.Generate((ISequenceGroup) sequenceContainer, RuntimePlatform.Clr);
                 }
                 else
                 {
                     throw new InvalidOperationException();
                 }
+            }
+            catch (TestflowException)
+            {
+                _globalInfo.State = RuntimeState.Error;
+                _testsMaintainer.FreeHosts();
+                throw;
             }
             catch (ApplicationException ex)
             {
@@ -80,9 +92,31 @@ namespace Testflow.MasterCore.Core
             catch (Exception ex)
             {
                 _globalInfo.LogService.Print(LogLevel.Fatal, CommonConst.PlatformLogSession, ex);
-                _globalInfo.State = RuntimeState.Error;
+                _globalInfo.State = RuntimeState.Collapsed;
                 _testsMaintainer.FreeHosts();
                 throw;
+            }
+        }
+
+        public void Start()
+        {
+            _testsMaintainer.StartHost();
+            ISequenceManager sequenceManager = _globalInfo.TestflowRunner.SequenceManager;
+            if (_sequenceData is ITestProject)
+            {
+                ITestProject testProject = _sequenceData as ITestProject;
+
+                _testsMaintainer.SendTestGenMessage(CoreConstants.TestProjectSessionId,
+                    sequenceManager.RuntimeSerialize(testProject));
+                foreach (ISequenceGroup sequenceGroup in testProject.SequenceGroups)
+                {
+                    _testsMaintainer.SendTestGenMessage(ModuleUtils.GetSessionId(testProject, sequenceGroup), 
+                        sequenceManager.RuntimeSerialize(sequenceGroup));
+                }
+            }
+            else
+            {
+                _testsMaintainer.SendTestGenMessage(0, sequenceManager.RuntimeSerialize(_sequenceData as ISequenceGroup));
             }
         }
 

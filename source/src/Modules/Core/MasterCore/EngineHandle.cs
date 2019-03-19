@@ -16,6 +16,7 @@ namespace Testflow.MasterCore
     {
         private static EngineHandle _instance;
         private static object _instLock = new object();
+        private RuntimeEngine _runtimeEngine;
 
         public EngineHandle()
         {
@@ -47,7 +48,7 @@ namespace Testflow.MasterCore
 
         public void RuntimeInitialize()
         {
-            RuntimeEngine runtimeEngine = new RuntimeEngine(ConfigData);
+            _runtimeEngine = new RuntimeEngine(ConfigData);
         }
 
         public void DesigntimeInitialize()
@@ -114,7 +115,7 @@ namespace Testflow.MasterCore
 
         public void Start()
         {
-            throw new NotImplementedException();
+            _runtimeEngine.Start();
         }
 
         public void Stop()

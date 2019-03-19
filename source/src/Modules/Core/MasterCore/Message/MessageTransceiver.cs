@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading;
 using Testflow.Common;
 using Testflow.CoreCommon;
+using Testflow.CoreCommon.Common;
 using Testflow.CoreCommon.Messages;
 using Testflow.MasterCore.Common;
 using Testflow.Utility.I18nUtil;
@@ -56,7 +57,7 @@ namespace Testflow.MasterCore.Message
             this.GlobalInfo = globalInfo;
             // 创建上行队列
             FormatterType = GlobalInfo.ConfigData.GetProperty<FormatterType>("EngineQueueFormat");
-            MessengerOption receiveOption = new MessengerOption(Constants.UpLinkMQName, typeof (ControlMessage),
+            MessengerOption receiveOption = new MessengerOption(CoreConstants.UpLinkMQName, typeof (ControlMessage),
                 typeof (DebugMessage), typeof (RmtGenMessage), typeof (StatusMessage), typeof (TestGenMessage))
             {
                 Type = MessengerType.MSMQ,
@@ -66,7 +67,7 @@ namespace Testflow.MasterCore.Message
             UpLinkMessenger = Messenger.GetMessenger(receiveOption);
             this._consumers = new Dictionary<string, IMessageHandler>(Constants.DefaultRuntimeSize);
             // 创建下行队列
-            MessengerOption sendOption = new MessengerOption(Constants.DownLinkMQName, typeof(ControlMessage),
+            MessengerOption sendOption = new MessengerOption(CoreConstants.DownLinkMQName, typeof(ControlMessage),
                 typeof(DebugMessage), typeof(RmtGenMessage), typeof(StatusMessage), typeof(TestGenMessage))
             {
                 Type = MessengerType.MSMQ,

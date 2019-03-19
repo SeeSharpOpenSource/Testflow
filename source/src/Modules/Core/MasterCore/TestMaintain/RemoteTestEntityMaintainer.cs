@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Testflow.CoreCommon.Common;
 using Testflow.CoreCommon.Data;
 using Testflow.Data.Sequence;
 using Testflow.MasterCore.TestMaintain.Container;
@@ -16,12 +17,17 @@ namespace Testflow.MasterCore.TestMaintain
             throw new System.NotImplementedException();
         }
 
-        public RuntimeContainer Generate(ITestProject testProject, params object[] param)
+        public RuntimeContainer Generate(ITestProject testProject, RuntimePlatform platform, params object[] param)
         {
             throw new System.NotImplementedException();
         }
 
-        public RuntimeContainer Generate(ISequenceGroup sequenceGroup, params object[] param)
+        public RuntimeContainer Generate(ISequenceGroup sequenceGroup, RuntimePlatform platform, params object[] param)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void SendTestGenMessage(int session, string sequenceData)
         {
             throw new System.NotImplementedException();
         }
@@ -32,6 +38,11 @@ namespace Testflow.MasterCore.TestMaintain
         }
 
         public void DisconnectHost(int sessionId)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void StartHost()
         {
             throw new System.NotImplementedException();
         }

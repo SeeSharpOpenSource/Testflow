@@ -1,16 +1,16 @@
-﻿using System.Collections.Generic;
-using Newtonsoft.Json;
+﻿using System;
 using Testflow.RemoteRunner.Common;
 using Testflow.Utility.I18nUtil;
 
 namespace Testflow.SlaveCore
 {
-    public class TestLauncher
+    public class AppDomainTestLauncher : MarshalByRefObject
     {
+
         private ContextManager _contextManager;
         private MessageTransceiver _transceiver;
 
-        public TestLauncher(string configDataStr)
+        public AppDomainTestLauncher(string configDataStr)
         {
             I18NOption i18NOption = new I18NOption(typeof(TestLauncher).Assembly, "i18n_SlaveCore_zh", "i18n_SlaveCore_en")
             {
