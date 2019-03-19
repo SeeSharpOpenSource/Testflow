@@ -40,6 +40,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Common\ModuleUtils.cs" />
     <Compile Include="Common\MQIgnoreAttribute.cs" />
     <Compile Include="Common\TestGenState.cs" />
     <Compile Include="Common\Constants.cs" />

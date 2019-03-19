@@ -55,28 +55,28 @@ namespace Testflow.MasterCore.Events
             switch (eventName)
             {
                 case Constants.TestGenerationStart:
-                    eventHandle.TestGenerationStart += ModuleUtil.GetDeleage<RuntimeDelegate.TestGenerationAction>(callBack);
+                    eventHandle.TestGenerationStart += ModuleUtils.GetDeleage<RuntimeDelegate.TestGenerationAction>(callBack);
                     break;
                 case Constants.TestGenerationReport:
-                    eventHandle.TestGenerationReport += ModuleUtil.GetDeleage<RuntimeDelegate.TestGenerationAction>(callBack);
+                    eventHandle.TestGenerationReport += ModuleUtils.GetDeleage<RuntimeDelegate.TestGenerationAction>(callBack);
                     break;
                 case Constants.TestGenerationEnd:
-                    eventHandle.TestGenerationEnd += ModuleUtil.GetDeleage<RuntimeDelegate.TestGenerationAction>(callBack);
+                    eventHandle.TestGenerationEnd += ModuleUtils.GetDeleage<RuntimeDelegate.TestGenerationAction>(callBack);
                     break;
                 case Constants.SequenceStarted:
-                    eventHandle.SequenceStarted += ModuleUtil.GetDeleage<RuntimeDelegate.StatusReceivedAction>(callBack);
+                    eventHandle.SequenceStarted += ModuleUtils.GetDeleage<RuntimeDelegate.StatusReceivedAction>(callBack);
                     break;
                 case Constants.StatusReceived:
-                    eventHandle.StatusReceived += ModuleUtil.GetDeleage<RuntimeDelegate.StatusReceivedAction>(callBack);
+                    eventHandle.StatusReceived += ModuleUtils.GetDeleage<RuntimeDelegate.StatusReceivedAction>(callBack);
                     break;
                 case Constants.SequenceOver:
-                    eventHandle.SequenceOver += ModuleUtil.GetDeleage<RuntimeDelegate.StatusReceivedAction>(callBack);
+                    eventHandle.SequenceOver += ModuleUtils.GetDeleage<RuntimeDelegate.StatusReceivedAction>(callBack);
                     break;
                 case Constants.TestOver:
-                    eventHandle.TestOver += ModuleUtil.GetDeleage<RuntimeDelegate.TestSessionOverAction>(callBack);
+                    eventHandle.TestOver += ModuleUtils.GetDeleage<RuntimeDelegate.TestSessionOverAction>(callBack);
                     break;
                 case Constants.BreakPointHitted:
-                    eventHandle.BreakPointHitted += ModuleUtil.GetDeleage<RuntimeDelegate.BreakPointHittedAction>(callBack);
+                    eventHandle.BreakPointHitted += ModuleUtils.GetDeleage<RuntimeDelegate.BreakPointHittedAction>(callBack);
                     break;
                 default:
                     I18N i18N = I18N.GetInstance(Constants.I18nName);
@@ -101,35 +101,35 @@ namespace Testflow.MasterCore.Events
             switch (eventName)
             {
                 case Constants.TestGenerationStart:
-                    eventHandle.OnTestGenerationStart(ModuleUtil.GetParamValue<ITestGenerationInfo>(eventParams, 0));
+                    eventHandle.OnTestGenerationStart(ModuleUtils.GetParamValue<ITestGenerationInfo>(eventParams, 0));
                     break;
                 case Constants.TestGenerationReport:
-                    eventHandle.OnTestGenerationReport(ModuleUtil.GetParamValue<ITestGenerationInfo>(eventParams, 0));
+                    eventHandle.OnTestGenerationReport(ModuleUtils.GetParamValue<ITestGenerationInfo>(eventParams, 0));
                     break;
                 case Constants.TestGenerationEnd:
-                    eventHandle.OnTestGenerationEnd(ModuleUtil.GetParamValue<ITestGenerationInfo>(eventParams, 0));
+                    eventHandle.OnTestGenerationEnd(ModuleUtils.GetParamValue<ITestGenerationInfo>(eventParams, 0));
                     break;
                 case Constants.SequenceStarted:
-                    eventHandle.OnSequenceStarted(ModuleUtil.GetParamValue<IRuntimeStatusInfo>(eventParams, 0),
-                        ModuleUtil.GetParamValue<ICallStack>(eventParams, 1));
+                    eventHandle.OnSequenceStarted(ModuleUtils.GetParamValue<IRuntimeStatusInfo>(eventParams, 0),
+                        ModuleUtils.GetParamValue<ICallStack>(eventParams, 1));
                     break;
                 case Constants.StatusReceived:
-                    eventHandle.OnStatusReceived(ModuleUtil.GetParamValue<IRuntimeStatusInfo>(eventParams, 0),
-                        ModuleUtil.GetParamValue<ICallStack>(eventParams, 1));
+                    eventHandle.OnStatusReceived(ModuleUtils.GetParamValue<IRuntimeStatusInfo>(eventParams, 0),
+                        ModuleUtils.GetParamValue<ICallStack>(eventParams, 1));
                     break;
                 case Constants.SequenceOver:
-                    eventHandle.OnSequenceOver(ModuleUtil.GetParamValue<IRuntimeStatusInfo>(eventParams, 0),
-                        ModuleUtil.GetParamValue<ICallStack>(eventParams, 1));
+                    eventHandle.OnSequenceOver(ModuleUtils.GetParamValue<IRuntimeStatusInfo>(eventParams, 0),
+                        ModuleUtils.GetParamValue<ICallStack>(eventParams, 1));
                     break;
                 case Constants.TestOver:
 //                    eventHandle.OnTestOver(ModuleUtil.GetParamValue<ITestResultCollection>(eventParams, 0),
 //                        ModuleUtil.GetParamValue<ISequenceGroup>(eventParams, 1));
-                    eventHandle.OnTestOver(ModuleUtil.GetParamValue<ITestResultCollection>(eventParams, 0),
+                    eventHandle.OnTestOver(ModuleUtils.GetParamValue<ITestResultCollection>(eventParams, 0),
                         (int)eventParams[1]);
                     break;
                 case Constants.BreakPointHitted:
-                    eventHandle.OnBreakPointHitted(ModuleUtil.GetParamValue<ISequenceDebugger>(eventParams, 0),
-                        ModuleUtil.GetParamValue<IDebugInformation>(eventParams, 1));
+                    eventHandle.OnBreakPointHitted(ModuleUtils.GetParamValue<ISequenceDebugger>(eventParams, 0),
+                        ModuleUtils.GetParamValue<IDebugInformation>(eventParams, 1));
                     break;
                 default:
                     I18N i18N = I18N.GetInstance(Constants.I18nName);

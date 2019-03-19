@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Runtime.ConstrainedExecution;
 using System.Runtime.Serialization;
 using Testflow.CoreCommon.Common;
 using Testflow.CoreCommon.Data;
@@ -10,20 +11,21 @@ namespace Testflow.CoreCommon.Messages
     /// </summary>
     public class DebugMessage : MessageBase
     {
-        /// <summary>
-        /// name是断点的全局ID转换为字符串
-        /// </summary>
-        public DebugMessage(string name, int id, CallStack stack) : base(name, id, MessageType.Debug)
+        public DebugMessage(string name, int id, int objectId, CallStack stack) : base(name, id, MessageType.Debug)
         {
             this.Stack = stack;
+            this.ObjectId = objectId;
         }
+
+        /// <summary>
+        /// 运行时对象id
+        /// </summary>
+        public int ObjectId { get; set; }
 
         /// <summary>
         /// 当前的堆栈信息
         /// </summary>
         public CallStack Stack { get; set; }
-
-        public List<string> Variable { get; set; }
 
         /// <summary>
         /// 被请求的变量值信息
@@ -33,18 +35,15 @@ namespace Testflow.CoreCommon.Messages
         public DebugMessage(SerializationInfo info, StreamingContext context) : base(info, context)
         {
             this.Stack = info.GetValue("Stack", typeof(CallStack)) as CallStack;
-            this.Variable = info.GetValue("Variable", typeof (List<string>)) as List<string>;
             this.Data = info.GetValue("Data", typeof(DebugData)) as DebugData;
+            this.ObjectId = (int) info.GetValue("ObjectId", typeof(int));
         }
 
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
             base.GetObjectData(info, context);
             info.AddValue("Stack", this.Stack, typeof(CallStack));
-            if (null != Variable)
-            {
-                info.AddValue("Variable", Variable);
-            }
+            info.AddValue("ObjectId", ObjectId);
             if (null != Data && 0 == Data.Count)
             {
                 info.AddValue("Data", Data, typeof(DebugData));

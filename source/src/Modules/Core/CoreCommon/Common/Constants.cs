@@ -11,6 +11,8 @@
 
         public const int UnverifiedSequenceIndex = -1;
 
+        public const int TestProjectIndex = -1;
+
         public const int TestProjectSessionId = -1;
         public const int EventQueueTimeOut = 500;
 

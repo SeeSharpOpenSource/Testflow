@@ -5,7 +5,7 @@ using Testflow.Utility.I18nUtil;
 
 namespace Testflow.MasterCore.Common
 {
-    internal static class ModuleUtil
+    internal static class ModuleUtils
     {
 
         public static TDataType GetDeleage<TDataType>(Delegate action) where TDataType : class
