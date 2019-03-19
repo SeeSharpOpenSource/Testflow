@@ -51,7 +51,7 @@ namespace Testflow.SequenceManager.Serializer
                 }
                 testProject.SequenceGroups.Add(sequenceGroup);
             }
-            VerifyTypeDatas(testProject);
+            ValidateTypeDatas(testProject);
 
             return testProject;
         }
@@ -76,7 +76,7 @@ namespace Testflow.SequenceManager.Serializer
             }
             sequenceGroup.Parameters = parameter;
             SetParameterToSequenceData(sequenceGroup, parameter);
-            VerifyTypeDatas(sequenceGroup);
+            ValidateTypeDatas(sequenceGroup);
             return sequenceGroup;
         }
 
@@ -91,22 +91,24 @@ namespace Testflow.SequenceManager.Serializer
             }
             sequenceGroup.Parameters = parameter;
             SetParameterToSequenceData(sequenceGroup, parameter);
-            VerifyTypeDatas(sequenceGroup);
+            ValidateTypeDatas(sequenceGroup);
         }
 
         public static TestProject LoadTestProjectFromJson(string jsonStr)
         {
             SequenceJsonConvertor convertor = new SequenceJsonConvertor();
             TestProject testProject = JsonConvert.DeserializeObject<TestProject>(jsonStr, convertor);
-            VerifyTypeDatas(testProject);
+            ValidateTypeDatas(testProject);
+            ModuleUtils.ValidateParent(testProject);
             return testProject;
         }
-
+        
         public static SequenceGroup LoadSequenceGroupFromJson(string jsonStr)
         {
             SequenceJsonConvertor convertor = new SequenceJsonConvertor();
             SequenceGroup sequenceGroup = JsonConvert.DeserializeObject<SequenceGroup>(jsonStr, convertor);
-            VerifyTypeDatas(sequenceGroup);
+            ValidateTypeDatas(sequenceGroup);
+            ModuleUtils.ValidateParent(sequenceGroup, null);
             return sequenceGroup;
         }
 
@@ -175,41 +177,41 @@ namespace Testflow.SequenceManager.Serializer
             }
         }
 
-        private static void VerifyTypeDatas(TestProject testProject)
+        private static void ValidateTypeDatas(TestProject testProject)
         {
-            VerifyTypeDatas(testProject.Variables, testProject.TypeDatas);
-            VerifyTypeDatas(testProject.SetUp, testProject.TypeDatas);
-            VerifyTypeDatas(testProject.TearDown, testProject.TypeDatas);
+            ValidateTypeDatas(testProject.Variables, testProject.TypeDatas);
+            ValidateTypeDatas(testProject.SetUp, testProject.TypeDatas);
+            ValidateTypeDatas(testProject.TearDown, testProject.TypeDatas);
         }
 
-        private static void VerifyTypeDatas(ISequenceGroup sequenceGroup)
+        private static void ValidateTypeDatas(ISequenceGroup sequenceGroup)
         {
-            VerifyTypeDatas(sequenceGroup.Arguments, sequenceGroup.TypeDatas);
-            VerifyTypeDatas(sequenceGroup.Variables, sequenceGroup.TypeDatas);
-            VerifyTypeDatas(sequenceGroup.SetUp, sequenceGroup.TypeDatas);
+            ValidateTypeDatas(sequenceGroup.Arguments, sequenceGroup.TypeDatas);
+            ValidateTypeDatas(sequenceGroup.Variables, sequenceGroup.TypeDatas);
+            ValidateTypeDatas(sequenceGroup.SetUp, sequenceGroup.TypeDatas);
             foreach (ISequence sequence in sequenceGroup.Sequences)
             {
-                VerifyTypeDatas(sequence, sequenceGroup.TypeDatas);
+                ValidateTypeDatas(sequence, sequenceGroup.TypeDatas);
             }
-            VerifyTypeDatas(sequenceGroup.TearDown, sequenceGroup.TypeDatas);
+            ValidateTypeDatas(sequenceGroup.TearDown, sequenceGroup.TypeDatas);
         }
 
-        private static void VerifyTypeDatas(ISequence sequence, ITypeDataCollection typeDatas)
+        private static void ValidateTypeDatas(ISequence sequence, ITypeDataCollection typeDatas)
         {
-            VerifyTypeDatas(sequence.Variables, typeDatas);
+            ValidateTypeDatas(sequence.Variables, typeDatas);
             foreach (ISequenceStep sequenceStep in sequence.Steps)
             {
-                VerifyTypeDatas(sequenceStep, typeDatas);
+                ValidateTypeDatas(sequenceStep, typeDatas);
             }
         }
 
-        private static void VerifyTypeDatas(ISequenceStep sequenceStep, ITypeDataCollection typeDatas)
+        private static void ValidateTypeDatas(ISequenceStep sequenceStep, ITypeDataCollection typeDatas)
         {
             if (sequenceStep.HasSubSteps)
             {
                 foreach (ISequenceStep subStep in sequenceStep.SubSteps)
                 {
-                    VerifyTypeDatas(subStep, typeDatas);
+                    ValidateTypeDatas(subStep, typeDatas);
                 }
             }
             else
@@ -239,7 +241,7 @@ namespace Testflow.SequenceManager.Serializer
             }
         }
 
-        private static void VerifyTypeDatas(IArgumentCollection variables, ITypeDataCollection typeDatas)
+        private static void ValidateTypeDatas(IArgumentCollection variables, ITypeDataCollection typeDatas)
         {
             foreach (IArgument rawArguments in variables)
             {
@@ -251,7 +253,7 @@ namespace Testflow.SequenceManager.Serializer
             }
         }
 
-        private static void VerifyTypeDatas(IVariableCollection variables, ITypeDataCollection typeDatas)
+        private static void ValidateTypeDatas(IVariableCollection variables, ITypeDataCollection typeDatas)
         {
             foreach (IVariable rawVariable in variables)
             {

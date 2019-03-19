@@ -241,7 +241,7 @@ namespace Testflow.SequenceManager.Common
 
         #endregion
 
-        #region Type Related
+        #region Data Validation
         
         public static void RefreshTypeIndex(ITestProject testProject)
         {
@@ -322,6 +322,56 @@ namespace Testflow.SequenceManager.Common
                 genericType = collectionType.GetGenericArguments();
             }
             return genericType[0];
+        }
+
+        public static void ValidateParent(ITestProject testProject)
+        {
+            testProject.Parent = null;
+            ValidateParent(testProject.Variables, testProject);
+            ValidateParent(testProject.SetUp, testProject);
+            ValidateParent(testProject.TearDown, testProject);
+        }
+
+        public static void ValidateParent(ISequenceGroup seuquenceGroup, ISequenceFlowContainer parent)
+        {
+            seuquenceGroup.Parent = parent;
+            ValidateParent(seuquenceGroup.Variables, seuquenceGroup);
+            ValidateParent(seuquenceGroup.SetUp, seuquenceGroup);
+            foreach (ISequence sequence in seuquenceGroup.Sequences)
+            {
+                ValidateParent(sequence, seuquenceGroup);
+            }
+            ValidateParent(seuquenceGroup.TearDown, seuquenceGroup);
+        }
+
+        private static void ValidateParent(ISequence sequence, ISequenceFlowContainer parent)
+        {
+            sequence.Parent = parent;
+            ValidateParent(sequence.Variables, sequence);
+            foreach (ISequenceStep step in sequence.Steps)
+            {
+                ValidateParent(step, sequence);
+            }
+        }
+
+        private static void ValidateParent(ISequenceStep step, ISequenceFlowContainer parent)
+        {
+            step.Parent = parent;
+            if (step.HasSubSteps)
+            {
+                foreach (ISequenceStep subStep in step.SubSteps)
+                {
+                    ValidateParent(subStep, step);
+                }
+            }
+        }
+
+        private static void ValidateParent(IVariableCollection variables, ISequenceFlowContainer parent)
+        {
+            foreach (IVariable variable in variables)
+            {
+                variable.Parent = parent;
+            }
         }
 
         #endregion
@@ -525,6 +575,7 @@ namespace Testflow.SequenceManager.Common
         }
 
         #endregion
+
 
         #region Serialization
 

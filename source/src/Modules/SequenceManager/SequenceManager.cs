@@ -192,7 +192,9 @@ namespace Testflow.SequenceManager
             switch (source)
             {
                 case SerializationTarget.File:
-                    return SequenceDeserializer.LoadTestProject(param[0], forceLoad, this.ConfigData);
+                    TestProject testProject = SequenceDeserializer.LoadTestProject(param[0], forceLoad, this.ConfigData);
+                    ModuleUtils.ValidateParent(testProject);
+                    return testProject;
                     break;
                 case SerializationTarget.DataBase:
                     throw new NotImplementedException();
@@ -212,7 +214,11 @@ namespace Testflow.SequenceManager
             switch (source)
             {
                 case SerializationTarget.File:
-                    return SequenceDeserializer.LoadSequenceGroup(param[0], forceLoad, this.ConfigData);
+                    SequenceGroup sequenceGroup = SequenceDeserializer.LoadSequenceGroup(param[0], forceLoad,
+                        this.ConfigData);
+                    ModuleUtils.ValidateParent(sequenceGroup, null);
+                    return sequenceGroup;
+
                     break;
                 case SerializationTarget.DataBase:
                     throw new NotImplementedException();
@@ -256,7 +262,8 @@ namespace Testflow.SequenceManager
         public void ValidateSequenceData(ITestProject testProject)
         {
             _typeMaintainer.VerifyVariableTypes(testProject);
-            _typeMaintainer.RefreshUsedAssemblyAndType(testProject); ;
+            _typeMaintainer.RefreshUsedAssemblyAndType(testProject);
+
         }
 
         public void ValidateSequenceData(ISequenceGroup sequenceGroup)
