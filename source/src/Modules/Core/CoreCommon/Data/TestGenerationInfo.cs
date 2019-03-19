@@ -13,8 +13,8 @@ namespace Testflow.CoreCommon.Data
 
         public TestGenerationInfo()
         {
-            this.GenerationInfos = new List<ISequenceGenerationInfo>(Constants.DefaultSequenceCapacaity);
-            this.SequenceGroupIndex = new List<int>(Constants.DefaultSequenceCapacaity);
+            this.GenerationInfos = new List<ISequenceGenerationInfo>(CoreConstants.DefaultSequenceCapacaity);
+            this.SequenceGroupIndex = new List<int>(CoreConstants.DefaultSequenceCapacaity);
         }
 
         private TestGenerationInfo(ITestGenerationInfo testGeneration)

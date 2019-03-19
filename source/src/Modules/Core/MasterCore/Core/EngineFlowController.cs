@@ -18,6 +18,7 @@ namespace Testflow.MasterCore.Core
         private readonly ModuleGlobalInfo _globalInfo;
         private readonly ITestEntityMaintainer _testsMaintainer;
         private readonly DebugManager _debugManager;
+        
 
         public EngineFlowController(ModuleGlobalInfo globalInfo)
         {

@@ -10,9 +10,9 @@ namespace Testflow.CoreCommon.Data
     {
         public CallStack()
         {
-            SequenceGroupIndex = Constants.UnverifiedSequenceIndex;
-            SequenceIndex = Constants.UnverifiedSequenceIndex;
-            this.StepStack = new List<int>(Constants.DefaultRuntimeSize);
+            SequenceGroupIndex = CoreConstants.UnverifiedSequenceIndex;
+            SequenceIndex = CoreConstants.UnverifiedSequenceIndex;
+            this.StepStack = new List<int>(CoreConstants.DefaultRuntimeSize);
         }
 
         public int SequenceGroupIndex { get; internal set; }

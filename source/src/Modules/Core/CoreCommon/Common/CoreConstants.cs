@@ -1,6 +1,6 @@
 ﻿namespace Testflow.CoreCommon.Common
 {
-    public static class Constants
+    public static class CoreConstants
     {
         public const string LocalHostAddr = "127.0.0.1";
         public const int DefaultSequenceCapacaity = 10;
@@ -20,6 +20,9 @@
 
         public const string UpLinkMQName = @".\Private$\TestflowUpLinkQueue";
         public const string DownLinkMQName = @".\Private$\TestflowDownLinkQueue";
+
+        public const string DownDebugMsgName = "Debug";
+        public const string UpDebugMsgName = "Debug";
 
         #region 事件名称
 

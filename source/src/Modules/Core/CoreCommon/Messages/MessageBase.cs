@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Runtime.Serialization;
+using System.Threading;
 using Testflow.Common;
 using Testflow.CoreCommon.Common;
 using Testflow.Utility.MessageUtil;
@@ -11,12 +12,11 @@ namespace Testflow.CoreCommon.Messages
     /// </summary>
     public abstract class MessageBase : IMessage, ISerializable
     {
-        protected MessageBase(string name, MessageType type)
+        private static long _index = 0;
+
+        public static void Clear()
         {
-            this.Name = name;
-            this.Type = type;
-            this.Id = CommonConst.TestGroupSession;
-            this.Time = DateTime.Now;
+            _index = 0;
         }
 
         protected MessageBase(string name, int id, MessageType type)
@@ -25,6 +25,7 @@ namespace Testflow.CoreCommon.Messages
             this.Type = type;
             this.Id = id;
             this.Time = DateTime.Now;
+            SetSignature();
         }
 
         /// <summary>
@@ -47,12 +48,18 @@ namespace Testflow.CoreCommon.Messages
         /// </summary>
         public DateTime Time { get; set; }
 
+        /// <summary>
+        /// 消息标签
+        /// </summary>
+        public long Index { get; set; }
+
         protected MessageBase(SerializationInfo info, StreamingContext context)
         {
             this.Name = (string) info.GetValue("Name", typeof (string));
             this.Type = (MessageType) info.GetValue("Type", typeof (MessageType));
             this.Id = (int) info.GetValue("Id", typeof (int));
             this.Time = (DateTime) info.GetValue("Time", typeof (DateTime));
+            this.Index = (long) info.GetValue("Signature", typeof (long));
         }
 
         public virtual void GetObjectData(SerializationInfo info, StreamingContext context)
@@ -61,6 +68,14 @@ namespace Testflow.CoreCommon.Messages
             info.AddValue("Type", this.Type, typeof(MessageType));
             info.AddValue("Id", this.Id, typeof(int));
             info.AddValue("Time", Time, typeof(DateTime));
+            info.AddValue("Signature", Index);
+        }
+
+        private void SetSignature()
+        {
+            const long sessionMsgCapacity = (long)1E15;
+            long index = Interlocked.Increment(ref _index);
+            this.Index = Id* sessionMsgCapacity + index;
         }
     }
 }

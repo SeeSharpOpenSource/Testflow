@@ -10,12 +10,12 @@ namespace Testflow.CoreCommon.Data
         public int PortNum { get; set; }
         public RuntimePlatform Platform { get; set; }
 
-        public bool IsRemoteHost => Constants.LocalHostAddr.Equals(IpAddress);
+        public bool IsRemoteHost => CoreConstants.LocalHostAddr.Equals(IpAddress);
 
         public HostInfo()
         {
             this.Id = -1;
-            this.IpAddress = Constants.LocalHostAddr;
+            this.IpAddress = CoreConstants.LocalHostAddr;
             this.PortNum = -1;
             this.Platform = RuntimePlatform.Clr;
         }

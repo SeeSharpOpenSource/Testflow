@@ -11,7 +11,7 @@ namespace Testflow.CoreCommon.Messages
     {
         public ControlMessage(string name, int id, params string[] extraParams) : base(name, id, MessageType.Ctrl)
         {
-            Params = new Dictionary<string, string>(Constants.DefaultRuntimeSize);
+            Params = new Dictionary<string, string>(CoreConstants.DefaultRuntimeSize);
             if (null != extraParams)
             {
                 foreach (string extraParam in extraParams)
@@ -24,7 +24,7 @@ namespace Testflow.CoreCommon.Messages
         public ControlMessage(string name, int id, Dictionary<string, string> extraParams) : base(name, id, MessageType.Ctrl)
         {
             Params = (null == extraParams) ? 
-                new Dictionary<string, string>(Constants.DefaultRuntimeSize):
+                new Dictionary<string, string>(CoreConstants.DefaultRuntimeSize):
                 new Dictionary<string, string>(extraParams);
         }
 

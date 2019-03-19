@@ -40,12 +40,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Common\ModuleUtils.cs" />
+    <Compile Include="Common\CoreUtils.cs" />
     <Compile Include="Common\MQIgnoreAttribute.cs" />
     <Compile Include="Common\TestGenState.cs" />
-    <Compile Include="Common\Constants.cs" />
+    <Compile Include="Common\CoreConstants.cs" />
     <Compile Include="Data\CallStack.cs" />
     <Compile Include="Data\DebugData.cs" />
+    <Compile Include="Data\DebugMessageType.cs" />
     <Compile Include="Data\EventQueue.cs" />
     <Compile Include="Data\HostInfo.cs" />
     <Compile Include="Data\MessageInfo.cs" />

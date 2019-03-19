@@ -15,6 +15,8 @@ namespace Testflow.MasterCore.Message
     /// </summary>
     internal abstract class MessageTransceiver : IDisposable
     {
+        protected readonly ZombieMessageCleaner ZombieCleaner;
+
         public static MessageTransceiver GetTransceiver(ModuleGlobalInfo globalInfo, bool isSyncMessenger)
         {
             // TODO 目前只实现了同步处理方式，异步处理后期实现
@@ -73,6 +75,8 @@ namespace Testflow.MasterCore.Message
             };
             DownLinkMessenger = Messenger.GetMessenger(sendOption);
             this.OperationLock = new SpinLock();
+
+            this.ZombieCleaner = new ZombieMessageCleaner(DownLinkMessenger, globalInfo);
         }
 
         protected abstract void Start();

@@ -9,9 +9,9 @@ namespace Testflow.CoreCommon.Data
         /// <summary>
         /// 该处的名称为SequenceGroupIndex.SequenceIndex.VariableName组成
         /// </summary>
-        public List<string> Names { get; }
-        public List<string> Values { get; }
-        public List<int> Types { get; }
+        public List<string> Names { get; set; }
+        public List<string> Values { get; set; }
+        public List<int> Types { get; set; }
 
         public int Count => Names.Count;
 
@@ -22,9 +22,9 @@ namespace Testflow.CoreCommon.Data
 
         public DebugData()
         {
-            this.Names = new List<string>(Constants.DefaultRuntimeSize);
-            this.Values = new List<string>(Constants.DefaultRuntimeSize);
-            this.Types = new List<int>(Constants.DefaultRuntimeSize);
+            this.Names = new List<string>(CoreConstants.DefaultRuntimeSize);
+            this.Values = new List<string>(CoreConstants.DefaultRuntimeSize);
+            this.Types = new List<int>(CoreConstants.DefaultRuntimeSize);
         }
 
         public DebugData(SerializationInfo info, StreamingContext context)

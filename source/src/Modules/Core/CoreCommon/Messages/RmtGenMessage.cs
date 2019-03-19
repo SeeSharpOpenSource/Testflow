@@ -14,7 +14,7 @@ namespace Testflow.CoreCommon.Messages
         {
             this.SequenceType = type;
             this.Sequence = sequence;
-            this.Params = new Dictionary<string, string>(Constants.DefaultRuntimeSize);
+            this.Params = new Dictionary<string, string>(CoreConstants.DefaultRuntimeSize);
         }
 
         /// <summary>

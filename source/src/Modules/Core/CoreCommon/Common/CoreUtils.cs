@@ -7,9 +7,33 @@ using Testflow.Runtime;
 
 namespace Testflow.CoreCommon.Common
 {
-    public static class ModuleUtils
+    public static class CoreUtils
     {
         const string VarNameDelim = ".";
+
+        public static string GetRuntimeVariableName(ITestProject testProject, ISequenceGroup sequenceGroup,
+            ISequence sequence, IVariable variable)
+        {
+            StringBuilder runtimeVarName = new StringBuilder(50);
+            runtimeVarName.Append(CoreConstants.TestProjectIndex).Append(VarNameDelim);
+            if (null != sequenceGroup)
+            {
+                if (null != testProject)
+                {
+                    runtimeVarName.Append(testProject.SequenceGroups.IndexOf(sequenceGroup)).Append(VarNameDelim);
+                }
+                else
+                {
+                    runtimeVarName.Append(0).Append(VarNameDelim);
+                }
+                if (null != sequence)
+                {
+                    runtimeVarName.Append(sequenceGroup.Sequences.IndexOf(sequence)).Append(VarNameDelim);
+                }
+            }
+            return runtimeVarName.Append(variable.Name).ToString();
+        }
+
         public static string GetRuntimeVariableName(IVariable variable)
         {
             StringBuilder runtimeVariableName = new StringBuilder(50);
@@ -26,13 +50,13 @@ namespace Testflow.CoreCommon.Common
                 ISequenceFlowContainer child = stacks.Pop();
                 if (child is ITestProject)
                 {
-                    runtimeVariableName.Append(Constants.TestProjectSessionId).Append(VarNameDelim);
+                    runtimeVariableName.Append(CoreConstants.TestProjectSessionId).Append(VarNameDelim);
                 }
                 else if (child is ISequenceGroup)
                 {
                     if (null == parent)
                     {
-                        runtimeVariableName.Append(Constants.TestProjectSessionId).Append(VarNameDelim)
+                        runtimeVariableName.Append(CoreConstants.TestProjectSessionId).Append(VarNameDelim)
                             .Append(0).Append(VarNameDelim);
                     }
                     else
@@ -64,7 +88,7 @@ namespace Testflow.CoreCommon.Common
         public static string GetRuntimeVariableName(string variableName, ICallStack stack)
         {
             StringBuilder runtimeVarName = new StringBuilder(50);
-            return runtimeVarName.Append(Constants.TestProjectIndex).Append(VarNameDelim).Append(stack.SequenceGroupIndex)
+            return runtimeVarName.Append(CoreConstants.TestProjectIndex).Append(VarNameDelim).Append(stack.SequenceGroupIndex)
                 .Append(stack.SequenceIndex).Append(VarNameDelim).Append(string.Join(VarNameDelim, stack.StepStack))
                 .Append(VarNameDelim).Append(variableName).ToString();
 

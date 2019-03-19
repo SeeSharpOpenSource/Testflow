@@ -26,6 +26,7 @@ namespace Testflow.MasterCore.Message
             };
             _cancellation = new CancellationTokenSource();
             _receiveThread.Start();
+            ZombieCleaner.Start();
         }
 
         protected override void Stop()
@@ -37,6 +38,7 @@ namespace Testflow.MasterCore.Message
                 GlobalInfo.LogService.Print(LogLevel.Warn, CommonConst.PlatformLogSession,
                     "Message receive thread stopped abnormally");
             }
+            ZombieCleaner.Stop();
         }
 
         protected override void SendMessage(MessageBase message)

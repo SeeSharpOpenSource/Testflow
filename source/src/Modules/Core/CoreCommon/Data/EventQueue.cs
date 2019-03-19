@@ -14,17 +14,17 @@ namespace Testflow.CoreCommon.Data
 
         public EventQueue()
         {
-            _events = new Queue<MessageInfo>(Constants.DefaultEventsQueueSize);
+            _events = new Queue<MessageInfo>(CoreConstants.DefaultEventsQueueSize);
             _queueLock = new SpinLock();
         }
 
         public void Enqueue(MessageInfo item)
         {
             bool getLock = GetLock();
-            if (_events.Count >= Constants.MaxEventsQueueSize)
+            if (_events.Count >= CoreConstants.MaxEventsQueueSize)
             {
                 ReleaseLock(getLock);
-                I18N i18N = I18N.GetInstance(Constants.I18nName);
+                I18N i18N = I18N.GetInstance(CoreConstants.I18nName);
                 throw new TestflowRuntimeException(ModuleErrorCode.EventsTooMany, i18N.GetStr("EventQueueOverflow"));
             }
             _events.Enqueue(item);
@@ -46,10 +46,10 @@ namespace Testflow.CoreCommon.Data
         private bool GetLock()
         {
             bool getLock = false;
-            _queueLock.TryEnter(Constants.EventQueueTimeOut, ref getLock);
+            _queueLock.TryEnter(CoreConstants.EventQueueTimeOut, ref getLock);
             if (!getLock)
             {
-                I18N i18N = I18N.GetInstance(Constants.I18nName);
+                I18N i18N = I18N.GetInstance(CoreConstants.I18nName);
                 throw new TestflowRuntimeException(ModuleErrorCode.EventTimeOut, i18N.GetStr("EventEnqueueTimeOut"));
             }
             return true;

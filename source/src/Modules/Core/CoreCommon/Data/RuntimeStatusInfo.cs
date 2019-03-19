@@ -34,7 +34,7 @@ namespace Testflow.CoreCommon.Data
 
         public RuntimeStatusInfo()
         {
-            this.RawVarValues = new SerializableMap<string, object>(Constants.DefaultRuntimeSize);
+            this.RawVarValues = new SerializableMap<string, object>(CoreConstants.DefaultRuntimeSize);
             this.RawCallStack = new CallStack();
         }
 
