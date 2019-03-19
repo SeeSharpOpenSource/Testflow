@@ -38,6 +38,23 @@ namespace Testflow.Modules
         TDataType GetRuntimeInfo<TDataType>(string infoName, params object[] extraParams);
 
         /// <summary>
+        /// 添加运行时对象
+        /// </summary>
+        /// <param name="objectType">对象类型</param>
+        /// <param name="sessionId">会话id</param>
+        /// <param name="param">额外参数</param>
+        /// <returns>对象的运行时ID号</returns>
+        int AddRuntimeObject(string objectType, int sessionId, params object[] param);
+
+        /// <summary>
+        /// 添加运行时对象
+        /// </summary>
+        /// <param name="objectId">对象ID</param>
+        /// <param name="param">额外参数</param>
+        /// <returns>删除运行时对象</returns>
+        int RemoveRuntimeObject(int objectId, params object[] param);
+
+        /// <summary>
         /// 注册运行时事件
         /// </summary>
         /// <param name="callBack">事件回调</param>
@@ -58,14 +75,14 @@ namespace Testflow.Modules
         /// </summary>
         /// <param name="sequenceGroup">待添加的序列组数据</param>
         /// <returns>会话ID</returns>
-        int AddRuntimeTarget(ISequenceGroup sequenceGroup);
+        int SetRuntimeTarget(ISequenceGroup sequenceGroup);
 
         /// <summary>
         /// 添加TestProject的运行时对象
         /// </summary>
         /// <param name="testProject">待添加的测试工程</param>
         /// <returns>TestProject对应的会话ID</returns>
-        int AddRuntimeTarget(ITestProject testProject);
+        int SetRuntimeTarget(ITestProject testProject);
 
         /// <summary>
         /// 终止运行时会话
