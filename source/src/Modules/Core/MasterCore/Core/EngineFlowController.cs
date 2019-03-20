@@ -127,12 +127,12 @@ namespace Testflow.MasterCore.Core
             }
         }
 
-        public bool HandleMessage(IMessage message)
+        public bool HandleMessage(MessageBase message)
         {
             throw new System.NotImplementedException();
         }
 
-        public void AddToQueue(IMessage message)
+        public void AddToQueue(MessageBase message)
         {
             throw new System.NotImplementedException();
         }

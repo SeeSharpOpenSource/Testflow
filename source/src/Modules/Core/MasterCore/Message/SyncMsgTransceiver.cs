@@ -2,6 +2,7 @@
 using System.Threading;
 using Testflow.Common;
 using Testflow.CoreCommon.Common;
+using Testflow.CoreCommon.Data.EventInfos;
 using Testflow.CoreCommon.Messages;
 using Testflow.MasterCore.Common;
 using Testflow.Utility.MessageUtil;
@@ -30,14 +31,14 @@ namespace Testflow.MasterCore.Message
 
         protected override void Start()
         {
+            _cancellation = new CancellationTokenSource();
             _receiveThread = new Thread(SynchronousReceive)
             {
+                Name = "RemoteMessageReceiver",
                 IsBackground = true
             };
-            _cancellation = new CancellationTokenSource();
             _receiveThread.Start();
             ZombieCleaner.Start();
-
 
             _engineMessageListener = new Thread(MessageProcessingLoop)
             {
@@ -57,13 +58,24 @@ namespace Testflow.MasterCore.Message
         protected override void Stop()
         {
             _cancellation.Cancel();
-            if (null != _receiveThread && ThreadState.Running == _receiveThread.ThreadState && !_receiveThread.Join(Constants.OperationTimeout))
-            {
-                _receiveThread.Abort();
-                GlobalInfo.LogService.Print(LogLevel.Warn, CommonConst.PlatformLogSession,
-                    "Message receive thread stopped abnormally");
-            }
+            StopThreadWork(_receiveThread);
+            //如果两个队列在被锁的状态则释放锁
+            _engineMessageQueue.FreeLock();
+            _statusMessageQueue.FreeLock();
+
+            StopThreadWork(_engineMessageListener);
+            StopThreadWork(_statusMessageListener);
             ZombieCleaner.Stop();
+        }
+
+        private void StopThreadWork(Thread thread)
+        {
+            if (null != thread && ThreadState.Running == thread.ThreadState && !thread.Join(Constants.OperationTimeout))
+            {
+                thread.Abort();
+                GlobalInfo.LogService.Print(LogLevel.Warn, CommonConst.PlatformLogSession,
+                    $"thread {thread.Name} is stopped abnormally");
+            }
         }
 
         protected override void SendMessage(MessageBase message)
@@ -73,11 +85,35 @@ namespace Testflow.MasterCore.Message
 
         private void SynchronousReceive(object state)
         {
-            while (!_cancellation.IsCancellationRequested)
+            try
             {
-                IMessage message = UpLinkMessenger.Receive();
-                IMessageHandler handler = GetConsumer(message);
-                handler.HandleMessage(message);
+                while (!_cancellation.IsCancellationRequested)
+                {
+                    IMessage rawMessage = UpLinkMessenger.Receive();
+                    MessageBase message = rawMessage as MessageBase;
+                    if (null != message)
+                    {
+                        if (message.Type == MessageType.Status)
+                        {
+                            _statusMessageQueue.Enqueue(message);
+                        }
+                        else
+                        {
+                            _engineMessageQueue.Enqueue(message);
+                        }
+                    }
+                    else
+                    {
+                        GlobalInfo.LogService.Print(LogLevel.Warn, CommonConst.PlatformSession,
+                            $"Unexpected message received. Type:{rawMessage.GetType().Name}, id:{rawMessage.Id}");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                GlobalInfo.EventQueue.Enqueue(new ExceptionEventInfo(ex));
+                GlobalInfo.LogService.Print(LogLevel.Fatal, CommonConst.PlatformLogSession, ex);
+                this.Stop();
             }
         }
         
@@ -90,15 +126,30 @@ namespace Testflow.MasterCore.Message
         private void MessageProcessingLoop(object queueObj)
         {
             LocalMessageQueue<MessageBase> queue = queueObj as LocalMessageQueue<MessageBase>;
-            while (true)
+            try
             {
-                MessageBase message = queue.WaitUntilMessageCome();
-                bool operationContinue = Consumers[message.Type.ToString()].HandleMessage(message);
-                // 如果消息执行后确认需要停止，则结束消息队列的处理。
-                if (!operationContinue)
+                while (!_cancellation.IsCancellationRequested)
                 {
-                    break;
+                    MessageBase message = queue.WaitUntilMessageCome();
+                    if (null == message)
+                    {
+                        continue;
+                    }
+                    bool operationContinue = GetConsumer(message).HandleMessage(message);
+                    // 如果消息执行后确认需要停止，则结束消息队列的处理。
+                    if (!operationContinue)
+                    {
+                        break;
+                    }
                 }
+                GlobalInfo.LogService.Print(LogLevel.Info, CommonConst.PlatformSession, 
+                    $"Listen thread: {Thread.CurrentThread.Name} is stopped.");
+            }
+            catch (Exception ex)
+            {
+                GlobalInfo.EventQueue.Enqueue(new ExceptionEventInfo(ex));
+                GlobalInfo.LogService.Print(LogLevel.Fatal, CommonConst.PlatformLogSession, ex);
+                this.Stop();
             }
         }
     }

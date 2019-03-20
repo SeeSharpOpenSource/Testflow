@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using Testflow.CoreCommon.Common;
 using Testflow.CoreCommon.Data;
+using Testflow.CoreCommon.Messages;
 using Testflow.Data.Sequence;
 using Testflow.MasterCore.TestMaintain.Container;
 using Testflow.Utility.MessageUtil;
@@ -57,12 +58,12 @@ namespace Testflow.MasterCore.TestMaintain
             throw new System.NotImplementedException();
         }
 
-        public bool HandleMessage(IMessage message)
+        public bool HandleMessage(MessageBase message)
         {
             throw new System.NotImplementedException();
         }
 
-        public void AddToQueue(IMessage message)
+        public void AddToQueue(MessageBase message)
         {
             throw new System.NotImplementedException();
         }

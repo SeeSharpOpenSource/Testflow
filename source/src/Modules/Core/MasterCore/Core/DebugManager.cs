@@ -96,12 +96,12 @@ namespace Testflow.MasterCore.Core
             _globalInfo.MessageTransceiver.Send(debugMessage);
         }
 
-        public bool HandleMessage(IMessage message)
+        public bool HandleMessage(MessageBase message)
         {
             throw new System.NotImplementedException();
         }
 
-        public void AddToQueue(IMessage message)
+        public void AddToQueue(MessageBase message)
         {
             throw new System.NotImplementedException();
         }

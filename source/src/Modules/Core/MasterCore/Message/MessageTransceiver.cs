@@ -45,7 +45,7 @@ namespace Testflow.MasterCore.Message
             }
         }
 
-        protected readonly Dictionary<string, IMessageHandler> Consumers;
+        private readonly Dictionary<string, IMessageHandler> _consumers;
 
         private SpinLock _operationLock;
 
@@ -65,7 +65,7 @@ namespace Testflow.MasterCore.Message
                 ReceiveType = ReceiveType.Synchronous
             };
             UpLinkMessenger = Messenger.GetMessenger(receiveOption);
-            this.Consumers = new Dictionary<string, IMessageHandler>(Constants.DefaultRuntimeSize);
+            this._consumers = new Dictionary<string, IMessageHandler>(Constants.DefaultRuntimeSize);
             // 创建下行队列
             MessengerOption sendOption = new MessengerOption(CoreConstants.DownLinkMQName, typeof(ControlMessage),
                 typeof(DebugMessage), typeof(RmtGenMessage), typeof(StatusMessage), typeof(TestGenMessage))
@@ -86,7 +86,7 @@ namespace Testflow.MasterCore.Message
 
         public void AddConsumer(string messageType, IMessageHandler handler)
         {
-            Consumers.Add(messageType, handler);
+            _consumers.Add(messageType, handler);
         }
 
         /// <summary>
@@ -147,15 +147,15 @@ namespace Testflow.MasterCore.Message
             SendMessage(message);
         }
 
-        protected IMessageHandler GetConsumer(IMessage message)
+        protected IMessageHandler GetConsumer(MessageBase message)
         {
-            string messageType = message.GetType().Name;
-            if (!Consumers.ContainsKey(messageType))
+            string messageType = message.Type.ToString();
+            if (!_consumers.ContainsKey(messageType))
             {
                 throw new TestflowRuntimeException(ModuleErrorCode.UnregisteredMessage, 
                     GlobalInfo.I18N.GetFStr("UnregisteredMessage", messageType));
             }
-            return Consumers[messageType];
+            return _consumers[messageType];
         }
 
         protected void GetOperationLock()

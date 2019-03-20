@@ -1,4 +1,5 @@
 ﻿using System;
+using Testflow.CoreCommon.Messages;
 using Testflow.MasterCore.Common;
 using Testflow.MasterCore.Message;
 using Testflow.Utility.MessageUtil;
@@ -17,12 +18,12 @@ namespace Testflow.MasterCore.StatusManage
             _globalInfo = globalInfo;
         }
 
-        public bool HandleMessage(IMessage message)
+        public bool HandleMessage(MessageBase message)
         {
             throw new System.NotImplementedException();
         }
 
-        public void AddToQueue(IMessage message)
+        public void AddToQueue(MessageBase message)
         {
             throw new System.NotImplementedException();
         }
