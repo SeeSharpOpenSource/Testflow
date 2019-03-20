@@ -1,4 +1,5 @@
-﻿using Testflow.MasterCore.Common;
+﻿using System;
+using Testflow.MasterCore.Common;
 using Testflow.MasterCore.Message;
 using Testflow.Utility.MessageUtil;
 
@@ -7,7 +8,7 @@ namespace Testflow.MasterCore.SyncManage
     /// <summary>
     /// 资源同步管理模块
     /// </summary>
-    internal class SynchronousManager : IMessageHandler
+    internal class SynchronousManager : IMessageHandler, IDisposable
     {
         private readonly ModuleGlobalInfo _globalInfo;
         public SynchronousManager(ModuleGlobalInfo globalInfo)
@@ -28,6 +29,16 @@ namespace Testflow.MasterCore.SyncManage
         public void Start()
         {
             throw new System.NotImplementedException();
+        }
+
+        public void Stop()
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void Dispose()
+        {
+            throw new NotImplementedException();
         }
     }
 }

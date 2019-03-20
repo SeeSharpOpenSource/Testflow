@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading;
 using Testflow.CoreCommon.Data;
+using Testflow.MasterCore.Core;
 using Testflow.MasterCore.Message;
 using Testflow.Modules;
 using Testflow.Runtime;
@@ -22,15 +23,7 @@ namespace Testflow.MasterCore.Common
 
         public EventQueue EventQueue { get; private set; }
 
-        private int _state;
-        public RuntimeState State
-        {
-            get { return (RuntimeState) _state; }
-            set
-            {
-                Thread.VolatileWrite(ref _state, (int)value);
-            }
-        }
+        public RuntimeStateMachine StateMachine { get; set; }
 
         public ModuleGlobalInfo(IModuleConfigData configData)
         {
@@ -38,7 +31,6 @@ namespace Testflow.MasterCore.Common
             this.I18N = I18N.GetInstance(Constants.I18nName);
             this.LogService = TestflowRunner.LogService;
             this.ConfigData = configData;
-            this._state = (int) RuntimeState.Idle;
         }
 
         public void RuntimeInitialize(MessageTransceiver messageTransceiver)

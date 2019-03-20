@@ -35,7 +35,7 @@ namespace Testflow.MasterCore.Core
             {
                 _watchVariables[session].Add(variableName);
             }
-            if (_globalInfo.State == RuntimeState.Running)
+            if (_globalInfo.StateMachine.State == RuntimeState.Running)
             {
                 SendRefreshWatchMessage(session);
             }
@@ -56,7 +56,7 @@ namespace Testflow.MasterCore.Core
                     _watchVariables.Remove(session);
                 }
             }
-            if (_globalInfo.State == RuntimeState.Running)
+            if (_globalInfo.StateMachine.State == RuntimeState.Running)
             {
                 SendRefreshWatchMessage(session);
             }

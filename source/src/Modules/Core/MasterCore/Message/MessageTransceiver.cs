@@ -45,9 +45,9 @@ namespace Testflow.MasterCore.Message
             }
         }
 
-        private readonly Dictionary<string, IMessageHandler> _consumers;
+        protected readonly Dictionary<string, IMessageHandler> Consumers;
 
-        protected SpinLock OperationLock;
+        private SpinLock _operationLock;
 
         protected ModuleGlobalInfo GlobalInfo;
         protected FormatterType FormatterType;
@@ -65,7 +65,7 @@ namespace Testflow.MasterCore.Message
                 ReceiveType = ReceiveType.Synchronous
             };
             UpLinkMessenger = Messenger.GetMessenger(receiveOption);
-            this._consumers = new Dictionary<string, IMessageHandler>(Constants.DefaultRuntimeSize);
+            this.Consumers = new Dictionary<string, IMessageHandler>(Constants.DefaultRuntimeSize);
             // 创建下行队列
             MessengerOption sendOption = new MessengerOption(CoreConstants.DownLinkMQName, typeof(ControlMessage),
                 typeof(DebugMessage), typeof(RmtGenMessage), typeof(StatusMessage), typeof(TestGenMessage))
@@ -75,7 +75,7 @@ namespace Testflow.MasterCore.Message
                 ReceiveType = ReceiveType.Synchronous
             };
             DownLinkMessenger = Messenger.GetMessenger(sendOption);
-            this.OperationLock = new SpinLock();
+            this._operationLock = new SpinLock();
 
             this.ZombieCleaner = new ZombieMessageCleaner(DownLinkMessenger, globalInfo);
         }
@@ -86,7 +86,7 @@ namespace Testflow.MasterCore.Message
 
         public void AddConsumer(string messageType, IMessageHandler handler)
         {
-            _consumers.Add(messageType, handler);
+            Consumers.Add(messageType, handler);
         }
 
         /// <summary>
@@ -150,18 +150,18 @@ namespace Testflow.MasterCore.Message
         protected IMessageHandler GetConsumer(IMessage message)
         {
             string messageType = message.GetType().Name;
-            if (!_consumers.ContainsKey(messageType))
+            if (!Consumers.ContainsKey(messageType))
             {
                 throw new TestflowRuntimeException(ModuleErrorCode.UnregisteredMessage, 
                     GlobalInfo.I18N.GetFStr("UnregisteredMessage", messageType));
             }
-            return _consumers[messageType];
+            return Consumers[messageType];
         }
 
         protected void GetOperationLock()
         {
             bool getLock = false;
-            OperationLock.TryEnter(Constants.OperationTimeout, ref getLock);
+            _operationLock.TryEnter(Constants.OperationTimeout, ref getLock);
             if (!getLock)
             {
                 GlobalInfo.LogService.Print(LogLevel.Error, CommonConst.PlatformLogSession, "Operation Timeout");
@@ -171,7 +171,7 @@ namespace Testflow.MasterCore.Message
 
         protected void FreeOperationLock()
         {
-            OperationLock.Exit();
+            _operationLock.Exit();
         }
 
         public virtual void Dispose()

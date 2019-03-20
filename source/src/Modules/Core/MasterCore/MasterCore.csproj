@@ -45,11 +45,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Common\Constants.cs" />
+    <Compile Include="Common\LocalMessageQueue.cs" />
     <Compile Include="Common\ModuleGlobalInfo.cs" />
     <Compile Include="Common\ModuleUtils.cs" />
     <Compile Include="Common\ModuleUtility.cs" />
     <Compile Include="Core\EngineFlowController.cs" />
     <Compile Include="Core\DebugManager.cs" />
+    <Compile Include="Core\RuntimeStateMachine.cs" />
     <Compile Include="EngineHandle.cs" />
     <Compile Include="Events\EventsDispatcher.cs" />
     <Compile Include="Message\ZombieMessageCleaner.cs" />

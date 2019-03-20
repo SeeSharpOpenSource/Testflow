@@ -47,9 +47,15 @@
     <Compile Include="Data\CallStack.cs" />
     <Compile Include="Data\DebugData.cs" />
     <Compile Include="Data\DebugMessageType.cs" />
+    <Compile Include="Data\EventInfos\EventType.cs" />
+    <Compile Include="Data\EventInfos\SyncEventInfo.cs" />
+    <Compile Include="Data\EventInfos\DebugEventInfo.cs" />
+    <Compile Include="Data\EventInfos\AbortEventInfo.cs" />
+    <Compile Include="Data\EventInfos\TestGenEventInfo.cs" />
+    <Compile Include="Data\EventInfos\ExceptionEventInfo.cs" />
     <Compile Include="Data\EventQueue.cs" />
     <Compile Include="Data\HostInfo.cs" />
-    <Compile Include="Data\MessageInfo.cs" />
+    <Compile Include="Data\EventInfos\EventInfoBase.cs" />
     <Compile Include="Data\PerformanceData.cs" />
     <Compile Include="Data\RuntimeStatusInfo.cs" />
     <Compile Include="Data\SequenceGenerationInfo.cs" />
@@ -61,6 +67,7 @@
     <Compile Include="Messages\MessageBase.cs" />
     <Compile Include="Messages\ResourceSyncMessage.cs" />
     <Compile Include="Messages\RmtGenMessage.cs" />
+    <Compile Include="Messages\RuntimeErrorMessage.cs" />
     <Compile Include="Messages\StatusMessage.cs" />
     <Compile Include="Messages\TestGenMessage.cs" />
     <Compile Include="Common\MessageType.cs" />
@@ -79,6 +86,7 @@
       <Name>Utility</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

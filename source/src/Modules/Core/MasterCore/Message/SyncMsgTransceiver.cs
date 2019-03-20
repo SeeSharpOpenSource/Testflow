@@ -1,5 +1,7 @@
-﻿using System.Threading;
+﻿using System;
+using System.Threading;
 using Testflow.Common;
+using Testflow.CoreCommon.Common;
 using Testflow.CoreCommon.Messages;
 using Testflow.MasterCore.Common;
 using Testflow.Utility.MessageUtil;
@@ -13,9 +15,17 @@ namespace Testflow.MasterCore.Message
     {
         private Thread _receiveThread;
         private CancellationTokenSource _cancellation;
+        // 考虑到Status接收器的负载可能较大，所以额外使用一个线程处理
+        private Thread _engineMessageListener;
+        private readonly LocalMessageQueue<MessageBase> _engineMessageQueue;
+
+        private Thread _statusMessageListener;
+        private readonly LocalMessageQueue<MessageBase> _statusMessageQueue;
 
         public SyncMsgTransceiver(ModuleGlobalInfo globalInfo) : base(globalInfo)
         {
+            _engineMessageQueue = new LocalMessageQueue<MessageBase>(Constants.DefaultEventsQueueSize);
+            _statusMessageQueue = new LocalMessageQueue<MessageBase>(Constants.DefaultEventsQueueSize);
         }
 
         protected override void Start()
@@ -27,6 +37,21 @@ namespace Testflow.MasterCore.Message
             _cancellation = new CancellationTokenSource();
             _receiveThread.Start();
             ZombieCleaner.Start();
+
+
+            _engineMessageListener = new Thread(MessageProcessingLoop)
+            {
+                Name = "EngineMessageListener",
+                IsBackground = true
+            };
+
+            _statusMessageListener = new Thread(MessageProcessingLoop)
+            {
+                Name = "EngineMessageListener",
+                IsBackground = true
+            };
+            _engineMessageListener.Start(_engineMessageQueue);
+            _statusMessageListener.Start(_statusMessageQueue);
         }
 
         protected override void Stop()
@@ -60,6 +85,16 @@ namespace Testflow.MasterCore.Message
         {
             base.Dispose();
             Stop();
+        }
+
+        private void MessageProcessingLoop(object queueObj)
+        {
+            LocalMessageQueue<MessageBase> queue = queueObj as LocalMessageQueue<MessageBase>;
+            while (true)
+            {
+                MessageBase message = queue.WaitUntilMessageCome();
+                Consumers[message.Type.ToString()].HandleMessage(message);
+            }
         }
     }
 }

@@ -120,7 +120,7 @@ namespace Testflow.MasterCore
 
         public void Stop()
         {
-            throw new NotImplementedException();
+            _runtimeEngine.Stop();
         }
 
         public void Dispose()

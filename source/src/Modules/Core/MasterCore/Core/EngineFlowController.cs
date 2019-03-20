@@ -2,6 +2,7 @@
 using System.Threading;
 using Testflow.Common;
 using Testflow.CoreCommon.Common;
+using Testflow.CoreCommon.Messages;
 using Testflow.Data.Sequence;
 using Testflow.MasterCore.Common;
 using Testflow.MasterCore.Message;
@@ -15,13 +16,13 @@ namespace Testflow.MasterCore.Core
     /// <summary>
     /// 实现引擎的运行时流程管理功能
     /// </summary>
-    internal class EngineFlowController : IMessageHandler
+    internal class EngineFlowController : IMessageHandler, IDisposable
     {
         private readonly ModuleGlobalInfo _globalInfo;
         private readonly ITestEntityMaintainer _testsMaintainer;
         private readonly DebugManager _debugManager;
         private ISequenceFlowContainer _sequenceData;
-
+        
         public EngineFlowController(ModuleGlobalInfo globalInfo)
         {
             _globalInfo = globalInfo;
@@ -31,6 +32,7 @@ namespace Testflow.MasterCore.Core
             {
                 _debugManager = new DebugManager(_globalInfo);
             }
+            
         }
 
         public RuntimeType RuntimeType => _globalInfo.ConfigData.GetProperty<RuntimeType>("RuntimeType");
@@ -39,9 +41,12 @@ namespace Testflow.MasterCore.Core
 
         public DebugManager Debugger => _debugManager;
 
+        public ITestEntityMaintainer TestMaintainer => _testsMaintainer;
+
         public void RegisterMessageHandler()
         {
             _globalInfo.MessageTransceiver.AddConsumer(MessageType.Ctrl.ToString(), this);
+            _globalInfo.MessageTransceiver.AddConsumer(MessageType.RuntimeError.ToString(), this);
             _globalInfo.MessageTransceiver.AddConsumer(MessageType.RmtGen.ToString(), _testsMaintainer);
             _globalInfo.MessageTransceiver.AddConsumer(MessageType.Debug.ToString(), _debugManager);
         }
@@ -50,6 +55,8 @@ namespace Testflow.MasterCore.Core
         {
             _sequenceData = sequenceContainer;
             GenerateTestMaintainer(sequenceContainer);
+
+            
         }
 
         // TODO 暂时是一个失败，所有的都停止操作，后续优化为状态控制
@@ -73,26 +80,26 @@ namespace Testflow.MasterCore.Core
                 }
                 else
                 {
-                    throw new InvalidOperationException();
+                    throw new ArgumentException();
                 }
             }
             catch (TestflowException)
             {
-                _globalInfo.State = RuntimeState.Error;
+                _globalInfo.StateMachine.State = RuntimeState.Error;
                 _testsMaintainer.FreeHosts();
                 throw;
             }
             catch (ApplicationException ex)
             {
                 _globalInfo.LogService.Print(LogLevel.Error, CommonConst.PlatformLogSession, ex);
-                _globalInfo.State = RuntimeState.Error;
+                _globalInfo.StateMachine.State = RuntimeState.Error;
                 _testsMaintainer.FreeHosts();
                 throw;
             }
             catch (Exception ex)
             {
                 _globalInfo.LogService.Print(LogLevel.Fatal, CommonConst.PlatformLogSession, ex);
-                _globalInfo.State = RuntimeState.Collapsed;
+                _globalInfo.StateMachine.State = RuntimeState.Collapsed;
                 _testsMaintainer.FreeHosts();
                 throw;
             }
@@ -128,6 +135,16 @@ namespace Testflow.MasterCore.Core
         public void AddToQueue(IMessage message)
         {
             throw new System.NotImplementedException();
+        }
+
+        public void Stop()
+        {
+            throw new NotImplementedException();
+        }
+        
+        public void Dispose()
+        {
+            throw new NotImplementedException();
         }
     }
 }

@@ -3,22 +3,23 @@ using System.Collections.Generic;
 using System.Threading;
 using Testflow.Common;
 using Testflow.CoreCommon.Common;
+using Testflow.CoreCommon.Data.EventInfos;
 using Testflow.Utility.I18nUtil;
 
 namespace Testflow.CoreCommon.Data
 {
     public class EventQueue : IDisposable
     {
-        private readonly Queue<MessageInfo> _events;
+        private readonly Queue<EventInfoBase> _events;
         private SpinLock _queueLock;
 
         public EventQueue()
         {
-            _events = new Queue<MessageInfo>(CoreConstants.DefaultEventsQueueSize);
+            _events = new Queue<EventInfoBase>(CoreConstants.DefaultEventsQueueSize);
             _queueLock = new SpinLock();
         }
 
-        public void Enqueue(MessageInfo item)
+        public void Enqueue(EventInfoBase item)
         {
             bool getLock = GetLock();
             if (_events.Count >= CoreConstants.MaxEventsQueueSize)
@@ -31,10 +32,10 @@ namespace Testflow.CoreCommon.Data
             ReleaseLock(getLock);
         }
 
-        public MessageInfo Dequeue()
+        public EventInfoBase Dequeue()
         {
             bool getLock = GetLock();
-            MessageInfo item = null;
+            EventInfoBase item = null;
             if (_events.Count > 0)
             {
                 item = _events.Dequeue();

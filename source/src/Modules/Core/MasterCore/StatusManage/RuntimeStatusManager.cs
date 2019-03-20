@@ -1,4 +1,5 @@
-﻿using Testflow.MasterCore.Common;
+﻿using System;
+using Testflow.MasterCore.Common;
 using Testflow.MasterCore.Message;
 using Testflow.Utility.MessageUtil;
 
@@ -7,7 +8,7 @@ namespace Testflow.MasterCore.StatusManage
     /// <summary>
     /// 运行时所有测试的状态管理
     /// </summary>
-    internal class RuntimeStatusManager : IMessageHandler
+    internal class RuntimeStatusManager : IMessageHandler, IDisposable
     {
         private readonly ModuleGlobalInfo _globalInfo;
 
@@ -29,6 +30,16 @@ namespace Testflow.MasterCore.StatusManage
         public void Start()
         {
             throw new System.NotImplementedException();
+        }
+
+        public void Stop()
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void Dispose()
+        {
+            throw new NotImplementedException();
         }
     }
 }

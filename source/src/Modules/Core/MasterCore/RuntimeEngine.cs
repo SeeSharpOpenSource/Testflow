@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Threading;
 using Testflow.Common;
 using Testflow.CoreCommon.Common;
+using Testflow.CoreCommon.Messages;
 using Testflow.Data.Sequence;
 using Testflow.MasterCore.TestMaintain;
 using Testflow.MasterCore.Common;
@@ -23,7 +25,7 @@ namespace Testflow.MasterCore
 
         private readonly RuntimeStatusManager _statusManager;
         private readonly SynchronousManager _syncManager;
-        private EngineFlowController _controller;
+        private readonly EngineFlowController _controller;
 
         public RuntimeEngine(IModuleConfigData configData)
         {
@@ -37,6 +39,10 @@ namespace Testflow.MasterCore
             _controller = new EngineFlowController(_globalInfo);
             _statusManager = new RuntimeStatusManager(_globalInfo);
             _syncManager = new SynchronousManager(_globalInfo);
+
+            RuntimeStateMachine stateMachine = new RuntimeStateMachine();
+            _globalInfo.StateMachine = stateMachine;
+            
             RegisterMessageHandler();
         }
 
@@ -57,7 +63,9 @@ namespace Testflow.MasterCore
 
         public void Initialize(ISequenceFlowContainer sequenceContainer)
         {
+            _globalInfo.StateMachine.State = RuntimeState.Idle;
             _controller.Initialize(sequenceContainer);
+
             
         }
 
@@ -75,17 +83,22 @@ namespace Testflow.MasterCore
 
         public void Stop()
         {
-            
+            _controller.Stop();
+            _syncManager.Stop();
+            _statusManager.Stop();
         }
 
         public void FreeTests()
         {
-            
+            _controller.TestMaintainer.FreeHosts();
         }
 
         public void Dispose()
         {
-            throw new NotImplementedException();
+            _controller.Dispose();
+            _syncManager.Dispose();
+            _statusManager.Dispose();
         }
+
     }
 }

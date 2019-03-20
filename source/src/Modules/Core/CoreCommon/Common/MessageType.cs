@@ -33,7 +33,11 @@
         /// <summary>
         /// 资源同步请求。运行容器收发、资源同步器发收
         /// </summary>
-        Sync = 5
-        
+        Sync = 5,
+
+        /// <summary>
+        /// 运行时异常消息
+        /// </summary>
+        RuntimeError = 6
     }
 }
