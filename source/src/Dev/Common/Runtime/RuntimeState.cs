@@ -6,6 +6,11 @@
     public enum RuntimeState
     {
         /// <summary>
+        /// 不可用状态
+        /// </summary>
+        NotAvailable = -1,
+
+        /// <summary>
         /// 空闲状态
         /// </summary>
         Idle = 0,
@@ -46,18 +51,23 @@
         Error = 7,
 
         /// <summary>
+        /// 执行结束
+        /// </summary>
+        Over = 8,
+
+        /// <summary>
         /// 申请中止
         /// </summary>
-        AbortRequested = 8,
+        AbortRequested = 9,
 
         /// <summary>
         /// 已中止状态
         /// </summary>
-        Abort = 9,
+        Abort = 10,
 
         /// <summary>
         /// 运行时崩溃
         /// </summary>
-        Collapsed = 10
+        Collapsed = 11
     }
 }

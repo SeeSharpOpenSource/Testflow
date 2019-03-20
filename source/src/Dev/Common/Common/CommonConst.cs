@@ -43,7 +43,12 @@
         /// <summary>
         /// 平台日志会话id
         /// </summary>
-        public const int PlatformLogSession = -1;
+        public const int PlatformLogSession = 1000000;
+
+        /// <summary>
+        /// 平台日志会话id
+        /// </summary>
+        public const int PlatformSession = 1000000;
 
         /// <summary>
         /// 测试工程的会话id
