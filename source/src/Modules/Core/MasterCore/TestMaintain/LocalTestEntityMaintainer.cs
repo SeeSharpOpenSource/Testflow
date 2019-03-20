@@ -100,7 +100,7 @@ namespace Testflow.MasterCore.TestMaintain
             _runtimeContainers.Clear();
         }
 
-        public void HandleMessage(IMessage message)
+        public bool HandleMessage(IMessage message)
         {
             throw new System.NotImplementedException();
         }

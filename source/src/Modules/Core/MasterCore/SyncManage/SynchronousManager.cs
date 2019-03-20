@@ -16,7 +16,7 @@ namespace Testflow.MasterCore.SyncManage
             this._globalInfo = globalInfo;
         }
 
-        public void HandleMessage(IMessage message)
+        public bool HandleMessage(IMessage message)
         {
             throw new System.NotImplementedException();
         }

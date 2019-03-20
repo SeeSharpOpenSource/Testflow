@@ -57,7 +57,7 @@ namespace Testflow.MasterCore.TestMaintain
             throw new System.NotImplementedException();
         }
 
-        public void HandleMessage(IMessage message)
+        public bool HandleMessage(IMessage message)
         {
             throw new System.NotImplementedException();
         }

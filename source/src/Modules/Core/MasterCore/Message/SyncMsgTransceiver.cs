@@ -93,7 +93,12 @@ namespace Testflow.MasterCore.Message
             while (true)
             {
                 MessageBase message = queue.WaitUntilMessageCome();
-                Consumers[message.Type.ToString()].HandleMessage(message);
+                bool operationContinue = Consumers[message.Type.ToString()].HandleMessage(message);
+                // 如果消息执行后确认需要停止，则结束消息队列的处理。
+                if (!operationContinue)
+                {
+                    break;
+                }
             }
         }
     }

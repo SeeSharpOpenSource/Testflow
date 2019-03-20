@@ -7,7 +7,7 @@ namespace Testflow.MasterCore.Message
         /// <summary>
         /// 同步处理消息
         /// </summary>
-        void HandleMessage(IMessage message);
+        bool HandleMessage(IMessage message);
 
         /// <summary>
         /// 异步添加消息到待处理队列

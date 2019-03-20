@@ -96,7 +96,7 @@ namespace Testflow.MasterCore.Core
             _globalInfo.MessageTransceiver.Send(debugMessage);
         }
 
-        public void HandleMessage(IMessage message)
+        public bool HandleMessage(IMessage message)
         {
             throw new System.NotImplementedException();
         }

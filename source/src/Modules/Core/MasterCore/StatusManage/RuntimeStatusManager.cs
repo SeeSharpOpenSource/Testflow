@@ -17,7 +17,7 @@ namespace Testflow.MasterCore.StatusManage
             _globalInfo = globalInfo;
         }
 
-        public void HandleMessage(IMessage message)
+        public bool HandleMessage(IMessage message)
         {
             throw new System.NotImplementedException();
         }
