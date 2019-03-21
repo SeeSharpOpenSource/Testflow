@@ -73,8 +73,6 @@ namespace Testflow.MasterCore.Message
             if (null != thread && ThreadState.Running == thread.ThreadState && !thread.Join(Constants.OperationTimeout))
             {
                 thread.Abort();
-                GlobalInfo.LogService.Print(LogLevel.Warn, CommonConst.PlatformLogSession,
-                    $"thread {thread.Name} is stopped abnormally");
             }
         }
 
@@ -109,6 +107,12 @@ namespace Testflow.MasterCore.Message
                     }
                 }
             }
+            catch (ThreadAbortException)
+            {
+                GlobalInfo.LogService.Print(LogLevel.Warn, CommonConst.PlatformLogSession,
+                    $"thread {Thread.CurrentThread.Name} is stopped abnormally");
+
+            }
             catch (Exception ex)
             {
                 GlobalInfo.EventQueue.Enqueue(new ExceptionEventInfo(ex));
@@ -142,8 +146,13 @@ namespace Testflow.MasterCore.Message
                         break;
                     }
                 }
-                GlobalInfo.LogService.Print(LogLevel.Info, CommonConst.PlatformSession, 
+                GlobalInfo.LogService.Print(LogLevel.Info, CommonConst.PlatformSession,
                     $"Listen thread: {Thread.CurrentThread.Name} is stopped.");
+            }
+            catch (ThreadAbortException)
+            {
+                GlobalInfo.LogService.Print(LogLevel.Warn, CommonConst.PlatformLogSession,
+                    $"thread {Thread.CurrentThread.Name} is stopped abnormally");
             }
             catch (Exception ex)
             {
