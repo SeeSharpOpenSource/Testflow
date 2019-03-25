@@ -58,24 +58,16 @@ namespace Testflow.MasterCore.Message
         protected override void Stop()
         {
             _cancellation.Cancel();
-            StopThreadWork(_receiveThread);
+            ModuleUtils.StopThreadWork(_receiveThread);
             //如果两个队列在被锁的状态则释放锁
             _engineMessageQueue.FreeLock();
             _statusMessageQueue.FreeLock();
 
-            StopThreadWork(_engineMessageListener);
-            StopThreadWork(_statusMessageListener);
+            ModuleUtils.StopThreadWork(_engineMessageListener);
+            ModuleUtils.StopThreadWork(_statusMessageListener);
             ZombieCleaner.Stop();
         }
-
-        private void StopThreadWork(Thread thread)
-        {
-            if (null != thread && ThreadState.Running == thread.ThreadState && !thread.Join(Constants.OperationTimeout))
-            {
-                thread.Abort();
-            }
-        }
-
+        
         protected override void SendMessage(MessageBase message)
         {
             DownLinkMessenger.Send(message, FormatterType);

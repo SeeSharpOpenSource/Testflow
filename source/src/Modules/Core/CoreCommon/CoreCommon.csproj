@@ -53,7 +53,6 @@
     <Compile Include="Data\EventInfos\AbortEventInfo.cs" />
     <Compile Include="Data\EventInfos\TestGenEventInfo.cs" />
     <Compile Include="Data\EventInfos\ExceptionEventInfo.cs" />
-    <Compile Include="Data\EventQueue.cs" />
     <Compile Include="Data\HostInfo.cs" />
     <Compile Include="Data\EventInfos\EventInfoBase.cs" />
     <Compile Include="Data\PerformanceData.cs" />

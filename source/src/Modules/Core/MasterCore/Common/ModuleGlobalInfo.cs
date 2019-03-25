@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading;
 using Testflow.CoreCommon.Data;
+using Testflow.CoreCommon.Data.EventInfos;
 using Testflow.MasterCore.Core;
 using Testflow.MasterCore.Message;
 using Testflow.Modules;
@@ -21,7 +22,7 @@ namespace Testflow.MasterCore.Common
 
         public MessageTransceiver MessageTransceiver { get; private set; }
 
-        public EventQueue EventQueue { get; private set; }
+        public LocalEventQueue<EventInfoBase> EventQueue { get; private set; }
 
         public RuntimeStateMachine StateMachine { get; set; }
 
@@ -36,7 +37,7 @@ namespace Testflow.MasterCore.Common
         public void RuntimeInitialize(MessageTransceiver messageTransceiver)
         {
             this.MessageTransceiver = messageTransceiver;
-            this.EventQueue = new EventQueue();
+            this.EventQueue = new LocalEventQueue<EventInfoBase>(Constants.DefaultEventsQueueSize);
         }
 
         public void Dispose()

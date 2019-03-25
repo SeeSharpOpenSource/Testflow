@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Testflow.Common;
 using Testflow.CoreCommon;
 using Testflow.CoreCommon.Data;
+using Testflow.CoreCommon.Data.EventInfos;
 using Testflow.Data.Sequence;
 using Testflow.MasterCore.Common;
 using Testflow.Runtime;
@@ -18,7 +19,7 @@ namespace Testflow.MasterCore.Events
     {
         private readonly Dictionary<int, SessionEventHandle> _events;
 
-        public EventsDispatcher(EventQueue eventQueue)
+        public EventsDispatcher(LocalEventQueue<EventInfoBase> eventQueue)
         {
             _events = new Dictionary<int, SessionEventHandle>(Constants.DefaultRuntimeSize);
             this.AsyncDispatch = true;

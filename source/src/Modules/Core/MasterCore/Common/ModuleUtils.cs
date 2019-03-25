@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using Testflow.Common;
 using Testflow.CoreCommon;
 using Testflow.Data.Sequence;
@@ -42,5 +43,14 @@ namespace Testflow.MasterCore.Common
             }
             return testProject.SequenceGroups.IndexOf(sequenceGroup);
         }
+
+        public static void StopThreadWork(Thread thread)
+        {
+            if (null != thread && ThreadState.Running == thread.ThreadState && !thread.Join(Constants.OperationTimeout))
+            {
+                thread.Abort();
+            }
+        }
+
     }
 }
