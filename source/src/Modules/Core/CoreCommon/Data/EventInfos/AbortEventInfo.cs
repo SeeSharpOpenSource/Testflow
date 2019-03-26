@@ -7,8 +7,17 @@ namespace Testflow.CoreCommon.Data.EventInfos
 {
     public class AbortEventInfo : EventInfoBase
     {
-        public AbortEventInfo(int session) : base(session, EventType.Abort, DateTime.Now)
+        /// <summary>
+        /// 为取消请求指令
+        /// </summary>
+        public bool IsRequest { get; set; }
+
+        public bool AbortSuccess { get; set; }
+
+        public AbortEventInfo(int session, bool isRequest, bool abortSuccess) : base(session, EventType.Abort, DateTime.Now)
         {
+            this.IsRequest = isRequest;
+            this.AbortSuccess = abortSuccess;
         }
     }
 }

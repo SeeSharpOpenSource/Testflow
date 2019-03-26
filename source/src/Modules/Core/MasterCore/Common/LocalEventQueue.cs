@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading;
 using Testflow.CoreCommon.Data.EventInfos;
-using Testflow.CoreCommon.Messages;
 
 namespace Testflow.MasterCore.Common
 {

@@ -56,6 +56,7 @@
     <Compile Include="EngineHandle.cs" />
     <Compile Include="Events\EventsDispatcher.cs" />
     <Compile Include="Message\ZombieMessageCleaner.cs" />
+    <Compile Include="StatusManage\SessionStateMaintainer.cs" />
     <Compile Include="TestMaintain\Container\AppDomainRuntimeContainer.cs" />
     <Compile Include="TestMaintain\Container\ProcessRuntimeContainer.cs" />
     <Compile Include="TestMaintain\ITestEntityMaintainer.cs" />
