@@ -53,7 +53,7 @@ namespace Testflow.MasterCore.StatusManage
             throw new NotImplementedException();
         }
 
-        public void TestGenEventProcess(TestGenEventInfo eventInfo)
+        public void TestGenEventProcess(TestStateEventInfo eventInfo)
         {
             throw new NotImplementedException();
         }

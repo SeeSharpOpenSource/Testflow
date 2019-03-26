@@ -41,7 +41,10 @@ namespace Testflow.MasterCore
             Exception exception = null;
             bool getLock = false;
             _operationLock.Enter(ref getLock);
-            exception = _exceptions.Dequeue();
+            if (_exceptions.Count > 0)
+            {
+                exception = _exceptions.Dequeue();
+            }
             _operationLock.Exit();
             return exception;
         }

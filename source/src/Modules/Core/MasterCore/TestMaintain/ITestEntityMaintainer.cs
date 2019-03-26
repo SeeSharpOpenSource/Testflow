@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using Testflow.CoreCommon.Common;
 using Testflow.CoreCommon.Data;
+using Testflow.CoreCommon.Messages;
 using Testflow.Data.Sequence;
 using Testflow.MasterCore.Message;
 using Testflow.MasterCore.TestMaintain.Container;
@@ -25,5 +26,7 @@ namespace Testflow.MasterCore.TestMaintain
         RuntimeContainer Generate(ISequenceGroup sequenceGroup, RuntimePlatform platform, params object[] param);
 
         void SendTestGenMessage(int session, string sequenceData);
+
+        Dictionary<int, RuntimeContainer> TestContainers { get; }
     }
 }

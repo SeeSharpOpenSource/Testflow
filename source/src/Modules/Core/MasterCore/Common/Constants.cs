@@ -18,6 +18,12 @@ namespace Testflow.MasterCore.Common
 
         public const int OperationTimeout = 1000;
 
+        #region Block事件状态值定义
+
+        public const int RmtGenState = 0;
+
+        #endregion
+
 
         #region 事件名称
 

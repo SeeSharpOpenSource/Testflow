@@ -33,7 +33,7 @@ namespace Testflow.MasterCore.StatusManage
             _eventProcessActions.Add(typeof(DebugEventInfo).Name, DebugEventProcess);
             _eventProcessActions.Add(typeof(ExceptionEventInfo).Name, ExceptionEventProcess);
             _eventProcessActions.Add(typeof(SyncEventInfo).Name, SyncEventProcess);
-            _eventProcessActions.Add(typeof(TestGenEventInfo).Name, TestGenEventProcess);
+            _eventProcessActions.Add(typeof(TestStateEventInfo).Name, TestGenEventProcess);
 
             this._stateMaintainers = new Dictionary<int, SessionStateMaintainer>(Constants.DefaultRuntimeSize);
         }
@@ -161,7 +161,7 @@ namespace Testflow.MasterCore.StatusManage
 
         private void TestGenEventProcess(EventInfoBase eventInfo)
         {
-            TestGenEventInfo testGenEvent = (TestGenEventInfo)eventInfo;
+            TestStateEventInfo testGenEvent = (TestStateEventInfo)eventInfo;
             _stateMaintainers[testGenEvent.Session].TestGenEventProcess(testGenEvent);
         }
 

@@ -2,6 +2,7 @@
 using System.Threading;
 using Testflow.Common;
 using Testflow.CoreCommon.Common;
+using Testflow.CoreCommon.Data.EventInfos;
 using Testflow.CoreCommon.Messages;
 using Testflow.Data.Sequence;
 using Testflow.MasterCore.Common;
@@ -9,7 +10,6 @@ using Testflow.MasterCore.Message;
 using Testflow.MasterCore.TestMaintain;
 using Testflow.Modules;
 using Testflow.Runtime;
-using Testflow.Utility.MessageUtil;
 
 namespace Testflow.MasterCore.Core
 {
@@ -22,16 +22,22 @@ namespace Testflow.MasterCore.Core
         private readonly ITestEntityMaintainer _testsMaintainer;
         private readonly DebugManager _debugManager;
         private ISequenceFlowContainer _sequenceData;
-        
+
+        private readonly BlockHandle _blockHandle;
+
         public EngineFlowController(ModuleGlobalInfo globalInfo)
         {
             _globalInfo = globalInfo;
             // TODO 暂时写死，只是用本地测试生成实体
-            _testsMaintainer = new LocalTestEntityMaintainer(_globalInfo);
+            _testsMaintainer = new LocalTestEntityMaintainer(_globalInfo, _blockHandle);
             if (EnableDebug)
             {
                 _debugManager = new DebugManager(_globalInfo);
             }
+            this._blockHandle = new BlockHandle()
+            {
+                Timeout = _globalInfo.ConfigData.GetProperty<int>("TestGenTimeout")
+            };
         }
 
         public RuntimeType RuntimeType => _globalInfo.ConfigData.GetProperty<RuntimeType>("RuntimeType");
@@ -54,8 +60,6 @@ namespace Testflow.MasterCore.Core
         {
             _sequenceData = sequenceContainer;
             GenerateTestMaintainer(sequenceContainer);
-
-            
         }
 
         // TODO 暂时是一个失败，所有的都停止操作，后续优化为状态控制
@@ -89,14 +93,13 @@ namespace Testflow.MasterCore.Core
             }
         }
 
-        public void Start()
+        public void StartTestGeneration()
         {
             _testsMaintainer.StartHost();
             ISequenceManager sequenceManager = _globalInfo.TestflowRunner.SequenceManager;
             if (_sequenceData is ITestProject)
             {
                 ITestProject testProject = _sequenceData as ITestProject;
-
                 _testsMaintainer.SendTestGenMessage(CoreConstants.TestProjectSessionId,
                     sequenceManager.RuntimeSerialize(testProject));
                 foreach (ISequenceGroup sequenceGroup in testProject.SequenceGroups)
@@ -108,6 +111,21 @@ namespace Testflow.MasterCore.Core
             else
             {
                 _testsMaintainer.SendTestGenMessage(0, sequenceManager.RuntimeSerialize(_sequenceData as ISequenceGroup));
+            }
+            // 等待远程生成结束
+            _blockHandle.Wait(Constants.RmtGenState);
+        }
+
+        public void StartTestWork()
+        {
+            // TODO 这里没有再去监听运行端是否开始的返回信息，可能会出现断链的问题，后期再解决
+            ControlMessage startMessage = new ControlMessage(MessageNames.CtrlStart, CommonConst.BroadcastSession);
+            foreach (int session in _testsMaintainer.TestContainers.Keys)
+            {
+                startMessage.Id = session;
+                _globalInfo.MessageTransceiver.Send(startMessage);
+                TestStateEventInfo stateEventInfo = new TestStateEventInfo(session, TestState.TestStart, startMessage.Time);
+                _globalInfo.EventQueue.Enqueue(stateEventInfo);
             }
         }
 
@@ -123,9 +141,16 @@ namespace Testflow.MasterCore.Core
 
         public void Stop()
         {
-            _testsMaintainer.FreeHosts();
+            ControlMessage abortMessage = new ControlMessage(MessageNames.CtrlAbort, CommonConst.BroadcastSession);
+            abortMessage.AddParam("IsRequest", true.ToString());
+            foreach (int session in _testsMaintainer.TestContainers.Keys)
+            {
+                abortMessage.Id = session;
+                _globalInfo.MessageTransceiver.Send(abortMessage);
+            }
+//            _testsMaintainer.FreeHosts();
         }
-        
+
         public void Dispose()
         {
             throw new NotImplementedException();

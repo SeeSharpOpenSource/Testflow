@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Newtonsoft.Json;
 using Testflow.Common;
 using Testflow.CoreCommon;
 using Testflow.CoreCommon.Common;
 using Testflow.CoreCommon.Data;
+using Testflow.CoreCommon.Data.EventInfos;
 using Testflow.CoreCommon.Messages;
 using Testflow.Data.Sequence;
 using Testflow.MasterCore.Common;
@@ -20,11 +22,13 @@ namespace Testflow.MasterCore.TestMaintain
     {
         private readonly ModuleGlobalInfo _globalInfo;
         private Dictionary<int, RuntimeContainer> _runtimeContainers;
-
-        public LocalTestEntityMaintainer(ModuleGlobalInfo globalInfo)
+        private readonly BlockHandle _blockHandle;
+        
+        public LocalTestEntityMaintainer(ModuleGlobalInfo globalInfo, BlockHandle blockHandle)
         {
             _globalInfo = globalInfo;
             this._runtimeContainers = new Dictionary<int, RuntimeContainer>(Constants.DefaultRuntimeSize);
+            this._blockHandle = blockHandle;
         }
 
         /// <summary>
@@ -89,7 +93,13 @@ namespace Testflow.MasterCore.TestMaintain
             RmtGenMessage rmtGenMessage = new RmtGenMessage(CoreConstants.DownRmtGenMsgName, session, runnerType,
                 sequenceData);
             rmtGenMessage.Params.Add("MsgType", "Generation");
+            _globalInfo.MessageTransceiver.Send(rmtGenMessage);
+            // 发送生成事件
+            TestStateEventInfo testGenEventInfo = new TestStateEventInfo(rmtGenMessage, TestState.StartGeneration);
+            _globalInfo.EventQueue.Enqueue(testGenEventInfo);
         }
+        
+        public Dictionary<int, RuntimeContainer> TestContainers => _runtimeContainers;
 
         public void FreeHosts()
         {
@@ -102,7 +112,33 @@ namespace Testflow.MasterCore.TestMaintain
 
         public bool HandleMessage(MessageBase message)
         {
-            throw new System.NotImplementedException();
+            bool state = false;
+            RmtGenMessage rmtGenMessage = (RmtGenMessage)message;
+            if (rmtGenMessage.Params["MsgType"].Equals("Success"))
+            {
+                state = true;
+                TestStateEventInfo stateEventInfo = new TestStateEventInfo(rmtGenMessage.Id, TestState.GenerationOver,
+                    rmtGenMessage.Time);
+                _globalInfo.EventQueue.Enqueue(stateEventInfo);
+                _runtimeContainers[rmtGenMessage.Id].HostReady = true;
+            }
+            else if (rmtGenMessage.Params["MsgType"].Equals("Failed"))
+            {
+                state = false;
+                TestStateEventInfo stateEventInfo = new TestStateEventInfo(rmtGenMessage.Id, TestState.Error,
+                    rmtGenMessage.Time)
+                {
+                    ErrorInfo = rmtGenMessage.Params["FailedInfo"]
+                };
+                _globalInfo.EventQueue.Enqueue(stateEventInfo);
+                FreeHost(rmtGenMessage.Id);
+            }
+            // 如果所有的host都已经ready，则释放主线程等待生成结束的锁
+            if (_runtimeContainers.Values.All(item => item.HostReady))
+            {
+                _blockHandle.Free(Constants.RmtGenState);
+            }
+            return state;
         }
 
         public void AddToQueue(MessageBase message)

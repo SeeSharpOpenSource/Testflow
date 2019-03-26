@@ -33,6 +33,8 @@ namespace Testflow.MasterCore.TestMaintain
             throw new System.NotImplementedException();
         }
 
+        public Dictionary<int, RuntimeContainer> TestContainers { get; }
+
         public void ConnectHost(HostInfo runnerHosts)
         {
             throw new System.NotImplementedException();

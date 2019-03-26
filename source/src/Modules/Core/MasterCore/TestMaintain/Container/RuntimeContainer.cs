@@ -32,10 +32,13 @@ namespace Testflow.MasterCore.TestMaintain.Container
         public int Session { get; }
         protected ModuleGlobalInfo GlobalInfo { get; }
 
+        public bool HostReady { get; set; }
+
         protected RuntimeContainer(int session, ModuleGlobalInfo globalInfo)
         {
             this.Session = session;
             this.GlobalInfo = globalInfo;
+            this.HostReady = false;
         }
 
         public abstract void Start(string startConfigData);

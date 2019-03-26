@@ -102,7 +102,8 @@ namespace Testflow.MasterCore
             {
                 _statusManager.Start();
                 _syncManager.Start();
-                _controller.Start();
+                _controller.StartTestGeneration();
+                _controller.StartTestWork();
             }
             catch (TestflowException ex)
             {
