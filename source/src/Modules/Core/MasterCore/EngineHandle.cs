@@ -49,6 +49,7 @@ namespace Testflow.MasterCore
         public void RuntimeInitialize()
         {
             _runtimeEngine = new RuntimeEngine(ConfigData);
+            _runtimeEngine.GlobalInfo.ExceptionManager.ExceptionRaised += (exception) => { ExceptionRaised?.Invoke(exception); };
         }
 
         public void DesigntimeInitialize()
@@ -61,7 +62,13 @@ namespace Testflow.MasterCore
             this.ConfigData = configData;
         }
 
-        public RuntimeState State { get; }
+        public RuntimeState State => _runtimeEngine?.GlobalInfo?.StateMachine.State ?? RuntimeState.NotAvailable;
+        public event Action<Exception> ExceptionRaised;
+
+        public void SetSequenceData(ISequenceFlowContainer sequenceData)
+        {
+            _runtimeEngine.Initialize(sequenceData);
+        }
 
         public RuntimeState GetRuntimeState(int sessionId)
         {
@@ -90,7 +97,6 @@ namespace Testflow.MasterCore
 
         public void RegisterRuntimeEvent(Delegate callBack, string eventName, params object[] extraParams)
         {
-            throw new NotImplementedException();
         }
 
         public void UnregisterRuntimeEvent(Delegate callBack, string eventName, params object[] extraParams)
@@ -125,7 +131,7 @@ namespace Testflow.MasterCore
 
         public void Dispose()
         {
-            throw new NotImplementedException();
+            _runtimeEngine?.Dispose();
         }
     }
 }

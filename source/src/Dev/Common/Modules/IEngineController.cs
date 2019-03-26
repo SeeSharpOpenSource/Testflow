@@ -18,6 +18,17 @@ namespace Testflow.Modules
         RuntimeState State { get; }
 
         /// <summary>
+        /// 运行时触发异常的事件
+        /// </summary>
+        event Action<Exception> ExceptionRaised;
+
+        /// <summary>
+        /// 添加待运行的序列数据
+        /// </summary>
+        /// <param name="sequenceData"></param>
+        void SetSequenceData(ISequenceFlowContainer sequenceData);
+
+        /// <summary>
         /// 获取运行时状态
         /// </summary>
         /// <param name="sessionId"></param>

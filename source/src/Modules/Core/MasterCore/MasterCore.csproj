@@ -55,6 +55,7 @@
     <Compile Include="Core\RuntimeStateMachine.cs" />
     <Compile Include="EngineHandle.cs" />
     <Compile Include="Events\EventsDispatcher.cs" />
+    <Compile Include="ExceptionManager.cs" />
     <Compile Include="Message\ZombieMessageCleaner.cs" />
     <Compile Include="StatusManage\SessionStateMaintainer.cs" />
     <Compile Include="TestMaintain\Container\AppDomainRuntimeContainer.cs" />

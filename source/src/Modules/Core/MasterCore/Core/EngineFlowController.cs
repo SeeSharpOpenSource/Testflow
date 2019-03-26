@@ -32,7 +32,6 @@ namespace Testflow.MasterCore.Core
             {
                 _debugManager = new DebugManager(_globalInfo);
             }
-            
         }
 
         public RuntimeType RuntimeType => _globalInfo.ConfigData.GetProperty<RuntimeType>("RuntimeType");
@@ -83,23 +82,8 @@ namespace Testflow.MasterCore.Core
                     throw new ArgumentException();
                 }
             }
-            catch (TestflowException)
+            catch (Exception)
             {
-                _globalInfo.StateMachine.State = RuntimeState.Error;
-                _testsMaintainer.FreeHosts();
-                throw;
-            }
-            catch (ApplicationException ex)
-            {
-                _globalInfo.LogService.Print(LogLevel.Error, CommonConst.PlatformLogSession, ex);
-                _globalInfo.StateMachine.State = RuntimeState.Error;
-                _testsMaintainer.FreeHosts();
-                throw;
-            }
-            catch (Exception ex)
-            {
-                _globalInfo.LogService.Print(LogLevel.Fatal, CommonConst.PlatformLogSession, ex);
-                _globalInfo.StateMachine.State = RuntimeState.Collapsed;
                 _testsMaintainer.FreeHosts();
                 throw;
             }
@@ -139,7 +123,7 @@ namespace Testflow.MasterCore.Core
 
         public void Stop()
         {
-            throw new NotImplementedException();
+            _testsMaintainer.FreeHosts();
         }
         
         public void Dispose()

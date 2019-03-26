@@ -23,12 +23,15 @@ namespace Testflow.MasterCore.Common
 
         public RuntimeStateMachine StateMachine { get; set; }
 
+        public ExceptionManager ExceptionManager { get; private set; }
+
         public ModuleGlobalInfo(IModuleConfigData configData)
         {
             TestflowRunner = TestflowRunner.GetInstance();
             this.I18N = I18N.GetInstance(Constants.I18nName);
             this.LogService = TestflowRunner.LogService;
             this.ConfigData = configData;
+            this.ExceptionManager = new ExceptionManager();
         }
 
         public void RuntimeInitialize(MessageTransceiver messageTransceiver)

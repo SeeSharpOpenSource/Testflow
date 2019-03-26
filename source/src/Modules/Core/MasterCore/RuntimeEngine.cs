@@ -50,6 +50,8 @@ namespace Testflow.MasterCore
         public SynchronousManager SyncManager => _syncManager;
         public EngineFlowController Controller => _controller;
 
+        public ModuleGlobalInfo GlobalInfo => _globalInfo;
+
         public RuntimeType RuntimeType => _globalInfo.ConfigData.GetProperty<RuntimeType>("RuntimeType");
 
         private void RegisterMessageHandler()
@@ -63,29 +65,79 @@ namespace Testflow.MasterCore
 
         public void Initialize(ISequenceFlowContainer sequenceContainer)
         {
-            _globalInfo.StateMachine.State = RuntimeState.Idle;
-            _controller.Initialize(sequenceContainer);
+            try
+            {
+                _globalInfo.StateMachine.State = RuntimeState.Idle;
+                _controller.Initialize(sequenceContainer);
+                _statusManager.Initialize(sequenceContainer);
 
-            _statusManager.Initialize(sequenceContainer);
-
-            _globalInfo.StateMachine.StateAbort += Stop;
-            _globalInfo.StateMachine.StateError += Stop;
-            _globalInfo.StateMachine.StateCollapsed += Stop;
-            _globalInfo.StateMachine.StateOver += Stop;
+                _globalInfo.StateMachine.StateAbort += Stop;
+                _globalInfo.StateMachine.StateError += Stop;
+                _globalInfo.StateMachine.StateCollapsed += Stop;
+                _globalInfo.StateMachine.StateOver += Stop;
+            }
+            catch (TestflowException ex)
+            {
+                _globalInfo.LogService.Print(LogLevel.Error, CommonConst.PlatformLogSession, ex, "Initialize internal error.");
+                _globalInfo.StateMachine.State = RuntimeState.Error;
+                _globalInfo.ExceptionManager.Append(ex);
+            }
+            catch (ApplicationException ex)
+            {
+                _globalInfo.LogService.Print(LogLevel.Error, CommonConst.PlatformLogSession, ex, "Initialize runtime error.");
+                _globalInfo.StateMachine.State = RuntimeState.Error;
+                _globalInfo.ExceptionManager.Append(ex);
+            }
+            catch (Exception ex)
+            {
+                _globalInfo.LogService.Print(LogLevel.Fatal, CommonConst.PlatformLogSession, ex, "Initialize fatal error.");
+                _globalInfo.StateMachine.State = RuntimeState.Collapsed;
+                _globalInfo.ExceptionManager.Append(ex);
+            }
         }
 
         public void Start()
         {
-            _statusManager.Start();
-            _syncManager.Start();
-            _controller.Start();
+            try
+            {
+                _statusManager.Start();
+                _syncManager.Start();
+                _controller.Start();
+            }
+            catch (TestflowException ex)
+            {
+                _globalInfo.LogService.Print(LogLevel.Error, CommonConst.PlatformLogSession, ex, "Start engine internal error.");
+                _globalInfo.StateMachine.State = RuntimeState.Error;
+                _globalInfo.ExceptionManager.Append(ex);
+            }
+            catch (ApplicationException ex)
+            {
+                _globalInfo.LogService.Print(LogLevel.Error, CommonConst.PlatformLogSession, ex, "Start engine runtime error.");
+                _globalInfo.StateMachine.State = RuntimeState.Error;
+                _globalInfo.ExceptionManager.Append(ex);
+            }
+            catch (Exception ex)
+            {
+                _globalInfo.LogService.Print(LogLevel.Fatal, CommonConst.PlatformLogSession, ex, "Start engine fatal error.");
+                _globalInfo.StateMachine.State = RuntimeState.Collapsed;
+                _globalInfo.ExceptionManager.Append(ex);
+            }
         }
 
         public void Stop()
         {
-            _syncManager.Stop();
-            _controller.Stop();
-            _statusManager.Stop();
+            try
+            {
+                _syncManager.Stop();
+                _controller.Stop();
+                _statusManager.Stop();
+            }
+            catch (Exception ex)
+            {
+                _globalInfo.LogService.Print(LogLevel.Fatal, CommonConst.PlatformLogSession, ex, "Stop engine failed.");
+                _globalInfo.StateMachine.State = RuntimeState.Collapsed;
+                _globalInfo.ExceptionManager.Append(ex);
+            }
         }
 
         public void FreeTests()
