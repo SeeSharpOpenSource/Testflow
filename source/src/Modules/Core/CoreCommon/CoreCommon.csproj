@@ -40,7 +40,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Common\BlockHandle.cs" />
     <Compile Include="Common\CoreUtils.cs" />
+    <Compile Include="Common\MessageNames.cs" />
     <Compile Include="Common\MQIgnoreAttribute.cs" />
     <Compile Include="Common\TestGenState.cs" />
     <Compile Include="Common\CoreConstants.cs" />
@@ -51,7 +53,7 @@
     <Compile Include="Data\EventInfos\SyncEventInfo.cs" />
     <Compile Include="Data\EventInfos\DebugEventInfo.cs" />
     <Compile Include="Data\EventInfos\AbortEventInfo.cs" />
-    <Compile Include="Data\EventInfos\TestGenEventInfo.cs" />
+    <Compile Include="Data\EventInfos\TestStateEventInfo.cs" />
     <Compile Include="Data\EventInfos\ExceptionEventInfo.cs" />
     <Compile Include="Data\HostInfo.cs" />
     <Compile Include="Data\EventInfos\EventInfoBase.cs" />

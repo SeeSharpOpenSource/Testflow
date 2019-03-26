@@ -9,16 +9,9 @@ namespace Testflow.CoreCommon.Messages
     /// </summary>
     public class ControlMessage : MessageBase
     {
-        public ControlMessage(string name, int id, params string[] extraParams) : base(name, id, MessageType.Ctrl)
+        public ControlMessage(string name, int id) : base(name, id, MessageType.Ctrl)
         {
             Params = new Dictionary<string, string>(CoreConstants.DefaultRuntimeSize);
-            if (null != extraParams)
-            {
-                foreach (string extraParam in extraParams)
-                {
-                    Params.Add(extraParam, string.Empty);
-                }
-            }
         }
 
         public ControlMessage(string name, int id, Dictionary<string, string> extraParams) : base(name, id, MessageType.Ctrl)

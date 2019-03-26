@@ -5,6 +5,7 @@
     /// </summary>
     public static class CommonConst
     {
+
         /// <summary>
         /// 外部属性的默认扩展参数个数
         /// </summary>
@@ -54,5 +55,10 @@
         /// 测试工程的会话id
         /// </summary>
         public const int TestGroupSession = -1;
+
+        /// <summary>
+        /// 广播会话ID
+        /// </summary>
+        public const int BroadcastSession = -10;
     }
 }
