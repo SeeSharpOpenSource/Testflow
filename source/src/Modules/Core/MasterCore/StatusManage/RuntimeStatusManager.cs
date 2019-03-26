@@ -38,28 +38,33 @@ namespace Testflow.MasterCore.StatusManage
             this._stateMaintainers = new Dictionary<int, SessionStateMaintainer>(Constants.DefaultRuntimeSize);
         }
 
-        public void Initialize(ITestProject testProject)
+        public void Initialize(ISequenceFlowContainer sequenceData)
         {
-            SessionStateMaintainer testProjectSession = new SessionStateMaintainer(_globalInfo,
-                CommonConst.TestGroupSession, testProject);
-            _stateMaintainers.Add(testProjectSession.Session, testProjectSession);
-
-            int sessionIndex = 0;
-            foreach (ISequenceGroup sequenceGroup in testProject.SequenceGroups)
+            if (sequenceData is ITestProject)
             {
-                SessionStateMaintainer stateManager = new SessionStateMaintainer(_globalInfo, sessionIndex++, sequenceGroup);
-                _stateMaintainers.Add(stateManager.Session, stateManager);
-            }
-        }
+                ITestProject testProject = (ITestProject)sequenceData;
+                SessionStateMaintainer testProjectSession = new SessionStateMaintainer(_globalInfo,
+                    CommonConst.TestGroupSession, testProject);
+                _stateMaintainers.Add(testProjectSession.Session, testProjectSession);
 
-        public void Initialize(ISequenceGroup sequenceGroup)
-        {
-            SessionStateMaintainer stateMaintainer = new SessionStateMaintainer(_globalInfo, 0, sequenceGroup);
-            _stateMaintainers.Add(stateMaintainer.Session, stateMaintainer);
+                int sessionIndex = 0;
+                foreach (ISequenceGroup sequenceGroup in testProject.SequenceGroups)
+                {
+                    SessionStateMaintainer stateManager = new SessionStateMaintainer(_globalInfo, sessionIndex++,
+                        sequenceGroup);
+                    _stateMaintainers.Add(stateManager.Session, stateManager);
+                }
+            }
+            else
+            {
+                SessionStateMaintainer stateMaintainer = new SessionStateMaintainer(_globalInfo, 0, (ISequenceGroup)sequenceData);
+                _stateMaintainers.Add(stateMaintainer.Session, stateMaintainer);
+            }
         }
 
         public void Start()
         {
+            _cancellation = new CancellationTokenSource();
             this._internalMessageThd = new Thread(ProcessInternalMessage)
             {
                 Name = "InnerMessageListener",
@@ -76,6 +81,16 @@ namespace Testflow.MasterCore.StatusManage
                 while (!_cancellation.IsCancellationRequested)
                 {
                     EventInfoBase eventInfo = internalEventQueue.WaitUntilMessageCome();
+                    if (null == eventInfo)
+                    {
+                        return;
+                    }
+                    _eventProcessActions[eventInfo.GetType().Name].Invoke(eventInfo);
+                }
+                // 处理完堆积的内部消息，然后停止
+                while (internalEventQueue.Count > 0)
+                {
+                    EventInfoBase eventInfo = internalEventQueue.Dequeue();
                     _eventProcessActions[eventInfo.GetType().Name].Invoke(eventInfo);
                 }
             }
@@ -107,7 +122,7 @@ namespace Testflow.MasterCore.StatusManage
                 {
                     stateMaintainer.AbortEventProcess(abortEvent);
                 }
-                _globalInfo.StateMachine.State = abortEvent.IsRequest ? RuntimeState.AbortRequested : RuntimeState.Abort;
+//                _globalInfo.StateMachine.State = abortEvent.IsRequest ? RuntimeState.AbortRequested : RuntimeState.Abort;
             }
             else
             {
@@ -123,18 +138,18 @@ namespace Testflow.MasterCore.StatusManage
 
         private void ExceptionEventProcess(EventInfoBase eventInfo)
         {
-            ExceptionEventInfo abortEvent = (ExceptionEventInfo)eventInfo;
-            if (abortEvent.Session == CommonConst.PlatformLogSession || IsRootEvent(eventInfo))
+            ExceptionEventInfo exceptionEvent = (ExceptionEventInfo)eventInfo;
+            if (exceptionEvent.Session == CommonConst.PlatformLogSession || IsRootEvent(eventInfo))
             {
                 foreach (SessionStateMaintainer stateMaintainer in _stateMaintainers.Values)
                 {
-                    stateMaintainer.ExceptionEventProcess(abortEvent);
+                    stateMaintainer.ExceptionEventProcess(exceptionEvent);
                 }
-                _globalInfo.StateMachine.State = RuntimeState.Failed;
+//                _globalInfo.StateMachine.State = RuntimeState.Failed;
             }
             else
             {
-                _stateMaintainers[abortEvent.Session].ExceptionEventProcess(abortEvent);
+                _stateMaintainers[exceptionEvent.Session].ExceptionEventProcess(exceptionEvent);
             }
         }
 
@@ -163,6 +178,8 @@ namespace Testflow.MasterCore.StatusManage
         public void Stop()
         {
             _cancellation.Cancel();
+            _globalInfo.EventQueue.StopEnqueue();
+            Thread.Sleep(_globalInfo.ConfigData.GetProperty<int>("StopTimeout"));
             ModuleUtils.StopThreadWork(_internalMessageThd);
         }
 

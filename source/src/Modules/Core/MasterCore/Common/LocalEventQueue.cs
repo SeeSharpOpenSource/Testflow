@@ -10,6 +10,8 @@ namespace Testflow.MasterCore.Common
 
         private SpinLock _blockLock;
 
+        private int _stopEnqueueFlag;
+
         private readonly AutoResetEvent _blockEvent;
 
         private int _isblocked;
@@ -22,6 +24,7 @@ namespace Testflow.MasterCore.Common
             _blockEvent = new AutoResetEvent(false);
             _isblocked = 0;
             _forceFree = 0;
+            _stopEnqueueFlag = 0;
         }
         
         public TMessageType WaitUntilMessageCome()
@@ -32,8 +35,9 @@ namespace Testflow.MasterCore.Common
 
             if (base.Count > 0)
             {
+                message = base.Dequeue();
                 _operationLock.Exit();
-                return base.Dequeue();
+                return message;
             }
             _operationLock.Exit();
             BlockThread();
@@ -49,6 +53,10 @@ namespace Testflow.MasterCore.Common
 
         public new void Enqueue(TMessageType item)
         {
+            if (1 == _stopEnqueueFlag)
+            {
+                return;
+            }
             bool getLock = false;
             _operationLock.Enter(ref getLock);
             base.Enqueue(item);
@@ -74,6 +82,11 @@ namespace Testflow.MasterCore.Common
             _operationLock.Enter(ref getLock);
             base.Clear();
             _operationLock.Exit();
+        }
+
+        public void StopEnqueue()
+        {
+            Thread.VolatileWrite(ref _stopEnqueueFlag, 1);
         }
 
         /// <summary>

@@ -32,8 +32,9 @@ namespace Testflow.MasterCore.Common
 
             if (base.Count > 0)
             {
+                message = base.Dequeue();
                 _operationLock.Exit();
-                return base.Dequeue();
+                return message;
             }
             _operationLock.Exit();
             BlockThread();

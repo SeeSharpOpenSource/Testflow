@@ -66,12 +66,12 @@ namespace Testflow.MasterCore
             _globalInfo.StateMachine.State = RuntimeState.Idle;
             _controller.Initialize(sequenceContainer);
 
-            
-        }
+            _statusManager.Initialize(sequenceContainer);
 
-        public void Clear()
-        {
-
+            _globalInfo.StateMachine.StateAbort += Stop;
+            _globalInfo.StateMachine.StateError += Stop;
+            _globalInfo.StateMachine.StateCollapsed += Stop;
+            _globalInfo.StateMachine.StateOver += Stop;
         }
 
         public void Start()
@@ -83,8 +83,8 @@ namespace Testflow.MasterCore
 
         public void Stop()
         {
-            _controller.Stop();
             _syncManager.Stop();
+            _controller.Stop();
             _statusManager.Stop();
         }
 
