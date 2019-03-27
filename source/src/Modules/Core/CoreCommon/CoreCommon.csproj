@@ -47,7 +47,7 @@
     <Compile Include="Common\TestGenState.cs" />
     <Compile Include="Common\CoreConstants.cs" />
     <Compile Include="Data\CallStack.cs" />
-    <Compile Include="Data\DebugData.cs" />
+    <Compile Include="Data\DebugWatchData.cs" />
     <Compile Include="Data\DebugMessageType.cs" />
     <Compile Include="Data\EventInfos\EventType.cs" />
     <Compile Include="Data\EventInfos\SyncEventInfo.cs" />

@@ -4,7 +4,7 @@ using Testflow.CoreCommon.Common;
 
 namespace Testflow.CoreCommon.Data
 {
-    public class DebugData : ISerializable
+    public class DebugWatchData : ISerializable
     {
         /// <summary>
         /// 该处的名称为SequenceGroupIndex.SequenceIndex.VariableName组成
@@ -20,14 +20,14 @@ namespace Testflow.CoreCommon.Data
             return $"{sequenceGroupIndex}.{sequenceIndex}.{name}";
         }
 
-        public DebugData()
+        public DebugWatchData()
         {
             this.Names = new List<string>(CoreConstants.DefaultRuntimeSize);
             this.Values = new List<string>(CoreConstants.DefaultRuntimeSize);
             this.Types = new List<int>(CoreConstants.DefaultRuntimeSize);
         }
 
-        public DebugData(SerializationInfo info, StreamingContext context)
+        public DebugWatchData(SerializationInfo info, StreamingContext context)
         {
             this.Names = info.GetValue("Names", typeof(List<string>)) as List<string>;
             this.Values = info.GetValue("Values",typeof(List<string>)) as List<string>;

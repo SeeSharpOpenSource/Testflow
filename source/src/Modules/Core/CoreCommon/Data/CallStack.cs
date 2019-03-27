@@ -71,7 +71,6 @@ namespace Testflow.CoreCommon.Data
             if (null == callStack || SequenceGroupIndex != callStack.SequenceGroupIndex ||
                 SequenceIndex != callStack.SequenceIndex || callStack.StepStack.Count != StepStack.Count)
             {
-
                 return false;
             }
             for (int i = 0; i < StepStack.Count; i++)

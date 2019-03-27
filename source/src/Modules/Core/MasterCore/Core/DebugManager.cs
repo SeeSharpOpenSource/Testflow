@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Testflow.CoreCommon.Common;
 using Testflow.CoreCommon.Data;
 using Testflow.CoreCommon.Messages;
@@ -17,14 +18,16 @@ namespace Testflow.MasterCore.Core
     {
         private readonly ModuleGlobalInfo _globalInfo;
         private readonly Dictionary<int, List<string>> _watchVariables;
+        private readonly Dictionary<int, List<CallStack>> _breakPoints;
 
         public DebugManager(ModuleGlobalInfo globalInfo)
         {
             this._globalInfo = globalInfo;
             _watchVariables = new Dictionary<int, List<string>>(Constants.DefaultRuntimeSize);
+            _breakPoints = new Dictionary<int, List<CallStack>>(Constants.DefaultRuntimeSize);
         }
 
-        public void AddDebugVariables(int session, IVariable variable)
+        public void AddWatchVariable(int session, IVariable variable)
         {
             string variableName = CoreUtils.GetRuntimeVariableName(variable);
             if (!_watchVariables.ContainsKey(session))
@@ -35,13 +38,15 @@ namespace Testflow.MasterCore.Core
             {
                 _watchVariables[session].Add(variableName);
             }
-            if (_globalInfo.StateMachine.State == RuntimeState.Running)
+            RuntimeState runtimeState = _globalInfo.StateMachine.State;
+            if (runtimeState == RuntimeState.Running || runtimeState == RuntimeState.Blocked ||
+                runtimeState == RuntimeState.DebugBlocked)
             {
                 SendRefreshWatchMessage(session);
             }
         }
 
-        public void RemoveDebugVariables(int session, IVariable variable)
+        public void RemoveWatchVariable(int session, IVariable variable)
         {
             string variableName = CoreUtils.GetRuntimeVariableName(variable);
             if (!_watchVariables.ContainsKey(session))
@@ -56,28 +61,73 @@ namespace Testflow.MasterCore.Core
                     _watchVariables.Remove(session);
                 }
             }
-            if (_globalInfo.StateMachine.State == RuntimeState.Running)
+            RuntimeState runtimeState = _globalInfo.StateMachine.State;
+            if (runtimeState == RuntimeState.Running || runtimeState == RuntimeState.Blocked ||
+                runtimeState == RuntimeState.DebugBlocked)
             {
                 SendRefreshWatchMessage(session);
             }
         }
 
-        public void AddBreakPoint(int sessionId, CallStack callStack)
+        public void AddBreakPoint(int sessionId, CallStack breakPoint)
+        {
+            if (_breakPoints.ContainsKey(sessionId) && _breakPoints[sessionId].Contains(breakPoint))
+            {
+                return;
+            }
+            if (!_breakPoints.ContainsKey(sessionId))
+            {
+                _breakPoints.Add(sessionId, new List<CallStack>(Constants.DefaultRuntimeSize));
+            }
+            _breakPoints[sessionId].Add(breakPoint);
+            RuntimeState runtimeState = _globalInfo.StateMachine.State;
+            if (runtimeState == RuntimeState.Running || runtimeState == RuntimeState.Blocked ||
+                runtimeState == RuntimeState.DebugBlocked)
+            {
+                SendAddBreakPointMessage(sessionId, breakPoint);
+            }
+        }
+
+        public void RemoveBreakPoint(int sessionId, CallStack breakPoint)
+        {
+            if (null != breakPoint && !_breakPoints.ContainsKey(sessionId) || !_breakPoints[sessionId].Contains(breakPoint))
+            {
+                return;
+            }
+            // breakPoint为null时会删除所有的断点
+            if (null == breakPoint)
+            {
+                _breakPoints[sessionId].Clear();
+            }
+            else
+            {
+                _breakPoints[sessionId].Remove(breakPoint);
+            }
+            
+            RuntimeState runtimeState = _globalInfo.StateMachine.State;
+            if (runtimeState == RuntimeState.Running || runtimeState == RuntimeState.Blocked ||
+                runtimeState == RuntimeState.DebugBlocked)
+            {
+                SendRemoveBreakPointMessage(sessionId, breakPoint);
+            }
+        }
+
+        private void SendAddBreakPointMessage(int sessionId, CallStack callStack)
         {
             DebugMessage debugMessage = new DebugMessage(MessageNames.DownDebugMsgName, sessionId,
                 DebugMessageType.AddBreakPoint)
             {
-                Stack = callStack
+                BreakPoint = callStack
             };
             _globalInfo.MessageTransceiver.Send(debugMessage);
         }
 
-        public void RemoveBreakPoint(int sessionId, CallStack callStack)
+        private void SendRemoveBreakPointMessage(int sessionId, CallStack callStack)
         {
-            DebugMessage debugMessage = new DebugMessage(MessageNames.DownDebugMsgName, sessionId, 
+            DebugMessage debugMessage = new DebugMessage(MessageNames.DownDebugMsgName, sessionId,
                 DebugMessageType.RemoveBreakPoint)
             {
-                Stack = callStack
+                BreakPoint = callStack
             };
             _globalInfo.MessageTransceiver.Send(debugMessage);
         }
@@ -85,20 +135,30 @@ namespace Testflow.MasterCore.Core
         private void SendRefreshWatchMessage(int sessionId)
         {
             DebugMessage debugMessage = new DebugMessage(MessageNames.DownDebugMsgName, sessionId,
-                DebugMessageType.RemoveBreakPoint)
+                DebugMessageType.RefreshWatch)
             {
-                Data = new DebugData()
+                WatchData = new DebugWatchData()
             };
             if (_watchVariables.ContainsKey(sessionId))
             {
-                debugMessage.Data.Names.AddRange(_watchVariables[sessionId]);
+                debugMessage.WatchData.Names.AddRange(_watchVariables[sessionId]);
             }
             _globalInfo.MessageTransceiver.Send(debugMessage);
         }
 
         public bool HandleMessage(MessageBase message)
         {
-            throw new System.NotImplementedException();
+            DebugMessage debugMessage = (DebugMessage)message;
+            DebugMessageType messageType = debugMessage.DebugMsgType;
+            switch (messageType)
+            {
+                case DebugMessageType.BreakPointHitted:
+                    // TODO
+                    break;
+                default:
+                    throw new ArgumentException();
+            }
+            return true;
         }
 
         public void AddToQueue(MessageBase message)
@@ -108,7 +168,7 @@ namespace Testflow.MasterCore.Core
 
         public void Initialize()
         {
-            throw new System.NotImplementedException();
+            
         }
     }
 }

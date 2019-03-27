@@ -14,12 +14,14 @@ namespace Testflow.CoreCommon.Messages
         public DebugMessage(string name, int id, DebugMessageType msgType) : base(name, id, MessageType.Debug)
         {
             this.DebugMsgType = msgType;
+            this.BreakPoint = null;
+            this.WatchData = null;
         }
 
         /// <summary>
         /// 当前的堆栈信息
         /// </summary>
-        public CallStack Stack { get; set; }
+        public CallStack BreakPoint { get; set; }
 
         /// <summary>
         /// 消息类型
@@ -29,25 +31,25 @@ namespace Testflow.CoreCommon.Messages
         /// <summary>
         /// 被请求的变量值信息
         /// </summary>
-        public DebugData Data { get; set; }
+        public DebugWatchData WatchData { get; set; }
 
         public DebugMessage(SerializationInfo info, StreamingContext context) : base(info, context)
         {
-            this.Stack = info.GetValue("Stack", typeof(CallStack)) as CallStack;
-            this.Data = info.GetValue("Data", typeof(DebugData)) as DebugData;
+            this.BreakPoint = info.GetValue("Stack", typeof(CallStack)) as CallStack;
+            this.WatchData = info.GetValue("Data", typeof(DebugWatchData)) as DebugWatchData;
             this.DebugMsgType = (DebugMessageType) info.GetValue("DebugMsgType", typeof (DebugMessageType));
         }
 
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
             base.GetObjectData(info, context);
-            if (null != Stack)
+            if (null != BreakPoint)
             {
-                info.AddValue("Stack", this.Stack, typeof(CallStack));
+                info.AddValue("Stack", this.BreakPoint, typeof(CallStack));
             }
-            if (null != Data && 0 == Data.Count)
+            if (null != WatchData && 0 == WatchData.Count)
             {
-                info.AddValue("Data", Data, typeof(DebugData));
+                info.AddValue("Data", WatchData, typeof(DebugWatchData));
             }
             info.AddValue("DebugMsgType", DebugMsgType);
         }

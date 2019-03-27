@@ -126,7 +126,7 @@ namespace Testflow.MasterCore
 
         public void Stop()
         {
-            _runtimeEngine.Stop();
+            _runtimeEngine?.Stop();
         }
 
         public void Dispose()
