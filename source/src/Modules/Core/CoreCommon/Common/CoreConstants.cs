@@ -20,13 +20,7 @@
 
         public const string UpLinkMQName = @".\Private$\TestflowUpLinkQueue";
         public const string DownLinkMQName = @".\Private$\TestflowDownLinkQueue";
-
-        public const string DownDebugMsgName = "Debug";
-        public const string UpDebugMsgName = "Debug";
-
-        public const string DownRmtGenMsgName = "RemoteGen";
-        public const string UpRmtGenMsgName = "RemoteGen";
-
+        
         #region 事件名称
 
         public const string TestGenerationStart = "TestGenerationStart";

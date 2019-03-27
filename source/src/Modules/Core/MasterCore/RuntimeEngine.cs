@@ -125,13 +125,18 @@ namespace Testflow.MasterCore
             }
         }
 
+        public void AbortRuntime(int session)
+        {
+            _controller.Abort(session);
+        }
+
         public void Stop()
         {
             try
             {
-                _syncManager.Stop();
-                _controller.Stop();
-                _statusManager.Stop();
+                _syncManager?.Stop();
+                _controller?.Stop();
+                _statusManager?.Stop();
             }
             catch (Exception ex)
             {

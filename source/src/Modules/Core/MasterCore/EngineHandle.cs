@@ -116,7 +116,7 @@ namespace Testflow.MasterCore
 
         public void AbortRuntime(int sessionId)
         {
-            throw new NotImplementedException();
+            _runtimeEngine.AbortRuntime(sessionId);
         }
 
         public void Start()

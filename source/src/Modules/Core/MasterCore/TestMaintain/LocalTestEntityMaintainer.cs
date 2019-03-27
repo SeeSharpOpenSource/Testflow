@@ -90,7 +90,7 @@ namespace Testflow.MasterCore.TestMaintain
             RunnerType runnerType = (session == Constants.TestProjectSessionId)
                 ? RunnerType.TestProject
                 : RunnerType.SequenceGroup;
-            RmtGenMessage rmtGenMessage = new RmtGenMessage(CoreConstants.DownRmtGenMsgName, session, runnerType,
+            RmtGenMessage rmtGenMessage = new RmtGenMessage(MessageNames.DownRmtGenMsgName, session, runnerType,
                 sequenceData);
             rmtGenMessage.Params.Add("MsgType", "Generation");
             _globalInfo.MessageTransceiver.Send(rmtGenMessage);

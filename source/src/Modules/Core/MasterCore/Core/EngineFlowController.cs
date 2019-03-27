@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Threading;
 using Testflow.Common;
 using Testflow.CoreCommon.Common;
 using Testflow.CoreCommon.Data.EventInfos;
@@ -66,30 +65,22 @@ namespace Testflow.MasterCore.Core
         // TODO 目标平台暂时写死
         private void GenerateTestMaintainer(ISequenceFlowContainer sequenceContainer)
         {
-            try
+            if (sequenceContainer is ITestProject)
             {
-                if (sequenceContainer is ITestProject)
+                ITestProject testProject = (ITestProject)sequenceContainer;
+                _testsMaintainer.Generate(testProject, RuntimePlatform.Clr);
+                foreach (ISequenceGroup sequenceGroup in testProject.SequenceGroups)
                 {
-                    ITestProject testProject = (ITestProject) sequenceContainer;
-                    _testsMaintainer.Generate(testProject, RuntimePlatform.Clr);
-                    foreach (ISequenceGroup sequenceGroup in testProject.SequenceGroups)
-                    {
-                        _testsMaintainer.Generate(sequenceGroup, RuntimePlatform.Clr);
-                    }
-                }
-                else if (sequenceContainer is ISequenceGroup)
-                {
-                    _testsMaintainer.Generate((ISequenceGroup) sequenceContainer, RuntimePlatform.Clr);
-                }
-                else
-                {
-                    throw new ArgumentException();
+                    _testsMaintainer.Generate(sequenceGroup, RuntimePlatform.Clr);
                 }
             }
-            catch (Exception)
+            else if (sequenceContainer is ISequenceGroup)
             {
-                _testsMaintainer.FreeHosts();
-                throw;
+                _testsMaintainer.Generate((ISequenceGroup)sequenceContainer, RuntimePlatform.Clr);
+            }
+            else
+            {
+                throw new ArgumentException();
             }
         }
 
@@ -131,7 +122,51 @@ namespace Testflow.MasterCore.Core
 
         public bool HandleMessage(MessageBase message)
         {
-            throw new System.NotImplementedException();
+            if (message is ControlMessage)
+            {
+                return HandleControlMessage((ControlMessage) message);
+            }
+            else
+            {
+                return HandleRuntimeErrorMessage((RuntimeErrorMessage) message);
+            }
+        }
+
+        private bool HandleControlMessage(ControlMessage message)
+        {
+            int session = message.Id;
+            string name = message.Name;
+            switch (name)
+            {
+                case MessageNames.CtrlAbort:
+                    bool abortSuccess = bool.Parse(message.Params["AbortSuccess"]);
+                    AbortEventInfo abortEventInfo = new AbortEventInfo(session, false, abortSuccess);
+                    if (!abortSuccess && message.Params.ContainsKey("Message"))
+                    {
+                        abortEventInfo.FailInfo = message.Params["Message"];
+                    }
+                    _globalInfo.EventQueue.Enqueue(abortEventInfo);
+                    _testsMaintainer.FreeHost(session);
+                    // 如果所有的都已经结束，则修改状态机状态
+                    if (0 == _testsMaintainer.TestContainers.Count)
+                    {
+                        _globalInfo.StateMachine.State = RuntimeState.Abort;
+                    }
+                    // 同步释放，每个Session的停止都是同步执行的。
+                    _blockHandle.Free(Constants.AbortState);
+                    break;
+                default:
+                    throw new InvalidOperationException();
+            }
+            return true;
+        }
+
+        private bool HandleRuntimeErrorMessage(RuntimeErrorMessage message)
+        {
+            ExceptionEventInfo exceptionEventInfo = new ExceptionEventInfo(message);
+            _globalInfo.EventQueue.Enqueue(exceptionEventInfo);
+            _testsMaintainer.FreeHost(message.Id);
+            return true;
         }
 
         public void AddToQueue(MessageBase message)
@@ -139,21 +174,40 @@ namespace Testflow.MasterCore.Core
             throw new System.NotImplementedException();
         }
 
+        public void Abort(int sessionId)
+        {
+            if (sessionId == CommonConst.TestGroupSession || sessionId == CommonConst.BroadcastSession)
+            {
+                foreach (int session in _testsMaintainer.TestContainers.Keys)
+                {
+                    Abort(session);
+                }
+            }
+            else
+            {
+                ControlMessage abortMessage = new ControlMessage(MessageNames.CtrlAbort, CommonConst.BroadcastSession);
+                abortMessage.AddParam("IsRequest", true.ToString());
+                abortMessage.Id = sessionId;
+                _globalInfo.MessageTransceiver.Send(abortMessage);
+
+                AbortEventInfo abortEventInfo = new AbortEventInfo(sessionId, true, false);
+                _globalInfo.EventQueue.Enqueue(abortEventInfo);
+
+                // 目前使用同步Abort，每次只能释放一个
+                _blockHandle.Timeout = _globalInfo.ConfigData.GetProperty<int>("AbortTimeout");
+                _blockHandle.Wait(Constants.AbortState);
+            }
+        }
+
         public void Stop()
         {
-            ControlMessage abortMessage = new ControlMessage(MessageNames.CtrlAbort, CommonConst.BroadcastSession);
-            abortMessage.AddParam("IsRequest", true.ToString());
-            foreach (int session in _testsMaintainer.TestContainers.Keys)
-            {
-                abortMessage.Id = session;
-                _globalInfo.MessageTransceiver.Send(abortMessage);
-            }
-//            _testsMaintainer.FreeHosts();
+            _testsMaintainer.FreeHosts();
         }
 
         public void Dispose()
         {
-            throw new NotImplementedException();
+            Abort(CommonConst.BroadcastSession);
+            Stop();
         }
     }
 }

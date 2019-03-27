@@ -21,6 +21,8 @@ namespace Testflow.MasterCore.TestMaintain
 
         void FreeHosts();
 
+        void FreeHost(int id);
+
         RuntimeContainer Generate(ITestProject testProject, RuntimePlatform platform, params object[] param);
 
         RuntimeContainer Generate(ISequenceGroup sequenceGroup, RuntimePlatform platform, params object[] param);

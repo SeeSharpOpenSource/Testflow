@@ -82,7 +82,6 @@
     <Compile Include="RuntimeEngine.cs" />
     <Compile Include="StatusManage\RuntimeStatusManager.cs" />
     <Compile Include="SyncManage\SynchronousManager.cs" />
-    <Compile Include="TestMaintain\RemoteTestEntityMaintainer.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\Dev\Common\Common.csproj">

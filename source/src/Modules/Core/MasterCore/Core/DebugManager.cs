@@ -64,7 +64,7 @@ namespace Testflow.MasterCore.Core
 
         public void AddBreakPoint(int sessionId, CallStack callStack)
         {
-            DebugMessage debugMessage = new DebugMessage(CoreConstants.DownDebugMsgName, sessionId,
+            DebugMessage debugMessage = new DebugMessage(MessageNames.DownDebugMsgName, sessionId,
                 DebugMessageType.AddBreakPoint)
             {
                 Stack = callStack
@@ -74,7 +74,7 @@ namespace Testflow.MasterCore.Core
 
         public void RemoveBreakPoint(int sessionId, CallStack callStack)
         {
-            DebugMessage debugMessage = new DebugMessage(CoreConstants.DownDebugMsgName, sessionId, 
+            DebugMessage debugMessage = new DebugMessage(MessageNames.DownDebugMsgName, sessionId, 
                 DebugMessageType.RemoveBreakPoint)
             {
                 Stack = callStack
@@ -84,7 +84,7 @@ namespace Testflow.MasterCore.Core
 
         private void SendRefreshWatchMessage(int sessionId)
         {
-            DebugMessage debugMessage = new DebugMessage(CoreConstants.DownDebugMsgName, sessionId,
+            DebugMessage debugMessage = new DebugMessage(MessageNames.DownDebugMsgName, sessionId,
                 DebugMessageType.RemoveBreakPoint)
             {
                 Data = new DebugData()

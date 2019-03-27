@@ -14,6 +14,8 @@ namespace Testflow.CoreCommon.Data.EventInfos
 
         public bool AbortSuccess { get; set; }
 
+        public string FailInfo { get; set; }
+
         public AbortEventInfo(int session, bool isRequest, bool abortSuccess) : base(session, EventType.Abort, DateTime.Now)
         {
             this.IsRequest = isRequest;
