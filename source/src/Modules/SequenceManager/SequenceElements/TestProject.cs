@@ -41,11 +41,7 @@ namespace Testflow.SequenceManager.SequenceElements
         [XmlIgnore]
         [SerializationIgnore]
         [RuntimeSerializeIgnore]
-        public ISequenceFlowContainer Parent
-        {
-            get { return null; }
-            set { throw new InvalidOperationException(); }
-        }
+        public ISequenceFlowContainer Parent { get; set; }
 
         [RuntimeType(typeof(TypeDataCollection))]
         public ITypeDataCollection TypeDatas { get; set; }

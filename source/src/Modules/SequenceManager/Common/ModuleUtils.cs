@@ -611,8 +611,10 @@ namespace Testflow.SequenceManager.Common
 
         public static void FillDeserializationInfo(SerializationInfo info, object obj, Type type)
         {
-            foreach (PropertyInfo propertyInfo in type.GetProperties())
+            SerializationInfoEnumerator infoEnumerator = info.GetEnumerator();
+            while (infoEnumerator.MoveNext())
             {
+                PropertyInfo propertyInfo = type.GetProperty(infoEnumerator.Current.Name, BindingFlags.Instance | BindingFlags.Public);
                 RuntimeSerializeIgnoreAttribute ignoreAttribute =
                     propertyInfo.GetCustomAttribute<RuntimeSerializeIgnoreAttribute>();
                 if (null != ignoreAttribute && ignoreAttribute.Ignore)
@@ -646,7 +648,7 @@ namespace Testflow.SequenceManager.Common
                         throw new InvalidOperationException();
                     }
                     const string addMethodName = "Add";
-                    
+
                     MethodInfo addMethod = propertyType.GetMethod(addMethodName, BindingFlags.Instance | BindingFlags.Public, null,
                             CallingConventions.Standard, new Type[] { elementType }, new ParameterModifier[0]);
                     // 构造类型为List<RealType>的临时集合去获取json的值
@@ -669,6 +671,7 @@ namespace Testflow.SequenceManager.Common
                 }
             }
         }
+
 //
 //        public static void FillCollectionDeserializationInfo(SerializationInfo info, object obj, Type type)
 //        {
