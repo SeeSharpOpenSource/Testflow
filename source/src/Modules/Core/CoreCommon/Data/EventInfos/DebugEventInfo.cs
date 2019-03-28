@@ -12,9 +12,29 @@ namespace Testflow.CoreCommon.Data.EventInfos
         /// </summary>
         public bool IsDebugHit { get; }
 
+        public DebugWatchData WatchData { get; }
+
         public DebugEventInfo(int session, DateTime time, bool isDebugHit) : base(session, EventType.Debug, time)
         {
             this.IsDebugHit = isDebugHit;
+        }
+
+        public DebugEventInfo(DebugMessage message) : base(message.Id, EventType.Debug, message.Time)
+        {
+            
+            if (message.DebugMsgType == DebugMessageType.BreakPointHitted)
+            {
+                this.IsDebugHit = true;
+                this.WatchData = message.WatchData;
+            }
+            else if (message.DebugMsgType == DebugMessageType.FreeDebugBlock)
+            {
+                this.IsDebugHit = false;
+            }
+            else
+            {
+                throw new ArgumentException();
+            }
         }
     }
 }

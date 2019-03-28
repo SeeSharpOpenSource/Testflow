@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading;
+using Testflow.Common;
 using Testflow.MasterCore.Common;
+using Testflow.Modules;
 
 namespace Testflow.MasterCore
 {
@@ -9,12 +11,14 @@ namespace Testflow.MasterCore
     {
         private readonly Queue<Exception> _exceptions;
         private SpinLock _operationLock;
+        private ILogService _log;
 
-        internal ExceptionManager()
+        internal ExceptionManager(ILogService logService)
         {
             this._exceptions = new Queue<Exception>(64);
             this._operationLock = new SpinLock();
             this.EnableEvent = true;
+            this._log = logService;
         }
 
         public int Count => _exceptions.Count;
@@ -34,6 +38,12 @@ namespace Testflow.MasterCore
                 _exceptions.Enqueue(exception);
                 _operationLock.Exit();
             }
+        }
+
+        public void AppendAndLog(Exception exception, LogLevel logLevel, string message)
+        {
+            _log.Print(logLevel, CommonConst.PlatformLogSession, exception, message);
+            Append(exception);
         }
 
         public Exception Dequeue()

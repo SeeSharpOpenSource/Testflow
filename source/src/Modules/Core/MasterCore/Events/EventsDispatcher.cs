@@ -111,25 +111,21 @@ namespace Testflow.MasterCore.Events
                     eventHandle.OnTestGenerationEnd(ModuleUtils.GetParamValue<ITestGenerationInfo>(eventParams, 0));
                     break;
                 case Constants.SequenceStarted:
-                    eventHandle.OnSequenceStarted(ModuleUtils.GetParamValue<IRuntimeStatusInfo>(eventParams, 0),
-                        ModuleUtils.GetParamValue<ICallStack>(eventParams, 1));
+                    eventHandle.OnSequenceStarted(ModuleUtils.GetParamValue<IRuntimeStatusInfo>(eventParams, 0));
                     break;
                 case Constants.StatusReceived:
-                    eventHandle.OnStatusReceived(ModuleUtils.GetParamValue<IRuntimeStatusInfo>(eventParams, 0),
-                        ModuleUtils.GetParamValue<ICallStack>(eventParams, 1));
+                    eventHandle.OnStatusReceived(ModuleUtils.GetParamValue<IRuntimeStatusInfo>(eventParams, 0));
                     break;
                 case Constants.SequenceOver:
-                    eventHandle.OnSequenceOver(ModuleUtils.GetParamValue<IRuntimeStatusInfo>(eventParams, 0),
-                        ModuleUtils.GetParamValue<ICallStack>(eventParams, 1));
+                    eventHandle.OnSequenceOver(ModuleUtils.GetParamValue<IRuntimeStatusInfo>(eventParams, 0));
                     break;
                 case Constants.TestOver:
 //                    eventHandle.OnTestOver(ModuleUtil.GetParamValue<ITestResultCollection>(eventParams, 0),
 //                        ModuleUtil.GetParamValue<ISequenceGroup>(eventParams, 1));
-                    eventHandle.OnTestOver(ModuleUtils.GetParamValue<ITestResultCollection>(eventParams, 0),
-                        (int)eventParams[1]);
+                    eventHandle.OnTestOver(ModuleUtils.GetParamValue<ITestResultCollection>(eventParams, 0));
                     break;
                 case Constants.BreakPointHitted:
-                    eventHandle.OnBreakPointHitted(ModuleUtils.GetParamValue<ISequenceDebugger>(eventParams, 0),
+                    eventHandle.OnBreakPointHitted(ModuleUtils.GetParamValue<IDebuggerHandle>(eventParams, 0),
                         ModuleUtils.GetParamValue<IDebugInformation>(eventParams, 1));
                     break;
                 default:

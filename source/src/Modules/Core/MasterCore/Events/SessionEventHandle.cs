@@ -74,29 +74,29 @@ namespace Testflow.MasterCore.Events
             TestGenerationEnd?.Invoke(generationinfo);
         }
 
-        internal void OnSequenceStarted(IRuntimeStatusInfo statusinfo, ICallStack stack)
+        internal void OnSequenceStarted(IRuntimeStatusInfo statusinfo)
         {
-            SequenceStarted?.Invoke(statusinfo, stack);
+            SequenceStarted?.Invoke(statusinfo);
         }
 
-        internal void OnStatusReceived(IRuntimeStatusInfo statusinfo, ICallStack stack)
+        internal void OnStatusReceived(IRuntimeStatusInfo statusinfo)
         {
-            StatusReceived?.Invoke(statusinfo, stack);
+            StatusReceived?.Invoke(statusinfo);
         }
 
-        internal void OnSequenceOver(IRuntimeStatusInfo statusinfo, ICallStack stack)
+        internal void OnSequenceOver(IRuntimeStatusInfo statusinfo)
         {
-            SequenceOver?.Invoke(statusinfo, stack);
+            SequenceOver?.Invoke(statusinfo);
         }
 
-        internal void OnTestOver(ITestResultCollection statistics, int sequencegroupIndex)
+        internal void OnTestOver(ITestResultCollection statistics)
         {
-            TestOver?.Invoke(statistics, sequencegroupIndex);
+            TestOver?.Invoke(statistics);
         }
 
-        internal void OnBreakPointHitted(ISequenceDebugger debugger, IDebugInformation information)
+        internal void OnBreakPointHitted(IDebuggerHandle debuggerHandle, IDebugInformation information)
         {
-            BreakPointHitted?.Invoke(debugger, information);
+            BreakPointHitted?.Invoke(debuggerHandle, information);
         }
 
         internal void OnTestGenerationReport(ITestGenerationInfo generationinfo)

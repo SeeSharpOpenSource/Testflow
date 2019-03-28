@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading;
 using Testflow.CoreCommon.Common;
 using Testflow.CoreCommon.Data;
+using Testflow.CoreCommon.Data.EventInfos;
 using Testflow.CoreCommon.Messages;
 using Testflow.Data.Sequence;
 using Testflow.MasterCore.Common;
@@ -19,12 +21,14 @@ namespace Testflow.MasterCore.Core
         private readonly ModuleGlobalInfo _globalInfo;
         private readonly Dictionary<int, List<string>> _watchVariables;
         private readonly Dictionary<int, List<CallStack>> _breakPoints;
+        private int _debugHitSession;
 
         public DebugManager(ModuleGlobalInfo globalInfo)
         {
             this._globalInfo = globalInfo;
             _watchVariables = new Dictionary<int, List<string>>(Constants.DefaultRuntimeSize);
             _breakPoints = new Dictionary<int, List<CallStack>>(Constants.DefaultRuntimeSize);
+            _debugHitSession = Constants.NoDebugHitSession;
         }
 
         public void AddWatchVariable(int session, IVariable variable)
@@ -112,6 +116,31 @@ namespace Testflow.MasterCore.Core
             }
         }
 
+        public void SendInitBreakPointMessage(int sessionId)
+        {
+            if (_breakPoints.ContainsKey(sessionId))
+            {
+                foreach (CallStack breakPoint in _breakPoints[sessionId])
+                {
+                    SendAddBreakPointMessage(sessionId, breakPoint);
+                }
+            }
+        }
+
+        public void Continue()
+        {
+            if (_debugHitSession == Constants.NoDebugHitSession)
+            {
+                return;
+            }
+            DebugMessage debugMessage = new DebugMessage(MessageNames.DownDebugMsgName, _debugHitSession,
+                DebugMessageType.FreeDebugBlock);
+            _globalInfo.MessageTransceiver.Send(debugMessage);
+
+            DebugEventInfo debugEvent = new DebugEventInfo(debugMessage);
+            _globalInfo.EventQueue.Enqueue(debugEvent);
+        }
+
         private void SendAddBreakPointMessage(int sessionId, CallStack callStack)
         {
             DebugMessage debugMessage = new DebugMessage(MessageNames.DownDebugMsgName, sessionId,
@@ -132,7 +161,7 @@ namespace Testflow.MasterCore.Core
             _globalInfo.MessageTransceiver.Send(debugMessage);
         }
 
-        private void SendRefreshWatchMessage(int sessionId)
+        public void SendRefreshWatchMessage(int sessionId)
         {
             DebugMessage debugMessage = new DebugMessage(MessageNames.DownDebugMsgName, sessionId,
                 DebugMessageType.RefreshWatch)
@@ -153,7 +182,9 @@ namespace Testflow.MasterCore.Core
             switch (messageType)
             {
                 case DebugMessageType.BreakPointHitted:
-                    // TODO
+                    Thread.VolatileWrite(ref _debugHitSession, debugMessage.Id);
+                    DebugEventInfo debugEvent = new DebugEventInfo(debugMessage);
+                    _globalInfo.EventQueue.Enqueue(debugEvent);
                     break;
                 default:
                     throw new ArgumentException();

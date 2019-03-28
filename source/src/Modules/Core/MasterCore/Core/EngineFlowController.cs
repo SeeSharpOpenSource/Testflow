@@ -52,7 +52,10 @@ namespace Testflow.MasterCore.Core
             _globalInfo.MessageTransceiver.AddConsumer(MessageType.Ctrl.ToString(), this);
             _globalInfo.MessageTransceiver.AddConsumer(MessageType.RuntimeError.ToString(), this);
             _globalInfo.MessageTransceiver.AddConsumer(MessageType.RmtGen.ToString(), _testsMaintainer);
-            _globalInfo.MessageTransceiver.AddConsumer(MessageType.Debug.ToString(), _debugManager);
+            if (EnableDebug)
+            {
+                _globalInfo.MessageTransceiver.AddConsumer(MessageType.Debug.ToString(), _debugManager);
+            }
         }
 
         public void Initialize(ISequenceFlowContainer sequenceContainer)
@@ -98,10 +101,16 @@ namespace Testflow.MasterCore.Core
                     _testsMaintainer.SendTestGenMessage(ModuleUtils.GetSessionId(testProject, sequenceGroup), 
                         sequenceManager.RuntimeSerialize(sequenceGroup));
                 }
+                // 初始化每个模块的监听变量
+                foreach (int session in _testsMaintainer.TestContainers.Keys)
+                {
+                    _debugManager?.SendInitBreakPointMessage(session);
+                }
             }
             else
             {
                 _testsMaintainer.SendTestGenMessage(0, sequenceManager.RuntimeSerialize(_sequenceData as ISequenceGroup));
+                _debugManager?.SendInitBreakPointMessage(0);
             }
             // 等待远程生成结束
             _blockHandle.Wait(Constants.RmtGenState);

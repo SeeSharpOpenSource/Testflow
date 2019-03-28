@@ -20,6 +20,11 @@
         /// <summary>
         /// 断点命中
         /// </summary>
-        BreakPointHitted = 3
+        BreakPointHitted = 3,
+
+        /// <summary>
+        /// 释放调试阻塞
+        /// </summary>
+        FreeDebugBlock = 4
     }
 }

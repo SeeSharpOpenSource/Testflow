@@ -39,5 +39,6 @@ namespace Testflow.MasterCore.Common
 
         #endregion
 
+        public const int NoDebugHitSession = -1000;
     }
 }

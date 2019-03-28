@@ -31,7 +31,7 @@ namespace Testflow.MasterCore.Common
             this.I18N = I18N.GetInstance(Constants.I18nName);
             this.LogService = TestflowRunner.LogService;
             this.ConfigData = configData;
-            this.ExceptionManager = new ExceptionManager();
+            this.ExceptionManager = new ExceptionManager(LogService);
         }
 
         public void RuntimeInitialize(MessageTransceiver messageTransceiver)
