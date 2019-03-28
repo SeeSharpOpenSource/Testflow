@@ -6,7 +6,7 @@ namespace Testflow.Runtime
     /// <summary>
     /// 序列调试器的集合
     /// </summary>
-    public interface ISequenceDebuggerCollection : ISerializableMap<int, ISequenceDebugger>
+    public interface ISequenceDebuggerCollection : ISerializableMap<int, IDebuggerHandle>
     {
          
     }

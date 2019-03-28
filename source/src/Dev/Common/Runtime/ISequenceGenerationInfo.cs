@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Testflow.Common;
 using Testflow.Data.Sequence;
 
 namespace Testflow.Runtime
@@ -11,11 +12,11 @@ namespace Testflow.Runtime
         /// <summary>
         /// 测试生成状态信息
         /// </summary>
-        IList<GenerationStatus> Status { get; }
+        ISerializableMap<int, GenerationStatus> Status { get; }
 
         /// <summary>
         /// 事件对应的Sequence索引号
         /// </summary>
-        IList<int> SequenceIndex { get; }
+        IList<int> Session { get; }
     }
 }

@@ -16,11 +16,6 @@ namespace Testflow.Runtime
         int SessionId { get; }
 
         /// <summary>
-        /// 当前序列索引号
-        /// </summary>
-        int SequenceIndex { get; set; }
-
-        /// <summary>
         /// 当前报告在当前序列信息发送的索引号
         /// </summary>
         ulong StatusIndex { get; set; }
@@ -64,10 +59,5 @@ namespace Testflow.Runtime
         /// 调用堆栈
         /// </summary>
         ICallStack CallStack { get; }
-
-        /// <summary>
-        /// 变量的实时取值
-        /// </summary>
-        ISerializableMap<string, object> VariableValues { get; }
     }
 }

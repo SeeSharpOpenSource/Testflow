@@ -11,7 +11,6 @@ namespace Testflow.CoreCommon.Data
     {
 
         public int SessionId { get; set; }
-        public int SequenceIndex { get; set; }
         public ulong StatusIndex { get; set; }
         public DateTime StartTime { get; set; }
         public TimeSpan ElapsedTime { get; set; }
@@ -21,21 +20,10 @@ namespace Testflow.CoreCommon.Data
         public ulong ProcessorTime { get; set; }
         public RuntimeState State { get; set; }
 
-        [MQIgnore]
-        public ICallStack CallStack => RawCallStack;
-
-        [MQIgnore]
-        public ISerializableMap<string, object> VariableValues => RawVarValues;
-
-        public CallStack RawCallStack { get; set; }
-
-        public SerializableMap<string, object> RawVarValues { get; set; }
-
+        public ICallStack CallStack { get; set; }
 
         public RuntimeStatusInfo()
         {
-            this.RawVarValues = new SerializableMap<string, object>(CoreConstants.DefaultRuntimeSize);
-            this.RawCallStack = new CallStack();
         }
 
         public void InitExtendProperties()

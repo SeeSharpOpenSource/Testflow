@@ -8,22 +8,8 @@ namespace Testflow.Runtime
     /// <summary>
     /// 单个测试序列的调试会话
     /// </summary>
-    public interface ISequenceDebugger
+    public interface IDebuggerHandle
     {
-        /// <summary>
-        /// 断点信息
-        /// </summary>
-        IBreakPointsInfo BreakPoints { get; }
-
-        /// <summary>
-        /// 未命中的断点步骤
-        /// </summary>
-        IList<ISequenceStep> UnreachedBreakPoints { get; }
-        
-        /// <summary>
-        /// 当前断点序列步骤
-        /// </summary>
-        ISequenceStep CurrentStep { get; }
 
         #region 调试流程控制
 

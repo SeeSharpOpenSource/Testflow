@@ -13,7 +13,7 @@ namespace Testflow.Runtime
         /// <summary>
         /// 断点命中信息
         /// </summary>
-        ICallStack DebugStack { get; }
+        ICallStack BreakPoint { get; }
 
         /// <summary>
         /// CPU使用事件，单位为ms
@@ -23,6 +23,6 @@ namespace Testflow.Runtime
         /// <summary>
         /// 变量调试信息
         /// </summary>
-        ISerializableMap<string, object> VariableDebugInfo { get; }
+        ISerializableMap<string, string> WatchDatas { get; }
     }
 }

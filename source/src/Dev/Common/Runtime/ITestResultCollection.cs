@@ -8,34 +8,40 @@ namespace Testflow.Runtime
     /// </summary>
     public interface ITestResultCollection : ISerializableMap<int, ISequenceTestResult>
     {
+
+        /// <summary>
+        /// 所在的会话ID
+        /// </summary>
+        int Session { get; set; }
+
         /// <summary>
         /// SetUp模块是否成功
         /// </summary>
-        bool SetUpSuccess { get; }
+        bool SetUpSuccess { get; set; }
 
         /// <summary>
         /// 成功执行的序列个数
         /// </summary>
-        int SuccessCount { get; }
+        int SuccessCount { get; set; }
 
         /// <summary>
         /// 失败的序列个数
         /// </summary>
-        int FailedCount { get; }
+        int FailedCount { get; set; }
 
         /// <summary>
         /// 超时的序列个数
         /// </summary>
-        int TimeOutCount { get; }
+        int TimeOutCount { get; set; }
 
         /// <summary>
         /// TearDown模块是否成功
         /// </summary>
-        bool TearDownSuccess { get; }
+        bool TearDownSuccess { get; set; }
 
         /// <summary>
         /// 变量的实时取值
         /// </summary>
-        ISerializableMap<string, object> VariableValues { get; }
+        ISerializableMap<string, string> WatchData { get; set; }
     }
 }

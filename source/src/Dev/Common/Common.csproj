@@ -95,9 +95,8 @@
       <DesignTime>True</DesignTime>
     </Compile>
     <Compile Include="Runtime\GenerationStatus.cs" />
-    <Compile Include="Runtime\IBreakPointsInfo.cs" />
     <Compile Include="Runtime\IDebugInformation.cs" />
-    <Compile Include="Runtime\ISequenceDebugger.cs" />
+    <Compile Include="Runtime\IDebuggerHandle.cs" />
     <Compile Include="DesignTime\IDesignTimeService.cs" />
     <Compile Include="DesignTime\IDesigntimeContext.cs" />
     <Compile Include="Data\Description\IFuncInterfaceDescription.cs" />

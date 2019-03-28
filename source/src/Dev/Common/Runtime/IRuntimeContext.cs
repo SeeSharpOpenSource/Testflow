@@ -67,17 +67,12 @@ namespace Testflow.Runtime
         /// <summary>
         /// 当前的调试器
         /// </summary>
-        ISequenceDebugger Debugger { get; }
+        IDebuggerHandle DebuggerHandle { get; }
 
         /// <summary>
         /// 所有序列的运行时状态信息
         /// </summary>
         IRuntimeStatusCollection RunTimeStatus { get; }
-
-        /// <summary>
-        /// 所有序列被标记的断点
-        /// </summary>
-        IDictionary<int, IBreakPointsInfo> BreakPoints { get; set; }
     }
 
     
