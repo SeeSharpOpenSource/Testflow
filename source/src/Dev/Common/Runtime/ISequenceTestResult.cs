@@ -59,6 +59,6 @@ namespace Testflow.Runtime
         /// <summary>
         /// 变量的事实取值
         /// </summary>
-        ISerializableMap<string, object> VariableValues { get; }
+        ISerializableMap<string, string> VariableValues { get; }
     }
 }

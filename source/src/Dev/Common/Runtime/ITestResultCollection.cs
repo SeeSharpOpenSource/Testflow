@@ -35,9 +35,19 @@ namespace Testflow.Runtime
         int TimeOutCount { get; set; }
 
         /// <summary>
+        /// 终止的序列个数
+        /// </summary>
+        int AbortCount { get; set; }
+
+        /// <summary>
         /// TearDown模块是否成功
         /// </summary>
         bool TearDownSuccess { get; set; }
+
+        /// <summary>
+        /// 运行是否结束
+        /// </summary>
+        bool TestOver { get; set; }
 
         /// <summary>
         /// 变量的实时取值

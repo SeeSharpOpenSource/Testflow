@@ -60,5 +60,15 @@
         /// 广播会话ID
         /// </summary>
         public const int BroadcastSession = -10;
+
+        /// <summary>
+        /// Setup序列的id
+        /// </summary>
+        public const int SetupIndex = -1;
+
+        /// <summary>
+        /// Teardown序列的id
+        /// </summary>
+        public const int TeardownIndex = -2;
     }
 }

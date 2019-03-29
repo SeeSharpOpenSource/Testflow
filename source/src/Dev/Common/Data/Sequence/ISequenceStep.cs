@@ -36,6 +36,11 @@ namespace Testflow.Data.Sequence
         bool BreakIfFailed { get; set; }
 
         /// <summary>
+        /// 标记当前Step的执行状态是否会被记录
+        /// </summary>
+        bool RecordStatus { get; set; }
+
+        /// <summary>
         /// 运行行为，正常运行/跳过/强制成功/强制失败
         /// </summary>
         RunBehavior Behavior { get; set; }

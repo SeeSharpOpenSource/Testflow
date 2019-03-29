@@ -1,11 +1,12 @@
 ﻿using System.Collections.Generic;
+using Testflow.Common;
 
 namespace Testflow.Runtime
 {
     /// <summary>
     /// 测试生成信息
     /// </summary>
-    public interface ITestGenerationInfo
+    public interface ITestGenerationInfo : ICloneableClass<ITestGenerationInfo>
     {
         /// <summary>
         /// 测试生成状态信息
@@ -13,8 +14,8 @@ namespace Testflow.Runtime
         IList<ISequenceGenerationInfo> GenerationInfos { get; }
 
         /// <summary>
-        /// 事件对应的SequenceGroup索引号
+        /// TestProject根节点的生成信息
         /// </summary>
-        IList<int> SequenceGroupIndex { get; }
+        ISequenceGenerationInfo RootGenerationInfo { get; }
     }
 }

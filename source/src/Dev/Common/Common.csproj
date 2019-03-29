@@ -94,6 +94,12 @@
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
     </Compile>
+    <Compile Include="Runtime\Data\PerformanceData.cs" />
+    <Compile Include="Runtime\Data\TestInstanceData.cs" />
+    <Compile Include="Runtime\Data\SequenceResultData.cs" />
+    <Compile Include="Runtime\Data\SessionResultData.cs" />
+    <Compile Include="Runtime\Data\RuntimeStatusData.cs" />
+    <Compile Include="Runtime\Data\StepResult.cs" />
     <Compile Include="Runtime\GenerationStatus.cs" />
     <Compile Include="Runtime\IDebugInformation.cs" />
     <Compile Include="Runtime\IDebuggerHandle.cs" />
@@ -167,6 +173,7 @@
       <LastGenOutput>i18n_common_cn.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

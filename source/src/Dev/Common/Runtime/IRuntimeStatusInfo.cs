@@ -21,6 +21,16 @@ namespace Testflow.Runtime
         ulong StatusIndex { get; set; }
 
         /// <summary>
+        /// 开始生成的时间
+        /// </summary>
+        DateTime StartGenTime { get;  }
+
+        /// <summary>
+        /// 结束生成的时间
+        /// </summary>
+        DateTime EndGenTime { get; }
+
+        /// <summary>
         /// 当前会话的开始时间
         /// </summary>
         DateTime StartTime { get; }
@@ -33,7 +43,7 @@ namespace Testflow.Runtime
         /// <summary>
         /// 总运行时间
         /// </summary>
-        DateTime RecordTime { get; }
+        DateTime CurrentTime { get; }
 
         /// <summary>
         /// 内存占用

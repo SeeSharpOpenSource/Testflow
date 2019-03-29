@@ -82,20 +82,6 @@ namespace Testflow.Modules
         void UnregisterRuntimeEvent(Delegate callBack, string eventName, params object[] extraParams);
 
         /// <summary>
-        /// 添加SequenceGroup的运行时对象
-        /// </summary>
-        /// <param name="sequenceGroup">待添加的序列组数据</param>
-        /// <returns>会话ID</returns>
-        int SetRuntimeTarget(ISequenceGroup sequenceGroup);
-
-        /// <summary>
-        /// 添加TestProject的运行时对象
-        /// </summary>
-        /// <param name="testProject">待添加的测试工程</param>
-        /// <returns>TestProject对应的会话ID</returns>
-        int SetRuntimeTarget(ITestProject testProject);
-
-        /// <summary>
         /// 终止运行时会话
         /// </summary>
         void AbortRuntime(int sessionId);
