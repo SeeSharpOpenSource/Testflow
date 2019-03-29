@@ -10,12 +10,7 @@ namespace Testflow.CoreCommon.Data.EventInfos
         public TestState State { get; }
 
         public string ErrorInfo { get; set; }
-
-        public TestStateEventInfo(TestGenMessage message) : base(message.Id, EventType.TestGen, message.Time)
-        {
-            this.State = message.State;
-        }
-
+        
         public TestStateEventInfo(RmtGenMessage message, TestState state) : base(message.Id, EventType.TestGen, message.Time)
         {
             this.State = state;

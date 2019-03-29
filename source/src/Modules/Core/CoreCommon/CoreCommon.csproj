@@ -58,11 +58,7 @@
     <Compile Include="Data\HostInfo.cs" />
     <Compile Include="Data\EventInfos\EventInfoBase.cs" />
     <Compile Include="Data\PerformanceData.cs" />
-    <Compile Include="Data\RuntimeStatusInfo.cs" />
-    <Compile Include="Data\SequenceGenerationInfo.cs" />
     <Compile Include="Data\SyncResourceInfo.cs" />
-    <Compile Include="Data\TestGenerationInfo.cs" />
-    <Compile Include="Data\TestResultCollection.cs" />
     <Compile Include="Messages\ControlMessage.cs" />
     <Compile Include="Messages\DebugMessage.cs" />
     <Compile Include="Messages\MessageBase.cs" />

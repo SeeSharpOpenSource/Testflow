@@ -1,4 +1,5 @@
-﻿using System.Runtime.Serialization;
+﻿using System.Collections.Generic;
+using System.Runtime.Serialization;
 using Testflow.CoreCommon.Common;
 using Testflow.CoreCommon.Data;
 using Testflow.Runtime;
@@ -16,10 +17,13 @@ namespace Testflow.CoreCommon.Messages
 
         public PerformanceData Performance { get; set; }
 
+        public Dictionary<string, string> WatchData { get; }
+
         public StatusMessage(string name, CallStack stack, RuntimeState state, int id) : base(name, id, MessageType.Status)
         {
             this.Stack = stack;
             this.State = state;
+            this.WatchData = new Dictionary<string, string>(CoreConstants.DefaultRuntimeSize);
         }
 
         public StatusMessage(SerializationInfo info, StreamingContext context) : base(info, context)
@@ -27,6 +31,8 @@ namespace Testflow.CoreCommon.Messages
             this.Stack = info.GetValue("Stack", typeof(CallStack)) as CallStack;
             this.State = (RuntimeState) info.GetValue("State", typeof(RuntimeState));
             this.Performance = info.GetValue("Performance", typeof(PerformanceData)) as PerformanceData;
+            this.WatchData =
+                info.GetValue("WatchData", typeof (Dictionary<string, string>)) as Dictionary<string, string>;
         }
 
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
@@ -38,6 +44,7 @@ namespace Testflow.CoreCommon.Messages
             {
                 info.AddValue("Performance", Performance, typeof(PerformanceData));
             }
+            info.AddValue("WatchData", WatchData);
         }
     }
 }

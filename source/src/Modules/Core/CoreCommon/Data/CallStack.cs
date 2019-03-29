@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Runtime.Serialization;
+using System.Text;
 using Testflow.CoreCommon.Common;
 using Testflow.Data.Sequence;
 using Testflow.Runtime;
@@ -8,6 +9,8 @@ namespace Testflow.CoreCommon.Data
 {
     public class CallStack : ICallStack, ISerializable
     {
+        private const string StackDelim = "_";
+
         public CallStack()
         {
             SequenceGroupIndex = CoreConstants.UnverifiedSequenceIndex;
@@ -48,6 +51,19 @@ namespace Testflow.CoreCommon.Data
             }
             ITestProject testProject = (ITestProject) sequenceGroup.Parent;
             callStack.SequenceGroupIndex = testProject.SequenceGroups.IndexOf(sequenceGroup);
+            return callStack;
+        }
+
+        public static CallStack GetStack(string stackStr)
+        {
+            CallStack callStack = new CallStack();
+            string[] stackElement = stackStr.Split(StackDelim.ToCharArray());
+            callStack.SequenceGroupIndex = int.Parse(stackElement[0]);
+            callStack.SequenceIndex = int.Parse(stackElement[1]);
+            for (int i = 2; i < stackElement.Length; i++)
+            {
+                callStack.StepStack.Add(int.Parse(stackElement[i]));
+            }
             return callStack;
         }
 
@@ -92,6 +108,17 @@ namespace Testflow.CoreCommon.Data
                 hashCode = (hashCode * 397) ^ (StepStack != null ? StepStack.GetHashCode() : 0);
                 return hashCode;
             }
+        }
+
+        public override string ToString()
+        {
+            StringBuilder callStackStr = new StringBuilder(100);
+            callStackStr.Append(SequenceGroupIndex)
+                .Append(StackDelim)
+                .Append(SequenceIndex)
+                .Append(StackDelim)
+                .Append(string.Join(StackDelim, StepStack));
+            return callStackStr.ToString();
         }
     }
 }

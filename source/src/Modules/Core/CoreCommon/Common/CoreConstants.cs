@@ -30,6 +30,7 @@
         public const string StatusReceived = "StatusReceived";
         public const string SequenceOver = "SequenceOver";
         public const string TestOver = "TestOver";
+        public const string TestProjectOver = "TestProjectOver";
         public const string BreakPointHitted = "BreakPointHitted";
 
         #endregion
