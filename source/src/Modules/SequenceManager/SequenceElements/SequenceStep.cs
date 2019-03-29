@@ -23,6 +23,8 @@ namespace Testflow.SequenceManager.SequenceElements
             this.Behavior = RunBehavior.Normal;
             this.LoopCounter = null;
             this.RetryCounter = null;
+            this.RecordStatus = false;
+            this.BreakIfFailed = true;
         }
         [RuntimeSerializeIgnore]
         public string Name { get; set; }
@@ -50,6 +52,7 @@ namespace Testflow.SequenceManager.SequenceElements
         public bool HasSubSteps => (null != SubSteps && SubSteps.Count > 0);
 
         public bool BreakIfFailed { get; set; }
+        public bool RecordStatus { get; set; }
 
         public RunBehavior Behavior { get; set; }
 

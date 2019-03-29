@@ -33,9 +33,17 @@ namespace Testflow.SequenceManager.SequenceElements
             // 该参数只在序列化时生成
             this.Parameters = null;
             this.ExecutionModel = ExecutionModel.SequentialExecution;
-            this.SetUp = null;
+            this.SetUp = new Sequence()
+            {
+                Name = "SetUp",
+                Index = CommonConst.SetupIndex
+            };
             this.Sequences = new SequenceCollection();
-            this.TearDown = null;
+            this.TearDown = new Sequence()
+            {
+                Name = "TearDown",
+                Index = CommonConst.TeardownIndex
+            };
         }
 
         [RuntimeSerializeIgnore]

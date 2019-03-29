@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Runtime.Serialization;
 using System.Xml.Serialization;
 using Newtonsoft.Json;
+using Testflow.Common;
 using Testflow.Data;
 using Testflow.Data.Sequence;
 using Testflow.SequenceManager.Common;
@@ -23,12 +24,20 @@ namespace Testflow.SequenceManager.SequenceElements
             this.ExecutionModel = ExecutionModel.SequentialExecution;
             this.Variables = new VariableCollection();
             this.VariableValues = new VariableInitValueCollection();
-            this.SetUp = new Sequence();
+            this.SetUp = new Sequence()
+            {
+                Name = "SetUp",
+                Index = CommonConst.SetupIndex
+            };
             this.SetUpParameters = new SequenceParameter();
             this.SequenceGroups = new SequenceGroupCollection();
             this.SequenceGroupParameters = new ParameterDataCollections();
             this.SequenceGroupLocations = null;
-            this.TearDown = new Sequence();
+            this.TearDown = new Sequence()
+            {
+                Name = "TearDown",
+                Index = CommonConst.TeardownIndex
+            };
             this.TearDownParameters = new SequenceParameter();
             this.ModelVersion = string.Empty;
         }
