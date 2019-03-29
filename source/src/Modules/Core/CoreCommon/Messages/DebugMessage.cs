@@ -35,9 +35,10 @@ namespace Testflow.CoreCommon.Messages
 
         public DebugMessage(SerializationInfo info, StreamingContext context) : base(info, context)
         {
-            this.BreakPoint = info.GetValue("Stack", typeof(CallStack)) as CallStack;
-            this.WatchData = info.GetValue("Data", typeof(DebugWatchData)) as DebugWatchData;
-            this.DebugMsgType = (DebugMessageType) info.GetValue("DebugMsgType", typeof (DebugMessageType));
+//            this.BreakPoint = info.GetValue("Stack", typeof(CallStack)) as CallStack;
+//            this.WatchData = info.GetValue("Data", typeof(DebugWatchData)) as DebugWatchData;
+//            this.DebugMsgType = (DebugMessageType) info.GetValue("DebugMsgType", typeof (DebugMessageType));
+            CoreUtils.SetMessageValue(info, this, this.GetType());
         }
 
         public override void GetObjectData(SerializationInfo info, StreamingContext context)

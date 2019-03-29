@@ -28,11 +28,13 @@ namespace Testflow.CoreCommon.Messages
 
         public StatusMessage(SerializationInfo info, StreamingContext context) : base(info, context)
         {
-            this.Stack = info.GetValue("Stack", typeof(CallStack)) as CallStack;
-            this.State = (RuntimeState) info.GetValue("State", typeof(RuntimeState));
-            this.Performance = info.GetValue("Performance", typeof(PerformanceData)) as PerformanceData;
-            this.WatchData =
-                info.GetValue("WatchData", typeof (Dictionary<string, string>)) as Dictionary<string, string>;
+//            this.Stack = info.GetValue("Stack", typeof(CallStack)) as CallStack;
+//            this.State = (RuntimeState)info.GetValue("State", typeof(RuntimeState));
+//            this.Performance = info.GetValue("Performance", typeof(PerformanceData)) as PerformanceData;
+//            this.WatchData =
+//                info.GetValue("WatchData", typeof(Dictionary<string, string>)) as Dictionary<string, string>;
+            CoreUtils.SetMessageValue(info, this, this.GetType());
+
         }
 
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
@@ -44,7 +46,10 @@ namespace Testflow.CoreCommon.Messages
             {
                 info.AddValue("Performance", Performance, typeof(PerformanceData));
             }
-            info.AddValue("WatchData", WatchData);
+            if (null != WatchData && WatchData.Count > 0)
+            {
+                info.AddValue("WatchData", WatchData, typeof(Dictionary<string, string>));
+            }
         }
     }
 }

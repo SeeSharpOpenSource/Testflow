@@ -44,11 +44,12 @@ namespace Testflow.CoreCommon.Messages
 
         public RmtGenMessage(SerializationInfo info, StreamingContext context) : base(info, context)
         {
-            this.SequenceType = (RunnerType) info.GetValue("SequenceType", typeof (RunnerType));
-            this.Sequence = (string) info.GetValue("Sequence", typeof (string));
-            this.Params = info.GetValue("Params", typeof (Dictionary<string, string>)) as Dictionary<string, string>;
-            this.MasterHost = info.GetValue("MasterHost", typeof (HostInfo)) as HostInfo;
-            this.RunnerHost = info.GetValue("RunnerHost", typeof (HostInfo)) as HostInfo;
+//            this.SequenceType = (RunnerType) info.GetValue("SequenceType", typeof (RunnerType));
+//            this.Sequence = (string) info.GetValue("Sequence", typeof (string));
+//            this.Params = info.GetValue("Params", typeof (Dictionary<string, string>)) as Dictionary<string, string>;
+//            this.MasterHost = info.GetValue("MasterHost", typeof (HostInfo)) as HostInfo;
+//            this.RunnerHost = info.GetValue("RunnerHost", typeof (HostInfo)) as HostInfo;
+            CoreUtils.SetMessageValue(info, this, this.GetType());
         }
 
         public override void GetObjectData(SerializationInfo info, StreamingContext context)

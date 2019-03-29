@@ -28,7 +28,8 @@ namespace Testflow.CoreCommon.Messages
 
         public ControlMessage(SerializationInfo info, StreamingContext context) : base(info, context)
         {
-            Params = info.GetValue("Params", typeof (Dictionary<string, string>)) as Dictionary<string, string>;
+//            Params = info.GetValue("Params", typeof (Dictionary<string, string>)) as Dictionary<string, string>;
+            CoreUtils.SetMessageValue(info, this, this.GetType());
         }
 
         public void AddParam(string paramName, string paramValue)

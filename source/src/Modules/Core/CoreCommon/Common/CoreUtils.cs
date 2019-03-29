@@ -1,7 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
+using System.Runtime.Serialization;
 using System.Text;
 using Testflow.CoreCommon.Data;
+using Testflow.CoreCommon.Messages;
 using Testflow.Data.Sequence;
 using Testflow.Runtime;
 
@@ -110,6 +114,17 @@ namespace Testflow.CoreCommon.Common
             {
                 return testProject.SequenceGroups[int.Parse(variableElement[1])].Sequences[int.Parse(variableElement[2])]
                         .Variables.FirstOrDefault(item => item.Name.Equals(variableElement[3]));
+            }
+        }
+
+        public static void SetMessageValue(SerializationInfo info, object target, Type type)
+        {
+            SerializationInfoEnumerator enumerator = info.GetEnumerator();
+            while (enumerator.MoveNext())
+            {
+                PropertyInfo propertyInfo = type.GetProperty(enumerator.Name,
+                    BindingFlags.Instance | BindingFlags.Public);
+                propertyInfo.SetValue(target, info.GetValue(enumerator.Name, propertyInfo.PropertyType));
             }
         }
     }
