@@ -44,7 +44,7 @@ namespace Testflow.Runtime
         /// <summary>
         /// 消耗的时间，单位为ms
         /// </summary>
-        ulong ElapsedTime { get; set; }
+        double ElapsedTime { get; set; }
 
         /// <summary>
         /// 性能测试结果

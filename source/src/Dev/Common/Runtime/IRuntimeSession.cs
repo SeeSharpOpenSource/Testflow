@@ -28,6 +28,21 @@ namespace Testflow.Runtime
         #region Status相关事件
 
         /// <summary>
+        /// 测试生成开始事件
+        /// </summary>
+        event RuntimeDelegate.TestGenerationAction TestGenerationStart;
+
+        /// <summary>
+        /// 测试生成中间事件，生成过程中会不间断生成该事件
+        /// </summary>
+        event RuntimeDelegate.TestGenerationAction TestGenerationReport;
+
+        /// <summary>
+        /// 测试生成结束事件
+        /// </summary>
+        event RuntimeDelegate.TestGenerationAction TestGenerationEnd;
+
+        /// <summary>
         /// 整个测试工程的测试开始时触发
         /// </summary>
         event RuntimeDelegate.StatusReceivedAction TestStart;
