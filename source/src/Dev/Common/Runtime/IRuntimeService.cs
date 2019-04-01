@@ -49,12 +49,12 @@ namespace Testflow.Runtime
         /// <summary>
         /// 所有测试执行结束后触发
         /// </summary>
-        event RuntimeDelegate.StatusReceivedAction TestStart;
+        event RuntimeDelegate.TestProjectStatusAction TestStart;
 
         /// <summary>
         /// 所有测试执行结束后触发
         /// </summary>
-        event RuntimeDelegate.TestProjectOverAction TestOver;
+        event RuntimeDelegate.TestProjectStatusAction TestOver;
 
         #endregion
 

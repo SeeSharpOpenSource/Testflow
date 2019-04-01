@@ -35,6 +35,6 @@ namespace Testflow.Runtime
         /// 测试工程所有项目执行结束后的委托
         /// </summary>
         /// <param name="statistics">执行结束后的统计信息</param>
-        public delegate void TestProjectOverAction(IList<ITestResultCollection> statistics);
+        public delegate void TestProjectStatusAction(IList<ITestResultCollection> statistics);
     }
 }
