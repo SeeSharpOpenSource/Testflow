@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Xml.Serialization;
 using Testflow.Common;
+using Testflow.Data.Sequence;
 
 namespace Testflow.Runtime
 {
@@ -66,13 +67,23 @@ namespace Testflow.Runtime
         RuntimeState State { get; }
 
         /// <summary>
-        /// 失败信息
+        /// 所有序列执行的堆栈信息
         /// </summary>
-        string FailedInfo { get; }
+        IList<ICallStack> CallStacks { get; }
 
         /// <summary>
-        /// 调用堆栈
+        /// 所有序列的状态信息
         /// </summary>
-        ICallStack CallStack { get; }
+        IList<RuntimeState> SequenceState { get; }
+
+        /// <summary>
+        /// 失败信息
+        /// </summary>
+        IList<string> FailedInfos { get; set; }
+
+        /// <summary>
+        /// 被监视的变量数据
+        /// </summary>
+        IDictionary<IVariable, string> WatchDatas { get; set; }
     }
 }

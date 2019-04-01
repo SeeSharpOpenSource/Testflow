@@ -33,7 +33,7 @@ namespace Testflow.MasterCore.Core
 
         public void AddWatchVariable(int session, IVariable variable)
         {
-            string variableName = CoreUtils.GetRuntimeVariableName(variable);
+            string variableName = CoreUtils.GetRuntimeVariableName(session, variable);
             if (!_watchVariables.ContainsKey(session))
             {
                 _watchVariables.Add(session, new List<string>(Constants.DefaultRuntimeSize));
@@ -52,7 +52,7 @@ namespace Testflow.MasterCore.Core
 
         public void RemoveWatchVariable(int session, IVariable variable)
         {
-            string variableName = CoreUtils.GetRuntimeVariableName(variable);
+            string variableName = CoreUtils.GetRuntimeVariableName(session, variable);
             if (!_watchVariables.ContainsKey(session))
             {
                 return;

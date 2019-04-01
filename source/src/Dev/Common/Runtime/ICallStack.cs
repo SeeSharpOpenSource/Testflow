@@ -9,9 +9,9 @@ namespace Testflow.Runtime
     public interface ICallStack
     {
         /// <summary>
-        /// 被调用测试组
+        /// 会话索引号
         /// </summary>
-        int SequenceGroupIndex { get; }
+        int SessionIndex { get; }
 
         /// <summary>
         /// 被调用测试序列

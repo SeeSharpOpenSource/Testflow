@@ -13,12 +13,12 @@ namespace Testflow.CoreCommon.Data
 
         public CallStack()
         {
-            SequenceGroupIndex = CoreConstants.UnverifiedSequenceIndex;
+            SessionIndex = CoreConstants.UnverifiedSequenceIndex;
             SequenceIndex = CoreConstants.UnverifiedSequenceIndex;
             this.StepStack = new List<int>(CoreConstants.DefaultRuntimeSize);
         }
 
-        public int SequenceGroupIndex { get; internal set; }
+        public int SessionIndex { get; internal set; }
         public int SequenceIndex { get; internal set; }
 
         public IList<int> StepStack { get; internal set; }
@@ -50,7 +50,7 @@ namespace Testflow.CoreCommon.Data
                 return callStack;
             }
             ITestProject testProject = (ITestProject) sequenceGroup.Parent;
-            callStack.SequenceGroupIndex = testProject.SequenceGroups.IndexOf(sequenceGroup);
+            callStack.SessionIndex = testProject.SequenceGroups.IndexOf(sequenceGroup);
             return callStack;
         }
 
@@ -58,7 +58,7 @@ namespace Testflow.CoreCommon.Data
         {
             CallStack callStack = new CallStack();
             string[] stackElement = stackStr.Split(StackDelim.ToCharArray());
-            callStack.SequenceGroupIndex = int.Parse(stackElement[0]);
+            callStack.SessionIndex = int.Parse(stackElement[0]);
             callStack.SequenceIndex = int.Parse(stackElement[1]);
             for (int i = 2; i < stackElement.Length; i++)
             {
@@ -69,14 +69,14 @@ namespace Testflow.CoreCommon.Data
 
         public CallStack(SerializationInfo info, StreamingContext context)
         {
-            this.SequenceGroupIndex = (int) info.GetValue("SequenceGroupIndex", typeof(int));
+            this.SessionIndex = (int) info.GetValue("SequenceGroupIndex", typeof(int));
             this.SequenceIndex = (int) info.GetValue("SequenceIndex", typeof(int));
             this.StepStack = info.GetValue("StepStack", typeof(List<int>)) as List<int>;
         }
 
         public void GetObjectData(SerializationInfo info, StreamingContext context)
         {
-            info.AddValue("SequenceGroupIndex", SequenceGroupIndex);
+            info.AddValue("SequenceGroupIndex", SessionIndex);
             info.AddValue("SequenceIndex", SequenceIndex);
             info.AddValue("StepStack", StepStack, typeof(List<int>));
         }
@@ -84,7 +84,7 @@ namespace Testflow.CoreCommon.Data
         public override bool Equals(object obj)
         {
             CallStack callStack = obj as CallStack;
-            if (null == callStack || SequenceGroupIndex != callStack.SequenceGroupIndex ||
+            if (null == callStack || SessionIndex != callStack.SessionIndex ||
                 SequenceIndex != callStack.SequenceIndex || callStack.StepStack.Count != StepStack.Count)
             {
                 return false;
@@ -103,7 +103,7 @@ namespace Testflow.CoreCommon.Data
         {
             unchecked
             {
-                int hashCode = SequenceGroupIndex;
+                int hashCode = SessionIndex;
                 hashCode = (hashCode * 397) ^ SequenceIndex;
                 hashCode = (hashCode * 397) ^ (StepStack != null ? StepStack.GetHashCode() : 0);
                 return hashCode;
@@ -113,7 +113,7 @@ namespace Testflow.CoreCommon.Data
         public override string ToString()
         {
             StringBuilder callStackStr = new StringBuilder(100);
-            callStackStr.Append(SequenceGroupIndex)
+            callStackStr.Append(SessionIndex)
                 .Append(StackDelim)
                 .Append(SequenceIndex)
                 .Append(StackDelim)

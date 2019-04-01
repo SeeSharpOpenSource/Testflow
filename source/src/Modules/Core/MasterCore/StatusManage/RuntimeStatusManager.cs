@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading;
 using Testflow.Common;
+using Testflow.CoreCommon.Common;
 using Testflow.CoreCommon.Data;
 using Testflow.CoreCommon.Data.EventInfos;
 using Testflow.CoreCommon.Messages;
@@ -22,7 +23,8 @@ namespace Testflow.MasterCore.StatusManage
         private Thread _internalMessageThd;
         private CancellationTokenSource _cancellation;
         private readonly Dictionary<string, Action<EventInfoBase>> _eventProcessActions;
-        private readonly Dictionary<int, SessionStateMaintainer> _stateMaintainers;
+        private readonly Dictionary<int, SessionStateHandle> _sessionStateHandles;
+        private StateManageInfo _stateManageInfo;
 
         public RuntimeStatusManager(ModuleGlobalInfo globalInfo)
         {
@@ -35,35 +37,41 @@ namespace Testflow.MasterCore.StatusManage
             _eventProcessActions.Add(typeof(SyncEventInfo).Name, SyncEventProcess);
             _eventProcessActions.Add(typeof(TestStateEventInfo).Name, TestGenEventProcess);
 
-            this._stateMaintainers = new Dictionary<int, SessionStateMaintainer>(Constants.DefaultRuntimeSize);
+            this._sessionStateHandles = new Dictionary<int, SessionStateHandle>(Constants.DefaultRuntimeSize);
         }
 
         public void Initialize(ISequenceFlowContainer sequenceData)
         {
+            _stateManageInfo = new StateManageInfo(_globalInfo, sequenceData);
             if (sequenceData is ITestProject)
             {
                 ITestProject testProject = (ITestProject)sequenceData;
-                SessionStateMaintainer testProjectSession = new SessionStateMaintainer(_globalInfo,
-                    CommonConst.TestGroupSession, testProject);
-                _stateMaintainers.Add(testProjectSession.Session, testProjectSession);
+                SessionStateHandle testProjectStateHandle = new SessionStateHandle(testProject,
+                    _stateManageInfo);
+                _sessionStateHandles.Add(testProjectStateHandle.Session, testProjectStateHandle);
 
-                int sessionIndex = 0;
-                foreach (ISequenceGroup sequenceGroup in testProject.SequenceGroups)
+                for (int index = 0; index < testProject.SequenceGroups.Count; index++)
                 {
-                    SessionStateMaintainer stateManager = new SessionStateMaintainer(_globalInfo, sessionIndex++,
-                        sequenceGroup);
-                    _stateMaintainers.Add(stateManager.Session, stateManager);
+                    SessionStateHandle stateHandle = new SessionStateHandle(index, testProject.SequenceGroups[index], 
+                        _stateManageInfo);
+                    _sessionStateHandles.Add(stateHandle.Session, stateHandle);
                 }
             }
             else
             {
-                SessionStateMaintainer stateMaintainer = new SessionStateMaintainer(_globalInfo, 0, (ISequenceGroup)sequenceData);
-                _stateMaintainers.Add(stateMaintainer.Session, stateMaintainer);
+                SessionStateHandle stateHandle = new SessionStateHandle(0, (ISequenceGroup) sequenceData,
+                    _stateManageInfo);
+                _sessionStateHandles.Add(stateHandle.Session, stateHandle);
             }
         }
 
         public void Start()
         {
+            foreach (SessionStateHandle stateHandle in _sessionStateHandles.Values)
+            {
+                stateHandle.Start();
+            }
+
             _cancellation = new CancellationTokenSource();
             this._internalMessageThd = new Thread(ProcessInternalMessage)
             {
@@ -113,62 +121,85 @@ namespace Testflow.MasterCore.StatusManage
             }
         }
 
+        // 完成的功能：执行结束后构造TestInstanceData并持久化，转发测试消息和事件到下级
+        #region 事件和消息处理
+
         private void AbortEventProcess(EventInfoBase eventInfo)
         {
-            AbortEventInfo abortEvent = (AbortEventInfo)eventInfo;
+            AbortEventInfo abortEvent = (AbortEventInfo) eventInfo;
             if (abortEvent.Session == CommonConst.PlatformLogSession || IsRootEvent(eventInfo))
             {
-                foreach (SessionStateMaintainer stateMaintainer in _stateMaintainers.Values)
+                foreach (SessionStateHandle stateHandle in _sessionStateHandles.Values)
                 {
-                    stateMaintainer.AbortEventProcess(abortEvent);
+                    stateHandle.AbortEventProcess(abortEvent);
                 }
-//                _globalInfo.StateMachine.State = abortEvent.IsRequest ? RuntimeState.AbortRequested : RuntimeState.Abort;
             }
             else
             {
-                _stateMaintainers[abortEvent.Session].AbortEventProcess(abortEvent);
+                _sessionStateHandles[abortEvent.Session].AbortEventProcess(abortEvent);
             }
         }
 
         private void DebugEventProcess(EventInfoBase eventInfo)
         {
-            DebugEventInfo debugEvent = (DebugEventInfo)eventInfo;
-            _stateMaintainers[debugEvent.Session].DebugEventProcess(debugEvent);
+            DebugEventInfo debugEvent = (DebugEventInfo) eventInfo;
+            _sessionStateHandles[debugEvent.Session].DebugEventProcess(debugEvent);
         }
 
         private void ExceptionEventProcess(EventInfoBase eventInfo)
         {
-            ExceptionEventInfo exceptionEvent = (ExceptionEventInfo)eventInfo;
+            ExceptionEventInfo exceptionEvent = (ExceptionEventInfo) eventInfo;
             if (exceptionEvent.Session == CommonConst.PlatformLogSession || IsRootEvent(eventInfo))
             {
-                foreach (SessionStateMaintainer stateMaintainer in _stateMaintainers.Values)
+                foreach (SessionStateHandle stateHandle in _sessionStateHandles.Values)
                 {
-                    stateMaintainer.ExceptionEventProcess(exceptionEvent);
+                    stateHandle.ExceptionEventProcess(exceptionEvent);
                 }
 //                _globalInfo.StateMachine.State = RuntimeState.Failed;
             }
             else
             {
-                _stateMaintainers[exceptionEvent.Session].ExceptionEventProcess(exceptionEvent);
+                _sessionStateHandles[exceptionEvent.Session].ExceptionEventProcess(exceptionEvent);
             }
         }
 
         private void SyncEventProcess(EventInfoBase eventInfo)
         {
             SyncEventInfo syncEvent = (SyncEventInfo) eventInfo;
-            _stateMaintainers[syncEvent.Session].SyncEventProcess(syncEvent);
+            _sessionStateHandles[syncEvent.Session].SyncEventProcess(syncEvent);
         }
 
         private void TestGenEventProcess(EventInfoBase eventInfo)
         {
-            TestStateEventInfo testGenEvent = (TestStateEventInfo)eventInfo;
-            _stateMaintainers[testGenEvent.Session].TestGenEventProcess(testGenEvent);
+            TestStateEventInfo testGenEvent = (TestStateEventInfo) eventInfo;
+            _sessionStateHandles[testGenEvent.Session].TestGenEventProcess(testGenEvent);
         }
 
         public bool HandleMessage(MessageBase message)
         {
-            throw new System.NotImplementedException();
+            SessionStateHandle stateHandle = _sessionStateHandles[message.Id];
+            bool handleResult = false;
+            switch (message.Type)
+            {
+                case MessageType.Status:
+                    handleResult = stateHandle.HandleStatusMessage((StatusMessage) message);
+                    break;
+                case MessageType.TestGen:
+                    handleResult = stateHandle.HandleTestGenMessage((TestGenMessage) message);
+                    break;
+                case MessageType.Ctrl:
+                case MessageType.Debug:
+                case MessageType.RmtGen:
+                case MessageType.Sync:
+                case MessageType.RuntimeError:
+                default:
+                    throw new InvalidProgramException();
+            }
+            return handleResult;
         }
+
+        #endregion
+
 
         public void AddToQueue(MessageBase message)
         {
@@ -188,12 +219,22 @@ namespace Testflow.MasterCore.StatusManage
             this.Stop();
         }
 
+        public void StopIfAllTestOver()
+        {
+            EventDispatcher eventDispatcher = _stateManageInfo.EventDispatcher;
+            if (_stateManageInfo.IsAllTestOver)
+            {
+                eventDispatcher.RaiseEvent(CoreConstants.TestProjectOver, CommonConst.PlatformLogSession,
+                    _stateManageInfo.TestStatus);
+            }
+        }
+
         /// <summary>
         /// 是否为根序列的事件
         /// </summary>
         private bool IsRootEvent(EventInfoBase eventInfo)
         {
-            return (eventInfo.Session == CommonConst.TestGroupSession) || 1 == _stateMaintainers.Count;
+            return (eventInfo.Session == CommonConst.TestGroupSession) || 1 == _sessionStateHandles.Count;
         }
     }
 }

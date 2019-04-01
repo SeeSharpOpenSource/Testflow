@@ -36,6 +36,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Management" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -54,10 +55,18 @@
     <Compile Include="Core\DebugManager.cs" />
     <Compile Include="Core\RuntimeStateMachine.cs" />
     <Compile Include="EngineHandle.cs" />
-    <Compile Include="Events\EventsDispatcher.cs" />
+    <Compile Include="EventData\RuntimeStatusInfo.cs" />
+    <Compile Include="EventData\SequenceGenerationInfo.cs" />
+    <Compile Include="EventData\SequenceTestResult.cs" />
+    <Compile Include="EventData\TestGenerationInfo.cs" />
+    <Compile Include="EventData\TestProjectResults.cs" />
+    <Compile Include="EventData\TestResultCollection.cs" />
+    <Compile Include="StatusManage\EventDispatcher.cs" />
     <Compile Include="ExceptionManager.cs" />
     <Compile Include="Message\ZombieMessageCleaner.cs" />
-    <Compile Include="StatusManage\SessionStateMaintainer.cs" />
+    <Compile Include="StatusManage\SequenceStateHandle.cs" />
+    <Compile Include="StatusManage\StateManageInfo.cs" />
+    <Compile Include="StatusManage\StatePersistance\PersistenceProxy.cs" />
     <Compile Include="TestMaintain\Container\AppDomainRuntimeContainer.cs" />
     <Compile Include="TestMaintain\Container\ProcessRuntimeContainer.cs" />
     <Compile Include="TestMaintain\ITestEntityMaintainer.cs" />
@@ -77,7 +86,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>i18n_engineCore_zh.resx</DependentUpon>
     </Compile>
-    <Compile Include="Events\SessionEventHandle.cs" />
+    <Compile Include="StatusManage\SessionStateHandle.cs" />
     <Compile Include="TestMaintain\Container\RuntimeContainer.cs" />
     <Compile Include="RuntimeEngine.cs" />
     <Compile Include="StatusManage\RuntimeStatusManager.cs" />
@@ -118,6 +127,7 @@
       <LastGenOutput>i18n_engineCore_zh.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

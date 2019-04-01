@@ -158,5 +158,43 @@ namespace Testflow.MasterCore
             _statusManager.Dispose();
         }
 
+        #region 处理外部接口
+
+        public RuntimeState GetRuntimeState(int sessionId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public TDataType GetComponent<TDataType>(string componentName, params object[] extraParams)
+        {
+            throw new NotImplementedException();
+        }
+
+        public TDataType GetRuntimeInfo<TDataType>(string infoName, params object[] extraParams)
+        {
+            throw new NotImplementedException();
+        }
+
+        public int AddRuntimeObject(string objectType, int sessionId, params object[] param)
+        {
+            throw new NotImplementedException();
+        }
+
+        public int RemoveRuntimeObject(int objectId, params object[] param)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void RegisterRuntimeEvent(Delegate callBack, string eventName, params object[] extraParams)
+        {
+        }
+
+        public void UnregisterRuntimeEvent(Delegate callBack, string eventName, params object[] extraParams)
+        {
+            throw new NotImplementedException();
+        }
+
+        #endregion
+
     }
 }

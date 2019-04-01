@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text;
 using Testflow.CoreCommon.Data.EventInfos;
 using Testflow.MasterCore.Core;
 using Testflow.MasterCore.Message;
@@ -25,6 +26,10 @@ namespace Testflow.MasterCore.Common
 
         public ExceptionManager ExceptionManager { get; private set; }
 
+        public string RuntimeHash{ get; }
+
+        
+
         public ModuleGlobalInfo(IModuleConfigData configData)
         {
             TestflowRunner = TestflowRunner.GetInstance();
@@ -32,6 +37,7 @@ namespace Testflow.MasterCore.Common
             this.LogService = TestflowRunner.LogService;
             this.ConfigData = configData;
             this.ExceptionManager = new ExceptionManager(LogService);
+            this.RuntimeHash = ModuleUtils.GetRuntimeHash(configData.GetProperty<Encoding>("PlatformEncoding"));
         }
 
         public void RuntimeInitialize(MessageTransceiver messageTransceiver)
@@ -39,6 +45,8 @@ namespace Testflow.MasterCore.Common
             this.MessageTransceiver = messageTransceiver;
             this.EventQueue = new LocalEventQueue<EventInfoBase>(Constants.DefaultEventsQueueSize);
         }
+
+
 
         public void Dispose()
         {

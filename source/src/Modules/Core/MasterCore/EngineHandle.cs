@@ -72,46 +72,37 @@ namespace Testflow.MasterCore
 
         public RuntimeState GetRuntimeState(int sessionId)
         {
-            throw new NotImplementedException();
+            return _runtimeEngine.GetRuntimeState(sessionId);
         }
 
         public TDataType GetComponent<TDataType>(string componentName, params object[] extraParams)
         {
-            throw new NotImplementedException();
+            return _runtimeEngine.GetComponent<TDataType>(componentName, extraParams);
         }
 
         public TDataType GetRuntimeInfo<TDataType>(string infoName, params object[] extraParams)
         {
-            throw new NotImplementedException();
+            return _runtimeEngine.GetRuntimeInfo<TDataType>(infoName, extraParams);
         }
 
         public int AddRuntimeObject(string objectType, int sessionId, params object[] param)
         {
-            throw new NotImplementedException();
+            return _runtimeEngine.AddRuntimeObject(objectType, sessionId, param);
         }
 
         public int RemoveRuntimeObject(int objectId, params object[] param)
         {
-            throw new NotImplementedException();
+            return _runtimeEngine.RemoveRuntimeObject(objectId, param);
         }
 
         public void RegisterRuntimeEvent(Delegate callBack, string eventName, params object[] extraParams)
         {
+            _runtimeEngine.RegisterRuntimeEvent(callBack, eventName, extraParams);
         }
 
         public void UnregisterRuntimeEvent(Delegate callBack, string eventName, params object[] extraParams)
         {
-            throw new NotImplementedException();
-        }
-
-        public int SetRuntimeTarget(ISequenceGroup sequenceGroup)
-        {
-            throw new NotImplementedException();
-        }
-
-        public int SetRuntimeTarget(ITestProject testProject)
-        {
-            throw new NotImplementedException();
+            _runtimeEngine.UnregisterRuntimeEvent(callBack, eventName, extraParams);
         }
 
         public void AbortRuntime(int sessionId)
@@ -132,6 +123,7 @@ namespace Testflow.MasterCore
         public void Dispose()
         {
             _runtimeEngine?.Dispose();
+            _instance = null;
         }
     }
 }

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.Serialization;
 using System.Text;
+using Testflow.Common;
 using Testflow.CoreCommon.Data;
 using Testflow.CoreCommon.Messages;
 using Testflow.Data.Sequence;
@@ -15,76 +16,14 @@ namespace Testflow.CoreCommon.Common
     {
         const string VarNameDelim = ".";
 
-        public static string GetRuntimeVariableName(ITestProject testProject, ISequenceGroup sequenceGroup,
-            ISequence sequence, IVariable variable)
-        {
-            StringBuilder runtimeVarName = new StringBuilder(50);
-            runtimeVarName.Append(CoreConstants.TestProjectIndex).Append(VarNameDelim);
-            if (null != sequenceGroup)
-            {
-                if (null != testProject)
-                {
-                    runtimeVarName.Append(testProject.SequenceGroups.IndexOf(sequenceGroup)).Append(VarNameDelim);
-                }
-                else
-                {
-                    runtimeVarName.Append(0).Append(VarNameDelim);
-                }
-                if (null != sequence)
-                {
-                    runtimeVarName.Append(sequenceGroup.Sequences.IndexOf(sequence)).Append(VarNameDelim);
-                }
-            }
-            return runtimeVarName.Append(variable.Name).ToString();
-        }
-
-        public static string GetRuntimeVariableName(IVariable variable)
+        public static string GetRuntimeVariableName(int session, IVariable variable)
         {
             StringBuilder runtimeVariableName = new StringBuilder(50);
-            Stack<ISequenceFlowContainer> stacks = new Stack<ISequenceFlowContainer>(8);
-            ISequenceFlowContainer parent = variable;
-            while (null != parent.Parent)
+            runtimeVariableName.Append(session).Append(VarNameDelim);
+            ISequence parent = variable.Parent as ISequence;
+            if (parent != null)
             {
-                parent = parent.Parent;
-                stacks.Push(parent);
-            }
-            parent = null;
-            while (0 != stacks.Count)
-            {
-                ISequenceFlowContainer child = stacks.Pop();
-                if (child is ITestProject)
-                {
-                    runtimeVariableName.Append(CoreConstants.TestProjectSessionId).Append(VarNameDelim);
-                }
-                else if (child is ISequenceGroup)
-                {
-                    if (null == parent)
-                    {
-                        runtimeVariableName.Append(CoreConstants.TestProjectSessionId).Append(VarNameDelim)
-                            .Append(0).Append(VarNameDelim);
-                    }
-                    else
-                    {
-                        runtimeVariableName.Append(((ITestProject)parent).SequenceGroups.IndexOf((ISequenceGroup)child)).
-                            Append(VarNameDelim);
-                    }
-                }
-                else if (child is ISequence)
-                {
-                    runtimeVariableName.Append(((ISequenceGroup)parent).Sequences.IndexOf((ISequence)child)).
-                            Append(VarNameDelim);
-                }
-                else if (parent is ISequence)
-                {
-                    runtimeVariableName.Append(((ISequence)parent).Steps.IndexOf((ISequenceStep)child)).
-                            Append(VarNameDelim);
-                }
-                else
-                {
-                    runtimeVariableName.Append(((ISequenceStep)parent).SubSteps.IndexOf((ISequenceStep)child)).
-                            Append(VarNameDelim);
-                }
-                parent = child;
+                runtimeVariableName.Append(parent.Index).Append(VarNameDelim);
             }
             return runtimeVariableName.Append(variable.Name).ToString();
         }
@@ -92,29 +31,59 @@ namespace Testflow.CoreCommon.Common
         public static string GetRuntimeVariableName(string variableName, ICallStack stack)
         {
             StringBuilder runtimeVarName = new StringBuilder(50);
-            return runtimeVarName.Append(CoreConstants.TestProjectIndex).Append(VarNameDelim).Append(stack.SequenceGroupIndex)
+            return runtimeVarName.Append(stack.SessionIndex)
                 .Append(stack.SequenceIndex).Append(VarNameDelim).Append(string.Join(VarNameDelim, stack.StepStack))
                 .Append(VarNameDelim).Append(variableName).ToString();
+        }
 
+        public static IVariable GetVariable(ISequenceFlowContainer sequenceData, string runtimeVariable)
+        {
+            return sequenceData is ISequenceGroup
+                ? GetVariable((ISequenceGroup) sequenceData, runtimeVariable)
+                : GetVariable((ITestProject) sequenceData, runtimeVariable);
         }
 
         public static IVariable GetVariable(ITestProject testProject, string runtimeVariable)
         {
             string[] variableElement = runtimeVariable.Split(VarNameDelim.ToCharArray());
+            IVariableCollection varCollection = null;
             if (2 == variableElement.Length)
             {
-                return testProject.Variables.FirstOrDefault(item => item.Name.Equals(variableElement[1]));
+                varCollection = testProject.Variables;
             }
             else if (3 == variableElement.Length)
             {
-                return testProject.SequenceGroups[int.Parse(variableElement[1])].Variables.FirstOrDefault(
-                    item => item.Name.Equals(variableElement[2]));
+                varCollection = variableElement[1].Equals(CommonConst.SetupIndex.ToString())? 
+                    testProject.SetUp.Variables : testProject.TearDown.Variables;
             }
-            else
+            return varCollection.FirstOrDefault(item => item.Name.Equals(variableElement[variableElement.Length - 1]));
+        }
+
+        public static IVariable GetVariable(ISequenceGroup sequenceGroup, string runtimeVariable)
+        {
+            string[] variableElement = runtimeVariable.Split(VarNameDelim.ToCharArray());
+            IVariableCollection varCollection = null;
+            if (2 == variableElement.Length)
             {
-                return testProject.SequenceGroups[int.Parse(variableElement[1])].Sequences[int.Parse(variableElement[2])]
-                        .Variables.FirstOrDefault(item => item.Name.Equals(variableElement[3]));
+                varCollection = sequenceGroup.Variables;
             }
+            else if (3 == variableElement.Length)
+            {
+                int sequenceIndex = int.Parse(variableElement[1]);
+                if (sequenceIndex == CommonConst.SetupIndex)
+                {
+                    varCollection = sequenceGroup.SetUp.Variables;
+                }
+                else if (sequenceIndex == CommonConst.TeardownIndex)
+                {
+                    varCollection = sequenceGroup.TearDown.Variables;
+                }
+                else
+                {
+                    varCollection = sequenceGroup.Sequences[sequenceIndex].Variables;
+                }
+            }
+            return varCollection.FirstOrDefault(item => item.Name.Equals(variableElement[variableElement.Length - 1]));
         }
 
         public static void SetMessageValue(SerializationInfo info, object target, Type type)
@@ -126,6 +95,17 @@ namespace Testflow.CoreCommon.Common
                     BindingFlags.Instance | BindingFlags.Public);
                 propertyInfo.SetValue(target, info.GetValue(enumerator.Name, propertyInfo.PropertyType));
             }
+        }
+
+        public static IDictionary<IVariable, string> GetVariableValues(DebugWatchData debugWatchData, ISequenceFlowContainer sequenceData)
+        {
+            Dictionary<IVariable, string> variableValues = new Dictionary<IVariable, string>(debugWatchData.Count);
+            for (int i = 0; i < debugWatchData.Count; i++)
+            {
+                IVariable variable = GetVariable(sequenceData, debugWatchData.Names[i]);
+                variableValues.Add(variable, debugWatchData.Values[i]);
+            }
+            return variableValues;
         }
     }
 }
