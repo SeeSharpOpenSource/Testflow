@@ -24,7 +24,7 @@ namespace Testflow.Runtime
         /// 测试序列组执行结束后的委托
         /// </summary>
         /// <param name="statistics">执行结束后的统计信息</param>
-        public delegate void TestSessionOverAction(ITestResultCollection statistics);
+        public delegate void SessionStatusAction(ITestResultCollection statistics);
 
         /// <summary>
         /// 断点命中后的委托

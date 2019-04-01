@@ -66,6 +66,11 @@ namespace Testflow.Runtime
         RuntimeState State { get; }
 
         /// <summary>
+        /// 失败信息
+        /// </summary>
+        string FailedInfo { get; }
+
+        /// <summary>
         /// 调用堆栈
         /// </summary>
         ICallStack CallStack { get; }
