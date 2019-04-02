@@ -1,7 +1,6 @@
-﻿using System.Collections.Generic;
-using Testflow.Common;
+﻿using Testflow.Common;
 
-namespace Testflow.Runtime
+namespace Testflow.Runtime.Data
 {
     /// <summary>
     /// 一个测试序列组的所有测试结果的集合

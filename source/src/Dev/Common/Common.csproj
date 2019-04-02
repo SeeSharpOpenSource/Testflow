@@ -117,8 +117,8 @@
     <Compile Include="Data\Sequence\ILoopCounter.cs" />
     <Compile Include="Data\Sequence\IRetryCounter.cs" />
     <Compile Include="Runtime\ISequenceDebuggerCollection.cs" />
-    <Compile Include="Runtime\ISequenceGenerationInfo.cs" />
-    <Compile Include="Runtime\ITestGenerationInfo.cs" />
+    <Compile Include="Runtime\Data\ISessionGenerationInfo.cs" />
+    <Compile Include="Runtime\Data\ITestGenerationInfo.cs" />
     <Compile Include="TestflowContext.cs" />
     <Compile Include="TestflowRunner.cs" />
     <Compile Include="TestflowRunnerOptions.cs" />
@@ -131,8 +131,8 @@
     <Compile Include="Runtime\IRuntimeConfiguration.cs" />
     <Compile Include="Runtime\IRuntimeSession.cs" />
     <Compile Include="Runtime\IRuntimeService.cs" />
-    <Compile Include="Runtime\IRuntimeStatusCollection.cs" />
-    <Compile Include="Runtime\ITestResultCollection.cs" />
+    <Compile Include="Runtime\Data\IRuntimeStatusCollection.cs" />
+    <Compile Include="Runtime\Data\ITestResultCollection.cs" />
     <Compile Include="Runtime\RuntimeDelegate.cs" />
     <Compile Include="Runtime\RuntimeState.cs" />
     <Compile Include="Modules\IConfigurationManager.cs" />
@@ -150,17 +150,17 @@
     <Compile Include="Modules\ISequenceManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Data\IAssemblyInfo.cs" />
-    <Compile Include="Runtime\IRuntimeStatusInfo.cs" />
+    <Compile Include="Runtime\Data\IRuntimeStatusInfo.cs" />
     <Compile Include="Data\Sequence\ISequenceCollection.cs" />
     <Compile Include="Data\Sequence\ISequenceStep.cs" />
     <Compile Include="Data\Sequence\ISequenceGroupParameter.cs" />
     <Compile Include="Data\Sequence\ISequenceGroup.cs" />
-    <Compile Include="Runtime\ISequenceTestResult.cs" />
-    <Compile Include="Runtime\ISequenceStatusInfo.cs" />
+    <Compile Include="Runtime\Data\ISequenceTestResult.cs" />
+    <Compile Include="Runtime\Data\ISequenceStatusInfo.cs" />
     <Compile Include="Data\Description\IComInterfaceDescription.cs" />
     <Compile Include="Runtime\IRuntimeContext.cs" />
     <Compile Include="Runtime\RuntimeType.cs" />
-    <Compile Include="Runtime\ISequenceFailedInfo.cs" />
+    <Compile Include="Runtime\Data\ISequenceFailedInfo.cs" />
     <Compile Include="TestflowStates.cs" />
   </ItemGroup>
   <ItemGroup>

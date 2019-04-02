@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using Testflow.Common;
+﻿using Testflow.Common;
 
-namespace Testflow.Runtime
+namespace Testflow.Runtime.Data
 {
     /// <summary>
     /// 运行时状态集合

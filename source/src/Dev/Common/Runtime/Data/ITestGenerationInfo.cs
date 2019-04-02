@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using Testflow.Common;
 
-namespace Testflow.Runtime
+namespace Testflow.Runtime.Data
 {
     /// <summary>
     /// 测试生成信息
@@ -11,11 +11,11 @@ namespace Testflow.Runtime
         /// <summary>
         /// 测试生成状态信息
         /// </summary>
-        IList<ISequenceGenerationInfo> GenerationInfos { get; }
+        IList<ISessionGenerationInfo> GenerationInfos { get; }
 
         /// <summary>
         /// TestProject根节点的生成信息
         /// </summary>
-        ISequenceGenerationInfo RootGenerationInfo { get; }
+        ISessionGenerationInfo RootGenerationInfo { get; }
     }
 }

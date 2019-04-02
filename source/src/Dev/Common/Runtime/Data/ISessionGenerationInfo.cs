@@ -1,13 +1,11 @@
-﻿using System.Collections.Generic;
-using Testflow.Common;
-using Testflow.Data.Sequence;
+﻿using Testflow.Common;
 
-namespace Testflow.Runtime
+namespace Testflow.Runtime.Data
 {
     /// <summary>
     /// 序列测试生成信息
     /// </summary>
-    public interface ISequenceGenerationInfo : ICloneableClass<ISequenceGenerationInfo>
+    public interface ISessionGenerationInfo : ICloneableClass<ISessionGenerationInfo>
     {
         /// <summary>
         /// 会话ID

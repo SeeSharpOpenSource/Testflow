@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Testflow.Data.Sequence;
+using Testflow.Runtime.Data;
 
 namespace Testflow.Runtime
 {
@@ -12,7 +13,7 @@ namespace Testflow.Runtime
         /// 测试生成过程中的委托
         /// </summary>
         /// <param name="generationInfo">测试生成状态信息</param>
-        public delegate void TestGenerationAction(ISequenceGenerationInfo generationInfo);
+        public delegate void TestGenerationAction(ISessionGenerationInfo generationInfo);
 
         /// <summary>
         /// 状态数据获取后的委托
