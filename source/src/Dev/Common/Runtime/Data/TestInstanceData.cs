@@ -34,6 +34,16 @@ namespace Testflow.Runtime.Data
         public string RuntimeHash { get; set; }
 
         /// <summary>
+        /// 测试生成开始时间
+        /// </summary>
+        public DateTime StartGenTime { get; set; }
+
+        /// <summary>
+        /// 测试生成结束时间
+        /// </summary>
+        public DateTime EndGenTime { get; set; }
+
+        /// <summary>
         /// 开始执行时间
         /// </summary>
         public DateTime StartTime { get; set; }
