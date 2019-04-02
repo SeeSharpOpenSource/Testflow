@@ -185,6 +185,7 @@ namespace Testflow.MasterCore.Core
 
         public void Abort(int sessionId)
         {
+            this._globalInfo.StateMachine.State = RuntimeState.AbortRequested;
             if (sessionId == CommonConst.TestGroupSession || sessionId == CommonConst.BroadcastSession)
             {
                 foreach (int session in _testsMaintainer.TestContainers.Keys)
