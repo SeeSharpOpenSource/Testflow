@@ -12,7 +12,7 @@ namespace Testflow.MasterCore.StatusManage.StatePersistance
             this._globalInfo = globalInfo;
         }
 
-        public void WriteData(TestProjectResults result)
+        public void WriteData(TestInstanceData testInstance)
         {
             // TODO
         }
@@ -33,6 +33,21 @@ namespace Testflow.MasterCore.StatusManage.StatePersistance
         }
 
         public void WriteData(PerformanceData performance)
+        {
+            // TODO
+        }
+
+        public void UpdateData(TestInstanceData testInstance)
+        {
+            // TODO
+        }
+
+        public void UpdateData(SessionResultData result)
+        {
+            // TODO
+        }
+
+        public void UpdateData(SequenceResultData result)
         {
             // TODO
         }
