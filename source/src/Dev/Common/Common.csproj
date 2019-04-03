@@ -94,7 +94,7 @@
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
     </Compile>
-    <Compile Include="Runtime\Data\PerformanceData.cs" />
+    <Compile Include="Runtime\Data\PerformanceStatus.cs" />
     <Compile Include="Runtime\Data\TestInstanceData.cs" />
     <Compile Include="Runtime\Data\SequenceResultData.cs" />
     <Compile Include="Runtime\Data\SessionResultData.cs" />

@@ -5,7 +5,7 @@ namespace Testflow.Runtime.Data
     /// <summary>
     /// 性能统计信息
     /// </summary>
-    public class PerformanceData
+    public class PerformanceStatus
     {
          /// <summary>
          /// 运行时哈希
