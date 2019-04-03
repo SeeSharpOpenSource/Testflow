@@ -14,6 +14,8 @@ namespace Testflow.CoreCommon.Data.EventInfos
 
         public DebugWatchData WatchData { get; }
 
+        public CallStack BreakPoint { get; }
+
         public DebugEventInfo(int session, DateTime time, bool isDebugHit) : base(session, EventType.Debug, time)
         {
             this.IsDebugHit = isDebugHit;
@@ -21,7 +23,7 @@ namespace Testflow.CoreCommon.Data.EventInfos
 
         public DebugEventInfo(DebugMessage message) : base(message.Id, EventType.Debug, message.Time)
         {
-            
+            this.BreakPoint = message.BreakPoint;
             if (message.DebugMsgType == DebugMessageType.BreakPointHitted)
             {
                 this.IsDebugHit = true;
