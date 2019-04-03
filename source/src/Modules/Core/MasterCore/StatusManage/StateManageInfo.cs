@@ -7,6 +7,7 @@ using Testflow.MasterCore.Common;
 using Testflow.MasterCore.EventData;
 using Testflow.MasterCore.StatusManage.StatePersistance;
 using Testflow.Runtime;
+using Testflow.Runtime.Data;
 
 namespace Testflow.MasterCore.StatusManage
 {
@@ -23,16 +24,30 @@ namespace Testflow.MasterCore.StatusManage
             this.DatabaseProxy = new PersistenceProxy(globalInfo);
             this.TestGenerationInfo = new TestGenerationInfo(sequenceData);
             this.TestStatus = new TestProjectResults(sequenceData);
-            this._statusIndex = -1;
+            this._eventStatusIndex = -1;
+            this._dataStatusIndex = -1;
+            this._perfStatusIndex = -1;
         }
 
         public string RuntimeHash { get; }
 
-        private long _statusIndex;
+        private long _eventStatusIndex;
+        /// <summary>
+        /// 事件触发的状态索引号
+        /// </summary>
+        public long EventStatusIndex {get { return Interlocked.Increment(ref _eventStatusIndex); } }
+
+        private long _dataStatusIndex;
         /// <summary>
         /// 写入数据库的状态索引号
         /// </summary>
-        public long StatusIndex {get { return Interlocked.Increment(ref _statusIndex); } }
+        public long DataStatusIndex { get { return Interlocked.Increment(ref _dataStatusIndex); } }
+
+        private long _perfStatusIndex;
+        /// <summary>
+        /// 写入数据库的性能数据索引号
+        /// </summary>
+        public long PerfStatusIndex { get { return Interlocked.Increment(ref _perfStatusIndex); } }
 
         /// <summary>
         /// 测试生成状态信息集合
@@ -58,7 +73,7 @@ namespace Testflow.MasterCore.StatusManage
 
         public bool IsAllTestOver => TestStatus.All(item => item.TestOver);
 
-        public ISequenceGenerationInfo GetGenerationInfo(int session)
+        public ISessionGenerationInfo GetGenerationInfo(int session)
         {
             if (session == CommonConst.TestGroupSession)
             {

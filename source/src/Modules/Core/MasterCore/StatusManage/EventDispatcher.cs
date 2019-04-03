@@ -130,13 +130,13 @@ namespace Testflow.MasterCore.StatusManage
             switch (eventName)
             {
                 case Constants.TestGenerationStart:
-                    OnTestGenerationStart(ModuleUtils.GetParamValue<ISequenceGenerationInfo>(eventParam, 0));
+                    OnTestGenerationStart(ModuleUtils.GetParamValue<ISessionGenerationInfo>(eventParam, 0));
                     break;
                 case Constants.TestGenerationReport:
-                    OnTestGenerationReport(ModuleUtils.GetParamValue<ISequenceGenerationInfo>(eventParam, 0));
+                    OnTestGenerationReport(ModuleUtils.GetParamValue<ISessionGenerationInfo>(eventParam, 0));
                     break;
                 case Constants.TestGenerationEnd:
-                    OnTestGenerationEnd(ModuleUtils.GetParamValue<ISequenceGenerationInfo>(eventParam, 0));
+                    OnTestGenerationEnd(ModuleUtils.GetParamValue<ISessionGenerationInfo>(eventParam, 0));
                     break;
                 case Constants.TestProjectStart:
                     OnTestProjectStart(ModuleUtils.GetParamValue<List<ITestResultCollection>>(eventParam, 0));
@@ -240,12 +240,12 @@ namespace Testflow.MasterCore.StatusManage
 
         //        event RuntimeDelegate.StatusReceivedAction SequenceFailed;
 
-        internal void OnTestGenerationStart(ISequenceGenerationInfo generationinfo)
+        internal void OnTestGenerationStart(ISessionGenerationInfo generationinfo)
         {
             TestGenerationStart?.Invoke(generationinfo);
         }
 
-        internal void OnTestGenerationEnd(ISequenceGenerationInfo generationinfo)
+        internal void OnTestGenerationEnd(ISessionGenerationInfo generationinfo)
         {
             TestGenerationEnd?.Invoke(generationinfo);
         }
@@ -280,7 +280,7 @@ namespace Testflow.MasterCore.StatusManage
             BreakPointHitted?.Invoke(debuggerHandle, information);
         }
 
-        internal void OnTestGenerationReport(ISequenceGenerationInfo generationinfo)
+        internal void OnTestGenerationReport(ISessionGenerationInfo generationinfo)
         {
             TestGenerationReport?.Invoke(generationinfo);
         }

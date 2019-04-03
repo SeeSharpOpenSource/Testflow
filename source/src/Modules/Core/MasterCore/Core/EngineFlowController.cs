@@ -68,6 +68,7 @@ namespace Testflow.MasterCore.Core
         // TODO 目标平台暂时写死
         private void GenerateTestMaintainer(ISequenceFlowContainer sequenceContainer)
         {
+            _globalInfo.StateMachine.State = RuntimeState.TestGen;
             if (sequenceContainer is ITestProject)
             {
                 ITestProject testProject = (ITestProject)sequenceContainer;

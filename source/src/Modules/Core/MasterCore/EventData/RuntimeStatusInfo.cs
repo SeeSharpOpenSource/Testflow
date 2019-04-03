@@ -7,6 +7,7 @@ using Testflow.Data.Sequence;
 using Testflow.MasterCore.Common;
 using Testflow.MasterCore.StatusManage;
 using Testflow.Runtime;
+using Testflow.Runtime.Data;
 using Testflow.Utility.Collections;
 
 namespace Testflow.MasterCore.EventData

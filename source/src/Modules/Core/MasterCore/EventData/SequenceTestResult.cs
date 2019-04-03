@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Testflow.Common;
 using Testflow.MasterCore.Common;
 using Testflow.Runtime;
+using Testflow.Runtime.Data;
 using Testflow.Utility.Collections;
 
 namespace Testflow.MasterCore.EventData

@@ -3,6 +3,7 @@ using Testflow.Common;
 using Testflow.Data.Sequence;
 using Testflow.MasterCore.Common;
 using Testflow.Runtime;
+using Testflow.Runtime.Data;
 
 namespace Testflow.MasterCore.EventData
 {

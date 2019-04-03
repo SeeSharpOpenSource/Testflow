@@ -32,7 +32,7 @@ namespace Testflow.MasterCore.StatusManage.StatePersistance
             // TODO
         }
 
-        public void WriteData(PerformanceData performance)
+        public void WriteData(PerformanceStatus performance)
         {
             // TODO
         }

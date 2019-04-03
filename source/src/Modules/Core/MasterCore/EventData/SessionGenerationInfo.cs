@@ -2,17 +2,18 @@
 using Testflow.Common;
 using Testflow.Data.Sequence;
 using Testflow.Runtime;
+using Testflow.Runtime.Data;
 using Testflow.Utility.Collections;
 
 namespace Testflow.MasterCore.EventData
 {
-    internal class SequenceGenerationInfo : ISequenceGenerationInfo
+    internal class SessionGenerationInfo : ISessionGenerationInfo
     {
         public int Session { get; }
         public ISerializableMap<int, GenerationStatus> SequenceStatus { get; }
         public GenerationStatus Status { get; set; }
 
-        public SequenceGenerationInfo(ISequenceGroup sequenceGroup, int session)
+        public SessionGenerationInfo(ISequenceGroup sequenceGroup, int session)
         {
             this.Session = session;
             this.Status = GenerationStatus.Idle;
@@ -25,7 +26,7 @@ namespace Testflow.MasterCore.EventData
             }
         }
 
-        public SequenceGenerationInfo(ITestProject testProject)
+        public SessionGenerationInfo(ITestProject testProject)
         {
             this.Session = CommonConst.TestGroupSession;
             this.Status = GenerationStatus.Idle;
@@ -34,7 +35,7 @@ namespace Testflow.MasterCore.EventData
             SequenceStatus.Add(CommonConst.TeardownIndex, GenerationStatus.Idle);
         }
 
-        public SequenceGenerationInfo(ISequenceGenerationInfo generationInfo)
+        public SessionGenerationInfo(ISessionGenerationInfo generationInfo)
         {
             this.Session = generationInfo.Session;
             this.Status = generationInfo.Status;
@@ -45,9 +46,9 @@ namespace Testflow.MasterCore.EventData
             }
         }
 
-        public ISequenceGenerationInfo Clone()
+        public ISessionGenerationInfo Clone()
         {
-            return new SequenceGenerationInfo(this);
+            return new SessionGenerationInfo(this);
         }
     }
 }

@@ -21,6 +21,9 @@ namespace Testflow.MasterCore.Core
         private readonly Dictionary<RuntimeState, Action> _stateActions;
         private int _runtimeState;
 
+        /// <summary>
+        /// 全局状态。配置规则：哪里最早获知全局状态变更就在哪里更新。
+        /// </summary>
         public RuntimeState State
         {
             get { return (RuntimeState) _runtimeState; }

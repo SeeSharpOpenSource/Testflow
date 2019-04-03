@@ -85,7 +85,7 @@ namespace Testflow.MasterCore.StatusManage
 
         private int _state;
         private readonly ITestResultCollection _testResults;
-        private ISequenceGenerationInfo _generationInfo;
+        private ISessionGenerationInfo _generationInfo;
 
         public RuntimeState State
         {
@@ -136,7 +136,7 @@ namespace Testflow.MasterCore.StatusManage
         {
             this.StartGenTime = eventInfo.TimeStamp;
             // TODO 暂时不更新所有Sequence的状态，按照SequenceGroup为单位进行报告
-            ISequenceGenerationInfo generationInfo;
+            ISessionGenerationInfo generationInfo;
             switch (eventInfo.State)
             {
                 case TestState.StartGeneration:
@@ -283,7 +283,7 @@ namespace Testflow.MasterCore.StatusManage
             }
         }
 
-        private ISequenceGenerationInfo SetGenerationInfo(TestStateEventInfo eventInfo, GenerationStatus status)
+        private ISessionGenerationInfo SetGenerationInfo(TestStateEventInfo eventInfo, GenerationStatus status)
         {
             _generationInfo.Status = status;
             foreach (int sequenceIndex in _generationInfo.SequenceStatus.Keys)

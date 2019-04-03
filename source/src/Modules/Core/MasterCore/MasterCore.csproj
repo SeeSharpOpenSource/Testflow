@@ -56,7 +56,7 @@
     <Compile Include="Core\RuntimeStateMachine.cs" />
     <Compile Include="EngineHandle.cs" />
     <Compile Include="EventData\RuntimeStatusInfo.cs" />
-    <Compile Include="EventData\SequenceGenerationInfo.cs" />
+    <Compile Include="EventData\SessionGenerationInfo.cs" />
     <Compile Include="EventData\SequenceTestResult.cs" />
     <Compile Include="EventData\TestGenerationInfo.cs" />
     <Compile Include="EventData\TestProjectResults.cs" />
