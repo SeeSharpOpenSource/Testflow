@@ -29,8 +29,10 @@ namespace Testflow.MasterCore.Common
         #region 事件名称
 
         public const string TestGenerationStart = "TestGenerationStart";
-        public const string TestGenerationReport = "TestGenerationReport";
         public const string TestGenerationEnd = "TestGenerationEnd";
+        public const string SessionGenerationStart = "SessionGenerationStart";
+        public const string SessionGenerationReport = "SessionGenerationReport";
+        public const string SessionGenerationEnd = "SessionGenerationEnd";
         public const string TestProjectStart = "TestProjectStart";
         public const string SessionStart = "SessionStart";
         public const string SequenceStarted = "SequenceStarted";
