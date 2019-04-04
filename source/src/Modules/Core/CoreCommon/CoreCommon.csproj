@@ -53,7 +53,7 @@
     <Compile Include="Data\EventInfos\SyncEventInfo.cs" />
     <Compile Include="Data\EventInfos\DebugEventInfo.cs" />
     <Compile Include="Data\EventInfos\AbortEventInfo.cs" />
-    <Compile Include="Data\EventInfos\TestStateEventInfo.cs" />
+    <Compile Include="Data\EventInfos\TestGenEventInfo.cs" />
     <Compile Include="Data\EventInfos\ExceptionEventInfo.cs" />
     <Compile Include="Data\HostInfo.cs" />
     <Compile Include="Data\EventInfos\EventInfoBase.cs" />

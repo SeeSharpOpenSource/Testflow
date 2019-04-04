@@ -47,7 +47,17 @@ namespace Testflow.Runtime
         #region 事件
 
         /// <summary>
-        /// 所有测试执行结束后触发
+        /// 测试开始生成时触发
+        /// </summary>
+        event RuntimeDelegate.TestGenerationAction TestGenStart;
+
+        /// <summary>
+        /// 测试生成结束后触发
+        /// </summary>
+        event RuntimeDelegate.TestGenerationAction TestGenOver;
+
+        /// <summary>
+        /// 所有测试开始执行时触发
         /// </summary>
         event RuntimeDelegate.TestProjectStatusAction TestStart;
 

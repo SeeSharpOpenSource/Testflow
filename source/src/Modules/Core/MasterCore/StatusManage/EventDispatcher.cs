@@ -34,8 +34,14 @@ namespace Testflow.MasterCore.StatusManage
                 case Constants.TestGenerationStart:
                     TestGenerationStart += ModuleUtils.GetDeleage<RuntimeDelegate.TestGenerationAction>(callBack);
                     break;
-                case Constants.TestGenerationReport:
-                    TestGenerationReport += ModuleUtils.GetDeleage<RuntimeDelegate.TestGenerationAction>(callBack);
+                case Constants.TestGenerationEnd:
+                    TestGenerationEnd += ModuleUtils.GetDeleage<RuntimeDelegate.TestGenerationAction>(callBack);
+                    break;
+                case Constants.SessionGenerationStart:
+                    SessionGenerationStart += ModuleUtils.GetDeleage<RuntimeDelegate.SessionGenerationAction>(callBack);
+                    break;
+                case Constants.SessionGenerationReport:
+                    SessionGenerationReport += ModuleUtils.GetDeleage<RuntimeDelegate.SessionGenerationAction>(callBack);
                     break;
                 case Constants.TestProjectStart:
                     TestProjectStart += ModuleUtils.GetDeleage<RuntimeDelegate.TestProjectStatusAction>(callBack);
@@ -43,8 +49,8 @@ namespace Testflow.MasterCore.StatusManage
                 case Constants.SessionStart:
                     SessionStart += ModuleUtils.GetDeleage<RuntimeDelegate.SessionStatusAction>(callBack);
                     break;
-                case Constants.TestGenerationEnd:
-                    TestGenerationEnd += ModuleUtils.GetDeleage<RuntimeDelegate.TestGenerationAction>(callBack);
+                case Constants.SessionGenerationEnd:
+                    SessionGenerationEnd += ModuleUtils.GetDeleage<RuntimeDelegate.SessionGenerationAction>(callBack);
                     break;
                 case Constants.SequenceStarted:
                     SequenceStarted += ModuleUtils.GetDeleage<RuntimeDelegate.StatusReceivedAction>(callBack);
@@ -78,11 +84,17 @@ namespace Testflow.MasterCore.StatusManage
                 case Constants.TestGenerationStart:
                     TestGenerationStart -= ModuleUtils.GetDeleage<RuntimeDelegate.TestGenerationAction>(callBack);
                     break;
-                case Constants.TestGenerationReport:
-                    TestGenerationReport -= ModuleUtils.GetDeleage<RuntimeDelegate.TestGenerationAction>(callBack);
-                    break;
                 case Constants.TestGenerationEnd:
                     TestGenerationEnd -= ModuleUtils.GetDeleage<RuntimeDelegate.TestGenerationAction>(callBack);
+                    break;
+                case Constants.SessionGenerationStart:
+                    SessionGenerationStart -= ModuleUtils.GetDeleage<RuntimeDelegate.SessionGenerationAction>(callBack);
+                    break;
+                case Constants.SessionGenerationReport:
+                    SessionGenerationReport -= ModuleUtils.GetDeleage<RuntimeDelegate.SessionGenerationAction>(callBack);
+                    break;
+                case Constants.SessionGenerationEnd:
+                    SessionGenerationEnd -= ModuleUtils.GetDeleage<RuntimeDelegate.SessionGenerationAction>(callBack);
                     break;
                 case Constants.TestProjectStart:
                     TestProjectStart -= ModuleUtils.GetDeleage<RuntimeDelegate.TestProjectStatusAction>(callBack);
@@ -130,13 +142,19 @@ namespace Testflow.MasterCore.StatusManage
             switch (eventName)
             {
                 case Constants.TestGenerationStart:
-                    OnTestGenerationStart(ModuleUtils.GetParamValue<ISessionGenerationInfo>(eventParam, 0));
-                    break;
-                case Constants.TestGenerationReport:
-                    OnTestGenerationReport(ModuleUtils.GetParamValue<ISessionGenerationInfo>(eventParam, 0));
+                    OnTestGenerationStart(ModuleUtils.GetParamValue<ITestGenerationInfo>(eventParam, 0));
                     break;
                 case Constants.TestGenerationEnd:
-                    OnTestGenerationEnd(ModuleUtils.GetParamValue<ISessionGenerationInfo>(eventParam, 0));
+                    OnTestGenerationEnd(ModuleUtils.GetParamValue<ITestGenerationInfo>(eventParam, 0));
+                    break;
+                case Constants.SessionGenerationStart:
+                    OnSessionGenerationStart(ModuleUtils.GetParamValue<ISessionGenerationInfo>(eventParam, 0));
+                    break;
+                case Constants.SessionGenerationReport:
+                    OnSessionGenerationReport(ModuleUtils.GetParamValue<ISessionGenerationInfo>(eventParam, 0));
+                    break;
+                case Constants.SessionGenerationEnd:
+                    OnSessionGenerationEnd(ModuleUtils.GetParamValue<ISessionGenerationInfo>(eventParam, 0));
                     break;
                 case Constants.TestProjectStart:
                     OnTestProjectStart(ModuleUtils.GetParamValue<List<ITestResultCollection>>(eventParam, 0));
@@ -181,14 +199,24 @@ namespace Testflow.MasterCore.StatusManage
         public event RuntimeDelegate.TestGenerationAction TestGenerationStart;
 
         /// <summary>
-        /// 测试生成中间事件，生成过程中会不间断生成该事件
-        /// </summary>
-        public event RuntimeDelegate.TestGenerationAction TestGenerationReport;
-
-        /// <summary>
         /// 测试生成结束事件
         /// </summary>
         public event RuntimeDelegate.TestGenerationAction TestGenerationEnd;
+
+        /// <summary>
+        /// 会话测试生成开始事件
+        /// </summary>
+        public event RuntimeDelegate.SessionGenerationAction SessionGenerationStart;
+
+        /// <summary>
+        /// 会话测试生成中间事件，生成过程中会不间断生成该事件
+        /// </summary>
+        public event RuntimeDelegate.SessionGenerationAction SessionGenerationReport;
+
+        /// <summary>
+        /// 会话测试生成结束事件
+        /// </summary>
+        public event RuntimeDelegate.SessionGenerationAction SessionGenerationEnd;
 
         /// <summary>
         /// 测试工程开始事件
@@ -240,14 +268,24 @@ namespace Testflow.MasterCore.StatusManage
 
         //        event RuntimeDelegate.StatusReceivedAction SequenceFailed;
 
-        internal void OnTestGenerationStart(ISessionGenerationInfo generationinfo)
+        internal void OnTestGenerationStart(ITestGenerationInfo generationinfo)
         {
             TestGenerationStart?.Invoke(generationinfo);
         }
 
-        internal void OnTestGenerationEnd(ISessionGenerationInfo generationinfo)
+        internal void OnTestGenerationEnd(ITestGenerationInfo generationinfo)
         {
             TestGenerationEnd?.Invoke(generationinfo);
+        }
+
+        internal void OnSessionGenerationStart(ISessionGenerationInfo generationinfo)
+        {
+            SessionGenerationStart?.Invoke(generationinfo);
+        }
+
+        internal void OnSessionGenerationEnd(ISessionGenerationInfo generationinfo)
+        {
+            SessionGenerationEnd?.Invoke(generationinfo);
         }
 
         internal void OnSequenceStarted(IRuntimeStatusInfo statusinfo)
@@ -280,9 +318,9 @@ namespace Testflow.MasterCore.StatusManage
             BreakPointHitted?.Invoke(debuggerHandle, information);
         }
 
-        internal void OnTestGenerationReport(ISessionGenerationInfo generationinfo)
+        internal void OnSessionGenerationReport(ISessionGenerationInfo generationinfo)
         {
-            TestGenerationReport?.Invoke(generationinfo);
+            SessionGenerationReport?.Invoke(generationinfo);
         }
 
         internal void OnTestProjectStart(IList<ITestResultCollection> testResults)

@@ -30,17 +30,17 @@ namespace Testflow.Runtime
         /// <summary>
         /// 测试生成开始事件
         /// </summary>
-        event RuntimeDelegate.TestGenerationAction TestGenerationStart;
+        event RuntimeDelegate.SessionGenerationAction SessionGenerationStart;
 
         /// <summary>
         /// 测试生成中间事件，生成过程中会不间断生成该事件
         /// </summary>
-        event RuntimeDelegate.TestGenerationAction TestGenerationReport;
+        event RuntimeDelegate.SessionGenerationAction SessionGenerationReport;
 
         /// <summary>
         /// 测试生成结束事件
         /// </summary>
-        event RuntimeDelegate.TestGenerationAction TestGenerationEnd;
+        event RuntimeDelegate.SessionGenerationAction SessionGenerationEnd;
 
         /// <summary>
         /// 整个测试工程的测试开始时触发
