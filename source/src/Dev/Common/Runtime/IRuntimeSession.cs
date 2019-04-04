@@ -45,7 +45,7 @@ namespace Testflow.Runtime
         /// <summary>
         /// 整个测试工程的测试开始时触发
         /// </summary>
-        event RuntimeDelegate.SessionStatusAction TestStart;
+        event RuntimeDelegate.SessionStatusAction SessionStart;
 
         /// <summary>
         /// Events raised when a sequence is start and host receive runtime stauts information. Asynchronous event.
@@ -70,7 +70,7 @@ namespace Testflow.Runtime
         /// <summary>
         /// Events raised when a sequence is failed and host receive runtime stauts information. Asynchronous event.
         /// </summary>
-        event RuntimeDelegate.SessionStatusAction TestOver;
+        event RuntimeDelegate.SessionStatusAction SessionOver;
 
         /// <summary>
         /// 断点命中事件，当某个断点被命中时触发
