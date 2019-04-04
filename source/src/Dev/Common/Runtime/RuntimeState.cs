@@ -41,28 +41,29 @@
         DebugBlocked = 5,
 
         /// <summary>
+        /// 申请中止
+        /// </summary>
+        AbortRequested = 6,
+
+        /// <summary>
         /// 跳过执行
         /// </summary>
-        Skipped = 6,
+        Skipped = 7,
 
         /// <summary>
         /// 测试成功
         /// </summary>
-        Success = 7,
+        Success = 8,
 
         /// <summary>
         /// 执行失败
         /// </summary>
-        Failed = 8,
+        Failed = 9,
+
         /// <summary>
         /// 执行结束
         /// </summary>
-        Over = 9,
-
-        /// <summary>
-        /// 申请中止
-        /// </summary>
-        AbortRequested = 10,
+        Over = 10,
 
         /// <summary>
         /// 已中止状态
