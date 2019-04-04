@@ -40,8 +40,8 @@ namespace Testflow.MasterCore.StatusManage
                 case Constants.TestProjectStart:
                     TestProjectStart += ModuleUtils.GetDeleage<RuntimeDelegate.TestProjectStatusAction>(callBack);
                     break;
-                case Constants.TestStart:
-                    TestStart += ModuleUtils.GetDeleage<RuntimeDelegate.SessionStatusAction>(callBack);
+                case Constants.SessionStart:
+                    SessionStart += ModuleUtils.GetDeleage<RuntimeDelegate.SessionStatusAction>(callBack);
                     break;
                 case Constants.TestGenerationEnd:
                     TestGenerationEnd += ModuleUtils.GetDeleage<RuntimeDelegate.TestGenerationAction>(callBack);
@@ -55,8 +55,8 @@ namespace Testflow.MasterCore.StatusManage
                 case Constants.SequenceOver:
                     SequenceOver += ModuleUtils.GetDeleage<RuntimeDelegate.StatusReceivedAction>(callBack);
                     break;
-                case Constants.TestOver:
-                    TestOver += ModuleUtils.GetDeleage<RuntimeDelegate.SessionStatusAction>(callBack);
+                case Constants.SessionOver:
+                    SessionOver += ModuleUtils.GetDeleage<RuntimeDelegate.SessionStatusAction>(callBack);
                     break;
                 case Constants.TestProjectOver:
                     TestProjectOver += ModuleUtils.GetDeleage<RuntimeDelegate.TestProjectStatusAction>(callBack);
@@ -87,8 +87,8 @@ namespace Testflow.MasterCore.StatusManage
                 case Constants.TestProjectStart:
                     TestProjectStart -= ModuleUtils.GetDeleage<RuntimeDelegate.TestProjectStatusAction>(callBack);
                     break;
-                case Constants.TestStart:
-                    TestStart -= ModuleUtils.GetDeleage<RuntimeDelegate.SessionStatusAction>(callBack);
+                case Constants.SessionStart:
+                    SessionStart -= ModuleUtils.GetDeleage<RuntimeDelegate.SessionStatusAction>(callBack);
                     break;
                 case Constants.SequenceStarted:
                     SequenceStarted -= ModuleUtils.GetDeleage<RuntimeDelegate.StatusReceivedAction>(callBack);
@@ -99,8 +99,8 @@ namespace Testflow.MasterCore.StatusManage
                 case Constants.SequenceOver:
                     SequenceOver -= ModuleUtils.GetDeleage<RuntimeDelegate.StatusReceivedAction>(callBack);
                     break;
-                case Constants.TestOver:
-                    TestOver -= ModuleUtils.GetDeleage<RuntimeDelegate.SessionStatusAction>(callBack);
+                case Constants.SessionOver:
+                    SessionOver -= ModuleUtils.GetDeleage<RuntimeDelegate.SessionStatusAction>(callBack);
                     break;
                 case Constants.BreakPointHitted:
                     BreakPointHitted -= ModuleUtils.GetDeleage<RuntimeDelegate.BreakPointHittedAction>(callBack);
@@ -141,7 +141,7 @@ namespace Testflow.MasterCore.StatusManage
                 case Constants.TestProjectStart:
                     OnTestProjectStart(ModuleUtils.GetParamValue<List<ITestResultCollection>>(eventParam, 0));
                     break;
-                case Constants.TestStart:
+                case Constants.SessionStart:
                     OnTestStart(ModuleUtils.GetParamValue<ITestResultCollection>(eventParam, 0));
                     break;
                 case Constants.SequenceStarted:
@@ -153,7 +153,7 @@ namespace Testflow.MasterCore.StatusManage
                 case Constants.SequenceOver:
                     OnSequenceOver(ModuleUtils.GetParamValue<IRuntimeStatusInfo>(eventParam, 0));
                     break;
-                case Constants.TestOver:
+                case Constants.SessionOver:
 //                    eventHandle.OnTestOver(ModuleUtil.GetParamValue<ITestResultCollection>(eventParams, 0),
 //                        ModuleUtil.GetParamValue<ISequenceGroup>(eventParams, 1));
                     OnTestOver(ModuleUtils.GetParamValue<ITestResultCollection>(eventParam, 0));
@@ -198,7 +198,7 @@ namespace Testflow.MasterCore.StatusManage
         /// <summary>
         /// 测试序列组开始执行的事件
         /// </summary>
-        public event RuntimeDelegate.SessionStatusAction TestStart;
+        public event RuntimeDelegate.SessionStatusAction SessionStart;
 
         /// <summary>
         /// Events raised when a sequence is start and host receive runtime stauts information. Asynchronous event.
@@ -218,7 +218,7 @@ namespace Testflow.MasterCore.StatusManage
         /// <summary>
         /// Events raised when a sequence is failed and host receive runtime stauts information. Asynchronous event.
         /// </summary>
-        public event RuntimeDelegate.SessionStatusAction TestOver;
+        public event RuntimeDelegate.SessionStatusAction SessionOver;
 
         /// <summary>
         /// 测试工程结束事件
@@ -267,12 +267,12 @@ namespace Testflow.MasterCore.StatusManage
 
         internal void OnTestOver(ITestResultCollection statistics)
         {
-            TestOver?.Invoke(statistics);
+            SessionOver?.Invoke(statistics);
         }
 
         internal void OnTestStart(ITestResultCollection statistics)
         {
-            TestStart?.Invoke(statistics);
+            SessionStart?.Invoke(statistics);
         }
 
         internal void OnBreakPointHitted(IDebuggerHandle debuggerHandle, IDebugInformation information)
