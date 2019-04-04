@@ -139,6 +139,7 @@ namespace Testflow.MasterCore.Core
 
             DebugEventInfo debugEvent = new DebugEventInfo(debugMessage);
             _globalInfo.EventQueue.Enqueue(debugEvent);
+            this._debugHitSession = Constants.NoDebugHitSession;
         }
 
         private void SendAddBreakPointMessage(int sessionId, CallStack callStack)
