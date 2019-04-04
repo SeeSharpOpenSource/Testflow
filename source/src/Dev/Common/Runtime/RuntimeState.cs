@@ -54,26 +54,25 @@
         /// 执行失败
         /// </summary>
         Failed = 8,
-
-        /// <summary>
-        /// 发生异常
-        /// </summary>
-        Error = 9,
-
         /// <summary>
         /// 执行结束
         /// </summary>
-        Over = 10,
+        Over = 9,
 
         /// <summary>
         /// 申请中止
         /// </summary>
-        AbortRequested = 11,
+        AbortRequested = 10,
 
         /// <summary>
         /// 已中止状态
         /// </summary>
-        Abort = 12,
+        Abort = 11,
+
+        /// <summary>
+        /// 发生异常
+        /// </summary>
+        Error = 12,
 
         /// <summary>
         /// 运行时崩溃
