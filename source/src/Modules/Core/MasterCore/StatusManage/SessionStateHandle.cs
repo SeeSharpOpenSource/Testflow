@@ -17,18 +17,18 @@ namespace Testflow.MasterCore.StatusManage
     internal class SessionStateHandle
     {
         private readonly EventDispatcher _eventDispatcher;
-        private readonly StateManageInfo _stateManageInfo;
+        private readonly StateManageContext _stateManageContext;
         private readonly ISequenceFlowContainer _sequenceData; 
         private readonly Dictionary<int, SequenceStateHandle> _sequenceHandles;
 
-        public SessionStateHandle(ITestProject testProject, StateManageInfo stateManageInfo)
+        public SessionStateHandle(ITestProject testProject, StateManageContext stateManageContext)
         {
             this._sequenceData = testProject;
             this.Session = CommonConst.TestGroupSession;
-            this.RuntimeHash = stateManageInfo.GlobalInfo.RuntimeHash;
+            this.RuntimeHash = stateManageContext.GlobalInfo.RuntimeHash;
             this.State = RuntimeState.NotAvailable;
-            this._eventDispatcher = stateManageInfo.EventDispatcher;
-            this._stateManageInfo = stateManageInfo;
+            this._eventDispatcher = stateManageContext.EventDispatcher;
+            this._stateManageContext = stateManageContext;
             this.StartGenTime = DateTime.MaxValue;
             this.EndGenTime = DateTime.MaxValue;
             this.StartTime = DateTime.MaxValue;
@@ -38,23 +38,23 @@ namespace Testflow.MasterCore.StatusManage
 
             this._sequenceHandles = new Dictionary<int, SequenceStateHandle>(Constants.DefaultRuntimeSize);
             _sequenceHandles.Add(CommonConst.SetupIndex, new SequenceStateHandle(Session,
-                testProject.SetUp, _stateManageInfo));
+                testProject.SetUp, _stateManageContext));
             _sequenceHandles.Add(CommonConst.TeardownIndex, new SequenceStateHandle(Session,
-                testProject.TearDown, _stateManageInfo));
+                testProject.TearDown, _stateManageContext));
 
-            _testResults = _stateManageInfo.GetSessionResults(Session);
-            _generationInfo = _stateManageInfo.GetGenerationInfo(Session);
+            _testResults = _stateManageContext.GetSessionResults(Session);
+            _generationInfo = _stateManageContext.GetGenerationInfo(Session);
         }
 
-        public SessionStateHandle(int session, ISequenceGroup sequenceGroup, StateManageInfo stateManageInfo)
+        public SessionStateHandle(int session, ISequenceGroup sequenceGroup, StateManageContext stateManageContext)
         {
             // 配置基本信息
             this._sequenceData = sequenceGroup;
             this.Session = session;
-            this.RuntimeHash = stateManageInfo.GlobalInfo.RuntimeHash;
+            this.RuntimeHash = stateManageContext.GlobalInfo.RuntimeHash;
             this.State = RuntimeState.NotAvailable;
-            this._eventDispatcher = stateManageInfo.EventDispatcher;
-            this._stateManageInfo = stateManageInfo;
+            this._eventDispatcher = stateManageContext.EventDispatcher;
+            this._stateManageContext = stateManageContext;
 
             this.StartGenTime = DateTime.MaxValue;
             this.EndGenTime = DateTime.MaxValue;
@@ -65,16 +65,16 @@ namespace Testflow.MasterCore.StatusManage
             // 初始化SequenceHandles
             this._sequenceHandles = new Dictionary<int, SequenceStateHandle>(Constants.DefaultRuntimeSize);
             _sequenceHandles.Add(CommonConst.SetupIndex, new SequenceStateHandle(Session, 
-                sequenceGroup.SetUp, _stateManageInfo));
+                sequenceGroup.SetUp, _stateManageContext));
             _sequenceHandles.Add(CommonConst.TeardownIndex, new SequenceStateHandle(Session, 
-                sequenceGroup.TearDown, _stateManageInfo));
+                sequenceGroup.TearDown, _stateManageContext));
             for (int i = 0; i < sequenceGroup.Sequences.Count; i++)
             {
-                _sequenceHandles.Add(i, new SequenceStateHandle(Session, sequenceGroup.Sequences[i], _stateManageInfo));
+                _sequenceHandles.Add(i, new SequenceStateHandle(Session, sequenceGroup.Sequences[i], _stateManageContext));
             }
             // 获取测试结果对象和生成信息对象
-            _testResults = _stateManageInfo.GetSessionResults(Session);
-            _generationInfo = _stateManageInfo.GetGenerationInfo(Session);
+            _testResults = _stateManageContext.GetSessionResults(Session);
+            _generationInfo = _stateManageContext.GetGenerationInfo(Session);
         }
 
         public int Session { get; }
@@ -302,11 +302,11 @@ namespace Testflow.MasterCore.StatusManage
                 ElapsedTime = ElapsedTime.TotalMilliseconds,
                 StartTime = StartTime,
                 EndTime = EndTime,
-                RuntimeHash = _stateManageInfo.RuntimeHash,
+                RuntimeHash = _stateManageContext.RuntimeHash,
                 SequenceHash = (_sequenceData as ISequenceGroup)?.Info.Hash ?? string.Empty,
                 Session = Session
             };
-            _stateManageInfo.DatabaseProxy.WriteData(resultData);
+            _stateManageContext.DatabaseProxy.WriteData(resultData);
             return resultData;
         }
     }

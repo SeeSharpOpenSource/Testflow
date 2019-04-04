@@ -24,7 +24,7 @@ namespace Testflow.MasterCore.StatusManage
         private CancellationTokenSource _cancellation;
         private readonly Dictionary<string, Action<EventInfoBase>> _eventProcessActions;
         private readonly Dictionary<int, SessionStateHandle> _sessionStateHandles;
-        private StateManageInfo _stateManageInfo;
+        private StateManageContext _stateManageContext;
 
         public RuntimeStatusManager(ModuleGlobalInfo globalInfo)
         {
@@ -42,25 +42,25 @@ namespace Testflow.MasterCore.StatusManage
 
         public void Initialize(ISequenceFlowContainer sequenceData)
         {
-            _stateManageInfo = new StateManageInfo(_globalInfo, sequenceData);
+            _stateManageContext = new StateManageContext(_globalInfo, sequenceData);
             if (sequenceData is ITestProject)
             {
                 ITestProject testProject = (ITestProject)sequenceData;
                 SessionStateHandle testProjectStateHandle = new SessionStateHandle(testProject,
-                    _stateManageInfo);
+                    _stateManageContext);
                 _sessionStateHandles.Add(testProjectStateHandle.Session, testProjectStateHandle);
 
                 for (int index = 0; index < testProject.SequenceGroups.Count; index++)
                 {
                     SessionStateHandle stateHandle = new SessionStateHandle(index, testProject.SequenceGroups[index], 
-                        _stateManageInfo);
+                        _stateManageContext);
                     _sessionStateHandles.Add(stateHandle.Session, stateHandle);
                 }
             }
             else
             {
                 SessionStateHandle stateHandle = new SessionStateHandle(0, (ISequenceGroup) sequenceData,
-                    _stateManageInfo);
+                    _stateManageContext);
                 _sessionStateHandles.Add(stateHandle.Session, stateHandle);
             }
         }
@@ -221,11 +221,11 @@ namespace Testflow.MasterCore.StatusManage
 
         public void StopIfAllTestOver()
         {
-            EventDispatcher eventDispatcher = _stateManageInfo.EventDispatcher;
-            if (_stateManageInfo.IsAllTestOver)
+            EventDispatcher eventDispatcher = _stateManageContext.EventDispatcher;
+            if (_stateManageContext.IsAllTestOver)
             {
                 eventDispatcher.RaiseEvent(CoreConstants.TestProjectOver, CommonConst.PlatformLogSession,
-                    _stateManageInfo.TestStatus);
+                    _stateManageContext.TestStatus);
             }
         }
 

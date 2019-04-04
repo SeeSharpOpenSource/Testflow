@@ -15,23 +15,23 @@ namespace Testflow.MasterCore.StatusManage
     {
         private int _state;
         private readonly EventDispatcher _eventDispatcher;
-        private readonly StateManageInfo _stateManageInfo;
+        private readonly StateManageContext _stateManageContext;
         private readonly ISequence _sequence;
         private DateTime _blockedStart;
         private ISequenceTestResult _sequenceTestResult;
 
-        public SequenceStateHandle(int session, ISequence sequence, StateManageInfo stateManageInfo)
+        public SequenceStateHandle(int session, ISequence sequence, StateManageContext stateManageContext)
         {
             this.Session = session;
             this._sequence = sequence;
             this.SequenceIndex = sequence.Index;
             this.State = RuntimeState.Idle;
-            this._eventDispatcher = stateManageInfo.EventDispatcher;
-            this._stateManageInfo = stateManageInfo;
+            this._eventDispatcher = stateManageContext.EventDispatcher;
+            this._stateManageContext = stateManageContext;
             this.BlockedTime = TimeSpan.Zero;
             this._blockedStart = DateTime.MaxValue;
 
-            _sequenceTestResult = this._stateManageInfo.GetSequenceResults(Session, SequenceIndex);
+            _sequenceTestResult = this._stateManageContext.GetSequenceResults(Session, SequenceIndex);
         }
 
         public RuntimeState State
@@ -80,7 +80,7 @@ namespace Testflow.MasterCore.StatusManage
                 RefreshCommonStatus(eventInfo, RuntimeState.Abort);
 
                 ITestResultCollection testResult =
-                    _stateManageInfo.GetSessionResults(eventInfo.Session);
+                    _stateManageContext.GetSessionResults(eventInfo.Session);
                 testResult.TestOver = true;
                 testResult.AbortCount++;
                 testResult[eventInfo.Session].ResultState = RuntimeState.Abort;
@@ -229,14 +229,14 @@ namespace Testflow.MasterCore.StatusManage
             {
                 Stack = this.RunStack,
                 ElapsedTime = this.ElapsedTime.TotalMilliseconds,
-                RuntimeHash = _stateManageInfo.RuntimeHash,
+                RuntimeHash = _stateManageContext.RuntimeHash,
                 Sequence = this.SequenceIndex,
                 Time = CurrentTime,
                 Result = result,
                 WatchData = watchData,
                 Session = Session,
             };
-            _stateManageInfo.DatabaseProxy.WriteData(statusData);
+            _stateManageContext.DatabaseProxy.WriteData(statusData);
             return statusData;
         }
 
@@ -252,10 +252,10 @@ namespace Testflow.MasterCore.StatusManage
                 Result = result,
                 FailInfo = failedInfo,
                 FailStack = RunStack,
-                RuntimeHash = _stateManageInfo.RuntimeHash,
+                RuntimeHash = _stateManageContext.RuntimeHash,
                 SequenceIndex = SequenceIndex,
             };
-            _stateManageInfo.DatabaseProxy.WriteData(resultData);
+            _stateManageContext.DatabaseProxy.WriteData(resultData);
             return resultData;
         }
 

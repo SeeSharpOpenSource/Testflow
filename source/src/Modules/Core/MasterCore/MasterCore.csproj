@@ -65,7 +65,7 @@
     <Compile Include="ExceptionManager.cs" />
     <Compile Include="Message\ZombieMessageCleaner.cs" />
     <Compile Include="StatusManage\SequenceStateHandle.cs" />
-    <Compile Include="StatusManage\StateManageInfo.cs" />
+    <Compile Include="StatusManage\StateManageContext.cs" />
     <Compile Include="StatusManage\StatePersistance\PersistenceProxy.cs" />
     <Compile Include="TestMaintain\Container\AppDomainRuntimeContainer.cs" />
     <Compile Include="TestMaintain\Container\ProcessRuntimeContainer.cs" />

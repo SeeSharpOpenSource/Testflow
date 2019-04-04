@@ -11,12 +11,12 @@ using Testflow.Runtime.Data;
 
 namespace Testflow.MasterCore.StatusManage
 {
-    internal class StateManageInfo
+    internal class StateManageContext
     {
         private readonly ISequenceFlowContainer _sequenceData;
         private readonly ModuleGlobalInfo _globalInfo;
 
-        public StateManageInfo(ModuleGlobalInfo globalInfo, ISequenceFlowContainer sequenceData)
+        public StateManageContext(ModuleGlobalInfo globalInfo, ISequenceFlowContainer sequenceData)
         {
             this.GlobalInfo = globalInfo;
             this.RuntimeHash = globalInfo.RuntimeHash;
