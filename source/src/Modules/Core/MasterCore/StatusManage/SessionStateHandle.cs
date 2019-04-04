@@ -117,7 +117,6 @@ namespace Testflow.MasterCore.StatusManage
         public void Start()
         {
             State = RuntimeState.Idle;
-
         }
 
         public SequenceStateHandle this[int sequenceIndex] => _sequenceHandles[sequenceIndex];
@@ -132,25 +131,25 @@ namespace Testflow.MasterCore.StatusManage
         // 更新SessionStateHandle的状态、生成PerformanceData并持久化、序列执行结束后生成SessionResultData并持久化、更新TestResult、整体执行结束后触发结束事件
         #region 消息处理和内部事件处理
 
-        public void TestGenEventProcess(TestStateEventInfo eventInfo)
+        public void TestGenEventProcess(TestGenEventInfo eventInfo)
         {
             this.StartGenTime = eventInfo.TimeStamp;
             // TODO 暂时不更新所有Sequence的状态，按照SequenceGroup为单位进行报告
             ISessionGenerationInfo generationInfo;
-            switch (eventInfo.State)
+            switch (eventInfo.GenState)
             {
-                case TestState.StartGeneration:
+                case TestGenState.StartGeneration:
                     RefreshTime(eventInfo, false);
                     this.State = RuntimeState.TestGen;
                     generationInfo = SetGenerationInfo(eventInfo, GenerationStatus.InProgress);
                     _eventDispatcher.RaiseEvent(CoreConstants.TestGenerationStart, eventInfo.Session, generationInfo);
                     break;
-                case TestState.GenerationOver:
+                case TestGenState.GenerationOver:
                     RefreshTime(eventInfo, false);
                     generationInfo = SetGenerationInfo(eventInfo, GenerationStatus.Success);
                     _eventDispatcher.RaiseEvent(CoreConstants.TestGenerationEnd, eventInfo.Session, generationInfo);
                     break;
-                case TestState.Error:
+                case TestGenState.Error:
                     // 更新Handle状态
                     RefreshTime(eventInfo, true);
                     this.State = RuntimeState.Error;
@@ -283,7 +282,7 @@ namespace Testflow.MasterCore.StatusManage
             }
         }
 
-        private ISessionGenerationInfo SetGenerationInfo(TestStateEventInfo eventInfo, GenerationStatus status)
+        private ISessionGenerationInfo SetGenerationInfo(TestGenEventInfo eventInfo, GenerationStatus status)
         {
             _generationInfo.Status = status;
             foreach (int sequenceIndex in _generationInfo.SequenceStatus.Keys)

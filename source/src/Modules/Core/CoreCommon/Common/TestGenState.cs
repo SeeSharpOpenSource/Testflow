@@ -3,36 +3,21 @@
     /// <summary>
     /// 测试生成状态
     /// </summary>
-    public enum TestState
+    public enum TestGenState
     {
-        /// <summary>
-        /// 空闲状态
-        /// </summary>
-        Idle = 0,
-
         /// <summary>
         /// 开始生成
         /// </summary>
-        StartGeneration = 1,
+        StartGeneration = 0,
 
         /// <summary>
         /// 结束
         /// </summary>
-        GenerationOver = 2,
-
-        /// <summary>
-        /// 测试开始
-        /// </summary>
-        TestStart = 3,
-
-        /// <summary>
-        /// 测试结束
-        /// </summary>
-        TestOver = 4,
+        GenerationOver = 1,
 
         /// <summary>
         /// 错误
         /// </summary>
-        Error = 5
+        Error = 2
     }
 }

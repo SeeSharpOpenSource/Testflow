@@ -125,8 +125,9 @@ namespace Testflow.MasterCore.Core
             {
                 startMessage.Id = session;
                 _globalInfo.MessageTransceiver.Send(startMessage);
-                TestStateEventInfo stateEventInfo = new TestStateEventInfo(session, TestState.TestStart, startMessage.Time);
-                _globalInfo.EventQueue.Enqueue(stateEventInfo);
+                // Session开始将在Status消息中发送，不再从Master端触发。
+//                TestStateEventInfo stateEventInfo = new TestStateEventInfo(session, TestGenState.TestStart, startMessage.Time);
+//                _globalInfo.EventQueue.Enqueue(stateEventInfo);
             }
         }
 

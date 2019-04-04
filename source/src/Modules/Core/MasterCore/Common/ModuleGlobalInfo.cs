@@ -28,8 +28,6 @@ namespace Testflow.MasterCore.Common
 
         public string RuntimeHash{ get; }
 
-        
-
         public ModuleGlobalInfo(IModuleConfigData configData)
         {
             TestflowRunner = TestflowRunner.GetInstance();

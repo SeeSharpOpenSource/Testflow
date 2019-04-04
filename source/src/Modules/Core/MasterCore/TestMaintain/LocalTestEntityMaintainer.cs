@@ -95,7 +95,7 @@ namespace Testflow.MasterCore.TestMaintain
             rmtGenMessage.Params.Add("MsgType", "Generation");
             _globalInfo.MessageTransceiver.Send(rmtGenMessage);
             // 发送生成事件
-            TestStateEventInfo testGenEventInfo = new TestStateEventInfo(rmtGenMessage, TestState.StartGeneration);
+            TestGenEventInfo testGenEventInfo = new TestGenEventInfo(rmtGenMessage, TestGenState.StartGeneration);
             _globalInfo.EventQueue.Enqueue(testGenEventInfo);
         }
         
@@ -117,20 +117,20 @@ namespace Testflow.MasterCore.TestMaintain
             if (rmtGenMessage.Params["MsgType"].Equals("Success"))
             {
                 state = true;
-                TestStateEventInfo stateEventInfo = new TestStateEventInfo(rmtGenMessage.Id, TestState.GenerationOver,
+                TestGenEventInfo genEventInfo = new TestGenEventInfo(rmtGenMessage.Id, TestGenState.GenerationOver,
                     rmtGenMessage.Time);
-                _globalInfo.EventQueue.Enqueue(stateEventInfo);
+                _globalInfo.EventQueue.Enqueue(genEventInfo);
                 _runtimeContainers[rmtGenMessage.Id].HostReady = true;
             }
             else if (rmtGenMessage.Params["MsgType"].Equals("Failed"))
             {
                 state = false;
-                TestStateEventInfo stateEventInfo = new TestStateEventInfo(rmtGenMessage.Id, TestState.Error,
+                TestGenEventInfo genEventInfo = new TestGenEventInfo(rmtGenMessage.Id, TestGenState.Error,
                     rmtGenMessage.Time)
                 {
                     ErrorInfo = rmtGenMessage.Params["FailedInfo"]
                 };
-                _globalInfo.EventQueue.Enqueue(stateEventInfo);
+                _globalInfo.EventQueue.Enqueue(genEventInfo);
                 FreeHost(rmtGenMessage.Id);
             }
             // 如果所有的host都已经ready，则释放主线程等待生成结束的锁
