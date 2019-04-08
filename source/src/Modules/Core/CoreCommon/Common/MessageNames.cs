@@ -10,5 +10,10 @@
 
         public const string DownRmtGenMsgName = "RemoteGen";
         public const string UpRmtGenMsgName = "RemoteGen";
+
+        public const string StartStatusName = "Start";
+        public const string ReportStatusName = "Report";
+        public const string ResultStatusName = "Result";
+        public const string ErrorStatusName = "Error";
     }
 }

@@ -12,9 +12,9 @@ namespace Testflow.CoreCommon.Messages
         // TODO 暂时停止到Sequence级别的报告
 //        public int SequenecIndex { get; set; }
 
-        public RuntimeState State { get; set; }
+        public GenerationStatus State { get; set; }
 
-        public TestGenMessage(string name, int id, int sequenceIndex, RuntimeState state) : base(name, id, MessageType.TestGen)
+        public TestGenMessage(string name, int id, int sequenceIndex, GenerationStatus state) : base(name, id, MessageType.TestGen)
         {
 //            this.SequenecIndex = sequenceIndex;
             this.State = state;
@@ -23,7 +23,7 @@ namespace Testflow.CoreCommon.Messages
         public TestGenMessage(SerializationInfo info, StreamingContext context) : base(info, context)
         {
 //            this.SequenecIndex = (int) info.GetValue("SequenceIndex", typeof(int));
-            this.State = (RuntimeState) info.GetValue("State", typeof(RuntimeState));
+            this.State = (GenerationStatus) info.GetValue("State", typeof(GenerationStatus));
         }
 
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
