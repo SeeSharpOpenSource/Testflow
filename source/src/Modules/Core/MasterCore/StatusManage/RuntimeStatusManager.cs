@@ -164,9 +164,7 @@ namespace Testflow.MasterCore.StatusManage
 
                     _globalInfo.StateMachine.State = RuntimeState.Error;
 
-                    _stateManageContext.TestInstance.EndGenTime = testGenEventInfo.TimeStamp;
-                    _stateManageContext.TestInstance.StartTime = testGenEventInfo.TimeStamp;
-                    _stateManageContext.TestInstance.EndTime = testGenEventInfo.TimeStamp;
+                    SetTestInstanceEndTime(testGenEventInfo.TimeStamp);
                     _stateManageContext.DatabaseProxy.UpdateData(_stateManageContext.TestInstance);
 
                     _stateManageContext.EventDispatcher.RaiseEvent(Constants.TestGenerationEnd, testGenEventInfo.Session, 
@@ -342,6 +340,7 @@ namespace Testflow.MasterCore.StatusManage
             {
                 testInstanceData.StartGenTime = endTime;
             }
+            testInstanceData.ElapsedTime = (testInstanceData.EndTime - testInstanceData.StartGenTime).TotalMilliseconds;
         }
     }
 }
