@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using Testflow.Common;
@@ -23,7 +24,21 @@ namespace Testflow.MasterCore.StatusManage
             this.EventDispatcher = new EventDispatcher();
             this.DatabaseProxy = new PersistenceProxy(globalInfo);
             this.TestGenerationInfo = new TestGenerationInfo(sequenceData);
-            this.TestStatus = new TestProjectResults(sequenceData);
+            this.TestResults = new TestProjectResults(sequenceData);
+            this.TestInstance = new TestInstanceData()
+            {
+                Name = _globalInfo.ConfigData.GetProperty<string>("TestName"),
+                Description = _globalInfo.ConfigData.GetProperty<string>("TestDescription"),
+                TestProjectName = sequenceData.Name,
+                TestProjectDescription = sequenceData.Description,
+                RuntimeHash = globalInfo.RuntimeHash,
+                StartGenTime = DateTime.MaxValue,
+                EndGenTime = DateTime.MaxValue,
+                StartTime = DateTime.MaxValue,
+                EndTime = DateTime.MinValue,
+                ElapsedTime = 0
+            };
+
             this._eventStatusIndex = -1;
             this._dataStatusIndex = -1;
             this._perfStatusIndex = -1;
@@ -57,7 +72,12 @@ namespace Testflow.MasterCore.StatusManage
         /// <summary>
         /// 测试状态信息结合
         /// </summary>
-        public List<ITestResultCollection> TestStatus { get; }
+        public TestProjectResults TestResults { get; }
+
+        /// <summary>
+        /// 测试实例信息(写入数据库)
+        /// </summary>
+        public TestInstanceData TestInstance { get; }
 
         /// <summary>
         /// 事件收发器
@@ -71,7 +91,7 @@ namespace Testflow.MasterCore.StatusManage
 
         public ModuleGlobalInfo GlobalInfo { get; }
 
-        public bool IsAllTestOver => TestStatus.All(item => item.TestOver);
+        public bool IsAllTestOver => TestResults.All(item => item.TestOver);
 
         public ISessionGenerationInfo GetGenerationInfo(int session)
         {
@@ -87,12 +107,12 @@ namespace Testflow.MasterCore.StatusManage
 
         public ITestResultCollection GetSessionResults(int session)
         {
-            return TestStatus.First(item => item.Session == session);
+            return TestResults.First(item => item.Session == session);
         }
 
         public ISequenceTestResult GetSequenceResults(int session, int sequenceIndex)
         {
-            return TestStatus.First(item => item.Session == session)[sequenceIndex];
+            return TestResults.First(item => item.Session == session)[sequenceIndex];
         }
 
     }
