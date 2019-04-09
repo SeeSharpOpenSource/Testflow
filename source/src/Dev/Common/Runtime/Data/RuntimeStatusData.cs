@@ -25,7 +25,7 @@ namespace Testflow.Runtime.Data
         /// <summary>
         /// 状态索引
         /// </summary>
-        public int StatusIndex { get; set; }
+        public long StatusIndex { get; set; }
 
         /// <summary>
         /// 当前时间
