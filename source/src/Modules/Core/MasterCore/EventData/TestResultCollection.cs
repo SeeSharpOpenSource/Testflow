@@ -22,7 +22,7 @@ namespace Testflow.MasterCore.EventData
             this.TimeOutCount = 0;
             this.AbortCount = 0;
             this.TestOver = false;
-            this.WatchData = new SerializableMap<string, string>(Constants.DefaultRuntimeSize);
+            this.WatchData = new Dictionary<IVariable, string>(Constants.DefaultRuntimeSize);
 
             this.Add(CommonConst.SetupIndex, new SequenceTestResult(session, CommonConst.SetupIndex));
             this.Add(CommonConst.TeardownIndex, new SequenceTestResult(session, CommonConst.TeardownIndex));
@@ -42,7 +42,7 @@ namespace Testflow.MasterCore.EventData
             this.TimeOutCount = 0;
             this.AbortCount = 0;
             this.TestOver = false;
-            this.WatchData = new SerializableMap<string, string>(Constants.DefaultRuntimeSize);
+            this.WatchData = new Dictionary<IVariable, string>(Constants.DefaultRuntimeSize);
             this.Add(CommonConst.SetupIndex, new SequenceTestResult(Session, CommonConst.SetupIndex));
             this.Add(CommonConst.TeardownIndex, new SequenceTestResult(Session, CommonConst.TeardownIndex));
         }
@@ -59,6 +59,6 @@ namespace Testflow.MasterCore.EventData
         public int AbortCount { get; set; }
         public bool TearDownSuccess { get; set; }
         public bool TestOver { get; set; }
-        public ISerializableMap<string, string> WatchData { get; set; }
+        public IDictionary<IVariable, string> WatchData { get; set; }
     }
 }

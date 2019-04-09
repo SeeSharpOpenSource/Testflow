@@ -53,13 +53,13 @@ namespace Testflow.MasterCore.StatusManage
                     SessionGenerationEnd += ModuleUtils.GetDeleage<RuntimeDelegate.SessionGenerationAction>(callBack);
                     break;
                 case Constants.SequenceStarted:
-                    SequenceStarted += ModuleUtils.GetDeleage<RuntimeDelegate.StatusReceivedAction>(callBack);
+                    SequenceStarted += ModuleUtils.GetDeleage<RuntimeDelegate.SequenceStatusAction>(callBack);
                     break;
                 case Constants.StatusReceived:
                     StatusReceived += ModuleUtils.GetDeleage<RuntimeDelegate.StatusReceivedAction>(callBack);
                     break;
                 case Constants.SequenceOver:
-                    SequenceOver += ModuleUtils.GetDeleage<RuntimeDelegate.StatusReceivedAction>(callBack);
+                    SequenceOver += ModuleUtils.GetDeleage<RuntimeDelegate.SequenceStatusAction>(callBack);
                     break;
                 case Constants.SessionOver:
                     SessionOver += ModuleUtils.GetDeleage<RuntimeDelegate.SessionStatusAction>(callBack);
@@ -103,13 +103,13 @@ namespace Testflow.MasterCore.StatusManage
                     SessionStart -= ModuleUtils.GetDeleage<RuntimeDelegate.SessionStatusAction>(callBack);
                     break;
                 case Constants.SequenceStarted:
-                    SequenceStarted -= ModuleUtils.GetDeleage<RuntimeDelegate.StatusReceivedAction>(callBack);
+                    SequenceStarted -= ModuleUtils.GetDeleage<RuntimeDelegate.SequenceStatusAction>(callBack);
                     break;
                 case Constants.StatusReceived:
                     StatusReceived -= ModuleUtils.GetDeleage<RuntimeDelegate.StatusReceivedAction>(callBack);
                     break;
                 case Constants.SequenceOver:
-                    SequenceOver -= ModuleUtils.GetDeleage<RuntimeDelegate.StatusReceivedAction>(callBack);
+                    SequenceOver -= ModuleUtils.GetDeleage<RuntimeDelegate.SequenceStatusAction>(callBack);
                     break;
                 case Constants.SessionOver:
                     SessionOver -= ModuleUtils.GetDeleage<RuntimeDelegate.SessionStatusAction>(callBack);
@@ -163,13 +163,13 @@ namespace Testflow.MasterCore.StatusManage
                     OnTestStart(ModuleUtils.GetParamValue<ITestResultCollection>(eventParam, 0));
                     break;
                 case Constants.SequenceStarted:
-                    OnSequenceStarted(ModuleUtils.GetParamValue<IRuntimeStatusInfo>(eventParam, 0));
+                    OnSequenceStarted(ModuleUtils.GetParamValue<ISequenceTestResult>(eventParam, 0));
                     break;
                 case Constants.StatusReceived:
                     OnStatusReceived(ModuleUtils.GetParamValue<IRuntimeStatusInfo>(eventParam, 0));
                     break;
                 case Constants.SequenceOver:
-                    OnSequenceOver(ModuleUtils.GetParamValue<IRuntimeStatusInfo>(eventParam, 0));
+                    OnSequenceOver(ModuleUtils.GetParamValue<ISequenceTestResult>(eventParam, 0));
                     break;
                 case Constants.SessionOver:
 //                    eventHandle.OnTestOver(ModuleUtil.GetParamValue<ITestResultCollection>(eventParams, 0),
@@ -231,7 +231,7 @@ namespace Testflow.MasterCore.StatusManage
         /// <summary>
         /// Events raised when a sequence is start and host receive runtime stauts information. Asynchronous event.
         /// </summary>
-        public event RuntimeDelegate.StatusReceivedAction SequenceStarted;
+        public event RuntimeDelegate.SequenceStatusAction SequenceStarted;
 
         /// <summary>
         /// Events raised when receive runtime status information. Asynchronous event.
@@ -241,7 +241,7 @@ namespace Testflow.MasterCore.StatusManage
         /// <summary>
         /// Events raised when a sequence is over and host receive runtime stauts information. Asynchronous event.
         /// </summary>
-        public event RuntimeDelegate.StatusReceivedAction SequenceOver;
+        public event RuntimeDelegate.SequenceStatusAction SequenceOver;
 
         /// <summary>
         /// Events raised when a sequence is failed and host receive runtime stauts information. Asynchronous event.
@@ -288,9 +288,9 @@ namespace Testflow.MasterCore.StatusManage
             SessionGenerationEnd?.Invoke(generationinfo);
         }
 
-        internal void OnSequenceStarted(IRuntimeStatusInfo statusinfo)
+        internal void OnSequenceStarted(ISequenceTestResult result)
         {
-            SequenceStarted?.Invoke(statusinfo);
+            SequenceStarted?.Invoke(result);
         }
 
         internal void OnStatusReceived(IRuntimeStatusInfo statusinfo)
@@ -298,9 +298,9 @@ namespace Testflow.MasterCore.StatusManage
             StatusReceived?.Invoke(statusinfo);
         }
 
-        internal void OnSequenceOver(IRuntimeStatusInfo statusinfo)
+        internal void OnSequenceOver(ISequenceTestResult result)
         {
-            SequenceOver?.Invoke(statusinfo);
+            SequenceOver?.Invoke(result);
         }
 
         internal void OnTestOver(ITestResultCollection statistics)

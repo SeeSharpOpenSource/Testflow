@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Testflow.Common;
+using Testflow.Data.Sequence;
 using Testflow.MasterCore.Common;
 using Testflow.Runtime;
 using Testflow.Runtime.Data;
@@ -26,7 +27,7 @@ namespace Testflow.MasterCore.EventData
         public double ElapsedTime { get; set; }
         public IPerformanceResult Performance { get; set; }
         public ISequenceFailedInfo FailedInfo { get; set; }
-        public ISerializableMap<string, string> VariableValues { get; }
+        public IDictionary<IVariable, string> VariableValues { get; }
 
         public void InitExtendProperties()
         {
