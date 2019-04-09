@@ -22,6 +22,7 @@ namespace Testflow.MasterCore.EventData
             this.StartTime = DateTime.MaxValue;
             this.EndTime = DateTime.MaxValue;
             this.ElapsedTime = 0;
+            this.VariableValues = new Dictionary<IVariable, string>(Constants.DefaultRuntimeSize);
         }
 
         public int SessionId { get; }

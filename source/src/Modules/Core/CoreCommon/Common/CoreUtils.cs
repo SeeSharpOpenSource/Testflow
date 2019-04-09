@@ -38,9 +38,20 @@ namespace Testflow.CoreCommon.Common
 
         public static IVariable GetVariable(ISequenceFlowContainer sequenceData, string runtimeVariable)
         {
-            return sequenceData is ISequenceGroup
-                ? GetVariable((ISequenceGroup) sequenceData, runtimeVariable)
-                : GetVariable((ITestProject) sequenceData, runtimeVariable);
+            IVariable variable;
+            if (sequenceData is ITestProject)
+            {
+                variable = GetVariable((ITestProject)sequenceData, runtimeVariable);
+            }
+            else if (sequenceData is ISequenceGroup)
+            {
+                variable = GetVariable((ISequenceGroup) sequenceData, runtimeVariable);
+            }
+            else
+            {
+                variable = GetVariable((ISequence) sequenceData, runtimeVariable);
+            }
+            return variable;
         }
 
         public static IVariable GetVariable(ITestProject testProject, string runtimeVariable)
@@ -57,6 +68,23 @@ namespace Testflow.CoreCommon.Common
                     testProject.SetUp.Variables : testProject.TearDown.Variables;
             }
             return varCollection.FirstOrDefault(item => item.Name.Equals(variableElement[variableElement.Length - 1]));
+        }
+
+        public static string GetVariableNameRegex(ISequenceFlowContainer sequenceData, int session)
+        {
+            string regex;
+            if (sequenceData is ITestProject || sequenceData is ISequenceGroup)
+            {
+                const string rootRegexFormat = @"^{0}\{1}[^\{1}]+";
+                regex = string.Format(rootRegexFormat, session, VarNameDelim);
+            }
+            else
+            {
+                ISequence sequence = (ISequence)sequenceData;
+                const string sequenceVarRegexFormat = @"^{0}\{2}{1}\{2}[^\{2}]+";
+                regex = string.Format(sequenceVarRegexFormat, session, sequence.Index, VarNameDelim);
+            }
+            return regex;
         }
 
         public static IVariable GetVariable(ISequenceGroup sequenceGroup, string runtimeVariable)
@@ -83,6 +111,13 @@ namespace Testflow.CoreCommon.Common
                     varCollection = sequenceGroup.Sequences[sequenceIndex].Variables;
                 }
             }
+            return varCollection.FirstOrDefault(item => item.Name.Equals(variableElement[variableElement.Length - 1]));
+        }
+
+        public static IVariable GetVariable(ISequence sequence, string runtimeVariable)
+        {
+            string[] variableElement = runtimeVariable.Split(VarNameDelim.ToCharArray());
+            IVariableCollection varCollection = sequence.Variables;
             return varCollection.FirstOrDefault(item => item.Name.Equals(variableElement[variableElement.Length - 1]));
         }
 

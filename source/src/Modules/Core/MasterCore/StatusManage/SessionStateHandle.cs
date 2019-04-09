@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading;
 using Testflow.Common;
 using Testflow.CoreCommon.Common;
@@ -411,9 +412,14 @@ namespace Testflow.MasterCore.StatusManage
             _testResults.TestOver = _testResults.Values.All(item => item.ResultState > RuntimeState.AbortRequested);
             if (null != watchData)
             {
-                foreach (KeyValuePair<string, string> varStrToValue in watchData)
+                Regex varNameRegex = new Regex(CoreUtils.GetVariableNameRegex(_sequenceData, Session));
+                foreach (KeyValuePair<string, string> varToValue in watchData)
                 {
-                    _testResults.WatchData.Add(CoreUtils.GetVariable(this.SequenceData, varStrToValue.Key), varStrToValue.Value);
+                    if (varNameRegex.IsMatch(varToValue.Key))
+                    {
+                        IVariable variable = CoreUtils.GetVariable(_sequenceData, varToValue.Key);
+                        _testResults.WatchData.Add(variable, varToValue.Value);
+                    }
                 }
             }
         }
@@ -425,9 +431,14 @@ namespace Testflow.MasterCore.StatusManage
             if (null != watchData)
             {
                 varValues = new Dictionary<IVariable, string>(watchData.Count);
-                foreach (KeyValuePair<string, string> varStrToValue in watchData)
+                Regex varNameRegex = new Regex(CoreUtils.GetVariableNameRegex(_sequenceData, Session));
+                foreach (KeyValuePair<string, string> varToValue in watchData)
                 {
-                    varValues.Add(CoreUtils.GetVariable(this.SequenceData, varStrToValue.Key), varStrToValue.Value);
+                    if (varNameRegex.IsMatch(varToValue.Key))
+                    {
+                        IVariable variable = CoreUtils.GetVariable(_sequenceData, varToValue.Key);
+                        varValues.Add(variable, varToValue.Value);
+                    }
                 }
             }
             else
