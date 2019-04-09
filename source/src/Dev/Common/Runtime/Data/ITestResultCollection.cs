@@ -1,4 +1,6 @@
-﻿using Testflow.Common;
+﻿using System.Collections.Generic;
+using Testflow.Common;
+using Testflow.Data.Sequence;
 
 namespace Testflow.Runtime.Data
 {
@@ -51,6 +53,6 @@ namespace Testflow.Runtime.Data
         /// <summary>
         /// 变量的实时取值
         /// </summary>
-        ISerializableMap<string, string> WatchData { get; set; }
+        IDictionary<IVariable, string> WatchData { get; set; }
     }
 }

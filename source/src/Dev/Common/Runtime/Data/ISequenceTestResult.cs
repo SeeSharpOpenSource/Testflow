@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using Testflow.Common;
+using Testflow.Data.Sequence;
 
 namespace Testflow.Runtime.Data
 {
@@ -56,6 +58,6 @@ namespace Testflow.Runtime.Data
         /// <summary>
         /// 变量的事实取值
         /// </summary>
-        ISerializableMap<string, string> VariableValues { get; }
+        IDictionary<IVariable, string> VariableValues { get; }
     }
 }
