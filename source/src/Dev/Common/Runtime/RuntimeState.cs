@@ -61,23 +61,28 @@
         Failed = 9,
 
         /// <summary>
+        /// 超时
+        /// </summary>
+        Timeout = 10,
+
+        /// <summary>
         /// 执行结束
         /// </summary>
-        Over = 10,
+        Over = 11,
 
         /// <summary>
         /// 已中止状态
         /// </summary>
-        Abort = 11,
+        Abort = 12,
 
         /// <summary>
         /// 发生异常
         /// </summary>
-        Error = 12,
+        Error = 13,
 
         /// <summary>
         /// 运行时崩溃
         /// </summary>
-        Collapsed = 13
+        Collapsed = 14
     }
 }

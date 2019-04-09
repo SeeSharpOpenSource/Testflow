@@ -46,5 +46,15 @@ namespace Testflow.Runtime.Data
         /// 测试耗时
         /// </summary>
         public double ElapsedTime { get; set; }
+
+        /// <summary>
+        /// 会话执行状态
+        /// </summary>
+        public RuntimeState State { get; set; }
+
+        /// <summary>
+        /// 错误信息
+        /// </summary>
+        public string FailedInfo { get; set; }
     }
 }

@@ -23,11 +23,6 @@ namespace Testflow.Runtime.Data
         public long Index { get; set; }
 
         /// <summary>
-        /// 当前运行时堆栈
-        /// </summary>
-        public string CallStack { get; set; }
-
-        /// <summary>
         /// 时间戳
         /// </summary>
         public DateTime TimeStamp { get; set; }
