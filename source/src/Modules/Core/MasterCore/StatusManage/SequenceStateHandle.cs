@@ -18,7 +18,7 @@ namespace Testflow.MasterCore.StatusManage
         private readonly StateManageContext _stateManageContext;
         private readonly ISequence _sequence;
         private DateTime _blockedStart;
-        private ISequenceTestResult _sequenceTestResult;
+        private readonly ISequenceTestResult _sequenceTestResult;
 
         public SequenceStateHandle(int session, ISequence sequence, StateManageContext stateManageContext)
         {

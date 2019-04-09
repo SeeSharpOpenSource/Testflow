@@ -3,6 +3,7 @@ using System.Text;
 using Testflow.CoreCommon.Data.EventInfos;
 using Testflow.MasterCore.Core;
 using Testflow.MasterCore.Message;
+using Testflow.MasterCore.StatusManage;
 using Testflow.Modules;
 using Testflow.Utility.I18nUtil;
 
@@ -25,6 +26,8 @@ namespace Testflow.MasterCore.Common
         public RuntimeStateMachine StateMachine { get; set; }
 
         public ExceptionManager ExceptionManager { get; private set; }
+
+        public EventDispatcher EventDispatcher { get; set; }
 
         public string RuntimeHash{ get; }
 

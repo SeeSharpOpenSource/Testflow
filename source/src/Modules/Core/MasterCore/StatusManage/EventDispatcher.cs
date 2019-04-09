@@ -43,14 +43,14 @@ namespace Testflow.MasterCore.StatusManage
                 case Constants.SessionGenerationReport:
                     SessionGenerationReport += ModuleUtils.GetDeleage<RuntimeDelegate.SessionGenerationAction>(callBack);
                     break;
+                case Constants.SessionGenerationEnd:
+                    SessionGenerationEnd += ModuleUtils.GetDeleage<RuntimeDelegate.SessionGenerationAction>(callBack);
+                    break;
                 case Constants.TestProjectStart:
                     TestProjectStart += ModuleUtils.GetDeleage<RuntimeDelegate.TestProjectStatusAction>(callBack);
                     break;
                 case Constants.SessionStart:
                     SessionStart += ModuleUtils.GetDeleage<RuntimeDelegate.SessionStatusAction>(callBack);
-                    break;
-                case Constants.SessionGenerationEnd:
-                    SessionGenerationEnd += ModuleUtils.GetDeleage<RuntimeDelegate.SessionGenerationAction>(callBack);
                     break;
                 case Constants.SequenceStarted:
                     SequenceStarted += ModuleUtils.GetDeleage<RuntimeDelegate.SequenceStatusAction>(callBack);
@@ -268,74 +268,74 @@ namespace Testflow.MasterCore.StatusManage
 
         //        event RuntimeDelegate.StatusReceivedAction SequenceFailed;
 
-        internal void OnTestGenerationStart(ITestGenerationInfo generationinfo)
+        private void OnTestGenerationStart(ITestGenerationInfo generationinfo)
         {
             TestGenerationStart?.Invoke(generationinfo);
         }
 
-        internal void OnTestGenerationEnd(ITestGenerationInfo generationinfo)
+        private void OnTestGenerationEnd(ITestGenerationInfo generationinfo)
         {
             TestGenerationEnd?.Invoke(generationinfo);
         }
 
-        internal void OnSessionGenerationStart(ISessionGenerationInfo generationinfo)
+        private void OnSessionGenerationStart(ISessionGenerationInfo generationinfo)
         {
             SessionGenerationStart?.Invoke(generationinfo);
         }
 
-        internal void OnSessionGenerationEnd(ISessionGenerationInfo generationinfo)
+        private void OnSessionGenerationEnd(ISessionGenerationInfo generationinfo)
         {
             SessionGenerationEnd?.Invoke(generationinfo);
         }
 
-        internal void OnSequenceStarted(ISequenceTestResult result)
+        private void OnSequenceStarted(ISequenceTestResult result)
         {
             SequenceStarted?.Invoke(result);
         }
 
-        internal void OnStatusReceived(IRuntimeStatusInfo statusinfo)
+        private void OnStatusReceived(IRuntimeStatusInfo statusinfo)
         {
             StatusReceived?.Invoke(statusinfo);
         }
 
-        internal void OnSequenceOver(ISequenceTestResult result)
+        private void OnSequenceOver(ISequenceTestResult result)
         {
             SequenceOver?.Invoke(result);
         }
 
-        internal void OnTestOver(ITestResultCollection statistics)
+        private void OnTestOver(ITestResultCollection statistics)
         {
             SessionOver?.Invoke(statistics);
         }
 
-        internal void OnTestStart(ITestResultCollection statistics)
+        private void OnTestStart(ITestResultCollection statistics)
         {
             SessionStart?.Invoke(statistics);
         }
 
-        internal void OnBreakPointHitted(IDebuggerHandle debuggerHandle, IDebugInformation information)
+        private void OnBreakPointHitted(IDebuggerHandle debuggerHandle, IDebugInformation information)
         {
             BreakPointHitted?.Invoke(debuggerHandle, information);
         }
 
-        internal void OnSessionGenerationReport(ISessionGenerationInfo generationinfo)
+        private void OnSessionGenerationReport(ISessionGenerationInfo generationinfo)
         {
             SessionGenerationReport?.Invoke(generationinfo);
         }
 
-        internal void OnTestProjectStart(IList<ITestResultCollection> testResults)
+        private void OnTestProjectStart(IList<ITestResultCollection> testResults)
         {
             TestProjectStart?.Invoke(testResults);
         }
 
-        internal void OnTestProjectOver(IList<ITestResultCollection> testResults)
+        private void OnTestProjectOver(IList<ITestResultCollection> testResults)
         {
             TestProjectOver?.Invoke(testResults);
         }
 
         #endregion
-        
-        internal class EventParam
+
+        private class EventParam
         {
             public string EventName { get; }
 

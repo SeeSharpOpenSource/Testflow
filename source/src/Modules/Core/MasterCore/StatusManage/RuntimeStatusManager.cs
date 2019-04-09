@@ -65,6 +65,8 @@ namespace Testflow.MasterCore.StatusManage
                     _stateManageContext);
                 _sessionStateHandles.Add(stateHandle.Session, stateHandle);
             }
+
+            _globalInfo.EventDispatcher = _stateManageContext.EventDispatcher;
         }
 
         public void Start()

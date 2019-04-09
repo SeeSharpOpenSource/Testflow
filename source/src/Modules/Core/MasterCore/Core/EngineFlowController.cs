@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using Testflow.Common;
 using Testflow.CoreCommon.Common;
 using Testflow.CoreCommon.Data.EventInfos;
@@ -9,6 +10,7 @@ using Testflow.MasterCore.Message;
 using Testflow.MasterCore.TestMaintain;
 using Testflow.Modules;
 using Testflow.Runtime;
+using Testflow.Runtime.Data;
 
 namespace Testflow.MasterCore.Core
 {
@@ -117,18 +119,82 @@ namespace Testflow.MasterCore.Core
             _blockHandle.Wait(Constants.RmtGenState);
         }
 
+        // 如果是TestProject运行，则先开始TestProject的SetUp，在触发SequenceOver事件后检查是否是TestProject的SetUp，如果是则开始其他Session。
+        // 注册其他的Session事件，如果所有Session都已经执行结束，则发送执行TestProject的TearDown的命令。
+        // 如果是SequenceGroup执行，直接开始即可。
         public void StartTestWork()
         {
-            // TODO 这里没有再去监听运行端是否开始的返回信息，可能会出现断链的问题，后期再解决
+            _globalInfo.EventDispatcher.SessionOver += SessionOverClean;
+            if (_sequenceData is ITestProject)
+            {
+                // 注册TestProject的Setup执行结束后的事件
+                _globalInfo.EventDispatcher.SequenceOver += StartTestSessionsIfSetUpOver;
+
+                ControlMessage startMessage = new ControlMessage(MessageNames.CtrlStart, CommonConst.TestGroupSession);
+                startMessage.AddParam("RunSetup", true.ToString());
+                _globalInfo.MessageTransceiver.Send(startMessage);
+            }
+            else
+            {
+                // TODO 这里没有再去监听运行端是否开始的返回信息，可能会出现断链的问题，后期再解决
+                ControlMessage startMessage = new ControlMessage(MessageNames.CtrlStart, CommonConst.BroadcastSession);
+                startMessage.AddParam("RunAll", true.ToString());
+                foreach (int session in _testsMaintainer.TestContainers.Keys)
+                {
+                    startMessage.Id = session;
+                    _globalInfo.MessageTransceiver.Send(startMessage);
+                }
+            }
+        }
+
+        /// <summary>
+        /// 如果TestProject的SetUp执行成功发送开始测试Session的命令
+        /// </summary>
+        private void StartTestSessionsIfSetUpOver(ISequenceTestResult result)
+        {
+            if (result.SessionId != CommonConst.TestGroupSession || result.SequenceIndex != CommonConst.SetupIndex)
+            {
+                return;
+            }
+            _globalInfo.EventDispatcher.SequenceOver -= StartTestSessionsIfSetUpOver;
+            if (result.ResultState != RuntimeState.Success)
+            {
+                return;
+            }
             ControlMessage startMessage = new ControlMessage(MessageNames.CtrlStart, CommonConst.BroadcastSession);
+            startMessage.AddParam("RunAll", true.ToString());
+            // 发送开始指令
             foreach (int session in _testsMaintainer.TestContainers.Keys)
             {
+                if (session == CommonConst.TestGroupSession)
+                {
+                    continue;
+                }
                 startMessage.Id = session;
                 _globalInfo.MessageTransceiver.Send(startMessage);
-                // Session开始将在Status消息中发送，不再从Master端触发。
-//                TestStateEventInfo stateEventInfo = new TestStateEventInfo(session, TestGenState.TestStart, startMessage.Time);
-//                _globalInfo.EventQueue.Enqueue(stateEventInfo);
             }
+        }
+
+        
+        private void SessionOverClean(ITestResultCollection testResults)
+        {
+            _testsMaintainer.FreeHost(testResults.Session);
+            // 如果只剩下TestMaintainer的数据，则发送执行TestProjectTearDown的命令
+            if (_sequenceData is ITestProject && _testsMaintainer.TestContainers.Count == 1 &&
+                _testsMaintainer.TestContainers.ContainsKey(CommonConst.TestGroupSession))
+            {
+                RunRootTearDownIfOtherSessionOver();
+            }
+        }
+
+        /// <summary>
+        /// 如果其他Session执行结束发送开始执行TestProjectTeardown的命令
+        /// </summary>
+        private void RunRootTearDownIfOtherSessionOver()
+        {
+            ControlMessage startMessage = new ControlMessage(MessageNames.CtrlStart, CommonConst.TestGroupSession);
+            startMessage.AddParam("RunTearDown", true.ToString());
+            _globalInfo.MessageTransceiver.Send(startMessage);
         }
 
         public bool HandleMessage(MessageBase message)

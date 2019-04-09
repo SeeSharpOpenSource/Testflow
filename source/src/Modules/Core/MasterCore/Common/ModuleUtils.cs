@@ -1,12 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Management;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
 using Testflow.Common;
 using Testflow.CoreCommon;
-using Testflow.CoreCommon.Data;
 using Testflow.Data.Sequence;
 using Testflow.MasterCore.EventData;
 using Testflow.MasterCore.StatusManage.StatePersistance;
