@@ -160,7 +160,7 @@ namespace Testflow.MasterCore.StatusManage
                     }
                     break;
                 case TestGenState.Error:
-                    _sessionStateHandles[testGenEventInfo.Session].State = RuntimeState.Error;
+                    _sessionStateHandles[eventInfo.Session].TestGenEventProcess(testGenEventInfo);
 
                     _globalInfo.StateMachine.State = RuntimeState.Error;
 
@@ -269,7 +269,7 @@ namespace Testflow.MasterCore.StatusManage
                         _stateManageContext.EventDispatcher.RaiseEvent(Constants.TestProjectStart,
                             CommonConst.TestGroupSession, _stateManageContext.TestResults);
 
-                        stateHandle[message.Id].HandleStatusMessage(statusMessage);
+                        stateHandle.HandleStatusMessage(statusMessage);
                     }
                     break;
                 case MessageNames.ReportStatusName:
