@@ -21,10 +21,11 @@ namespace Testflow.CoreCommon.Messages
 
         public Dictionary<string, string> WatchData { get; }
 
+        public ExceptionInfo ExceptionInfo { get; set; }
+
         public StatusMessage(string name, RuntimeState state, int id) : base(name, id, MessageType.Status)
         {
             this.State = state;
-            this.WatchData = new Dictionary<string, string>(CoreConstants.DefaultRuntimeSize);
             this.WatchData = new Dictionary<string, string>(CoreConstants.DefaultRuntimeSize);
         }
 
@@ -36,7 +37,6 @@ namespace Testflow.CoreCommon.Messages
 //            this.WatchData =
 //                info.GetValue("WatchData", typeof(Dictionary<string, string>)) as Dictionary<string, string>;
             CoreUtils.SetMessageValue(info, this, this.GetType());
-
         }
 
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
@@ -52,6 +52,10 @@ namespace Testflow.CoreCommon.Messages
             if (null != WatchData && WatchData.Count > 0)
             {
                 info.AddValue("WatchData", WatchData, typeof(Dictionary<string, string>));
+            }
+            if (null != ExceptionInfo)
+            {
+                info.AddValue("ExceptionInfo", ExceptionInfo, typeof(ExceptionInfo));
             }
         }
     }
