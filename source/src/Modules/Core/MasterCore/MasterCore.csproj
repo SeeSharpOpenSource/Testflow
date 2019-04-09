@@ -55,6 +55,7 @@
     <Compile Include="Core\DebugManager.cs" />
     <Compile Include="Core\RuntimeStateMachine.cs" />
     <Compile Include="EngineHandle.cs" />
+    <Compile Include="EventData\PerformanceResult.cs" />
     <Compile Include="EventData\RuntimeStatusInfo.cs" />
     <Compile Include="EventData\SessionGenerationInfo.cs" />
     <Compile Include="EventData\SequenceTestResult.cs" />

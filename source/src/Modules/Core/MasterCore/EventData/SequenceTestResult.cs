@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Testflow.Common;
+using Testflow.CoreCommon.Data;
 using Testflow.Data.Sequence;
 using Testflow.MasterCore.Common;
 using Testflow.Runtime;
@@ -17,6 +18,10 @@ namespace Testflow.MasterCore.EventData
 
             this.SessionId = sessionId;
             this.SequenceIndex = sequenceIndex;
+            this.ResultState = RuntimeState.Idle;
+            this.StartTime = DateTime.MaxValue;
+            this.EndTime = DateTime.MaxValue;
+            this.ElapsedTime = 0;
         }
 
         public int SessionId { get; }
@@ -25,7 +30,6 @@ namespace Testflow.MasterCore.EventData
         public DateTime StartTime { get; set; }
         public DateTime EndTime { get; set; }
         public double ElapsedTime { get; set; }
-        public IPerformanceResult Performance { get; set; }
         public ISequenceFailedInfo FailedInfo { get; set; }
         public IDictionary<IVariable, string> VariableValues { get; }
 

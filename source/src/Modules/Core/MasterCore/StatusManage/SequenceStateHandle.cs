@@ -128,7 +128,7 @@ namespace Testflow.MasterCore.StatusManage
             return true;
         }
 
-        public void HandleStatusMessage(StatusMessage message)
+        public void HandleStatusMessage(StatusMessage message, int index)
         {
             switch (message.State)
             {

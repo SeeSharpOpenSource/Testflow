@@ -252,6 +252,8 @@ namespace Testflow.MasterCore.StatusManage
                     UpdateSessionResultData(string.Empty);
 
                     SetTestResultStatistics(message.WatchData);
+                    _testResults.Performance = ModuleUtils.GetPerformanceResult(_stateManageContext.DatabaseProxy,
+                        RuntimeHash, Session);
                     _stateManageContext.EventDispatcher.RaiseEvent(Constants.SessionStart,
                         Session, _testResults);
                     // 写入性能记录条目
@@ -287,6 +289,8 @@ namespace Testflow.MasterCore.StatusManage
                     RefreshTime(message);
 
                     SetTestResultStatistics(message.WatchData);
+                    _testResults.Performance = ModuleUtils.GetPerformanceResult(_stateManageContext.DatabaseProxy,
+                        RuntimeHash, Session);
                     _stateManageContext.EventDispatcher.RaiseEvent(Constants.SessionOver,
                         Session, _testResults);
 
@@ -311,6 +315,8 @@ namespace Testflow.MasterCore.StatusManage
                     UpdateSessionResultData(message.ExceptionInfo.ToString());
 
                     SetTestResultStatistics(message.WatchData);
+                    _testResults.Performance = ModuleUtils.GetPerformanceResult(_stateManageContext.DatabaseProxy,
+                        RuntimeHash, Session);
                     _stateManageContext.EventDispatcher.RaiseEvent(Constants.SessionOver,
                         Session, _testResults);
                     // 写入性能记录条目

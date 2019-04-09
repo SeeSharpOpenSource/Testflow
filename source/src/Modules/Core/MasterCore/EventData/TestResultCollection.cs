@@ -30,6 +30,7 @@ namespace Testflow.MasterCore.EventData
             {
                 this.Add(i, new SequenceTestResult(session, i));
             }
+            this.Performance = null;
         }
 
         public TestResultCollection(ITestProject testProject) : base(2)
@@ -45,6 +46,7 @@ namespace Testflow.MasterCore.EventData
             this.WatchData = new Dictionary<IVariable, string>(Constants.DefaultRuntimeSize);
             this.Add(CommonConst.SetupIndex, new SequenceTestResult(Session, CommonConst.SetupIndex));
             this.Add(CommonConst.TeardownIndex, new SequenceTestResult(Session, CommonConst.TeardownIndex));
+            this.Performance = null;
         }
 
         public TestResultCollection(SerializationInfo info, StreamingContext context) : base(info, context)
@@ -59,6 +61,7 @@ namespace Testflow.MasterCore.EventData
         public int AbortCount { get; set; }
         public bool TearDownSuccess { get; set; }
         public bool TestOver { get; set; }
+        public IPerformanceResult Performance { get; set; }
         public IDictionary<IVariable, string> WatchData { get; set; }
     }
 }

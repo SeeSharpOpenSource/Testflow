@@ -8,6 +8,9 @@ using Testflow.Common;
 using Testflow.CoreCommon;
 using Testflow.CoreCommon.Data;
 using Testflow.Data.Sequence;
+using Testflow.MasterCore.EventData;
+using Testflow.MasterCore.StatusManage.StatePersistance;
+using Testflow.Runtime;
 using Testflow.Utility.I18nUtil;
 
 namespace Testflow.MasterCore.Common
@@ -96,6 +99,12 @@ namespace Testflow.MasterCore.Common
             string runtimeInfo = $"{hostName}/{systemVersion}/{mac}/{DateTime.Now}";
 
             return GetHashValue(runtimeInfo, encoding);
+        }
+
+        public static IPerformanceResult GetPerformanceResult(PersistenceProxy databaseProxy, string runtimeHash, int session)
+        {
+            // TODO not implemented
+            return new PerformanceResult();
         }
     }
 }
