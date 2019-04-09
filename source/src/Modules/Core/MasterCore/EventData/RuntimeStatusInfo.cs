@@ -28,9 +28,12 @@ namespace Testflow.MasterCore.EventData
             this.StartTime = stateHandle.StartTime;
             this.ElapsedTime = stateHandle.ElapsedTime;
             this.CurrentTime = stateHandle.CurrentTime;
-            this.MemoryUsed = stateHandle.Performance.MemoryUsed;
-            this.MemoryAllocated = stateHandle.Performance.MemoryAllocated;
-            this.ProcessorTime = stateHandle.Performance.ProcessorTime;
+            if (null != stateHandle.Performance)
+            {
+                this.MemoryUsed = stateHandle.Performance.MemoryUsed;
+                this.MemoryAllocated = stateHandle.Performance.MemoryAllocated;
+                this.ProcessorTime = stateHandle.Performance.ProcessorTime;
+            }
             this.State = stateHandle.State;
 
             for (int i = 0; i < stateHandle.SequenceCount; i++)
