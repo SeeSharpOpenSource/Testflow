@@ -51,6 +51,11 @@ namespace Testflow.Runtime.Data
         bool TestOver { get; set; }
 
         /// <summary>
+        /// 性能结果数据
+        /// </summary>
+        IPerformanceResult Performance { get; set; }
+
+        /// <summary>
         /// 变量的实时取值
         /// </summary>
         IDictionary<IVariable, string> WatchData { get; set; }

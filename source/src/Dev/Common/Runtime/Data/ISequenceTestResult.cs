@@ -46,11 +46,6 @@ namespace Testflow.Runtime.Data
         double ElapsedTime { get; set; }
 
         /// <summary>
-        /// 性能测试结果
-        /// </summary>
-        IPerformanceResult Performance { get; set; }
-
-        /// <summary>
         /// 测试失败信息
         /// </summary>
         ISequenceFailedInfo FailedInfo { get; set; }
