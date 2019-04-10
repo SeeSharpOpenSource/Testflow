@@ -149,5 +149,23 @@ namespace Testflow.MasterCore.Resources.locale {
                 return ResourceManager.GetString("UnregisteredMessage", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 用户终止执行测试序列。.
+        /// </summary>
+        internal static string UserAbort {
+            get {
+                return ResourceManager.GetString("UserAbort", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 用户终止测试序列错误：{0}。.
+        /// </summary>
+        internal static string UserAbortError {
+            get {
+                return ResourceManager.GetString("UserAbortError", resourceCulture);
+            }
+        }
     }
 }

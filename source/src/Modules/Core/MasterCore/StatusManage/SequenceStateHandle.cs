@@ -1,11 +1,16 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading;
 using Testflow.Common;
 using Testflow.CoreCommon.Common;
+using Testflow.CoreCommon.Data;
 using Testflow.CoreCommon.Data.EventInfos;
 using Testflow.CoreCommon.Messages;
 using Testflow.Data.Sequence;
+using Testflow.MasterCore.Common;
+using Testflow.MasterCore.EventData;
 using Testflow.Runtime;
 using Testflow.Runtime.Data;
 
@@ -19,6 +24,8 @@ namespace Testflow.MasterCore.StatusManage
         private readonly ISequence _sequence;
         private DateTime _blockedStart;
         private readonly ISequenceTestResult _sequenceTestResult;
+        private readonly SequenceResultData _sequenceResultData;
+        private RuntimeStatusData _statusData;
 
         public SequenceStateHandle(int session, ISequence sequence, StateManageContext stateManageContext)
         {
@@ -32,6 +39,33 @@ namespace Testflow.MasterCore.StatusManage
             this._blockedStart = DateTime.MaxValue;
 
             _sequenceTestResult = this._stateManageContext.GetSequenceResults(Session, SequenceIndex);
+            _sequenceResultData = new SequenceResultData()
+            {
+                Name = sequence.Name,
+                Description = sequence.Description,
+                StartTime = DateTime.MaxValue,
+                EndTime = DateTime.MaxValue,
+                ElapsedTime = 0,
+                RuntimeHash = stateManageContext.RuntimeHash,
+                FailInfo = string.Empty,
+                Result = RuntimeState.Idle,
+                FailStack = string.Empty,
+                Session = session,
+                SequenceIndex = sequence.Index,
+            };
+            _stateManageContext.DatabaseProxy.WriteData(_sequenceResultData);
+            _statusData = new RuntimeStatusData()
+            {
+                RuntimeHash = _stateManageContext.RuntimeHash,
+                Sequence = this.SequenceIndex,
+                Session = Session,
+                Stack = this.RunStack.ToString(),
+                Time = CurrentTime,
+                ElapsedTime = this.ElapsedTime.TotalMilliseconds,
+                Result = StepResult.NotAvailable,
+                WatchData = string.Empty,
+                StatusIndex = -1
+            };
         }
 
         public RuntimeState State
@@ -61,7 +95,9 @@ namespace Testflow.MasterCore.StatusManage
 
         public TimeSpan BlockedTime { get; set; }
 
-        public string RunStack { get; set; }
+        public CallStack RunStack { get; set; }
+
+        public StepResult StepResult { get; set; }
 
         // 处理事件和消息。完成的工作有：
         // 更新SequenceStateHandle的状态、生成RuntimeStatusData并持久化、序列执行结束后生成SequenceResultData并持久化
@@ -69,103 +105,137 @@ namespace Testflow.MasterCore.StatusManage
 
         public void AbortEventProcess(AbortEventInfo eventInfo)
         {
-            RuntimeStatusData statusData;
             if (eventInfo.IsRequest)
             {
-                RefreshCommonStatus(eventInfo, RuntimeState.AbortRequested);
-                statusData = CreateTestStatusData();
+                RefreshCommonStatus(eventInfo, RuntimeState.AbortRequested, StepResult.NotAvailable);
             }
             else
             {
-                RefreshCommonStatus(eventInfo, RuntimeState.Abort);
+                RefreshCommonStatus(eventInfo, RuntimeState.Abort, StepResult.Abort);
 
-                ITestResultCollection testResult =
-                    _stateManageContext.GetSessionResults(eventInfo.Session);
-                testResult.TestOver = true;
-                testResult.AbortCount++;
-                testResult[eventInfo.Session].ResultState = RuntimeState.Abort;
-                testResult[eventInfo.Session].ElapsedTime = (ulong) this.ElapsedTime.TotalMilliseconds;
-                _eventDispatcher.RaiseEvent(CoreConstants.TestOver, eventInfo.Session, testResult);
+                SequenceFailedInfo failedInfo = new SequenceFailedInfo(_stateManageContext.GlobalInfo.I18N.GetStr("UserAbort"), FailedType.Abort);
+                UpdateSequenceTestResult(failedInfo, null);
+                _eventDispatcher.RaiseEvent(CoreConstants.SequenceOver, eventInfo.Session, _sequenceTestResult);
 
-                statusData = CreateTestStatusData();
+                WriteRuntimeStatusData(StepResult.Failed, string.Empty);
             }
-            return statusData;
         }
 
-        public void DebugEventProcess(DebugEventInfo eventInfo)
+        public void DebugEventProcess(DebugEventInfo eventInfo, ISequenceFlowContainer parentSequenceData)
         {
-            throw new NotImplementedException();
+            if (eventInfo.IsDebugHit)
+            {
+                RefreshCommonStatus(eventInfo, RuntimeState.DebugBlocked, StepResult.NotAvailable);
+                
+                DebugInformation debugInformation = new DebugInformation(eventInfo, parentSequenceData);
+                _stateManageContext.EventDispatcher.RaiseEvent(CoreConstants.BreakPointHitted, Session,
+                    _stateManageContext.GlobalInfo.DebugHandle, debugInformation);
+            }
+            else
+            {
+                RefreshCommonStatus(eventInfo, RuntimeState.Running, StepResult.NotAvailable);
+            }
         }
 
         public void ExceptionEventProcess(ExceptionEventInfo eventInfo)
         {
-            throw new NotImplementedException();
+            // TODO
         }
 
         public void SyncEventProcess(SyncEventInfo eventInfo)
         {
-            throw new NotImplementedException();
-        }
-
-        public void HandleTestGenMessage(TestGenMessage message)
-        {
-            switch (message.State)
-            {
-                case RuntimeState.Idle:
-                    break;
-                case RuntimeState.TestGen:
-
-                    break;
-                case RuntimeState.Error:
-                    break;
-                case RuntimeState.AbortRequested:
-                    break;
-                case RuntimeState.Abort:
-                    break;
-                default:
-                    throw new InvalidProgramException();
-            }
-            return true;
+            // TODO
         }
 
         public void HandleStatusMessage(StatusMessage message, int index)
         {
-            switch (message.State)
+            RuntimeState newState = message.SequenceStates[index];
+            this.RunStack = message.Stacks[index];
+            StepResult stepResult = message.Results[index];
+            switch (message.Name)
             {
-                case RuntimeState.Running:
+                case MessageNames.StartStatusName:
+                case MessageNames.ReportStatusName:
+                    if (State == RuntimeState.StartIdle && newState == RuntimeState.Running)
+                    {
+                        // 序列刚开始执行
+                        RefreshCommonStatus(message, newState, stepResult);
+                        // 更新数据库中的测试数据条目
+                        UpdateSequenceResultData(string.Empty);
+                        // 触发SequenceStart事件
+                        UpdateSequenceTestResult(null, null);
+                        _stateManageContext.EventDispatcher.RaiseEvent(Constants.SequenceOver, Session,
+                            _sequenceTestResult);
+
+                    }
+                    // 序列执行结束
+                    else if ((State == RuntimeState.Running || State == RuntimeState.Blocked || State == RuntimeState.DebugBlocked)
+                        && newState > RuntimeState.AbortRequested)
+                    {
+                        RefreshCommonStatus(message, newState, stepResult);
+
+                        // 更新数据库中的测试数据条目
+                        UpdateSequenceResultData(GetFailedInfoStr(message));
+                        // 写入RuntimeStatusInfo条目
+                        string watchDataStr = ModuleUtils.WatchDataToString(message.WatchData);
+                        WriteRuntimeStatusData(stepResult, watchDataStr);
+
+                        // 触发SequenceOver事件
+                        ISequenceFailedInfo failedInfo = GetFailedInfo(message);
+                        UpdateSequenceTestResult(failedInfo, message.WatchData);
+                        _stateManageContext.EventDispatcher.RaiseEvent(Constants.SequenceOver, Session,
+                            _sequenceTestResult);
+                    }
+                    // 关键节点状态更新
+                    else
+                    {
+                        RefreshCommonStatus(message, newState, stepResult);
+                        // 只有在StepResult处于结果节点时才会触发事件和
+                        if (message.InterestedSequence.Contains(SequenceIndex))
+                        {
+                            // 写入RuntimeStatusInfo条目
+                            string watchDataStr = ModuleUtils.WatchDataToString(message.WatchData);
+                            WriteRuntimeStatusData(stepResult, watchDataStr);
+                        }
+                    }
                     break;
-                case RuntimeState.Blocked:
+                case MessageNames.HearBeatStatusName:
+                    RefreshCommonStatus(message, newState, stepResult);
                     break;
-                case RuntimeState.DebugBlocked:
+                case MessageNames.ErrorStatusName:
+                    newState = RuntimeState.Error;
+                    stepResult = StepResult.Error;
+                    RefreshCommonStatus(message, newState, stepResult);
+
+                    // 更新数据库中的测试数据条目
+                    UpdateSequenceResultData(message.ExceptionInfo.ToString());
+                    // 写入RuntimeStatusInfo条目
+                    WriteRuntimeStatusData(stepResult, ModuleUtils.WatchDataToString(message.WatchData));
+
+                    // 触发SequenceOver事件
+                    UpdateSequenceTestResult(message.ExceptionInfo, message.WatchData);
+                    _stateManageContext.EventDispatcher.RaiseEvent(Constants.SequenceOver, Session,
+                        _sequenceTestResult);
                     break;
-                case RuntimeState.Skipped:
-                    break;
-                case RuntimeState.Success:
-                    break;
-                case RuntimeState.Failed:
-                    break;
-                case RuntimeState.Error:
-                    break;
-                case RuntimeState.Over:
-                    break;
-                case RuntimeState.AbortRequested:
-                    break;
-                case RuntimeState.Abort:
+                case MessageNames.ResultStatusName:
                     break;
                 default:
                     throw new InvalidProgramException();
+                    break;
             }
-            return true;
         }
 
         #endregion
 
+        #region 更新数据
 
-        private void RefreshCommonStatus(MessageBase message, RuntimeState newState)
+        /// <summary>
+        /// 更新事件、状态和StepResult
+        /// </summary>
+        private void RefreshCommonStatus(MessageBase message, RuntimeState newState, StepResult result)
         {
             // 如果阻塞开始时间无效并且最新状态是非阻塞状态，则继续执行
-            if (_blockedStart == DateTime.MaxValue &&
-                (newState != RuntimeState.Blocked && newState != RuntimeState.DebugBlocked))
+            if (_blockedStart == DateTime.MaxValue && (newState != RuntimeState.Blocked && newState != RuntimeState.DebugBlocked))
             {
                 // ignore
             }
@@ -177,26 +247,24 @@ namespace Testflow.MasterCore.StatusManage
                 this._blockedStart = DateTime.MaxValue;
             }
             // 如果阻塞开始事件无效，并且目前状态为阻塞状态，则更新阻塞开始时间
-            else if (_blockedStart == DateTime.MaxValue &&
-                     (newState == RuntimeState.Blocked || newState == RuntimeState.DebugBlocked))
+            else if (_blockedStart == DateTime.MaxValue && (newState == RuntimeState.Blocked || newState == RuntimeState.DebugBlocked))
             {
                 this._blockedStart = message.Time;
             }
             this.ElapsedTime = message.Time - this.StartTime - this.BlockedTime;
             this.CurrentTime = message.Time;
-            if (newState == RuntimeState.Abort || newState == RuntimeState.Error || newState == RuntimeState.Failed ||
-                newState == RuntimeState.Success)
+            if (newState == RuntimeState.Abort || newState == RuntimeState.Error || newState == RuntimeState.Failed || newState == RuntimeState.Success)
             {
                 this.EndTime = message.Time;
             }
             this.State = newState;
+            this.StepResult = result;
         }
 
-        private void RefreshCommonStatus(EventInfoBase eventInfo, RuntimeState newState)
+        private void RefreshCommonStatus(EventInfoBase eventInfo, RuntimeState newState, StepResult stepResult)
         {
             // 如果阻塞开始时间无效并且最新状态是非阻塞状态，则继续执行
-            if (_blockedStart == DateTime.MaxValue &&
-                (newState != RuntimeState.Blocked && newState != RuntimeState.DebugBlocked))
+            if (_blockedStart == DateTime.MaxValue && (newState != RuntimeState.Blocked && newState != RuntimeState.DebugBlocked))
             {
                 // ignore
             }
@@ -208,56 +276,67 @@ namespace Testflow.MasterCore.StatusManage
                 this._blockedStart = DateTime.MaxValue;
             }
             // 如果阻塞开始事件无效，并且目前状态为阻塞状态，则更新阻塞开始时间
-            else if (_blockedStart == DateTime.MaxValue &&
-                     (newState == RuntimeState.Blocked || newState == RuntimeState.DebugBlocked))
+            else if (_blockedStart == DateTime.MaxValue && (newState == RuntimeState.Blocked || newState == RuntimeState.DebugBlocked))
             {
                 this._blockedStart = eventInfo.TimeStamp;
             }
             this.ElapsedTime = eventInfo.TimeStamp - this.StartTime - this.BlockedTime;
             this.CurrentTime = eventInfo.TimeStamp;
             this.State = newState;
-            if (newState == RuntimeState.Abort || newState == RuntimeState.Error || newState == RuntimeState.Failed ||
-                newState == RuntimeState.Success)
+            if (newState == RuntimeState.Abort || newState == RuntimeState.Error || newState == RuntimeState.Failed || newState == RuntimeState.Success)
             {
                 this.EndTime = eventInfo.TimeStamp;
             }
+            this.StepResult = stepResult;
         }
 
-        private RuntimeStatusData WriteRuntimeStatusData(StepResult result, string watchData)
+        private void UpdateSequenceTestResult(ISequenceFailedInfo failedInfo, Dictionary<string, string> watchData)
         {
-            RuntimeStatusData statusData = new RuntimeStatusData()
+            _sequenceTestResult.ResultState = this.State;
+            _sequenceTestResult.StartTime = this.StartTime;
+            _sequenceTestResult.EndTime = this.EndTime;
+            _sequenceTestResult.ElapsedTime = this.ElapsedTime.TotalMilliseconds;
+            _sequenceTestResult.FailedInfo = failedInfo;
+            _sequenceTestResult.VariableValues.Clear();
+
+            if (null != watchData)
             {
-                Stack = this.RunStack,
-                ElapsedTime = this.ElapsedTime.TotalMilliseconds,
-                RuntimeHash = _stateManageContext.RuntimeHash,
-                Sequence = this.SequenceIndex,
-                Time = CurrentTime,
-                Result = result,
-                WatchData = watchData,
-                Session = Session,
-            };
-            _stateManageContext.DatabaseProxy.WriteData(statusData);
-            return statusData;
+                Regex varNameRegex = new Regex(CoreUtils.GetVariableNameRegex(_sequence, Session));
+                foreach (KeyValuePair<string, string> varToValue in watchData)
+                {
+                    if (varNameRegex.IsMatch(varToValue.Key))
+                    {
+                        IVariable variable = CoreUtils.GetVariable(_sequence, varToValue.Key);
+                        _sequenceTestResult.VariableValues.Add(variable, varToValue.Value);
+                    }
+                }
+            }
         }
 
-        private SequenceResultData WriteSequenceResult(StepResult result, string failedInfo)
+        private void WriteRuntimeStatusData(StepResult result, string watchData)
         {
-            SequenceResultData resultData = new SequenceResultData()
-            {
-                Name = _sequence.Name,
-                Description = _sequence.Description,
-                ElapsedTime = this.ElapsedTime.TotalMilliseconds,
-                StartTime = StartTime,
-                EndTime = EndTime,
-                Result = result,
-                FailInfo = failedInfo,
-                FailStack = RunStack,
-                RuntimeHash = _stateManageContext.RuntimeHash,
-                SequenceIndex = SequenceIndex,
-            };
-            _stateManageContext.DatabaseProxy.WriteData(resultData);
-            return resultData;
+            _statusData.Stack = this.RunStack.ToString();
+            _statusData.Time = CurrentTime;
+            _statusData.ElapsedTime = this.ElapsedTime.TotalMilliseconds;
+            _statusData.Result = result;
+            _statusData.WatchData = watchData;
+            _statusData.StatusIndex = _stateManageContext.DataStatusIndex;
+
+            _stateManageContext.DatabaseProxy.WriteData(_statusData);
         }
+
+        private void UpdateSequenceResultData(string failedInfo)
+        {
+            _sequenceResultData.StartTime = StartTime;
+            _sequenceResultData.ElapsedTime = this.ElapsedTime.TotalMilliseconds;
+            _sequenceResultData.EndTime = EndTime;
+            _sequenceResultData.Result = State;
+            _sequenceResultData.FailInfo = failedInfo;
+            _sequenceResultData.FailStack = RunStack.ToString();
+            _stateManageContext.DatabaseProxy.UpdateData(_sequenceResultData);
+        }
+
+        #endregion
 
         public void StopStateHandle(DateTime time, RuntimeState state, string failedInfo)
         {
@@ -274,7 +353,19 @@ namespace Testflow.MasterCore.StatusManage
             _sequenceTestResult.ElapsedTime = ElapsedTime.TotalMilliseconds;
             _sequenceTestResult.ResultState = State;
             _sequenceTestResult.EndTime = EndTime;
-            _sequenceTestResult.FailedInfo.Description = failedInfo;
+            _sequenceTestResult.FailedInfo.Message = failedInfo;
+        }
+
+        private ISequenceFailedInfo GetFailedInfo(StatusMessage message)
+        {
+            return !message.FailedInfo.ContainsKey(SequenceIndex) ? 
+                null : new SequenceFailedInfo(message.FailedInfo[SequenceIndex]);
+        }
+
+        private string GetFailedInfoStr(StatusMessage message)
+        {
+            return !message.FailedInfo.ContainsKey(SequenceIndex) ?
+                string.Empty : message.FailedInfo[SequenceIndex];
         }
     }
 }

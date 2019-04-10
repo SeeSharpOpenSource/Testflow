@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Management;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
+using Newtonsoft.Json;
 using Testflow.Common;
 using Testflow.CoreCommon;
 using Testflow.Data.Sequence;
@@ -103,6 +105,32 @@ namespace Testflow.MasterCore.Common
         {
             // TODO not implemented
             return new PerformanceResult();
+        }
+
+        public static string WatchDataToString(IDictionary<string, string> watchData)
+        {
+            if (null == watchData || watchData.Count == 0)
+            {
+                return string.Empty;
+            }
+            JsonSerializerSettings settings = new JsonSerializerSettings()
+            {
+                // TODO
+            };
+            return JsonConvert.SerializeObject(watchData, settings);
+        }
+
+        public static Dictionary<string, string> StrToWatchData(string watchDataStr)
+        {
+            if (string.IsNullOrWhiteSpace(watchDataStr))
+            {
+                return new Dictionary<string, string>(1);
+            }
+            JsonSerializerSettings settings = new JsonSerializerSettings()
+            {
+                // TODO
+            };
+            return JsonConvert.DeserializeObject<Dictionary<string, string>>(watchDataStr, settings);
         }
     }
 }

@@ -147,4 +147,10 @@
   <data name="UnregisteredMessage" xml:space="preserve">
     <value>Unregistered message type: {0}.</value>
   </data>
+  <data name="UserAbort" xml:space="preserve">
+    <value>Test aborted by user operation.</value>
+  </data>
+  <data name="UserAbortError" xml:space="preserve">
+    <value>Abort Error: {0}.</value>
+  </data>
 </root>

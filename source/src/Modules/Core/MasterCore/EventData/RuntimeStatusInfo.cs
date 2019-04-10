@@ -38,7 +38,7 @@ namespace Testflow.MasterCore.EventData
 
             for (int i = 0; i < stateHandle.SequenceCount; i++)
             {
-                CallStacks.Add(CallStack.GetStack(stateHandle[i].RunStack));
+                CallStacks.Add(stateHandle[i].RunStack);
                 SequenceState.Add(stateHandle[i].State);
             }
             this.FailedInfos = failedInfos;

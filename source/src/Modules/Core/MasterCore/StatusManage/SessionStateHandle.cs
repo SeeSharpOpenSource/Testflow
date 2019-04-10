@@ -22,6 +22,7 @@ namespace Testflow.MasterCore.StatusManage
         private readonly StateManageContext _stateManageContext;
         private ISequenceFlowContainer _sequenceData; 
         private readonly Dictionary<int, SequenceStateHandle> _sequenceHandles;
+        private long _heatBeatIndex = -1;
 
         public SessionStateHandle(ITestProject testProject, StateManageContext stateManageContext)
         {
@@ -50,7 +51,6 @@ namespace Testflow.MasterCore.StatusManage
             {
                 _sequenceHandles.Add(i, new SequenceStateHandle(Session, sequenceGroup.Sequences[i], _stateManageContext));
             }
-            
         }
 
         private void InitializeBasicInfo(int session, ISequenceFlowContainer sequenceData)
@@ -102,6 +102,8 @@ namespace Testflow.MasterCore.StatusManage
         private SessionResultData _sessionResults;
         private PerformanceStatus _performanceStatus;
         private ISessionGenerationInfo _generationInfo;
+
+        public long HeartBeatIndex => Thread.VolatileRead(ref _heatBeatIndex);
 
         public RuntimeState State
         {
@@ -217,7 +219,7 @@ namespace Testflow.MasterCore.StatusManage
 
         public void DebugEventProcess(DebugEventInfo eventInfo)
         {
-            _sequenceHandles[eventInfo.BreakPoint.SequenceIndex].DebugEventProcess(eventInfo);
+            _sequenceHandles[eventInfo.BreakPoint.SequenceIndex].DebugEventProcess(eventInfo, this.SequenceData);
         }
 
         public void ExceptionEventProcess(ExceptionEventInfo eventInfo)
@@ -237,6 +239,8 @@ namespace Testflow.MasterCore.StatusManage
             {
                 _generationInfo.SequenceStatus[sequenceIndex] = generationState;
             }
+
+            FlipHeatBeatIndex();
             return true;
         }
 
@@ -244,6 +248,7 @@ namespace Testflow.MasterCore.StatusManage
         {
             this.State = message.State;
             this.Performance = message.Performance;
+            IRuntimeStatusInfo runtimeStatusInfo;
             switch (message.Name)
             {
                 case MessageNames.StartStatusName:
@@ -270,17 +275,19 @@ namespace Testflow.MasterCore.StatusManage
                 case MessageNames.ReportStatusName:
                     RefreshTime(message);
 
-                    IRuntimeStatusInfo runtimeStatusInfo = CreateRuntimeStatusInfo(message);
-                    _stateManageContext.EventDispatcher.RaiseEvent(Constants.StatusReceived,
-                        Session, runtimeStatusInfo);
-
                     for (int i = 0; i < message.Stacks.Count; i++)
                     {
-                        if (message.SequenceStates[i] == RuntimeState.Running)
+                        RuntimeState sequenceState = message.SequenceStates[i];
+                        if (sequenceState == RuntimeState.Running || RuntimeState.Blocked == sequenceState ||
+                            RuntimeState.DebugBlocked == sequenceState)
                         {
                             _sequenceHandles[message.Stacks[i].SequenceIndex].HandleStatusMessage(message, i);
                         }
                     }
+
+                    runtimeStatusInfo = CreateRuntimeStatusInfo(message);
+                    _stateManageContext.EventDispatcher.RaiseEvent(Constants.StatusReceived,
+                        Session, runtimeStatusInfo);
 
                     // 写入性能记录条目
                     WritePerformanceStatus();
@@ -323,10 +330,27 @@ namespace Testflow.MasterCore.StatusManage
                     // 写入性能记录条目
                     WritePerformanceStatus();
                     break;
+                case MessageNames.HearBeatStatusName:
+                    RefreshTime(message);
+
+                    for (int i = 0; i < message.Stacks.Count; i++)
+                    {
+                        if (message.SequenceStates[i] == RuntimeState.Running)
+                        {
+                            _sequenceHandles[message.Stacks[i].SequenceIndex].HandleStatusMessage(message, i);
+                        }
+                    }
+
+                    runtimeStatusInfo = CreateRuntimeStatusInfo(message);
+                    _stateManageContext.EventDispatcher.RaiseEvent(Constants.StatusReceived,
+                        Session, runtimeStatusInfo);
+                    break;
                 default:
                     throw new InvalidProgramException();
                     break;
             }
+
+            FlipHeatBeatIndex();
             return true;
         }
 
@@ -450,6 +474,11 @@ namespace Testflow.MasterCore.StatusManage
         }
 
         #endregion
+
+        private void FlipHeatBeatIndex()
+        {
+            Interlocked.Increment(ref _heatBeatIndex);
+        }
 
 //        private void SetErrorTestResults()
 

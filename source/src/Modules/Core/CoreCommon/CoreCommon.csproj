@@ -42,7 +42,6 @@
   <ItemGroup>
     <Compile Include="Common\BlockHandle.cs" />
     <Compile Include="Common\CoreUtils.cs" />
-    <Compile Include="Data\ExceptionInfo.cs" />
     <Compile Include="Common\MessageNames.cs" />
     <Compile Include="Common\MQIgnoreAttribute.cs" />
     <Compile Include="Common\TestGenState.cs" />
@@ -59,6 +58,7 @@
     <Compile Include="Data\HostInfo.cs" />
     <Compile Include="Data\EventInfos\EventInfoBase.cs" />
     <Compile Include="Data\PerformanceData.cs" />
+    <Compile Include="Data\SequenceFailedInfo.cs" />
     <Compile Include="Data\SyncResourceInfo.cs" />
     <Compile Include="Messages\ControlMessage.cs" />
     <Compile Include="Messages\DebugMessage.cs" />

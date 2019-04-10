@@ -291,6 +291,9 @@ namespace Testflow.MasterCore.StatusManage
                             CommonConst.TestGroupSession, _stateManageContext.TestResults);
                     }
                     break;
+                case MessageNames.HearBeatStatusName:
+                    stateHandle.HandleStatusMessage(statusMessage);
+                    break;
                 default:
                     throw new InvalidProgramException();
                     break;

@@ -15,5 +15,6 @@
         public const string ReportStatusName = "Report";
         public const string ResultStatusName = "Result";
         public const string ErrorStatusName = "Error";
+        public const string HearBeatStatusName = "HeartBeat";
     }
 }

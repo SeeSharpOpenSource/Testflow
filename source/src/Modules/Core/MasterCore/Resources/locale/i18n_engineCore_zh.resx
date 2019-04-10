@@ -147,4 +147,10 @@
   <data name="UnregisteredMessage" xml:space="preserve">
     <value>未注册的消息类型：“{0}”。</value>
   </data>
+  <data name="UserAbort" xml:space="preserve">
+    <value>用户终止执行测试序列。</value>
+  </data>
+  <data name="UserAbortError" xml:space="preserve">
+    <value>用户终止测试序列错误：{0}。</value>
+  </data>
 </root>

@@ -3,6 +3,7 @@ using System.Runtime.Serialization;
 using Testflow.CoreCommon.Common;
 using Testflow.CoreCommon.Data;
 using Testflow.Runtime;
+using Testflow.Runtime.Data;
 
 namespace Testflow.CoreCommon.Messages
 {
@@ -17,16 +18,23 @@ namespace Testflow.CoreCommon.Messages
 
         public List<RuntimeState> SequenceStates { get; set; }
 
+        public List<StepResult> Results { get; set; }
+
         public PerformanceData Performance { get; set; }
+
+        public Dictionary<int, string> FailedInfo { get; set; }
+
+        public List<int> InterestedSequence { get; set; }
 
         public Dictionary<string, string> WatchData { get; }
 
-        public ExceptionInfo ExceptionInfo { get; set; }
+        public SequenceFailedInfo ExceptionInfo { get; set; }
 
         public StatusMessage(string name, RuntimeState state, int id) : base(name, id, MessageType.Status)
         {
             this.State = state;
             this.WatchData = new Dictionary<string, string>(CoreConstants.DefaultRuntimeSize);
+            this.InterestedSequence = new List<int>(CoreConstants.DefaultRuntimeSize);
         }
 
         public StatusMessage(SerializationInfo info, StreamingContext context) : base(info, context)
@@ -37,6 +45,14 @@ namespace Testflow.CoreCommon.Messages
 //            this.WatchData =
 //                info.GetValue("WatchData", typeof(Dictionary<string, string>)) as Dictionary<string, string>;
             CoreUtils.SetMessageValue(info, this, this.GetType());
+            if (null == FailedInfo)
+            {
+                FailedInfo = new Dictionary<int, string>(1);
+            }
+            if (null == InterestedSequence)
+            {
+                InterestedSequence = new List<int>(1);
+            }
         }
 
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
@@ -55,7 +71,16 @@ namespace Testflow.CoreCommon.Messages
             }
             if (null != ExceptionInfo)
             {
-                info.AddValue("ExceptionInfo", ExceptionInfo, typeof(ExceptionInfo));
+                info.AddValue("ExceptionInfo", ExceptionInfo, typeof(SequenceFailedInfo));
+            }
+            info.AddValue("Results", Results, typeof(List<StepResult>));
+            if (null != FailedInfo && FailedInfo.Count > 0)
+            {
+                info.AddValue("FailedInfo", FailedInfo, typeof(Dictionary<int, string>));
+            }
+            if (null != InterestedSequence && InterestedSequence.Count > 0)
+            {
+                info.AddValue("InterestedSequence", InterestedSequence, typeof(List<int>));
             }
         }
     }
