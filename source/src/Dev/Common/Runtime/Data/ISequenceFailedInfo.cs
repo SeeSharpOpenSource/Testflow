@@ -13,13 +13,23 @@ namespace Testflow.Runtime.Data
         FailedType Type { get; set; }
 
         /// <summary>
-        /// 失败的异常信息
-        /// </summary>
-        Exception FailedException { get; set; }
-
-        /// <summary>
         /// 错误描述信息
         /// </summary>
-        string Description { get; set; }
+        string Message { get; set; }
+
+        /// <summary>
+        /// 错误源，FailedType为UnHandledException和RuntimeError有效
+        /// </summary>
+        string Source { get; set; }
+
+        /// <summary>
+        /// 错误堆栈，FailedType为UnHandledException和RuntimeError有效
+        /// </summary>
+        string StackTrace { get; set; }
+
+        /// <summary>
+        /// 异常类型，FailedType为UnHandledException和RuntimeError有效
+        /// </summary>
+        string ExceptionType { get; set; }
     }
 }

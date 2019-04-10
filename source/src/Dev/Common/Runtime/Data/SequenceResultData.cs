@@ -35,7 +35,7 @@ namespace Testflow.Runtime.Data
         /// <summary>
         /// 序列执行结果
         /// </summary>
-        public StepResult Result { get; set; }
+        public RuntimeState Result { get; set; }
 
         /// <summary>
         /// 开始时间

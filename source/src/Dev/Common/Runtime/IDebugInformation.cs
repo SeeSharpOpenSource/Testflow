@@ -16,13 +16,8 @@ namespace Testflow.Runtime
         ICallStack BreakPoint { get; }
 
         /// <summary>
-        /// CPU使用事件，单位为ms
-        /// </summary>
-        ulong ElapsedTime { get; }
-
-        /// <summary>
         /// 变量调试信息
         /// </summary>
-        ISerializableMap<string, string> WatchDatas { get; }
+        IDictionary<IVariable, string> WatchDatas { get; }
     }
 }

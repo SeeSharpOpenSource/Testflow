@@ -28,7 +28,7 @@
         /// <summary>
         /// 运行时异常
         /// </summary>
-        RuntimeFailed = 4,
+        RuntimeError = 4,
 
         /// <summary>
         /// 超时
