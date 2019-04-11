@@ -2,9 +2,9 @@
 using System.Threading;
 using Testflow.CoreCommon.Messages;
 
-namespace Testflow.MasterCore.Common
+namespace Testflow.CoreCommon.Common
 {
-    internal class LocalMessageQueue<TMessageType> : Queue<TMessageType> where TMessageType : MessageBase
+    public class LocalMessageQueue<TMessageType> : Queue<TMessageType> where TMessageType : MessageBase
     {
         private SpinLock _operationLock;
 

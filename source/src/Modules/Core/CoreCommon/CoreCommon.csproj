@@ -42,6 +42,7 @@
   <ItemGroup>
     <Compile Include="Common\BlockHandle.cs" />
     <Compile Include="Common\CoreUtils.cs" />
+    <Compile Include="Common\LocalMessageQueue.cs" />
     <Compile Include="Common\MessageNames.cs" />
     <Compile Include="Common\MQIgnoreAttribute.cs" />
     <Compile Include="Common\TestGenState.cs" />

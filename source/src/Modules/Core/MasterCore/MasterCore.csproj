@@ -47,7 +47,6 @@
   <ItemGroup>
     <Compile Include="Common\Constants.cs" />
     <Compile Include="Common\LocalEventQueue.cs" />
-    <Compile Include="Common\LocalMessageQueue.cs" />
     <Compile Include="Common\ModuleGlobalInfo.cs" />
     <Compile Include="Common\ModuleUtils.cs" />
     <Compile Include="ObjectManage\IRuntimeObjectCustomer.cs" />
