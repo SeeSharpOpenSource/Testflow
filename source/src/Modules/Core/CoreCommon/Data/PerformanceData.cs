@@ -17,7 +17,7 @@ namespace Testflow.CoreCommon.Data
         /// <summary>
         /// CPU使用事件，单位为ms
         /// </summary>
-        public ulong ProcessorTime { get; set; }
+        public double ProcessorTime { get; set; }
 
         public PerformanceData(long memoryUsed, long memoryAllocated, ulong processorTime)
         {

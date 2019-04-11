@@ -54,7 +54,7 @@ namespace Testflow.MasterCore.EventData
         public DateTime CurrentTime { get; set; }
         public long MemoryUsed { get; set; }
         public long MemoryAllocated { get; set; }
-        public ulong ProcessorTime { get; set; }
+        public double ProcessorTime { get; set; }
         public RuntimeState State { get; set; }
         public IList<ICallStack> CallStacks { get; }
         public IList<RuntimeState> SequenceState { get; }

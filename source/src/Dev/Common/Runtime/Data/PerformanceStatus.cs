@@ -40,6 +40,6 @@ namespace Testflow.Runtime.Data
         /// <summary>
         /// CPU使用事件，单位为ms
         /// </summary>
-        public ulong ProcessorTime { get; set; }
+        public double ProcessorTime { get; set; }
     }
 }
