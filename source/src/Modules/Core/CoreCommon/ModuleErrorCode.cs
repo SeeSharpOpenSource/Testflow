@@ -14,5 +14,8 @@ namespace Testflow.CoreCommon
         public const int OperationTimeout = 8 | CommonErrorCode.EngineCoreErrorMask;
         public const int InvalidOperation = 9 | CommonErrorCode.EngineCoreErrorMask;
         public const int UnregisteredMessage = 10 | CommonErrorCode.EngineCoreErrorMask;
+        public const int InvalidRuntimeObjectType = 11 | CommonErrorCode.EngineCoreErrorMask;
+        public const int InvalidRuntimeInfoName = 11 | CommonErrorCode.EngineCoreErrorMask;
+
     }
 }

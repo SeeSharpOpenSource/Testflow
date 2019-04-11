@@ -50,7 +50,10 @@
     <Compile Include="Common\LocalMessageQueue.cs" />
     <Compile Include="Common\ModuleGlobalInfo.cs" />
     <Compile Include="Common\ModuleUtils.cs" />
-    <Compile Include="Common\ModuleUtility.cs" />
+    <Compile Include="ObjectManage\IRuntimeObjectCustomer.cs" />
+    <Compile Include="ObjectManage\Objects\BreakPointObject.cs" />
+    <Compile Include="ObjectManage\RuntimeObject.cs" />
+    <Compile Include="ObjectManage\RuntimeObjectManager.cs" />
     <Compile Include="Core\EngineFlowController.cs" />
     <Compile Include="Core\DebugManager.cs" />
     <Compile Include="Core\RuntimeStateMachine.cs" />

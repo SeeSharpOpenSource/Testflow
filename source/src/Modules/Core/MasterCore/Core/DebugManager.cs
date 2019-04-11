@@ -8,6 +8,8 @@ using Testflow.CoreCommon.Messages;
 using Testflow.Data.Sequence;
 using Testflow.MasterCore.Common;
 using Testflow.MasterCore.Message;
+using Testflow.MasterCore.ObjectManage;
+using Testflow.MasterCore.ObjectManage.Objects;
 using Testflow.Runtime;
 using Testflow.Utility.MessageUtil;
 
@@ -16,7 +18,7 @@ namespace Testflow.MasterCore.Core
     /// <summary>
     /// 调试状态管理
     /// </summary>
-    internal class DebugManager : IMessageHandler
+    internal class DebugManager : IMessageHandler, IRuntimeObjectCustomer
     {
         private readonly ModuleGlobalInfo _globalInfo;
         private readonly Dictionary<int, List<string>> _watchVariables;
@@ -201,6 +203,18 @@ namespace Testflow.MasterCore.Core
         public void Initialize()
         {
             
+        }
+
+        public void AddObject(RuntimeObject runtimeObject)
+        {
+            BreakPointObject breakPointObject = (BreakPointObject)runtimeObject;
+            AddBreakPoint(breakPointObject.BreakPoint.Session, breakPointObject.BreakPoint);
+        }
+
+        public void RemoveObject(RuntimeObject runtimeObject)
+        {
+            BreakPointObject breakPointObject = (BreakPointObject)runtimeObject;
+            RemoveBreakPoint(breakPointObject.BreakPoint.Session, breakPointObject.BreakPoint);
         }
     }
 }

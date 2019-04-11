@@ -44,6 +44,21 @@ namespace Testflow.MasterCore.Common
 
         #endregion
 
+        #region 运行时对象常量定义
+
+        public const long InvalidObjectId = -1;
+        public const string BreakPointObjectName = "BreakPoint";
+
+        #endregion
+
+        #region 运行时信息常量定义
+
+        public const string RuntimeStateInfo = "RuntimeState";
+        public const string ElapsedTimeInfo = "ElapsedTime";
+
+        #endregion
+
+
         public const int NoDebugHitSession = -1000;
     }
 }

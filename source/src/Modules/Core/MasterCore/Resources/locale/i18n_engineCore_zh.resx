@@ -132,6 +132,12 @@
   <data name="IncorrectParamType" xml:space="preserve">
     <value>事件参数类型应为”{0}“。</value>
   </data>
+  <data name="InvalidRuntimeInfoName" xml:space="preserve">
+    <value>非法的运行时信息名称：{0}。</value>
+  </data>
+  <data name="InvalidRuntimeObjType" xml:space="preserve">
+    <value>非法的运行时对象类型：{0}。</value>
+  </data>
   <data name="OperatoinTimeout" xml:space="preserve">
     <value>操作超时。</value>
   </data>

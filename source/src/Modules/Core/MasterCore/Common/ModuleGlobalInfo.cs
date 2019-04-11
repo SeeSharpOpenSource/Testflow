@@ -54,10 +54,9 @@ namespace Testflow.MasterCore.Common
             this.DebugHandle = new DebuggerHandle(debugManager);
         }
 
-
-
         public void Dispose()
         {
+            MessageTransceiver?.Dispose();
         }
     }
 }

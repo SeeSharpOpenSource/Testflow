@@ -132,6 +132,12 @@
   <data name="IncorrectParamType" xml:space="preserve">
     <value>The type of event parameter should be "{0}".</value>
   </data>
+  <data name="InvalidRuntimeInfoName" xml:space="preserve">
+    <value>Invalid runtime information name: {0}.</value>
+  </data>
+  <data name="InvalidRuntimeObjType" xml:space="preserve">
+    <value>Invalid runtime object type: {0}.</value>
+  </data>
   <data name="OperatoinTimeout" xml:space="preserve">
     <value>Operation timeout.</value>
   </data>

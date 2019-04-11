@@ -303,6 +303,8 @@ namespace Testflow.MasterCore.StatusManage
 
         #endregion
 
+        public SessionStateHandle this[int session] => _sessionStateHandles[session];
+
         public void AddToQueue(MessageBase message)
         {
             throw new System.NotImplementedException();
@@ -346,6 +348,11 @@ namespace Testflow.MasterCore.StatusManage
                 testInstanceData.StartGenTime = endTime;
             }
             testInstanceData.ElapsedTime = (testInstanceData.EndTime - testInstanceData.StartGenTime).TotalMilliseconds;
+        }
+
+        public RuntimeState GetRuntimeState(int sessionId)
+        {
+            return _sessionStateHandles[sessionId].State;
         }
     }
 }

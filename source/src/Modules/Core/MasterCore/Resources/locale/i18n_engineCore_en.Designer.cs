@@ -106,6 +106,24 @@ namespace Testflow.MasterCore.Resources.locale {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Invalid runtime information name: {0}..
+        /// </summary>
+        internal static string InvalidRuntimeInfoName {
+            get {
+                return ResourceManager.GetString("InvalidRuntimeInfoName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Invalid runtime object type: {0}..
+        /// </summary>
+        internal static string InvalidRuntimeObjType {
+            get {
+                return ResourceManager.GetString("InvalidRuntimeObjType", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Operation timeout..
         /// </summary>
         internal static string OperatoinTimeout {

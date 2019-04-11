@@ -32,7 +32,7 @@ namespace Testflow.CoreCommon.Common
         {
             StringBuilder runtimeVarName = new StringBuilder(50);
             return runtimeVarName.Append(stack.SessionIndex)
-                .Append(stack.SequenceIndex).Append(VarNameDelim).Append(string.Join(VarNameDelim, stack.StepStack))
+                .Append(stack.Session).Append(VarNameDelim).Append(string.Join(VarNameDelim, stack.StepStack))
                 .Append(VarNameDelim).Append(variableName).ToString();
         }
 

@@ -2,7 +2,6 @@
 using Testflow.CoreCommon.Messages;
 using Testflow.MasterCore.Common;
 using Testflow.MasterCore.Message;
-using Testflow.Utility.MessageUtil;
 
 namespace Testflow.MasterCore.SyncManage
 {
@@ -19,27 +18,28 @@ namespace Testflow.MasterCore.SyncManage
 
         public bool HandleMessage(MessageBase message)
         {
-            throw new System.NotImplementedException();
+            // TODO
+            return true;
         }
 
         public void AddToQueue(MessageBase message)
         {
-            throw new System.NotImplementedException();
+            // TODO
         }
 
         public void Start()
         {
-            throw new System.NotImplementedException();
+            // TODO
         }
 
         public void Stop()
         {
-            throw new System.NotImplementedException();
+            // TODO
         }
 
         public void Dispose()
         {
-            throw new NotImplementedException();
+            // TODO
         }
     }
 }

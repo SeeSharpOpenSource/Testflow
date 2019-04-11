@@ -176,6 +176,7 @@ namespace Testflow.MasterCore.Message
 
         public virtual void Dispose()
         {
+            Stop();
             UpLinkMessenger.Dispose();
             DownLinkMessenger.Dispose();
         }

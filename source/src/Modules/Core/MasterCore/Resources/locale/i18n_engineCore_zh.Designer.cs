@@ -106,6 +106,24 @@ namespace Testflow.MasterCore.Resources.locale {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to 非法的运行时信息名称：{0}。.
+        /// </summary>
+        internal static string InvalidRuntimeInfoName {
+            get {
+                return ResourceManager.GetString("InvalidRuntimeInfoName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 非法的运行时对象类型：{0}。.
+        /// </summary>
+        internal static string InvalidRuntimeObjType {
+            get {
+                return ResourceManager.GetString("InvalidRuntimeObjType", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to 操作超时。.
         /// </summary>
         internal static string OperatoinTimeout {

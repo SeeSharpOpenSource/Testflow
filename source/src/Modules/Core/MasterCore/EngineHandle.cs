@@ -85,12 +85,12 @@ namespace Testflow.MasterCore
             return _runtimeEngine.GetRuntimeInfo<TDataType>(infoName, extraParams);
         }
 
-        public int AddRuntimeObject(string objectType, int sessionId, params object[] param)
+        public long AddRuntimeObject(string objectType, int sessionId, params object[] param)
         {
             return _runtimeEngine.AddRuntimeObject(objectType, sessionId, param);
         }
 
-        public int RemoveRuntimeObject(int objectId, params object[] param)
+        public long RemoveRuntimeObject(int objectId, params object[] param)
         {
             return _runtimeEngine.RemoveRuntimeObject(objectId, param);
         }

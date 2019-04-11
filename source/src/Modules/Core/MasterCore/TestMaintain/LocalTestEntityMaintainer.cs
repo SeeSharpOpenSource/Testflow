@@ -77,7 +77,7 @@ namespace Testflow.MasterCore.TestMaintain
             // 如果是SequenceGroup并且还有入参，则必须和包含上级TestProject一起运行
             if (null != sequenceGroup && null == sequenceGroup.Parent && 0 != sequenceGroup.Arguments.Count)
             {
-                ModuleUtility.LogAndRaiseDataException(LogLevel.Error, "SequenceGroup with input arguments cannot run with out test project.", ModuleErrorCode.SequenceDataError, null, "UnexistArgumentSource");
+                ModuleUtils.LogAndRaiseDataException(LogLevel.Error, "SequenceGroup with input arguments cannot run with out test project.", ModuleErrorCode.SequenceDataError, null, "UnexistArgumentSource");
             }
             RuntimeContainer runtimeContainer = RuntimeContainer.CreateContainer(0, platform, _globalInfo, param);
             _runtimeContainers.Add(runtimeContainer.Session, runtimeContainer);

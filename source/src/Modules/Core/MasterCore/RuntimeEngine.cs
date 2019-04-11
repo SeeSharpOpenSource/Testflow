@@ -1,17 +1,22 @@
 ﻿using System;
 using System.Threading;
 using Testflow.Common;
+using Testflow.CoreCommon;
 using Testflow.CoreCommon.Common;
+using Testflow.CoreCommon.Data;
 using Testflow.CoreCommon.Messages;
 using Testflow.Data.Sequence;
 using Testflow.MasterCore.TestMaintain;
 using Testflow.MasterCore.Common;
 using Testflow.MasterCore.Core;
 using Testflow.MasterCore.Message;
+using Testflow.MasterCore.ObjectManage;
+using Testflow.MasterCore.ObjectManage.Objects;
 using Testflow.MasterCore.StatusManage;
 using Testflow.MasterCore.SyncManage;
 using Testflow.Modules;
 using Testflow.Runtime;
+using Testflow.Runtime.Data;
 
 namespace Testflow.MasterCore
 {
@@ -26,6 +31,7 @@ namespace Testflow.MasterCore
         private readonly RuntimeStatusManager _statusManager;
         private readonly SynchronousManager _syncManager;
         private readonly EngineFlowController _controller;
+        private readonly RuntimeObjectManager _runtimeObjectManager;
 
         public RuntimeEngine(IModuleConfigData configData)
         {
@@ -40,6 +46,8 @@ namespace Testflow.MasterCore
             _syncManager = new SynchronousManager(_globalInfo);
 
             _globalInfo.RuntimeInitialize(messageTransceiver, _controller.Debugger);
+
+            _runtimeObjectManager = new RuntimeObjectManager();
 
             RuntimeStateMachine stateMachine = new RuntimeStateMachine();
             _globalInfo.StateMachine = stateMachine;
@@ -71,11 +79,20 @@ namespace Testflow.MasterCore
                 _globalInfo.StateMachine.State = RuntimeState.Idle;
                 _controller.Initialize(sequenceContainer);
                 _statusManager.Initialize(sequenceContainer);
-
+                // 注册状态更新事件
                 _globalInfo.StateMachine.StateAbort += Stop;
                 _globalInfo.StateMachine.StateError += Stop;
                 _globalInfo.StateMachine.StateCollapsed += Stop;
                 _globalInfo.StateMachine.StateOver += Stop;
+
+                // 注册Session结束后自动释放host的事件
+                _globalInfo.EventDispatcher.Register(new RuntimeDelegate.SessionStatusAction(
+                    (testResult) =>
+                    {
+                       _controller.TestMaintainer.FreeHost(testResult.Session); 
+                    }), CommonConst.BroadcastSession, Constants.SessionOver);
+                // 注册运行时对象消费者
+                _runtimeObjectManager.RegisterCustomer<BreakPointObject>(_controller.Debugger);
             }
             catch (TestflowException ex)
             {
@@ -101,6 +118,7 @@ namespace Testflow.MasterCore
         {
             try
             {
+                _globalInfo.MessageTransceiver.Activate();
                 _statusManager.Start();
                 _syncManager.Start();
                 _controller.StartTestGeneration();
@@ -138,6 +156,7 @@ namespace Testflow.MasterCore
                 _syncManager?.Stop();
                 _controller?.Stop();
                 _statusManager?.Stop();
+                _globalInfo.MessageTransceiver.Deactivate();
             }
             catch (Exception ex)
             {
@@ -157,13 +176,14 @@ namespace Testflow.MasterCore
             _controller.Dispose();
             _syncManager.Dispose();
             _statusManager.Dispose();
+            _globalInfo.Dispose();
         }
 
         #region 处理外部接口
 
         public RuntimeState GetRuntimeState(int sessionId)
         {
-            throw new NotImplementedException();
+            return _statusManager.GetRuntimeState(sessionId);
         }
 
         public TDataType GetComponent<TDataType>(string componentName, params object[] extraParams)
@@ -173,26 +193,96 @@ namespace Testflow.MasterCore
 
         public TDataType GetRuntimeInfo<TDataType>(string infoName, params object[] extraParams)
         {
-            throw new NotImplementedException();
+            object infoValue = null;
+            int session = 0;
+            int sequenceIndex;
+            switch (infoName)
+            {
+                case Constants.RuntimeStateInfo:
+                    if (extraParams.Length == 0)
+                    {
+                        infoValue = _globalInfo.StateMachine.State;
+                    }
+                    else if (extraParams.Length == 1)
+                    {
+                        session = (int)extraParams[0];
+                        infoValue = _statusManager[session].State;
+                    }
+                    else if (extraParams.Length == 2)
+                    {
+                        session = (int)extraParams[0];
+                        sequenceIndex = (int)extraParams[1];
+                        infoValue = _statusManager[session][sequenceIndex].State;
+                    }
+                    break;
+                case Constants.ElapsedTimeInfo:
+                    if (extraParams.Length == 1)
+                    {
+                        session = (int)extraParams[0];
+                        infoValue = _statusManager[session].ElapsedTime.TotalMilliseconds;
+                    }
+                    else if (extraParams.Length == 2)
+                    {
+                        session = (int)extraParams[0];
+                        sequenceIndex = (int)extraParams[1];
+                        infoValue = _statusManager[session][sequenceIndex].ElapsedTime.TotalMilliseconds;
+                    }
+                    break;
+                default:
+                    _globalInfo.LogService.Print(LogLevel.Warn, CommonConst.PlatformLogSession,
+                        $"Unsupported runtime object type: {0}.");
+                    _globalInfo.ExceptionManager.Append(new TestflowDataException(
+                        ModuleErrorCode.InvalidRuntimeInfoName,
+                        _globalInfo.I18N.GetFStr("InvalidRuntimeInfoName", infoName)));
+                    break;
+            }
+            return (TDataType) infoValue;
         }
 
-        public int AddRuntimeObject(string objectType, int sessionId, params object[] param)
+        public long AddRuntimeObject(string objectType, int sessionId, params object[] param)
         {
-            throw new NotImplementedException();
+            long objectId = Constants.InvalidObjectId;
+            switch (objectType)
+            {
+                case Constants.BreakPointObjectName:
+                    BreakPointObject breakPointObject = new BreakPointObject((CallStack)param[0]);
+                    objectId = breakPointObject.Id;
+                    _runtimeObjectManager.AddObject(breakPointObject);
+                    break;
+                default:
+                    _globalInfo.LogService.Print(LogLevel.Warn, CommonConst.PlatformLogSession, 
+                        $"Unsupported runtime object type: {0}.");
+                    _globalInfo.ExceptionManager.Append(new TestflowDataException(
+                        ModuleErrorCode.InvalidRuntimeObjectType,
+                        _globalInfo.I18N.GetFStr("InvalidRuntimeObjType", objectType)));
+                    break;
+            }
+            return objectId;
         }
 
-        public int RemoveRuntimeObject(int objectId, params object[] param)
+        public long RemoveRuntimeObject(int objectId, params object[] param)
         {
-            throw new NotImplementedException();
+            if (null == _runtimeObjectManager[objectId])
+            {
+                return Constants.InvalidObjectId;
+            }
+            _runtimeObjectManager.RemoveObject(objectId);
+            return objectId;
         }
 
         public void RegisterRuntimeEvent(Delegate callBack, string eventName, params object[] extraParams)
         {
+            int session = CommonConst.BroadcastSession;
+            if (0 == extraParams.Length)
+            {
+                session = (int) extraParams[0];
+            }
+            _globalInfo.EventDispatcher.Register(callBack, session, eventName);
         }
 
         public void UnregisterRuntimeEvent(Delegate callBack, string eventName, params object[] extraParams)
         {
-            throw new NotImplementedException();
+            _globalInfo.EventDispatcher.Unregister(callBack, eventName);
         }
 
         #endregion
