@@ -182,8 +182,8 @@ namespace Testflow.SequenceManagerTest
             Assert.AreEqual(testProject.Name, "TestProject1");
             Assert.AreEqual(testProject.Description, "");
             Assert.AreEqual(testProject.ModelVersion, "1.0.0");
-            Assert.AreEqual(testProject.SetUp.Name, "");
-            Assert.AreEqual(testProject.TearDown.Name, "");
+            Assert.AreEqual(testProject.SetUp.Name, "SetUp");
+            Assert.AreEqual(testProject.TearDown.Name, "TearDown");
             Assert.AreEqual(testProject.SequenceGroupLocations.Count, 3);
         }
 
