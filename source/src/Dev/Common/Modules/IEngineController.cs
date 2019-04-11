@@ -55,7 +55,7 @@ namespace Testflow.Modules
         /// <param name="sessionId">会话id</param>
         /// <param name="param">额外参数</param>
         /// <returns>对象的运行时ID号</returns>
-        int AddRuntimeObject(string objectType, int sessionId, params object[] param);
+        long AddRuntimeObject(string objectType, int sessionId, params object[] param);
 
         /// <summary>
         /// 添加运行时对象
@@ -63,7 +63,7 @@ namespace Testflow.Modules
         /// <param name="objectId">对象ID</param>
         /// <param name="param">额外参数</param>
         /// <returns>删除运行时对象</returns>
-        int RemoveRuntimeObject(int objectId, params object[] param);
+        long RemoveRuntimeObject(int objectId, params object[] param);
 
         /// <summary>
         /// 注册运行时事件
