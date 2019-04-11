@@ -87,7 +87,7 @@ namespace Testflow.Utility.MessageUtil
             return null != _messengers.FirstOrDefault(item => item.Option.Equals(option));
         }
 
-        private MessageDispatcher _messageDispatcher;
+        private readonly MessageDispatcher _messageDispatcher;
 
         /// <summary>
         /// 常见Messanger抽象类
@@ -102,6 +102,7 @@ namespace Testflow.Utility.MessageUtil
                 Name = UtilityConstants.MessengerName
             };
             I18N.InitInstance(i18NOption);
+            this._messageDispatcher = new MessageDispatcher(this);
         }
 
         /// <summary>
@@ -133,7 +134,21 @@ namespace Testflow.Utility.MessageUtil
         {
             foreach (IMessageConsumer messageConsumer in consumers)
             {
-                this.MessageReceived += messageConsumer.Handle;
+                //                this.MessageReceived += messageConsumer.Handle;
+                _messageDispatcher.RegisterConsumer(messageConsumer);
+            }
+         
+        }
+
+        /// <summary>
+        /// 取消注册消费者，数据接收端调用
+        /// </summary>
+        public void UnregisterConsumer(params IMessageConsumer[] consumers)
+        {
+            foreach (IMessageConsumer messageConsumer in consumers)
+            {
+//                this.MessageReceived -= messageConsumer.Handle;
+                _messageDispatcher.UnregisterConsumer(messageConsumer);
             }
         }
 
