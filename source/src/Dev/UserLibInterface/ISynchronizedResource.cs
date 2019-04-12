@@ -1,4 +1,4 @@
-﻿namespace Testflow
+﻿namespace Testflow.Usr
 {
     /// <summary>
     /// 同步资源的接口
