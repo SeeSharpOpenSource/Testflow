@@ -1,14 +1,14 @@
 ﻿using System;
 using Testflow.RemoteRunner.Common;
+using Testflow.SlaveCore.Controller;
+using Testflow.SlaveCore.Runner;
 using Testflow.Utility.I18nUtil;
 
 namespace Testflow.SlaveCore
 {
-    public class AppDomainTestLauncher : MarshalByRefObject
+    public class AppDomainTestLauncher : MarshalByRefObject, IDisposable
     {
-
-        private ContextManager _contextManager;
-        private MessageTransceiver _transceiver;
+        private SlaveContext _slaveContext;
 
         public AppDomainTestLauncher(string configDataStr)
         {
@@ -17,13 +17,19 @@ namespace Testflow.SlaveCore
                 Name = Constants.I18nName
             };
             I18N.InitInstance(i18NOption);
-            _contextManager = new ContextManager(configDataStr);
-            _transceiver = new MessageTransceiver(_contextManager);
+            _slaveContext = new SlaveContext(configDataStr);
         }
 
         public void Start()
         {
+            SlaveController slaveController = new SlaveController(_slaveContext);
+            _slaveContext.Controller = slaveController;
+            slaveController.StartMonitoring();
+        }
 
+        public void Dispose()
+        {
+            _slaveContext.Dispose();
         }
     }
 }

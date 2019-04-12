@@ -7,7 +7,7 @@ namespace Testflow.SlaveCore
 {
     public class TestLauncher
     {
-        private ContextManager _contextManager;
+        private SlaveContext _contextManager;
         private MessageTransceiver _transceiver;
 
         public TestLauncher(string configDataStr)
@@ -17,8 +17,8 @@ namespace Testflow.SlaveCore
                 Name = Constants.I18nName
             };
             I18N.InitInstance(i18NOption);
-            _contextManager = new ContextManager(configDataStr);
-            _transceiver = new MessageTransceiver(_contextManager);
+            _contextManager = new SlaveContext(configDataStr);
+//            _transceiver = new MessageTransceiver(_contextManager, );
         }
 
         public void Start()

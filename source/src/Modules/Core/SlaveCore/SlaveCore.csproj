@@ -46,7 +46,11 @@
   <ItemGroup>
     <Compile Include="AppDomainTestLauncher.cs" />
     <Compile Include="Common\Constants.cs" />
-    <Compile Include="ContextManager.cs" />
+    <Compile Include="Runner\ParallelTestRunner.cs" />
+    <Compile Include="Runner\SequentialTestRunner.cs" />
+    <Compile Include="Runner\TestRunnerBase.cs" />
+    <Compile Include="SlaveContext.cs" />
+    <Compile Include="Controller\SlaveController.cs" />
     <Compile Include="Data\BreakPoint.cs" />
     <Compile Include="Resources\locale\i18n_SlaveCore_en.Designer.cs">
       <DependentUpon>i18n_SlaveCore_en.resx</DependentUpon>
