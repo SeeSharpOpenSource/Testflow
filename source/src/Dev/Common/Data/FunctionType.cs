@@ -18,6 +18,16 @@
         /// <summary>
         /// 静态方法
         /// </summary>
-        StaticFunction = 2
+        StaticFunction = 2,
+
+        /// <summary>
+        /// 断言函数
+        /// </summary>
+        Assertion = 3,
+
+        /// <summary>
+        /// 回调函数
+        /// </summary>
+        CallBack = 4
     }
 }
