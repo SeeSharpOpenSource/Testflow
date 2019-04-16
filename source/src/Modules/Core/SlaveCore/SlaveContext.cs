@@ -6,7 +6,9 @@ using Testflow.CoreCommon.Common;
 using Testflow.Data.Sequence;
 using Testflow.Log;
 using Testflow.Runtime;
+using Testflow.SlaveCore.Common;
 using Testflow.SlaveCore.Controller;
+using Testflow.SlaveCore.Data;
 using Testflow.SlaveCore.Runner;
 using Testflow.Utility.I18nUtil;
 
@@ -20,6 +22,7 @@ namespace Testflow.SlaveCore
         public SlaveContext(string configDataStr)
         {
             _configData = JsonConvert.DeserializeObject<Dictionary<string, string>>(configDataStr);
+            this._valueConvertor = new Dictionary<string, Func<string, object>>(10);
             _valueConvertor.Add(typeof(string).Name, strValue => strValue);
             _valueConvertor.Add(typeof(long).Name, strValue => long.Parse(strValue));
             _valueConvertor.Add(typeof(int).Name, strValue => int.Parse(strValue));
@@ -33,6 +36,11 @@ namespace Testflow.SlaveCore
             this.MessageTransceiver = new MessageTransceiver(this, SessionId);
 
             State = RuntimeState.Idle;
+
+            this.StatusQueue = new LocalEventQueue<SequenceStatusInfo>(CoreConstants.DefaultEventsQueueSize);
+
+            this.LogSession = TODO;
+            this.I18N = I18N.GetInstance(Constants.I18nName);
         }
 
         public I18N I18N { get; }
@@ -50,6 +58,10 @@ namespace Testflow.SlaveCore
         public RunnerType SequenceType { get; set; }
 
         public ISequenceFlowContainer Sequence { get; set; }
+
+        public VariableMapper VariableMapper { get; set; }
+
+        public LocalEventQueue<SequenceStatusInfo> StatusQueue { get; }
 
         private int _runtimeState;
 

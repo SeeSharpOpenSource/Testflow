@@ -45,10 +45,17 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AppDomainTestLauncher.cs" />
+    <Compile Include="Common\AssertionException.cs" />
     <Compile Include="Common\Constants.cs" />
     <Compile Include="Common\ModuleUtils.cs" />
-    <Compile Include="Data\ExecutionStep.cs" />
-    <Compile Include="Data\SequenceExecutionModel.cs" />
+    <Compile Include="Runner\Model\StepAssertModel.cs" />
+    <Compile Include="Runner\Model\StepCallBackModel.cs" />
+    <Compile Include="Runner\Model\StepExecutionModel.cs" />
+    <Compile Include="Data\LocalEventQueue.cs" />
+    <Compile Include="Runner\Model\SequenceExecutionModel.cs" />
+    <Compile Include="Data\SequenceStatusInfo.cs" />
+    <Compile Include="Data\StatusReportType.cs" />
+    <Compile Include="Runner\Model\StepModelBase.cs" />
     <Compile Include="Data\VariableMapper.cs" />
     <Compile Include="Runner\AssemblyInvoker.cs" />
     <Compile Include="Runner\ParallelTestRunner.cs" />

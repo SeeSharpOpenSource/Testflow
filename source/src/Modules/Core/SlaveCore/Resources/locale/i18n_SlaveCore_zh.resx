@@ -117,6 +117,9 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="AssertFailMessage" xml:space="preserve">
+    <value>断言检查变量‘{0}’失败。预期值：‘{1}’；真实值：‘{2}’。</value>
+  </data>
   <data name="CannotSendWhenDeactive" xml:space="preserve">
     <value>信使处于非激活状态时不能执行消息发送。</value>
   </data>

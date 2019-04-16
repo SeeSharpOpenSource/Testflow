@@ -6,6 +6,7 @@ using Testflow.CoreCommon.Data;
 using Testflow.CoreCommon.Messages;
 using Testflow.Data.Sequence;
 using Testflow.Runtime;
+using Testflow.SlaveCore.Data;
 
 namespace Testflow.SlaveCore.Controller
 {
@@ -85,6 +86,11 @@ namespace Testflow.SlaveCore.Controller
                     _slaveContext.I18N.GetFStr("InvalidMessageReceived", message.GetType().Name));
             }
             
+            InitializeSequenceDataContainer(rmtGenMessage);
+        }
+
+        private void InitializeSequenceDataContainer(RmtGenMessage rmtGenMessage)
+        {
             // TODO slave端暂时没有好的获取SequenceManager的方式，目前直接引用SequenceManager，后续再去优化
             SequenceManager.SequenceManager sequenceManager = new SequenceManager.SequenceManager();
             _slaveContext.SequenceType = rmtGenMessage.SequenceType;
@@ -96,6 +102,9 @@ namespace Testflow.SlaveCore.Controller
             {
                 _slaveContext.Sequence = sequenceManager.RuntimeDeserializeSequenceGroup(rmtGenMessage.Sequence);
             }
+
+            _slaveContext.VariableMapper = new VariableMapper(_slaveContext);
+            sequenceManager.Dispose();
         }
 
         // TODO 暂时写死，使用AppDomain为单位计算

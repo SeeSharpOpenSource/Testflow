@@ -61,6 +61,15 @@ namespace Testflow.SlaveCore.Resources.locale {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Assertion check of variable &apos;{0}&apos; failed. Expected value: &apos;{1}&apos;; Real value: &apos;{2}&apos;..
+        /// </summary>
+        internal static string AssertFailMessage {
+            get {
+                return ResourceManager.GetString("AssertFailMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Cannot send message when messenger is deactivated.
         /// </summary>
         internal static string CannotSendWhenDeactive {

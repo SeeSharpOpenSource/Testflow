@@ -10,8 +10,9 @@ namespace Testflow.SlaveCore.Data
         private readonly Dictionary<string, object> _variables;
         private readonly SlaveContext _context;
 
-        public VariableMapper(SlaveContext context, ISequenceFlowContainer sequenceData)
+        public VariableMapper(SlaveContext context)
         {
+            ISequenceFlowContainer sequenceData = context.Sequence;
             this._variables = new Dictionary<string, object>(512);
             this._context = context;
             if (context.SequenceType == RunnerType.TestProject)

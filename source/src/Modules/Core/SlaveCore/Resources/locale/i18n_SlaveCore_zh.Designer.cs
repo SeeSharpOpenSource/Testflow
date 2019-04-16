@@ -61,6 +61,15 @@ namespace Testflow.SlaveCore.Resources.locale {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to 断言检查变量‘{0}’失败。预期值：‘{1}’；真实值：‘{2}’。.
+        /// </summary>
+        internal static string AssertFailMessage {
+            get {
+                return ResourceManager.GetString("AssertFailMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to 信使处于非激活状态时不能执行消息发送。.
         /// </summary>
         internal static string CannotSendWhenDeactive {
