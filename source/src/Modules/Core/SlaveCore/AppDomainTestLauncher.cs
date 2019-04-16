@@ -1,5 +1,5 @@
 ﻿using System;
-using Testflow.RemoteRunner.Common;
+using Testflow.SlaveCore.Common;
 using Testflow.SlaveCore.Controller;
 using Testflow.SlaveCore.Runner;
 using Testflow.Utility.I18nUtil;

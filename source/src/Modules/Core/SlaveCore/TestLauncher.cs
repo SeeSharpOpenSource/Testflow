@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using Newtonsoft.Json;
-using Testflow.RemoteRunner.Common;
+using Testflow.SlaveCore.Common;
 using Testflow.Utility.I18nUtil;
 
 namespace Testflow.SlaveCore

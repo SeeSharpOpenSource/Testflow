@@ -106,6 +106,51 @@ namespace Testflow.SlaveCore.Resources.locale {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to 程序集‘{0}’是序列中定义程序集的早期版本。.
+        /// </summary>
+        internal static string InvalidLibVersion {
+            get {
+                return ResourceManager.GetString("InvalidLibVersion", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 接收到非法的消息“{0}”。.
+        /// </summary>
+        internal static string InvalidMessageReceived {
+            get {
+                return ResourceManager.GetString("InvalidMessageReceived", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 不支持到类型‘{0}’的转换。.
+        /// </summary>
+        internal static string InvalidTypeCast {
+            get {
+                return ResourceManager.GetString("InvalidTypeCast", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 加载程序集失败。.
+        /// </summary>
+        internal static string LoadAssemblyFailed {
+            get {
+                return ResourceManager.GetString("LoadAssemblyFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 加载类型数据失败。.
+        /// </summary>
+        internal static string LoadTypeFailed {
+            get {
+                return ResourceManager.GetString("LoadTypeFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to 操作超时。.
         /// </summary>
         internal static string OperatoinTimeout {
@@ -129,6 +174,15 @@ namespace Testflow.SlaveCore.Resources.locale {
         internal static string UnexistEvent {
             get {
                 return ResourceManager.GetString("UnexistEvent", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 路径&apos;{1}&apos;下不存在程序集&apos;{0}&apos;。.
+        /// </summary>
+        internal static string UnexistLibrary {
+            get {
+                return ResourceManager.GetString("UnexistLibrary", resourceCulture);
             }
         }
         

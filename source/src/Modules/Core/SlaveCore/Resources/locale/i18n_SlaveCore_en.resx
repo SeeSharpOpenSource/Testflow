@@ -132,6 +132,21 @@
   <data name="IncorrectParamType" xml:space="preserve">
     <value>The type of event parameter should be "{0}".</value>
   </data>
+  <data name="InvalidLibVersion" xml:space="preserve">
+    <value>The version of assembly {0} is lower than the version defined in sequence.</value>
+  </data>
+  <data name="InvalidMessageReceived" xml:space="preserve">
+    <value>Invalid message "{0}" received.</value>
+  </data>
+  <data name="InvalidTypeCast" xml:space="preserve">
+    <value>Unsupported cast to type '{0}'.</value>
+  </data>
+  <data name="LoadAssemblyFailed" xml:space="preserve">
+    <value>Load assembly failed.</value>
+  </data>
+  <data name="LoadTypeFailed" xml:space="preserve">
+    <value>Load type data failed.</value>
+  </data>
   <data name="OperatoinTimeout" xml:space="preserve">
     <value>Operation timeout.</value>
   </data>
@@ -140,6 +155,9 @@
   </data>
   <data name="UnexistEvent" xml:space="preserve">
     <value>Unexist session event "{0}".</value>
+  </data>
+  <data name="UnexistLibrary" xml:space="preserve">
+    <value>Assembly '{0}' cannot be found in path '{1}'.</value>
   </data>
   <data name="UnexistSession" xml:space="preserve">
     <value>Session with id "{0}" dose not exist.</value>

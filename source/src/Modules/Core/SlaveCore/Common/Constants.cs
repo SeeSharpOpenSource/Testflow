@@ -1,4 +1,4 @@
-﻿namespace Testflow.RemoteRunner.Common
+﻿namespace Testflow.SlaveCore.Common
 {
     public static class Constants
     {

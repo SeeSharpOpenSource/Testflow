@@ -17,5 +17,9 @@ namespace Testflow.CoreCommon
         public const int InvalidRuntimeObjectType = 11 | CommonErrorCode.EngineCoreErrorMask;
         public const int InvalidRuntimeInfoName = 11 | CommonErrorCode.EngineCoreErrorMask;
 
+        public const int InvalidMessageReceived = 12 | CommonErrorCode.EngineCoreErrorMask;
+        public const int UnavailableLibrary = 13 | CommonErrorCode.EngineCoreErrorMask;
+        public const int UnaccessibleType = 14 | CommonErrorCode.EngineCoreErrorMask;
+        public const int UnsupportedTypeCast = 15 | CommonErrorCode.EngineCoreErrorMask;
     }
 }

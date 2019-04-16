@@ -142,5 +142,10 @@ namespace Testflow.CoreCommon.Common
             }
             return variableValues;
         }
+
+        public static bool IsValidVaraible(string variable)
+        {
+            return !string.IsNullOrWhiteSpace(variable);
+        }
     }
 }

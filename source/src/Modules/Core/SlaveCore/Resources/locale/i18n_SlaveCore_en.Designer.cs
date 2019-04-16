@@ -106,6 +106,51 @@ namespace Testflow.SlaveCore.Resources.locale {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The version of assembly {0} is lower than the version defined in sequence..
+        /// </summary>
+        internal static string InvalidLibVersion {
+            get {
+                return ResourceManager.GetString("InvalidLibVersion", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Invalid message &quot;{0}&quot; received..
+        /// </summary>
+        internal static string InvalidMessageReceived {
+            get {
+                return ResourceManager.GetString("InvalidMessageReceived", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unsupported cast to type &apos;{0}&apos;..
+        /// </summary>
+        internal static string InvalidTypeCast {
+            get {
+                return ResourceManager.GetString("InvalidTypeCast", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Load assembly failed..
+        /// </summary>
+        internal static string LoadAssemblyFailed {
+            get {
+                return ResourceManager.GetString("LoadAssemblyFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Load type data failed..
+        /// </summary>
+        internal static string LoadTypeFailed {
+            get {
+                return ResourceManager.GetString("LoadTypeFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Operation timeout..
         /// </summary>
         internal static string OperatoinTimeout {
@@ -129,6 +174,15 @@ namespace Testflow.SlaveCore.Resources.locale {
         internal static string UnexistEvent {
             get {
                 return ResourceManager.GetString("UnexistEvent", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Assembly &apos;{0}&apos; cannot be found in path &apos;{1}&apos;..
+        /// </summary>
+        internal static string UnexistLibrary {
+            get {
+                return ResourceManager.GetString("UnexistLibrary", resourceCulture);
             }
         }
         

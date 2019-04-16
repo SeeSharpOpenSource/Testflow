@@ -132,6 +132,21 @@
   <data name="IncorrectParamType" xml:space="preserve">
     <value>事件参数类型应为”{0}“。</value>
   </data>
+  <data name="InvalidLibVersion" xml:space="preserve">
+    <value>程序集‘{0}’是序列中定义程序集的早期版本。</value>
+  </data>
+  <data name="InvalidMessageReceived" xml:space="preserve">
+    <value>接收到非法的消息“{0}”。</value>
+  </data>
+  <data name="InvalidTypeCast" xml:space="preserve">
+    <value>不支持到类型‘{0}’的转换。</value>
+  </data>
+  <data name="LoadAssemblyFailed" xml:space="preserve">
+    <value>加载程序集失败。</value>
+  </data>
+  <data name="LoadTypeFailed" xml:space="preserve">
+    <value>加载类型数据失败。</value>
+  </data>
   <data name="OperatoinTimeout" xml:space="preserve">
     <value>操作超时。</value>
   </data>
@@ -140,6 +155,9 @@
   </data>
   <data name="UnexistEvent" xml:space="preserve">
     <value>不存在的会话事件："{0}"。</value>
+  </data>
+  <data name="UnexistLibrary" xml:space="preserve">
+    <value>路径'{1}'下不存在程序集'{0}'。</value>
   </data>
   <data name="UnexistSession" xml:space="preserve">
     <value>不存在ID为”{0}“的运行时会话。</value>

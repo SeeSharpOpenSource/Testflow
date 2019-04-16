@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Threading;
 using Newtonsoft.Json;
+using Testflow.CoreCommon.Common;
+using Testflow.Data.Sequence;
 using Testflow.Log;
 using Testflow.Runtime;
 using Testflow.SlaveCore.Controller;
@@ -44,6 +46,10 @@ namespace Testflow.SlaveCore
         public SlaveController Controller { get; set; }
 
         public TestRunnerBase Runner { get; set; }
+
+        public RunnerType SequenceType { get; set; }
+
+        public ISequenceFlowContainer Sequence { get; set; }
 
         private int _runtimeState;
 

@@ -4,7 +4,6 @@ using System.Threading;
 using Testflow.Common;
 using Testflow.CoreCommon.Common;
 using Testflow.CoreCommon.Messages;
-using Testflow.RemoteRunner.Common;
 using Testflow.Utility.MessageUtil;
 
 namespace Testflow.SlaveCore
