@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Testflow.CoreCommon.Common;
+using Testflow.CoreCommon.Messages;
 using Testflow.Data;
 using Testflow.Data.Sequence;
+using Testflow.Runtime.Data;
 using Testflow.SlaveCore.Data;
 
 namespace Testflow.SlaveCore.Runner.Model
@@ -131,9 +133,13 @@ namespace Testflow.SlaveCore.Runner.Model
             return CoreUtils.GetRuntimeVariableName(session, variable);
         }
 
-        public override void FillStatusInfo()
+        /// <summary>
+        /// 当指定时间内该序列没有额外信息到达时传递运行时状态的信息
+        /// </summary>
+        public override void FillStatusInfo(StatusMessage statusMessage)
         {
-            throw new NotImplementedException();
+            statusMessage.Stacks.Add(GetStack());
+            statusMessage.Results.Add(StepResult.NotAvailable);
         }
 
         public override void Invoke()

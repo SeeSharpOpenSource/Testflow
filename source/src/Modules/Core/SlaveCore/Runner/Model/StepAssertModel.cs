@@ -1,4 +1,5 @@
-﻿using Testflow.Data.Sequence;
+﻿using Testflow.CoreCommon.Messages;
+using Testflow.Data.Sequence;
 using Testflow.SlaveCore.Data;
 
 namespace Testflow.SlaveCore.Runner.Model
@@ -18,7 +19,7 @@ namespace Testflow.SlaveCore.Runner.Model
 
         }
 
-        public override void FillStatusInfo()
+        public override void FillStatusInfo(StatusMessage statusMessage)
         {
             throw new System.NotImplementedException();
         }
