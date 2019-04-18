@@ -165,6 +165,9 @@
   <data name="UnexistSession" xml:space="preserve">
     <value>不存在ID为”{0}“的运行时会话。</value>
   </data>
+  <data name="UnexistVariable" xml:space="preserve">
+    <value>当前序列中不存在名称为“{0}”的变量。</value>
+  </data>
   <data name="UnregisteredMessage" xml:space="preserve">
     <value>未注册的消息类型：“{0}”。</value>
   </data>

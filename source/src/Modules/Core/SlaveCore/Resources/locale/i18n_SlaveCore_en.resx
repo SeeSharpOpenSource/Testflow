@@ -165,6 +165,9 @@
   <data name="UnexistSession" xml:space="preserve">
     <value>Session with id "{0}" dose not exist.</value>
   </data>
+  <data name="UnexistVariable" xml:space="preserve">
+    <value>Unexist variable "{0}" in sequence data.</value>
+  </data>
   <data name="UnregisteredMessage" xml:space="preserve">
     <value>Unregistered message type: {0}.</value>
   </data>

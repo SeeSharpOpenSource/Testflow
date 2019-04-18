@@ -7,18 +7,21 @@ using Testflow.CoreCommon.Messages;
 using Testflow.Data.Sequence;
 using Testflow.Runtime;
 using Testflow.SlaveCore.Data;
+using Testflow.SlaveCore.Runner;
+using Testflow.SlaveCore.Runner.Model;
 
 namespace Testflow.SlaveCore.Controller
 {
     internal class SlaveController : IDisposable
     {
         private readonly MessageTransceiver _transceiver;
-        private readonly SlaveContext _slaveContext;
+        private readonly SlaveContext _context;
+        private SessionExecutionModel _sessionExecutionModel;
 
-        public SlaveController(SlaveContext slaveContext)
+        public SlaveController(SlaveContext context)
         {
-            this._transceiver = slaveContext.MessageTransceiver;
-            this._slaveContext = slaveContext;
+            this._transceiver = context.MessageTransceiver;
+            this._context = context;
         }
 
         public void StartMonitoring()
@@ -31,7 +34,7 @@ namespace Testflow.SlaveCore.Controller
         {
             try
             {
-                _slaveContext.LogSession.Print(LogLevel.Info, CommonConst.PlatformLogSession, "Monitoring thread start.");
+                _context.LogSession.Print(LogLevel.Info, CommonConst.PlatformLogSession, "Monitoring thread start.");
 
                 TestGeneration();
 
@@ -41,18 +44,18 @@ namespace Testflow.SlaveCore.Controller
 
                 StateMonitoring();
 
-                _slaveContext.LogSession.Print(LogLevel.Info, CommonConst.PlatformLogSession, "Monitoring thread over.");
+                _context.LogSession.Print(LogLevel.Info, CommonConst.PlatformLogSession, "Monitoring thread over.");
             }
             catch (Exception ex)
             {
                 StatusMessage statusMessage = new StatusMessage(MessageNames.ErrorStatusName, RuntimeState.Error,
-                    _slaveContext.SessionId);
+                    _context.SessionId);
                 statusMessage.ExceptionInfo = new SequenceFailedInfo(ex);
-                _slaveContext.Runner?.FillStatusMessageInfo(statusMessage);
+                _context.Runner?.FillStatusMessageInfo(statusMessage);
                 FillPerformance(statusMessage);
                 _transceiver.SendMessage(statusMessage);
 
-                _slaveContext.LogSession.Print(LogLevel.Fatal, CommonConst.PlatformLogSession, ex, 
+                _context.LogSession.Print(LogLevel.Fatal, CommonConst.PlatformLogSession, ex, 
                     "Monitoring thread exited with unexpted exception.");
             }
         }
@@ -75,7 +78,7 @@ namespace Testflow.SlaveCore.Controller
         // 测试数据
         private void TestGeneration()
         {
-            LocalMessageQueue<MessageBase> messageQueue = _slaveContext.MessageTransceiver.MessageQueue;
+            LocalMessageQueue<MessageBase> messageQueue = _context.MessageTransceiver.MessageQueue;
             // 首先接收RmtGenMessage
             MessageBase message = messageQueue.WaitUntilMessageCome();
 
@@ -83,28 +86,54 @@ namespace Testflow.SlaveCore.Controller
             if (null == rmtGenMessage)
             {
                 throw new TestflowRuntimeException(ModuleErrorCode.InvalidMessageReceived,
-                    _slaveContext.I18N.GetFStr("InvalidMessageReceived", message.GetType().Name));
+                    _context.I18N.GetFStr("InvalidMessageReceived", message.GetType().Name));
             }
             
-            InitializeSequenceDataContainer(rmtGenMessage);
+            InitializeRuntimeComponents(rmtGenMessage);
+
+            InitializeExecutionModel();
         }
 
-        private void InitializeSequenceDataContainer(RmtGenMessage rmtGenMessage)
+        private void InitializeRuntimeComponents(RmtGenMessage rmtGenMessage)
         {
             // TODO slave端暂时没有好的获取SequenceManager的方式，目前直接引用SequenceManager，后续再去优化
             SequenceManager.SequenceManager sequenceManager = new SequenceManager.SequenceManager();
-            _slaveContext.SequenceType = rmtGenMessage.SequenceType;
+            _context.SequenceType = rmtGenMessage.SequenceType;
             if (rmtGenMessage.SequenceType == RunnerType.TestProject)
             {
-                _slaveContext.Sequence = sequenceManager.RuntimeDeserializeTestProject(rmtGenMessage.Sequence);
+                _context.Sequence = sequenceManager.RuntimeDeserializeTestProject(rmtGenMessage.Sequence);
             }
             else
             {
-                _slaveContext.Sequence = sequenceManager.RuntimeDeserializeSequenceGroup(rmtGenMessage.Sequence);
+                _context.Sequence = sequenceManager.RuntimeDeserializeSequenceGroup(rmtGenMessage.Sequence);
             }
 
-            _slaveContext.VariableMapper = new VariableMapper(_slaveContext);
             sequenceManager.Dispose();
+            _context.VariableMapper = new VariableMapper(_context);
+            switch (_context.SequenceType)
+            {
+                case RunnerType.TestProject:
+                    ITestProject testProject = (ITestProject) _context.Sequence;
+                    _context.TypeInvoker = new AssemblyInvoker(_context, testProject.Assemblies,
+                        testProject.TypeDatas);
+                    break;
+                case RunnerType.SequenceGroup:
+                    ISequenceGroup sequenceGroup = (ISequenceGroup) _context.Sequence;
+                    _context.TypeInvoker = new AssemblyInvoker(_context, sequenceGroup.Assemblies,
+                        sequenceGroup.TypeDatas);
+                    break;
+                default:
+                    throw new InvalidProgramException();
+            }
+            _context.TypeInvoker.LoadAssemblyAndType();
+        }
+
+        private void InitializeExecutionModel()
+        {
+            _sessionExecutionModel = new SessionExecutionModel(_context);
+            _context.State = RuntimeState.TestGen;
+            _sessionExecutionModel.Generate();
+            _context.State = RuntimeState.StartIdle;
         }
 
         // TODO 暂时写死，使用AppDomain为单位计算
@@ -119,6 +148,7 @@ namespace Testflow.SlaveCore.Controller
         public void Dispose()
         {
             _transceiver.Dispose();
+            _context.Dispose();
         }
     }
 }

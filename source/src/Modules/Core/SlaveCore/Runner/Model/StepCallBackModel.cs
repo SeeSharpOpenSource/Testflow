@@ -10,6 +10,16 @@ namespace Testflow.SlaveCore.Runner.Model
         {
         }
 
+        public override void GenerateInvokeInfo()
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public override void InitializeParamsValues()
+        {
+            throw new System.NotImplementedException();
+        }
+
         public override void FillStatusInfo(StatusMessage statusMessage)
         {
             throw new System.NotImplementedException();

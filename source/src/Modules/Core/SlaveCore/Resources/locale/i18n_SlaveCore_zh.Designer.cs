@@ -205,6 +205,15 @@ namespace Testflow.SlaveCore.Resources.locale {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to 当前序列中不存在名称为“{0}”的变量。.
+        /// </summary>
+        internal static string UnexistVariable {
+            get {
+                return ResourceManager.GetString("UnexistVariable", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to 未注册的消息类型：“{0}”。.
         /// </summary>
         internal static string UnregisteredMessage {

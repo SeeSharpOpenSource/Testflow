@@ -2,11 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using Testflow.Common;
+using Testflow.CoreCommon;
 using Testflow.CoreCommon.Common;
 using Testflow.CoreCommon.Messages;
 using Testflow.Data;
 using Testflow.Data.Sequence;
 using Testflow.Runtime.Data;
+using Testflow.SlaveCore.Common;
 using Testflow.SlaveCore.Data;
 
 namespace Testflow.SlaveCore.Runner.Model
@@ -25,7 +28,7 @@ namespace Testflow.SlaveCore.Runner.Model
 
         #region 子序列属性
 
-        public List<StepExecutionModel> SubSteps { get; }
+        public StepModelBase SubStepRoot { get; }
 
         #endregion
 
@@ -102,11 +105,7 @@ namespace Testflow.SlaveCore.Runner.Model
 
             if (StepData.HasSubSteps)
             {
-                this.SubSteps = new List<StepExecutionModel>(step.SubSteps.Count);
-                foreach (ISequenceStep subStep in step.SubSteps)
-                {
-                    SubSteps.Add(new StepExecutionModel(subStep, context));
-                }
+                this.SubStepRoot = ModuleUtils.CreateStepModelChain(StepData.SubSteps, Context);
             }
             else
             {
@@ -133,6 +132,66 @@ namespace Testflow.SlaveCore.Runner.Model
             return CoreUtils.GetRuntimeVariableName(session, variable);
         }
 
+        public override void GenerateInvokeInfo()
+        {
+            if (StepData.HasSubSteps)
+            {
+                this.SubStepRoot.NextStep.GenerateInvokeInfo();
+            }
+            else
+            {
+                switch (FunctionType)
+                {
+                    case FunctionType.StaticFunction:
+                    case FunctionType.InstanceFunction:
+                        this.Method = Context.TypeInvoker.GetMethod(StepData.Function);
+                        break;
+                    case FunctionType.Constructor:
+                        this.Constructor = Context.TypeInvoker.GetConstructor(StepData.Function);
+                        break;
+                    default:
+                        throw new InvalidProgramException();
+                }
+            }
+            NextStep.GenerateInvokeInfo();
+        }
+
+        public override void InitializeParamsValues()
+        {
+            if (StepData.HasSubSteps)
+            {
+                SubStepRoot.InitializeParamsValues();
+            }
+            else
+            {
+                IArgumentCollection argumentInfos = StepData.Function.ParameterType;
+                IParameterDataCollection parameters = StepData.Function.Parameters;
+                for (int i = 0; i < argumentInfos.Count; i++)
+                {
+                    string paramValue = parameters[i].Value;
+                    if (parameters[i].ParameterType == ParameterType.Value)
+                    {
+                        Params[i] = Context.TypeInvoker.CastValue(argumentInfos[i].Type, paramValue);
+                    }
+                    else
+                    {
+
+                        IVariable variable = ModuleUtils.GetVaraibleByRawVarName(paramValue, StepData);
+                        if (null == variable)
+                        {
+                            Context.LogSession.Print(LogLevel.Error, SequenceIndex,
+                                $"Unexist variable '{paramValue}' in sequence data.");
+                            throw new TestflowDataException(ModuleErrorCode.SequenceDataError,
+                                Context.I18N.GetFStr("UnexistVariable", paramValue));
+
+                        }
+                        Params[i] = variable;
+                    }
+                }
+            }
+            NextStep?.InitializeParamsValues();
+        }
+
         /// <summary>
         /// 当指定时间内该序列没有额外信息到达时传递运行时状态的信息
         /// </summary>
@@ -153,11 +212,11 @@ namespace Testflow.SlaveCore.Runner.Model
                 LoopCount = 0;
                 do
                 {
+                    ExecuteStepSingleTime();
                     if (CoreUtils.IsValidVaraible(LoopVar))
                     {
                         Context.VariableMapper.SetVariableValue(LoopVar, LoopCount);
                     }
-
                 } while (++LoopCount < MaxLoopCount);
             }
         }
@@ -166,51 +225,64 @@ namespace Testflow.SlaveCore.Runner.Model
         {
             if (StepData.HasSubSteps)
             {
-                foreach (StepExecutionModel subStep in SubSteps)
-                {
-                    subStep.Invoke();
-                }
+                SubStepRoot.Invoke();
             }
-            object instance;
-            object returnValue;
-            InitializeParamValue();
-            switch (FunctionType)
+            else
             {
-                case FunctionType.Constructor:
-                    instance = Constructor.Invoke(Params);
-                    if (CoreUtils.IsValidVaraible(InstanceVar))
-                    {
-                        Context.VariableMapper.SetVariableValue(InstanceVar, instance);
-                    }
-                    break;
-                case FunctionType.InstanceFunction:
-                    instance = Context.VariableMapper.GetVariableValue(InstanceVar);
-                    returnValue = Method.Invoke(instance, Params);
-                    if (CoreUtils.IsValidVaraible(ReturnVar))
-                    {
-                        Context.VariableMapper.SetVariableValue(ReturnVar, returnValue);
-                    }
-                    break;
-                case FunctionType.StaticFunction:
-                    returnValue = Method.Invoke(null, Params);
-                    if (CoreUtils.IsValidVaraible(ReturnVar))
-                    {
-                        Context.VariableMapper.SetVariableValue(ReturnVar, returnValue);
-                    }
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException();
+                object instance;
+                object returnValue;
+                SetVariableParamValue();
+                switch (FunctionType)
+                {
+                    case FunctionType.Constructor:
+                        instance = Constructor.Invoke(Params);
+                        if (CoreUtils.IsValidVaraible(InstanceVar))
+                        {
+                            Context.VariableMapper.SetVariableValue(InstanceVar, instance);
+                        }
+                        break;
+                    case FunctionType.InstanceFunction:
+                        instance = Context.VariableMapper.GetVariableValue(InstanceVar);
+                        returnValue = Method.Invoke(instance, Params);
+                        if (CoreUtils.IsValidVaraible(ReturnVar))
+                        {
+                            Context.VariableMapper.SetVariableValue(ReturnVar, returnValue);
+                        }
+                        break;
+                    case FunctionType.StaticFunction:
+                        returnValue = Method.Invoke(null, Params);
+                        if (CoreUtils.IsValidVaraible(ReturnVar))
+                        {
+                            Context.VariableMapper.SetVariableValue(ReturnVar, returnValue);
+                        }
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
             }
             if (StepData.RecordStatus)
             {
-                SequenceStatusInfo statusInfo = new SequenceStatusInfo(StepData.Index, this.GetStack(), StatusReportType.Record);
+                SequenceStatusInfo statusInfo = new SequenceStatusInfo(StepData.Index, this.GetStack(),
+                    StatusReportType.Record);
+
+
                 Context.StatusQueue.Enqueue(statusInfo);
             }
+
+            NextStep?.Invoke();
         }
 
-        private void InitializeParamValue()
+        private void SetVariableParamValue()
         {
-            throw new NotImplementedException();
+            IParameterDataCollection parameters = StepData.Function.Parameters;
+            for (int i = 0; i < parameters.Count; i++)
+            {
+                if (parameters[i].ParameterType == ParameterType.Variable)
+                {
+                    string variableName = CoreUtils.GetRuntimeVariableName(Context.SessionId, (IVariable)parameters[i]);
+                    Params[i] = Context.VariableMapper.GetVariableValue(variableName);
+                }
+            }
         }
     }
 }

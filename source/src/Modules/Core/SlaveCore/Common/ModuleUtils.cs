@@ -1,6 +1,12 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using System.Text.RegularExpressions;
+using Testflow.Common;
+using Testflow.CoreCommon;
 using Testflow.Data;
+using Testflow.Data.Sequence;
+using Testflow.SlaveCore.Runner.Model;
 
 namespace Testflow.SlaveCore.Common
 {
@@ -43,6 +49,51 @@ namespace Testflow.SlaveCore.Common
         public static string GetTypeFullName(ITypeData typeData)
         {
             return $"{typeData.Namespace}.{typeData.Name}";
+        }
+
+        public static StepModelBase CreateStepModelChain(IList<ISequenceStep> steps, SlaveContext context)
+        {
+            StepModelBase root = null;
+            if (steps.Count == 0)
+            {
+                return root;
+            }
+
+            root = StepModelBase.GetStepModel(steps[0], context);
+            root.NextStep = null;
+            StepModelBase lastNode = root;
+            StepModelBase currentNode = null;
+            for (int i = 1; i < steps.Count; i++)
+            {
+                currentNode = StepModelBase.GetStepModel(steps[i], context);
+                lastNode.NextStep = currentNode;
+                lastNode = currentNode;
+                currentNode.NextStep = null;
+            }
+            return root;
+        }
+
+        public static IVariable GetVaraibleByRawVarName(string rawVarName, ISequenceFlowContainer sequenceData)
+        {
+            IVariable variable = null;
+            if (sequenceData is ITestProject)
+            {
+                variable = ((ITestProject) sequenceData).Variables.FirstOrDefault(item => item.Name == rawVarName);
+            }
+            else if (sequenceData is ISequenceGroup)
+            {
+                variable = ((ISequenceGroup) sequenceData).Variables.FirstOrDefault(item => item.Name == rawVarName);
+            }
+            else if (sequenceData is ISequenceStep)
+            {
+                variable = ((ISequence)sequenceData).Variables.FirstOrDefault(item => item.Name == rawVarName);
+                if (null == variable)
+                {
+                    variable =
+                        ((ISequenceGroup) sequenceData.Parent).Variables.FirstOrDefault(item => item.Name == rawVarName);
+                }
+            }
+            return variable;
         }
     }
 }

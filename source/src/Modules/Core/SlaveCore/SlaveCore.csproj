@@ -48,6 +48,7 @@
     <Compile Include="Common\AssertionException.cs" />
     <Compile Include="Common\Constants.cs" />
     <Compile Include="Common\ModuleUtils.cs" />
+    <Compile Include="Runner\Model\SessionExecutionModel.cs" />
     <Compile Include="Runner\Model\StepAssertModel.cs" />
     <Compile Include="Runner\Model\StepCallBackModel.cs" />
     <Compile Include="Runner\Model\StepExecutionModel.cs" />

@@ -61,6 +61,8 @@ namespace Testflow.SlaveCore
 
         public VariableMapper VariableMapper { get; set; }
 
+        public AssemblyInvoker TypeInvoker { get; set; }
+
         public LocalEventQueue<SequenceStatusInfo> StatusQueue { get; }
 
         private int _runtimeState;
@@ -108,7 +110,6 @@ namespace Testflow.SlaveCore
         public void Dispose()
         {
             Runner?.Dispose();
-            Controller?.Dispose();
         }
     }
 }

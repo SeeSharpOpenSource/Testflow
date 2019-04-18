@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
 using Testflow.CoreCommon.Data;
 using Testflow.CoreCommon.Messages;
 using Testflow.Data;
 using Testflow.Data.Sequence;
 using Testflow.Runtime.Data;
+using Testflow.SlaveCore.Common;
 using Testflow.SlaveCore.Data;
 
 namespace Testflow.SlaveCore.Runner.Model
@@ -35,6 +37,18 @@ namespace Testflow.SlaveCore.Runner.Model
             }
         }
 
+        private static readonly Dictionary<int, StepModelBase> CurrentModel = new Dictionary<int, StepModelBase>(Constants.DefaultRuntimeSize);
+
+        public static StepModelBase GetCurrentStep(int sequenceIndex)
+        {
+            return CurrentModel.ContainsKey(sequenceIndex) ? CurrentModel[sequenceIndex] : null;
+        }
+
+        public static void AddSequenceEntrance(StepModelBase stepModel)
+        {
+            CurrentModel.Add(stepModel.SequenceIndex, stepModel);
+        }
+
         public StepModelBase NextStep { get; set; }
 
         protected readonly SlaveContext Context;
@@ -56,6 +70,11 @@ namespace Testflow.SlaveCore.Runner.Model
             return CallStack.GetStack(StepData);
         }
 
+        public abstract void GenerateInvokeInfo();
+
+        public abstract void InitializeParamsValues();
+
+        // 该方法只有在某个Sequence没有关键信息上报时使用。
         public abstract void FillStatusInfo(StatusMessage statusMessage);
 
         public abstract void Invoke();
