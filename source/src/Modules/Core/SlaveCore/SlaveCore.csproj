@@ -45,7 +45,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AppDomainTestLauncher.cs" />
-    <Compile Include="Common\AssertionException.cs" />
     <Compile Include="Common\Constants.cs" />
     <Compile Include="Common\ModuleUtils.cs" />
     <Compile Include="Runner\Model\SessionExecutionModel.cs" />

@@ -24,14 +24,10 @@ namespace Testflow.SlaveCore.Controller
             this._context = context;
         }
 
-        public void StartMonitoring()
+        public void StartslaveTask()
         {
             _transceiver.StartReceive();
-            HandleDownlinkMessage();
-        }
 
-        private void HandleDownlinkMessage()
-        {
             try
             {
                 _context.LogSession.Print(LogLevel.Info, CommonConst.PlatformLogSession, "Monitoring thread start.");
@@ -57,6 +53,8 @@ namespace Testflow.SlaveCore.Controller
 
                 _context.LogSession.Print(LogLevel.Fatal, CommonConst.PlatformLogSession, ex, 
                     "Monitoring thread exited with unexpted exception.");
+
+                StopSlaveTask();
             }
         }
 
@@ -75,7 +73,7 @@ namespace Testflow.SlaveCore.Controller
             throw new NotImplementedException();
         }
 
-        // 测试数据
+        // 生成测试数据
         private void TestGeneration()
         {
             LocalMessageQueue<MessageBase> messageQueue = _context.MessageTransceiver.MessageQueue;
@@ -88,10 +86,34 @@ namespace Testflow.SlaveCore.Controller
                 throw new TestflowRuntimeException(ModuleErrorCode.InvalidMessageReceived,
                     _context.I18N.GetFStr("InvalidMessageReceived", message.GetType().Name));
             }
-            
-            InitializeRuntimeComponents(rmtGenMessage);
 
-            InitializeExecutionModel();
+            try
+            {
+                // 发送测试开始消息
+                _context.State = RuntimeState.TestGen;
+                TestGenMessage testGenStartMessage = new TestGenMessage(MessageNames.TestGenName, _context.SessionId,
+                    CommonConst.PlatformSession, GenerationStatus.InProgress);
+                _context.MessageTransceiver.SendMessage(testGenStartMessage);
+
+                InitializeRuntimeComponents(rmtGenMessage);
+                InitializeExecutionModel();
+
+                // 发送测试结束消息
+                _context.State = RuntimeState.StartIdle;
+                TestGenMessage testGenOverMessage = new TestGenMessage(MessageNames.TestGenName, _context.SessionId,
+                    CommonConst.PlatformSession, GenerationStatus.Success);
+                _context.MessageTransceiver.SendMessage(testGenOverMessage);
+            }
+            catch (Exception ex)
+            {
+                _context.LogSession.Print(LogLevel.Error, CommonConst.PlatformLogSession, ex, "Test Generation failed.");
+                _context.State = RuntimeState.Error;
+                TestGenMessage testGenFailMessage = new TestGenMessage(MessageNames.TestGenName, _context.SessionId,
+                CommonConst.PlatformSession, GenerationStatus.Failed);
+                _context.MessageTransceiver.SendMessage(testGenFailMessage);
+                
+                throw;
+            }
         }
 
         private void InitializeRuntimeComponents(RmtGenMessage rmtGenMessage)
@@ -131,9 +153,7 @@ namespace Testflow.SlaveCore.Controller
         private void InitializeExecutionModel()
         {
             _sessionExecutionModel = new SessionExecutionModel(_context);
-            _context.State = RuntimeState.TestGen;
             _sessionExecutionModel.Generate();
-            _context.State = RuntimeState.StartIdle;
         }
 
         // TODO 暂时写死，使用AppDomain为单位计算
@@ -143,6 +163,11 @@ namespace Testflow.SlaveCore.Controller
             message.Performance.ProcessorTime = currentDomain.MonitoringTotalProcessorTime.TotalMilliseconds;
             message.Performance.MemoryUsed = currentDomain.MonitoringSurvivedMemorySize;
             message.Performance.MemoryAllocated = currentDomain.MonitoringTotalAllocatedMemorySize;
+        }
+
+        public void StopSlaveTask()
+        {
+
         }
 
         public void Dispose()

@@ -76,7 +76,7 @@ namespace Testflow.SlaveCore.Runner.Model
 
                 _context.StatusQueue.Enqueue(overStatusInfo);
             }
-            catch (AssertionException ex)
+            catch (TestflowAssertException ex)
             {
                 this.State = RuntimeState.Failed;
                 SequenceStatusInfo errorStatusInfo = new SequenceStatusInfo(Index,
@@ -85,7 +85,7 @@ namespace Testflow.SlaveCore.Runner.Model
             }
             catch (TestflowException ex)
             {
-                this.State = RuntimeState.Failed;
+                this.State = RuntimeState.Error;
                 SequenceStatusInfo errorStatusInfo = new SequenceStatusInfo(Index,
                     StepModelBase.GetCurrentStep(Index).GetStack(), StatusReportType.Failed, ex);
                 this._context.StatusQueue.Enqueue(errorStatusInfo);

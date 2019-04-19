@@ -9,12 +9,14 @@ using Testflow.CoreCommon.Data;
 using Testflow.CoreCommon.Messages;
 using Testflow.Data.Sequence;
 using Testflow.Runtime;
+using Testflow.Utility.I18nUtil;
 
 namespace Testflow.CoreCommon.Common
 {
     public static class CoreUtils
     {
-        const string VarNameDelim = ".";
+        const string VarNameDelim = "$";
+        const string PropertyDelim = ".";
 
         public static string GetRuntimeVariableName(int session, IVariable variable)
         {

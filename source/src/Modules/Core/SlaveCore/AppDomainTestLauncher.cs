@@ -24,7 +24,7 @@ namespace Testflow.SlaveCore
         {
             SlaveController slaveController = new SlaveController(_slaveContext);
             _slaveContext.Controller = slaveController;
-            slaveController.StartMonitoring();
+            slaveController.StartslaveTask();
         }
 
         public void Dispose()

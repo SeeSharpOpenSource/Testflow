@@ -16,5 +16,7 @@
         public const string ResultStatusName = "Result";
         public const string ErrorStatusName = "Error";
         public const string HearBeatStatusName = "HeartBeat";
+
+        public const string TestGenName = "TestGen";
     }
 }

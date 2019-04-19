@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Testflow.CoreCommon.Common;
 using Testflow.Data.Sequence;
+using Testflow.SlaveCore.Common;
 
 namespace Testflow.SlaveCore.Data
 {
@@ -45,14 +46,14 @@ namespace Testflow.SlaveCore.Data
             }
         }
 
-        public void SetVariableValue(string variableName, object value)
+        public void SetParamValue(string variableName, string paramValue, object value)
         {
-            this._variables[variableName] = value;
+            this._variables[variableName] = ModuleUtils.SetParamValue(paramValue, _variables[variableName], value);
         }
 
-        public object GetVariableValue(string variableName)
+        public object GetParamValue(string variableName, string paramValueStr)
         {
-            return this._variables[variableName];
+            return ModuleUtils.GetParamValue(paramValueStr, this._variables[variableName]);
         }
 
         public void Dispose()

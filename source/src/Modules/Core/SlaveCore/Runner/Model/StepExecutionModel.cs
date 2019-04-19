@@ -175,14 +175,15 @@ namespace Testflow.SlaveCore.Runner.Model
                     }
                     else
                     {
-
-                        IVariable variable = ModuleUtils.GetVaraibleByRawVarName(paramValue, StepData);
+                        // 如果是变量，则先获取对应的Varaible变量，真正的值在运行时才更新获取
+                        string variableName = ModuleUtils.GetVariableNameFromParamValue(paramValue);
+                        IVariable variable = ModuleUtils.GetVaraibleByRawVarName(variableName, StepData);
                         if (null == variable)
                         {
                             Context.LogSession.Print(LogLevel.Error, SequenceIndex,
-                                $"Unexist variable '{paramValue}' in sequence data.");
+                                $"Unexist variable '{variableName}' in sequence data.");
                             throw new TestflowDataException(ModuleErrorCode.SequenceDataError,
-                                Context.I18N.GetFStr("UnexistVariable", paramValue));
+                                Context.I18N.GetFStr("UnexistVariable", variableName));
 
                         }
                         Params[i] = variable;
@@ -215,7 +216,7 @@ namespace Testflow.SlaveCore.Runner.Model
                     ExecuteStepSingleTime();
                     if (CoreUtils.IsValidVaraible(LoopVar))
                     {
-                        Context.VariableMapper.SetVariableValue(LoopVar, LoopCount);
+                        Context.VariableMapper.SetParamValue(LoopVar, StepData.LoopCounter.CounterVariable, LoopCount);
                     }
                 } while (++LoopCount < MaxLoopCount);
             }
@@ -238,22 +239,22 @@ namespace Testflow.SlaveCore.Runner.Model
                         instance = Constructor.Invoke(Params);
                         if (CoreUtils.IsValidVaraible(InstanceVar))
                         {
-                            Context.VariableMapper.SetVariableValue(InstanceVar, instance);
+                            Context.VariableMapper.SetParamValue(InstanceVar, StepData.Function.Instance, instance);
                         }
                         break;
                     case FunctionType.InstanceFunction:
-                        instance = Context.VariableMapper.GetVariableValue(InstanceVar);
+                        instance = Context.VariableMapper.GetParamValue(InstanceVar, StepData.Function.Instance);
                         returnValue = Method.Invoke(instance, Params);
                         if (CoreUtils.IsValidVaraible(ReturnVar))
                         {
-                            Context.VariableMapper.SetVariableValue(ReturnVar, returnValue);
+                            Context.VariableMapper.SetParamValue(ReturnVar, StepData.Function.Return, returnValue);
                         }
                         break;
                     case FunctionType.StaticFunction:
                         returnValue = Method.Invoke(null, Params);
                         if (CoreUtils.IsValidVaraible(ReturnVar))
                         {
-                            Context.VariableMapper.SetVariableValue(ReturnVar, returnValue);
+                            Context.VariableMapper.SetParamValue(ReturnVar, StepData.Function.Return, returnValue);
                         }
                         break;
                     default:
@@ -272,6 +273,7 @@ namespace Testflow.SlaveCore.Runner.Model
             NextStep?.Invoke();
         }
 
+        // 因为Variable的值在整个过程中会变化，所以需要在运行前实时获取
         private void SetVariableParamValue()
         {
             IParameterDataCollection parameters = StepData.Function.Parameters;
@@ -279,8 +281,12 @@ namespace Testflow.SlaveCore.Runner.Model
             {
                 if (parameters[i].ParameterType == ParameterType.Variable)
                 {
-                    string variableName = CoreUtils.GetRuntimeVariableName(Context.SessionId, (IVariable)parameters[i]);
-                    Params[i] = Context.VariableMapper.GetVariableValue(variableName);
+                    // 获取变量值的名称
+                    string variableName = CoreUtils.GetRuntimeVariableName(Context.SessionId, (IVariable)Params[i]);
+                    // 使用变量名称获取变量当前对象的值
+                    object variableValue = Context.VariableMapper.GetParamValue(variableName, parameters[i].Value);
+                    // 根据ParamString和变量对应的值配置参数。
+                    Params[i] = ModuleUtils.GetParamValue(parameters[i].Value, variableValue);
                 }
             }
         }
