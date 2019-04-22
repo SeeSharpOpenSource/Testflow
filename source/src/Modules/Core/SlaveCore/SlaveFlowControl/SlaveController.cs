@@ -4,19 +4,21 @@ using Testflow.CoreCommon;
 using Testflow.CoreCommon.Common;
 using Testflow.CoreCommon.Data;
 using Testflow.CoreCommon.Messages;
+using Testflow.Data;
 using Testflow.Data.Sequence;
 using Testflow.Runtime;
+using Testflow.SlaveCore.Common;
 using Testflow.SlaveCore.Data;
 using Testflow.SlaveCore.Runner;
 using Testflow.SlaveCore.Runner.Model;
 
-namespace Testflow.SlaveCore.Controller
+namespace Testflow.SlaveCore.SlaveFlowControl
 {
     internal class SlaveController : IDisposable
     {
         private readonly MessageTransceiver _transceiver;
         private readonly SlaveContext _context;
-        private SessionExecutionModel _sessionExecutionModel;
+        private TestRunner _runner;
 
         public SlaveController(SlaveContext context)
         {
@@ -32,11 +34,13 @@ namespace Testflow.SlaveCore.Controller
             {
                 _context.LogSession.Print(LogLevel.Info, CommonConst.PlatformLogSession, "Monitoring thread start.");
 
-                TestGeneration();
+                SessionExecutionModel sessionExecutionModel = TestGeneration();
 
                 StartDownLinkMessageListening();
 
                 SendGenerationOverMessage();
+
+                StartTestWork(sessionExecutionModel);
 
                 StateMonitoring();
 
@@ -58,6 +62,12 @@ namespace Testflow.SlaveCore.Controller
             }
         }
 
+        private void StartTestWork(SessionExecutionModel sessionExecutionModel)
+        {
+            _runner = TestRunner.CreateRunner(_context);
+            _runner.Start(sessionExecutionModel);
+        }
+
         private void StateMonitoring()
         {
             throw new NotImplementedException();
@@ -74,7 +84,7 @@ namespace Testflow.SlaveCore.Controller
         }
 
         // 生成测试数据
-        private void TestGeneration()
+        private SessionExecutionModel TestGeneration()
         {
             LocalMessageQueue<MessageBase> messageQueue = _context.MessageTransceiver.MessageQueue;
             // 首先接收RmtGenMessage
@@ -96,13 +106,15 @@ namespace Testflow.SlaveCore.Controller
                 _context.MessageTransceiver.SendMessage(testGenStartMessage);
 
                 InitializeRuntimeComponents(rmtGenMessage);
-                InitializeExecutionModel();
+                SessionExecutionModel sessionExecutionModel = InitializeExecutionModel();
 
                 // 发送测试结束消息
                 _context.State = RuntimeState.StartIdle;
                 TestGenMessage testGenOverMessage = new TestGenMessage(MessageNames.TestGenName, _context.SessionId,
                     CommonConst.PlatformSession, GenerationStatus.Success);
                 _context.MessageTransceiver.SendMessage(testGenOverMessage);
+
+                return sessionExecutionModel;
             }
             catch (Exception ex)
             {
@@ -123,11 +135,15 @@ namespace Testflow.SlaveCore.Controller
             _context.SequenceType = rmtGenMessage.SequenceType;
             if (rmtGenMessage.SequenceType == RunnerType.TestProject)
             {
-                _context.Sequence = sequenceManager.RuntimeDeserializeTestProject(rmtGenMessage.Sequence);
+                ITestProject testProject = sequenceManager.RuntimeDeserializeTestProject(rmtGenMessage.Sequence);
+                _context.Sequence = testProject;
+                _context.ExecutionModel = ExecutionModel.SequentialExecution;
             }
             else
             {
-                _context.Sequence = sequenceManager.RuntimeDeserializeSequenceGroup(rmtGenMessage.Sequence);
+                ISequenceGroup sequenceGroup = sequenceManager.RuntimeDeserializeSequenceGroup(rmtGenMessage.Sequence);
+                _context.Sequence = sequenceGroup;
+                _context.ExecutionModel = sequenceGroup.ExecutionModel;
             }
 
             sequenceManager.Dispose();
@@ -150,10 +166,11 @@ namespace Testflow.SlaveCore.Controller
             _context.TypeInvoker.LoadAssemblyAndType();
         }
 
-        private void InitializeExecutionModel()
+        private SessionExecutionModel InitializeExecutionModel()
         {
-            _sessionExecutionModel = new SessionExecutionModel(_context);
-            _sessionExecutionModel.Generate();
+            SessionExecutionModel sessionExecutionModel = new SessionExecutionModel(_context);
+            sessionExecutionModel.Generate();
+            return sessionExecutionModel;
         }
 
         // TODO 暂时写死，使用AppDomain为单位计算

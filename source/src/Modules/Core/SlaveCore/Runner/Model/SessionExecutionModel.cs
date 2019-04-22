@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Testflow.CoreCommon.Common;
 using Testflow.Data.Sequence;
 using Testflow.Runtime;
+using Testflow.SlaveCore.Common;
 
 namespace Testflow.SlaveCore.Runner.Model
 {

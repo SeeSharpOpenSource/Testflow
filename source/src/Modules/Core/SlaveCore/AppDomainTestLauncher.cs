@@ -1,7 +1,7 @@
 ﻿using System;
 using Testflow.SlaveCore.Common;
-using Testflow.SlaveCore.Controller;
 using Testflow.SlaveCore.Runner;
+using Testflow.SlaveCore.SlaveFlowControl;
 using Testflow.Utility.I18nUtil;
 
 namespace Testflow.SlaveCore

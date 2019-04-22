@@ -169,6 +169,15 @@ namespace Testflow.SlaveCore.Resources.locale {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Step is configured as &quot;Force Failed&quot;..
+        /// </summary>
+        internal static string StepForceFailed {
+            get {
+                return ResourceManager.GetString("StepForceFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to SequenceGroup with input arguments cannot run with out test project..
         /// </summary>
         internal static string UnexistArgumentSource {

@@ -1,5 +1,6 @@
 ﻿using Testflow.CoreCommon.Messages;
 using Testflow.Data.Sequence;
+using Testflow.SlaveCore.Common;
 using Testflow.SlaveCore.Data;
 
 namespace Testflow.SlaveCore.Runner.Model

@@ -1,12 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Threading;
 using Testflow.Common;
 using Testflow.CoreCommon.Common;
 using Testflow.CoreCommon.Messages;
 using Testflow.Utility.MessageUtil;
 
-namespace Testflow.SlaveCore
+namespace Testflow.SlaveCore.Common
 {
     internal class MessageTransceiver : IDisposable
     {

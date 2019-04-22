@@ -47,6 +47,9 @@
     <Compile Include="AppDomainTestLauncher.cs" />
     <Compile Include="Common\Constants.cs" />
     <Compile Include="Common\ModuleUtils.cs" />
+    <Compile Include="Common\SequenceOverException.cs" />
+    <Compile Include="SlaveFlowControl\SlaveFlowElement.cs" />
+    <Compile Include="SlaveFlowControl\StatusMonitor.cs" />
     <Compile Include="Runner\Model\SessionExecutionModel.cs" />
     <Compile Include="Runner\Model\StepAssertModel.cs" />
     <Compile Include="Runner\Model\StepCallBackModel.cs" />
@@ -60,9 +63,9 @@
     <Compile Include="Runner\AssemblyInvoker.cs" />
     <Compile Include="Runner\ParallelTestRunner.cs" />
     <Compile Include="Runner\SequentialTestRunner.cs" />
-    <Compile Include="Runner\TestRunnerBase.cs" />
-    <Compile Include="SlaveContext.cs" />
-    <Compile Include="Controller\SlaveController.cs" />
+    <Compile Include="Runner\TestRunner.cs" />
+    <Compile Include="Common\SlaveContext.cs" />
+    <Compile Include="SlaveFlowControl\SlaveController.cs" />
     <Compile Include="Resources\locale\i18n_SlaveCore_en.Designer.cs">
       <DependentUpon>i18n_SlaveCore_en.resx</DependentUpon>
       <AutoGen>True</AutoGen>
@@ -73,7 +76,7 @@
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
     </Compile>
-    <Compile Include="MessageTransceiver.cs" />
+    <Compile Include="Common\MessageTransceiver.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TestLauncher.cs" />
   </ItemGroup>

@@ -3,16 +3,16 @@ using System.Collections.Generic;
 using System.Threading;
 using Newtonsoft.Json;
 using Testflow.CoreCommon.Common;
+using Testflow.Data;
 using Testflow.Data.Sequence;
 using Testflow.Log;
 using Testflow.Runtime;
-using Testflow.SlaveCore.Common;
-using Testflow.SlaveCore.Controller;
 using Testflow.SlaveCore.Data;
 using Testflow.SlaveCore.Runner;
+using Testflow.SlaveCore.SlaveFlowControl;
 using Testflow.Utility.I18nUtil;
 
-namespace Testflow.SlaveCore
+namespace Testflow.SlaveCore.Common
 {
     internal class SlaveContext : IDisposable
     {
@@ -53,11 +53,13 @@ namespace Testflow.SlaveCore
 
         public SlaveController Controller { get; set; }
 
-        public TestRunnerBase Runner { get; set; }
+        public TestRunner Runner { get; set; }
 
         public RunnerType SequenceType { get; set; }
 
         public ISequenceFlowContainer Sequence { get; set; }
+
+        public ExecutionModel ExecutionModel { get; set; }
 
         public VariableMapper VariableMapper { get; set; }
 

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using Testflow.Common;
 using Testflow.CoreCommon;
 using Testflow.CoreCommon.Common;
@@ -204,6 +205,47 @@ namespace Testflow.SlaveCore.Runner.Model
 
         public override void Invoke()
         {
+            switch (StepData.Behavior)
+            {
+                case RunBehavior.Normal:
+                    ExecuteSequenceStep();
+                    break;
+                case RunBehavior.Skip:
+                    break;
+                case RunBehavior.ForceSuccess:
+                    try
+                    {
+                        ExecuteSequenceStep();
+                    }
+                    catch (ApplicationException ex)
+                    {
+                        Context.LogSession.Print(LogLevel.Warn, SequenceIndex, ex, "Execute failed but force success.");
+                    }
+                    break;
+                case RunBehavior.ForceFailed:
+                    ExecuteSequenceStep();
+                    TestflowAssertException exception = new TestflowAssertException(ModuleErrorCode.ForceFailed, 
+                        Context.I18N.GetStr("StepForceFailed"));
+                    SequenceStatusInfo info = new SequenceStatusInfo(SequenceIndex, this.GetStack(), 
+                        StatusReportType.Failed, exception);
+                    Context.StatusQueue.Enqueue(info);
+                    throw new SequenceOverException(SequenceIndex);
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+            if (StepData.RecordStatus)
+            {
+                SequenceStatusInfo statusInfo = new SequenceStatusInfo(StepData.Index, this.GetStack(), StatusReportType.Record);
+
+
+                Context.StatusQueue.Enqueue(statusInfo);
+            }
+            NextStep?.Invoke();
+        }
+
+        private void ExecuteSequenceStep()
+        {
             if (!HasLoopCount)
             {
                 ExecuteStepSingleTime();
@@ -261,16 +303,6 @@ namespace Testflow.SlaveCore.Runner.Model
                         throw new ArgumentOutOfRangeException();
                 }
             }
-            if (StepData.RecordStatus)
-            {
-                SequenceStatusInfo statusInfo = new SequenceStatusInfo(StepData.Index, this.GetStack(),
-                    StatusReportType.Record);
-
-
-                Context.StatusQueue.Enqueue(statusInfo);
-            }
-
-            NextStep?.Invoke();
         }
 
         // 因为Variable的值在整个过程中会变化，所以需要在运行前实时获取
@@ -282,7 +314,7 @@ namespace Testflow.SlaveCore.Runner.Model
                 if (parameters[i].ParameterType == ParameterType.Variable)
                 {
                     // 获取变量值的名称
-                    string variableName = CoreUtils.GetRuntimeVariableName(Context.SessionId, (IVariable)Params[i]);
+                    string variableName = CoreUtils.GetRuntimeVariableName(Context.SessionId, (IVariable) Params[i]);
                     // 使用变量名称获取变量当前对象的值
                     object variableValue = Context.VariableMapper.GetParamValue(variableName, parameters[i].Value);
                     // 根据ParamString和变量对应的值配置参数。

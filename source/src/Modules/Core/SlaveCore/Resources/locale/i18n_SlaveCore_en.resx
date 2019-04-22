@@ -153,6 +153,9 @@
   <data name="OperatoinTimeout" xml:space="preserve">
     <value>Operation timeout.</value>
   </data>
+  <data name="StepForceFailed" xml:space="preserve">
+    <value>Step is configured as "Force Failed".</value>
+  </data>
   <data name="UnexistArgumentSource" xml:space="preserve">
     <value>SequenceGroup with input arguments cannot run with out test project.</value>
   </data>

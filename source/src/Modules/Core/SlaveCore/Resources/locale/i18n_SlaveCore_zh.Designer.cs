@@ -169,6 +169,15 @@ namespace Testflow.SlaveCore.Resources.locale {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to 序列配置为强制失败。.
+        /// </summary>
+        internal static string StepForceFailed {
+            get {
+                return ResourceManager.GetString("StepForceFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to 带有入参的SequenceGroup必须和父级的TestProject同时运行。.
         /// </summary>
         internal static string UnexistArgumentSource {
