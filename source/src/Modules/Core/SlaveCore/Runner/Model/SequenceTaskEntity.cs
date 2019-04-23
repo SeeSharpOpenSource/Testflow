@@ -11,14 +11,14 @@ using Testflow.SlaveCore.Data;
 
 namespace Testflow.SlaveCore.Runner.Model
 {
-    internal class SequenceExecutionModel
+    internal class SequenceTaskEntity
     {
         private readonly ISequence _sequence;
         private readonly SlaveContext _context;
 
-        private StepModelBase _stepRootNode;
+        private StepTaskEntityBase _stepEntityRoot;
 
-        public SequenceExecutionModel(ISequence sequence, SlaveContext context)
+        public SequenceTaskEntity(ISequence sequence, SlaveContext context)
         {
             this._sequence = sequence;
             this._context = context;
@@ -50,13 +50,13 @@ namespace Testflow.SlaveCore.Runner.Model
         {
             this.State = RuntimeState.TestGen;
 
-            _stepRootNode = ModuleUtils.CreateStepModelChain(_sequence.Steps, _context);
-            _stepRootNode.GenerateInvokeInfo();
-            _stepRootNode.InitializeParamsValues();
+            _stepEntityRoot = ModuleUtils.CreateStepModelChain(_sequence.Steps, _context);
+            _stepEntityRoot.GenerateInvokeInfo();
+            _stepEntityRoot.InitializeParamsValues();
 
             this.State = RuntimeState.StartIdle;
             // 添加当前根节点到stepModel管理中
-            StepModelBase.AddSequenceEntrance(_stepRootNode);
+            StepTaskEntityBase.AddSequenceEntrance(_stepEntityRoot);
         }
 
         public void Invoke()
@@ -64,15 +64,15 @@ namespace Testflow.SlaveCore.Runner.Model
             try
             {
                 this.State = RuntimeState.Running;
-                SequenceStatusInfo startStatusInfo = new SequenceStatusInfo(Index, _stepRootNode.GetStack(), StatusReportType.Start);
+                SequenceStatusInfo startStatusInfo = new SequenceStatusInfo(Index, _stepEntityRoot.GetStack(), StatusReportType.Start);
                 _context.StatusQueue.Enqueue(startStatusInfo);
 
-                _stepRootNode.Invoke();
+                _stepEntityRoot.Invoke();
 
                 this.State = RuntimeState.Over;
 
                 SequenceStatusInfo overStatusInfo = new SequenceStatusInfo(Index,
-                    StepModelBase.GetCurrentStep(Index).GetStack(), StatusReportType.Over);
+                    StepTaskEntityBase.GetCurrentStep(Index).GetStack(), StatusReportType.Over);
 
                 _context.StatusQueue.Enqueue(overStatusInfo);
             }
@@ -80,28 +80,28 @@ namespace Testflow.SlaveCore.Runner.Model
             {
                 this.State = RuntimeState.Failed;
                 SequenceStatusInfo errorStatusInfo = new SequenceStatusInfo(Index,
-                    StepModelBase.GetCurrentStep(Index).GetStack(), StatusReportType.Failed, ex);
+                    StepTaskEntityBase.GetCurrentStep(Index).GetStack(), StatusReportType.Failed, ex);
                 this._context.StatusQueue.Enqueue(errorStatusInfo);
             }
             catch (TestflowException ex)
             {
                 this.State = RuntimeState.Error;
                 SequenceStatusInfo errorStatusInfo = new SequenceStatusInfo(Index,
-                    StepModelBase.GetCurrentStep(Index).GetStack(), StatusReportType.Failed, ex);
+                    StepTaskEntityBase.GetCurrentStep(Index).GetStack(), StatusReportType.Failed, ex);
                 this._context.StatusQueue.Enqueue(errorStatusInfo);
             }
             catch (TargetInvocationException ex)
             {
                 this.State = RuntimeState.Error;
                 SequenceStatusInfo errorStatusInfo = new SequenceStatusInfo(Index,
-                    StepModelBase.GetCurrentStep(Index).GetStack(), StatusReportType.Error, ex.InnerException);
+                    StepTaskEntityBase.GetCurrentStep(Index).GetStack(), StatusReportType.Error, ex.InnerException);
                 this._context.StatusQueue.Enqueue(errorStatusInfo);
             }
             catch (Exception ex)
             {
                 this.State = RuntimeState.Error;
                 SequenceStatusInfo errorStatusInfo = new SequenceStatusInfo(Index,
-                    StepModelBase.GetCurrentStep(Index).GetStack(), StatusReportType.Error, ex);
+                    StepTaskEntityBase.GetCurrentStep(Index).GetStack(), StatusReportType.Error, ex);
                 this._context.StatusQueue.Enqueue(errorStatusInfo);
             }
 
@@ -114,7 +114,7 @@ namespace Testflow.SlaveCore.Runner.Model
             {
                 return;
             }
-            message.Stacks.Add(StepModelBase.GetCurrentStep(Index).GetStack());
+            message.Stacks.Add(StepTaskEntityBase.GetCurrentStep(Index).GetStack());
             message.SequenceStates.Add(this.State);
             message.Results.Add(StepResult.NotAvailable);
         }

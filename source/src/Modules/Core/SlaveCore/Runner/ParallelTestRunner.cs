@@ -9,7 +9,7 @@ namespace Testflow.SlaveCore.Runner
         {
         }
 
-        public override void Start(SessionExecutionModel sessionExecutionModel)
+        public override void Start(SessionTaskEntity sessionExecutionModel)
         {
             throw new System.NotImplementedException();
         }

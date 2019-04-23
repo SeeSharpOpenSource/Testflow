@@ -38,7 +38,7 @@ namespace Testflow.SlaveCore.Runner
             _context = context;
         }
 
-        public abstract void Start(SessionExecutionModel sessionExecutionModel);
+        public abstract void Start(SessionTaskEntity sessionExecutionModel);
 
         private void HandleDownlinkMessage()
         {

@@ -22,5 +22,6 @@ namespace Testflow.CoreCommon
         public const int UnaccessibleType = 14 | CommonErrorCode.EngineCoreErrorMask;
         public const int UnsupportedTypeCast = 15 | CommonErrorCode.EngineCoreErrorMask;
         public const int ForceFailed = 16 | CommonErrorCode.EngineCoreErrorMask;
+        public const int RuntimeError = 100 | CommonErrorCode.EngineCoreErrorMask;
     }
 }

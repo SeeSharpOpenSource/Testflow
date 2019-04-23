@@ -7,17 +7,17 @@ using Testflow.SlaveCore.Common;
 
 namespace Testflow.SlaveCore.Runner.Model
 {
-    internal class SessionExecutionModel
+    internal class SessionTaskEntity
     {
         private readonly SlaveContext _context;
 
-        private readonly SequenceExecutionModel _setUp;
+        private readonly SequenceTaskEntity _setUp;
 
-        private readonly SequenceExecutionModel _tearDown;
+        private readonly SequenceTaskEntity _tearDown;
 
-        private readonly List<SequenceExecutionModel> _sequenceModels;
+        private readonly List<SequenceTaskEntity> _sequenceEntities;
 
-        public SessionExecutionModel(SlaveContext context)
+        public SessionTaskEntity(SlaveContext context)
         {
             this._context = context;
 
@@ -26,18 +26,18 @@ namespace Testflow.SlaveCore.Runner.Model
             {
                 case RunnerType.TestProject:
                     ITestProject testProject = (ITestProject)sequenceData;
-                    _setUp = new SequenceExecutionModel(testProject.SetUp, _context);
-                    _tearDown = new SequenceExecutionModel(testProject.TearDown, _context);
-                    _sequenceModels = new List<SequenceExecutionModel>(1);
+                    _setUp = new SequenceTaskEntity(testProject.SetUp, _context);
+                    _tearDown = new SequenceTaskEntity(testProject.TearDown, _context);
+                    _sequenceEntities = new List<SequenceTaskEntity>(1);
                     break;
                 case RunnerType.SequenceGroup:
                     ISequenceGroup sequenceGroup = (ISequenceGroup)sequenceData;
-                    _setUp = new SequenceExecutionModel(sequenceGroup.SetUp, _context);
-                    _tearDown = new SequenceExecutionModel(sequenceGroup.TearDown, _context);
-                    _sequenceModels = new List<SequenceExecutionModel>(sequenceGroup.Sequences.Count);
+                    _setUp = new SequenceTaskEntity(sequenceGroup.SetUp, _context);
+                    _tearDown = new SequenceTaskEntity(sequenceGroup.TearDown, _context);
+                    _sequenceEntities = new List<SequenceTaskEntity>(sequenceGroup.Sequences.Count);
                     foreach (ISequence sequence in sequenceGroup.Sequences)
                     {
-                        _sequenceModels.Add(new SequenceExecutionModel(sequence, _context));
+                        _sequenceEntities.Add(new SequenceTaskEntity(sequence, _context));
                     }
                     break;
                 default:
@@ -49,7 +49,7 @@ namespace Testflow.SlaveCore.Runner.Model
         {
             _setUp.Generate();
             _tearDown.Generate();
-            foreach (SequenceExecutionModel sequenceModel in _sequenceModels)
+            foreach (SequenceTaskEntity sequenceModel in _sequenceEntities)
             {
                 sequenceModel.Generate();
             }
@@ -67,7 +67,7 @@ namespace Testflow.SlaveCore.Runner.Model
 
         public void InvokeSequence(int index)
         {
-            _sequenceModels[index].Invoke();
+            _sequenceEntities[index].Invoke();
         }
     }
 }

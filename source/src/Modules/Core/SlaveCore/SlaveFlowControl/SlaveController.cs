@@ -32,9 +32,11 @@ namespace Testflow.SlaveCore.SlaveFlowControl
 
             try
             {
-                _context.LogSession.Print(LogLevel.Info, CommonConst.PlatformLogSession, "Monitoring thread start.");
+                _context.LogSession.Print(LogLevel.Info, CommonConst.PlatformLogSession, 
+                    $"Test process of session {_context.SessionId} start.");
 
-                SessionExecutionModel sessionExecutionModel = TestGeneration();
+                SessionTaskEntity sessionExecutionModel = TestGeneration();
+                _context.SessionTaskEntity = sessionExecutionModel;
 
                 StartDownLinkMessageListening();
 
@@ -44,7 +46,7 @@ namespace Testflow.SlaveCore.SlaveFlowControl
 
                 StateMonitoring();
 
-                _context.LogSession.Print(LogLevel.Info, CommonConst.PlatformLogSession, "Monitoring thread over.");
+                _context.LogSession.Print(LogLevel.Info, CommonConst.PlatformLogSession, "Test process start.");
             }
             catch (Exception ex)
             {
@@ -62,7 +64,7 @@ namespace Testflow.SlaveCore.SlaveFlowControl
             }
         }
 
-        private void StartTestWork(SessionExecutionModel sessionExecutionModel)
+        private void StartTestWork(SessionTaskEntity sessionExecutionModel)
         {
             _runner = TestRunner.CreateRunner(_context);
             _runner.Start(sessionExecutionModel);
@@ -84,7 +86,7 @@ namespace Testflow.SlaveCore.SlaveFlowControl
         }
 
         // 生成测试数据
-        private SessionExecutionModel TestGeneration()
+        private SessionTaskEntity TestGeneration()
         {
             LocalMessageQueue<MessageBase> messageQueue = _context.MessageTransceiver.MessageQueue;
             // 首先接收RmtGenMessage
@@ -106,7 +108,7 @@ namespace Testflow.SlaveCore.SlaveFlowControl
                 _context.MessageTransceiver.SendMessage(testGenStartMessage);
 
                 InitializeRuntimeComponents(rmtGenMessage);
-                SessionExecutionModel sessionExecutionModel = InitializeExecutionModel();
+                SessionTaskEntity sessionExecutionModel = InitializeExecutionModel();
 
                 // 发送测试结束消息
                 _context.State = RuntimeState.StartIdle;
@@ -166,9 +168,9 @@ namespace Testflow.SlaveCore.SlaveFlowControl
             _context.TypeInvoker.LoadAssemblyAndType();
         }
 
-        private SessionExecutionModel InitializeExecutionModel()
+        private SessionTaskEntity InitializeExecutionModel()
         {
-            SessionExecutionModel sessionExecutionModel = new SessionExecutionModel(_context);
+            SessionTaskEntity sessionExecutionModel = new SessionTaskEntity(_context);
             sessionExecutionModel.Generate();
             return sessionExecutionModel;
         }

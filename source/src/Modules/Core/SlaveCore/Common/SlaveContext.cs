@@ -9,6 +9,7 @@ using Testflow.Log;
 using Testflow.Runtime;
 using Testflow.SlaveCore.Data;
 using Testflow.SlaveCore.Runner;
+using Testflow.SlaveCore.Runner.Model;
 using Testflow.SlaveCore.SlaveFlowControl;
 using Testflow.Utility.I18nUtil;
 
@@ -62,6 +63,8 @@ namespace Testflow.SlaveCore.Common
         public ExecutionModel ExecutionModel { get; set; }
 
         public VariableMapper VariableMapper { get; set; }
+
+        public SessionTaskEntity SessionTaskEntity { get; set; }
 
         public AssemblyInvoker TypeInvoker { get; set; }
 

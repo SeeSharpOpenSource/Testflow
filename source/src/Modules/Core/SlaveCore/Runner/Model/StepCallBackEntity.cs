@@ -5,9 +5,9 @@ using Testflow.SlaveCore.Data;
 
 namespace Testflow.SlaveCore.Runner.Model
 {
-    internal class StepCallBackModel : StepModelBase
+    internal class StepCallBackEntity : StepTaskEntityBase
     {
-        public StepCallBackModel(ISequenceStep step, SlaveContext context) : base(step, context)
+        public StepCallBackEntity(ISequenceStep step, SlaveContext context) : base(step, context)
         {
         }
 

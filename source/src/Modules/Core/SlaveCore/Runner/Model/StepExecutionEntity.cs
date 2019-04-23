@@ -15,7 +15,7 @@ using Testflow.SlaveCore.Data;
 
 namespace Testflow.SlaveCore.Runner.Model
 {
-    internal class StepExecutionModel : StepModelBase
+    internal class StepExecutionEntity : StepTaskEntityBase
     {
         #region 序列功能标志
 
@@ -29,7 +29,7 @@ namespace Testflow.SlaveCore.Runner.Model
 
         #region 子序列属性
 
-        public StepModelBase SubStepRoot { get; }
+        public StepTaskEntityBase SubStepRoot { get; }
 
         #endregion
 
@@ -67,7 +67,7 @@ namespace Testflow.SlaveCore.Runner.Model
 
         #endregion
 
-        public StepExecutionModel(ISequenceStep step, SlaveContext context) : base(step, context)
+        public StepExecutionEntity(ISequenceStep step, SlaveContext context) : base(step, context)
         {
             this.HasLoopCount = false;
             this.HasRetryCount = false;

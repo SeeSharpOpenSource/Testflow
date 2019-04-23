@@ -54,21 +54,21 @@ namespace Testflow.SlaveCore.Common
             return $"{typeData.Namespace}.{typeData.Name}";
         }
 
-        public static StepModelBase CreateStepModelChain(IList<ISequenceStep> steps, SlaveContext context)
+        public static StepTaskEntityBase CreateStepModelChain(IList<ISequenceStep> steps, SlaveContext context)
         {
-            StepModelBase root = null;
+            StepTaskEntityBase root = null;
             if (steps.Count == 0)
             {
                 return root;
             }
 
-            root = StepModelBase.GetStepModel(steps[0], context);
+            root = StepTaskEntityBase.GetStepModel(steps[0], context);
             root.NextStep = null;
-            StepModelBase lastNode = root;
-            StepModelBase currentNode = null;
+            StepTaskEntityBase lastNode = root;
+            StepTaskEntityBase currentNode = null;
             for (int i = 1; i < steps.Count; i++)
             {
-                currentNode = StepModelBase.GetStepModel(steps[i], context);
+                currentNode = StepTaskEntityBase.GetStepModel(steps[i], context);
                 lastNode.NextStep = currentNode;
                 lastNode = currentNode;
                 currentNode.NextStep = null;

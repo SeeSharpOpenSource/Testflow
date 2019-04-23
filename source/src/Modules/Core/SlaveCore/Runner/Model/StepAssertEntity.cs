@@ -5,7 +5,7 @@ using Testflow.SlaveCore.Data;
 
 namespace Testflow.SlaveCore.Runner.Model
 {
-    internal class StepAssertModel : StepModelBase
+    internal class StepAssertEntity : StepTaskEntityBase
     {
         public string VariableName { get; }
 
@@ -15,7 +15,7 @@ namespace Testflow.SlaveCore.Runner.Model
 
         public string RealValue { get; }
 
-        public StepAssertModel(ISequenceStep step, SlaveContext context) : base(step, context)
+        public StepAssertEntity(ISequenceStep step, SlaveContext context) : base(step, context)
         {
 
         }
