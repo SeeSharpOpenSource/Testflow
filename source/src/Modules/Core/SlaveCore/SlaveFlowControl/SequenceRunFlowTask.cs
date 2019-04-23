@@ -1,4 +1,6 @@
-﻿using Testflow.SlaveCore.Common;
+﻿using Testflow.CoreCommon.Messages;
+using Testflow.Runtime;
+using Testflow.SlaveCore.Common;
 
 namespace Testflow.SlaveCore.SlaveFlowControl
 {
@@ -10,10 +12,25 @@ namespace Testflow.SlaveCore.SlaveFlowControl
 
         protected override void FlowTaskAction()
         {
-            throw new System.NotImplementedException();
+            Context.State = RuntimeState.Running;
+
+
+
+            Context.State = RuntimeState.Over;
+            this.Next = null;
         }
 
         protected override void StopTaskAction()
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public override void AbortAction()
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public override MessageBase GetHeartBeatMessage()
         {
             throw new System.NotImplementedException();
         }

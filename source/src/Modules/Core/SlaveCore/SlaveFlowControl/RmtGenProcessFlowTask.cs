@@ -1,8 +1,12 @@
-﻿using Testflow.CoreCommon.Common;
+﻿using Testflow.Common;
+using Testflow.CoreCommon;
+using Testflow.CoreCommon.Common;
 using Testflow.CoreCommon.Messages;
 using Testflow.Data;
 using Testflow.Data.Sequence;
+using Testflow.Runtime;
 using Testflow.SlaveCore.Common;
+using Testflow.SlaveCore.Runner.Model;
 
 namespace Testflow.SlaveCore.SlaveFlowControl
 {
@@ -14,10 +18,18 @@ namespace Testflow.SlaveCore.SlaveFlowControl
 
         protected override void FlowTaskAction()
         {
+            Context.State = RuntimeState.Idle;
+
             LocalMessageQueue<MessageBase> messageQueue = Context.MessageTransceiver.MessageQueue;
             // 首先接收RmtGenMessage
             MessageBase message = messageQueue.WaitUntilMessageCome();
             RmtGenMessage rmtGenMessage = (RmtGenMessage)message;
+
+            if (null == rmtGenMessage)
+            {
+                throw new TestflowRuntimeException(ModuleErrorCode.InvalidMessageReceived,
+                    Context.I18N.GetFStr("InvalidMessageReceived", message.GetType().Name));
+            }
 
             SequenceManager.SequenceManager sequenceManager = new SequenceManager.SequenceManager();
             Context.SequenceType = rmtGenMessage.SequenceType;
@@ -41,7 +53,18 @@ namespace Testflow.SlaveCore.SlaveFlowControl
 
         protected override void StopTaskAction()
         {
-            throw new System.NotImplementedException();
+            // ignore
+        }
+
+        public override void AbortAction()
+        {
+            // ignore
+        }
+
+        public override MessageBase GetHeartBeatMessage()
+        {
+            return new TestGenMessage(MessageNames.TestGenName, Context.SessionId, CommonConst.PlatformSession,
+                GenerationStatus.Idle);
         }
 
         public override SlaveFlowTaskBase Next { get; protected set; }

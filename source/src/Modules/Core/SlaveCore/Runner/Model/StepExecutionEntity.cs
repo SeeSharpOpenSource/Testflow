@@ -238,7 +238,6 @@ namespace Testflow.SlaveCore.Runner.Model
             {
                 SequenceStatusInfo statusInfo = new SequenceStatusInfo(StepData.Index, this.GetStack(), StatusReportType.Record);
 
-
                 Context.StatusQueue.Enqueue(statusInfo);
             }
             NextStep?.Invoke();

@@ -34,14 +34,12 @@ namespace Testflow.SlaveCore.Common
             _valueConvertor.Add(typeof(byte).Name, strValue => byte.Parse(strValue));
 
             SessionId = this.GetProperty<int>("Session");
-            this.MessageTransceiver = new MessageTransceiver(this, SessionId);
-
-            State = RuntimeState.Idle;
-
+            State = RuntimeState.NotAvailable;
             this.StatusQueue = new LocalEventQueue<SequenceStatusInfo>(CoreConstants.DefaultEventsQueueSize);
-
             this.LogSession = TODO;
             this.I18N = I18N.GetInstance(Constants.I18nName);
+            this.MessageTransceiver = new MessageTransceiver(this, SessionId);
+            this.UplinkMsgPacker = new StatusMonitor(this);
         }
 
         public I18N I18N { get; }
@@ -69,6 +67,8 @@ namespace Testflow.SlaveCore.Common
         public AssemblyInvoker TypeInvoker { get; set; }
 
         public LocalEventQueue<SequenceStatusInfo> StatusQueue { get; }
+
+        public StatusMonitor UplinkMsgPacker { get; }
 
         private int _runtimeState;
 

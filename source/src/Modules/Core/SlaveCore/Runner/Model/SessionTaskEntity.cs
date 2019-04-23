@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Testflow.CoreCommon.Common;
+using Testflow.CoreCommon.Messages;
 using Testflow.Data.Sequence;
 using Testflow.Runtime;
 using Testflow.SlaveCore.Common;
@@ -16,6 +17,8 @@ namespace Testflow.SlaveCore.Runner.Model
         private readonly SequenceTaskEntity _tearDown;
 
         private readonly List<SequenceTaskEntity> _sequenceEntities;
+
+        public int SequenceCount => _sequenceEntities.Count;
 
         public SessionTaskEntity(SlaveContext context)
         {
@@ -68,6 +71,32 @@ namespace Testflow.SlaveCore.Runner.Model
         public void InvokeSequence(int index)
         {
             _sequenceEntities[index].Invoke();
+        }
+
+        /// <summary>
+        /// 心跳包中填充状态
+        /// </summary>
+        public void FillSequenceInfo(StatusMessage message)
+        {
+            _setUp.FillStatusInfo(message);
+            foreach (SequenceTaskEntity sequenceTaskEntity in _sequenceEntities)
+            {
+                sequenceTaskEntity.FillStatusInfo(message);
+            }
+            _tearDown.FillStatusInfo(message);
+        }
+
+        /// <summary>
+        /// 全局失败后填充状态
+        /// </summary>
+        public void FillSequenceInfo(StatusMessage message, string errorMessage)
+        {
+            _setUp.FillStatusInfo(message, errorMessage);
+            foreach (SequenceTaskEntity sequenceTaskEntity in _sequenceEntities)
+            {
+                sequenceTaskEntity.FillStatusInfo(message, errorMessage);
+            }
+            _tearDown.FillStatusInfo(message, errorMessage);
         }
     }
 }

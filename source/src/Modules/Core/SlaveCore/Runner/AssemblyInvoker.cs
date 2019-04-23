@@ -147,7 +147,6 @@ namespace Testflow.SlaveCore.Runner
             }
             else
             {
-                
                 throw new TestflowRuntimeException(ModuleErrorCode.UnsupportedTypeCast,
                     _context.I18N.GetFStr("InvalidTypeCast", type.Name));
             }

@@ -16,7 +16,7 @@ namespace Testflow.SlaveCore.SlaveFlowControl
     {
         protected readonly SlaveContext Context;
 
-        public SlaveFlowTaskBase(SlaveContext context)
+        protected SlaveFlowTaskBase(SlaveContext context)
         {
             this.Context = context;
         }
@@ -25,7 +25,10 @@ namespace Testflow.SlaveCore.SlaveFlowControl
         {
             try
             {
+                // 配置心跳包生成委托
+                Context.UplinkMsgPacker.HeartbeatMsgGenerator = GetHeartBeatMessage;
                 FlowTaskAction();
+                Next.DoFlowTask();
             }
             catch (TestflowException ex)
             {
@@ -33,21 +36,18 @@ namespace Testflow.SlaveCore.SlaveFlowControl
             }
             catch (Exception ex)
             {
+                Context.State = RuntimeState.Error;
+                // 失败后打印日志并发送错误信息
                 Context.LogSession.Print(LogLevel.Fatal, CommonConst.PlatformLogSession, ex, "Runtime exception occured.");
-                StatusMessage errorMessage = new StatusMessage(MessageNames.ErrorStatusName, RuntimeState.Error,
-                    Context.SessionId)
+                StatusMessage errorMessage = new StatusMessage(MessageNames.ErrorStatusName, Context.State, Context.SessionId)
                 {
-                    
+                    ExceptionInfo = new SequenceFailedInfo(ex),
                 };
-                errorMessage.ExceptionInfo = new SequenceFailedInfo(ex);
 
-
-
-
-                Context.MessageTransceiver.SendMessage(errorMessage);
-
+                Context.SessionTaskEntity.FillSequenceInfo(errorMessage, Context.I18N.GetStr("RuntimeError"));
+                Context.UplinkMsgPacker.SendMessage(errorMessage);
+                StopTaskAction();
             }
-            Next.DoFlowTask();
         }
 
         /// <summary>
@@ -56,6 +56,10 @@ namespace Testflow.SlaveCore.SlaveFlowControl
         protected abstract void FlowTaskAction();
 
         protected abstract void StopTaskAction();
+
+        public abstract void AbortAction();
+
+        public abstract MessageBase GetHeartBeatMessage();
 
         public abstract SlaveFlowTaskBase Next { get; protected set; }
 

@@ -10,6 +10,7 @@ namespace Testflow.SlaveCore.Data
         public CallStack Stack { get; }
         public StatusReportType ReportType { get; }
         public Exception Exception { get; }
+        public DateTime Time { get; }
 
         public SequenceStatusInfo(int sequence, CallStack stack, StatusReportType type, Exception exception = null)
         {
@@ -17,6 +18,7 @@ namespace Testflow.SlaveCore.Data
             this.Stack = stack;
             this.ReportType = type;
             this.Exception = exception;
+            this.Time = DateTime.Now;
         }
     }
 }

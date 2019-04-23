@@ -72,6 +72,7 @@ namespace Testflow.SlaveCore.Common
                 while (!_cancellation.IsCancellationRequested)
                 {
                     IMessage message = _downLinkMessenger.Peak();
+                    // 如果是自己的消息，则在队列中移除并添加到队列中
                     if (message.Id == SessionId)
                     {
                         IMessage receive = _downLinkMessenger.Receive();

@@ -153,6 +153,9 @@
   <data name="OperatoinTimeout" xml:space="preserve">
     <value>操作超时。</value>
   </data>
+  <data name="RuntimeError" xml:space="preserve">
+    <value>运行时异常。</value>
+  </data>
   <data name="StepForceFailed" xml:space="preserve">
     <value>序列配置为强制失败。</value>
   </data>

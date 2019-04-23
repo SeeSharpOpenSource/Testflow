@@ -169,6 +169,15 @@ namespace Testflow.SlaveCore.Resources.locale {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to 运行时异常。.
+        /// </summary>
+        internal static string RuntimeError {
+            get {
+                return ResourceManager.GetString("RuntimeError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to 序列配置为强制失败。.
         /// </summary>
         internal static string StepForceFailed {

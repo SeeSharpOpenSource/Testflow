@@ -109,14 +109,27 @@ namespace Testflow.SlaveCore.Runner.Model
 
         public void FillStatusInfo(StatusMessage message)
         {
-            // 如果是外部调用且该序列已经执行结束，则说明该序列在前面的消息中已经标记结束，直接返回。
-            if (this.State > RuntimeState.AbortRequested)
+            // 如果是外部调用且该序列已经执行结束或者message中已经有了当前序列的信息，则说明该序列在前面的消息中已经标记结束，直接返回。
+            if (message.InterestedSequence.Contains(this.Index) || this.State > RuntimeState.AbortRequested)
             {
                 return;
             }
             message.Stacks.Add(StepTaskEntityBase.GetCurrentStep(Index).GetStack());
             message.SequenceStates.Add(this.State);
             message.Results.Add(StepResult.NotAvailable);
+        }
+
+        public void FillStatusInfo(StatusMessage message, string errorInfo)
+        {
+            // 如果是外部调用且该序列已经执行结束或者message中已经有了当前序列的信息，则说明该序列在前面的消息中已经标记结束，直接返回。
+            if (message.InterestedSequence.Contains(this.Index) || this.State > RuntimeState.AbortRequested)
+            {
+                return;
+            }
+            message.Stacks.Add(StepTaskEntityBase.GetCurrentStep(Index).GetStack());
+            message.SequenceStates.Add(this.State);
+            message.Results.Add(StepResult.NotAvailable);
+            message.FailedInfo.Add(Index, errorInfo);
         }
     }
 }

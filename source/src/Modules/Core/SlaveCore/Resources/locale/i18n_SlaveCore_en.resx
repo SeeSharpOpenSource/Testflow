@@ -153,6 +153,9 @@
   <data name="OperatoinTimeout" xml:space="preserve">
     <value>Operation timeout.</value>
   </data>
+  <data name="RuntimeError" xml:space="preserve">
+    <value>Runtime error.</value>
+  </data>
   <data name="StepForceFailed" xml:space="preserve">
     <value>Step is configured as "Force Failed".</value>
   </data>

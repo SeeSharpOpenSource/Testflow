@@ -46,13 +46,13 @@
   <ItemGroup>
     <Compile Include="AppDomainTestLauncher.cs" />
     <Compile Include="Common\Constants.cs" />
+    <Compile Include="Common\UplinkMessagePacker.cs" />
     <Compile Include="Common\ModuleUtils.cs" />
     <Compile Include="Common\SequenceOverException.cs" />
     <Compile Include="SlaveFlowControl\CtrlStartProcessFlowTask.cs" />
     <Compile Include="SlaveFlowControl\RmtGenProcessFlowTask.cs" />
     <Compile Include="SlaveFlowControl\SequenceRunFlowTask.cs" />
     <Compile Include="SlaveFlowControl\SlaveFlowTaskBase.cs" />
-    <Compile Include="SlaveFlowControl\StatusMonitor.cs" />
     <Compile Include="Runner\Model\SessionTaskEntity.cs" />
     <Compile Include="Runner\Model\StepAssertEntity.cs" />
     <Compile Include="Runner\Model\StepCallBackEntity.cs" />
@@ -68,7 +68,7 @@
     <Compile Include="Runner\SequentialTestRunner.cs" />
     <Compile Include="Runner\TestRunner.cs" />
     <Compile Include="Common\SlaveContext.cs" />
-    <Compile Include="SlaveFlowControl\SlaveController.cs" />
+    <Compile Include="SlaveController.cs" />
     <Compile Include="Resources\locale\i18n_SlaveCore_en.Designer.cs">
       <DependentUpon>i18n_SlaveCore_en.resx</DependentUpon>
       <AutoGen>True</AutoGen>
