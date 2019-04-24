@@ -178,6 +178,15 @@ namespace Testflow.SlaveCore.Resources.locale {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The &quot;SetUp&quot; sequence is failed..
+        /// </summary>
+        internal static string SetUpFailed {
+            get {
+                return ResourceManager.GetString("SetUpFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Step is configured as &quot;Force Failed&quot;..
         /// </summary>
         internal static string StepForceFailed {

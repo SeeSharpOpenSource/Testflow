@@ -49,10 +49,12 @@
     <Compile Include="Common\DownlinkMessageProcessor.cs" />
     <Compile Include="Common\UplinkMessagePacker.cs" />
     <Compile Include="Common\ModuleUtils.cs" />
-    <Compile Include="Common\SequenceOverException.cs" />
+    <Compile Include="Common\TaskFailedException.cs" />
     <Compile Include="SlaveFlowControl\CtrlStartProcessFlowTask.cs" />
     <Compile Include="SlaveFlowControl\RmtGenProcessFlowTask.cs" />
-    <Compile Include="SlaveFlowControl\SequenceRunFlowTask.cs" />
+    <Compile Include="SlaveFlowControl\RunAllSequenceFlowTask.cs" />
+    <Compile Include="SlaveFlowControl\RunSingleSequenceFlowTask.cs" />
+    <Compile Include="SlaveFlowControl\RunTestProjectFlowTask.cs" />
     <Compile Include="SlaveFlowControl\SlaveFlowTaskBase.cs" />
     <Compile Include="Runner\Model\SessionTaskEntity.cs" />
     <Compile Include="Runner\Model\StepAssertEntity.cs" />

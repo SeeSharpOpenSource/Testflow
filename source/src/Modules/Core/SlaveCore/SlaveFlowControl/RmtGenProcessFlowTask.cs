@@ -26,7 +26,7 @@ namespace Testflow.SlaveCore.SlaveFlowControl
             // 等待接收到RmtGenMessage为止
             while (null == (rmtGenMessage = Context.RmtGenMessage))
             {
-                Thread.Yield();
+                Thread.Sleep(10);
             }
 
             SequenceManager.SequenceManager sequenceManager = new SequenceManager.SequenceManager();

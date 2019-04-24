@@ -30,6 +30,8 @@ namespace Testflow.SlaveCore
         {
             
 
+
+
             try
             {
                 _transceiver.StartReceive();
@@ -52,18 +54,15 @@ namespace Testflow.SlaveCore
             }
             catch (Exception ex)
             {
-                StatusMessage statusMessage = new StatusMessage(MessageNames.ErrorStatusName, RuntimeState.Error,
-                    _context.SessionId);
-                statusMessage.ExceptionInfo = new SequenceFailedInfo(ex);
-                _context.Runner?.FillStatusMessageInfo(statusMessage);
-                FillPerformance(statusMessage);
-                _context.UplinkMsgPacker.SendMessage(statusMessage);
-
-                _context.LogSession.Print(LogLevel.Fatal, CommonConst.PlatformLogSession, ex, 
-                    "Monitoring thread exited with unexpted exception.");
+                
 
                 StopSlaveTask();
             }
+
+
+            DownlinkMessageProcessor downlinkMsgProcessor = new DownlinkMessageProcessor(_context);
+            downlinkMsgProcessor.StartListen();
+
         }
 
         private void StartTestWork(SessionTaskEntity sessionExecutionModel)

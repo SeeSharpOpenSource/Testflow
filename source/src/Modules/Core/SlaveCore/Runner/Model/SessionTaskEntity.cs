@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Testflow.Common;
 using Testflow.CoreCommon.Common;
 using Testflow.CoreCommon.Messages;
 using Testflow.Data.Sequence;
@@ -71,6 +72,22 @@ namespace Testflow.SlaveCore.Runner.Model
         public void InvokeSequence(int index)
         {
             _sequenceEntities[index].Invoke();
+        }
+
+        public RuntimeState GetSequenceTaskState(int index)
+        {
+            switch (index)
+            {
+                case CommonConst.SetupIndex:
+                    return _setUp.State;
+                    break;
+                case CommonConst.TeardownIndex:
+                    return _tearDown.State;
+                    break;
+                default:
+                    return _sequenceEntities[index].State;
+                    break;
+            }
         }
 
         /// <summary>

@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Threading;
+using Testflow.Common;
+using Testflow.CoreCommon;
 using Testflow.CoreCommon.Common;
 using Testflow.CoreCommon.Data;
 using Testflow.CoreCommon.Messages;
@@ -18,8 +21,36 @@ namespace Testflow.SlaveCore.SlaveFlowControl
             // 发送测试结束消息
             Context.State = RuntimeState.StartIdle;
 
+            ControlMessage message;
+            while (null == (message = Context.CtrlStartMessage))
+            {
+                Thread.Sleep(10);
+            }
+            if (!MessageNames.CtrlStart.Equals(message.Name))
+            {
+                throw new TestflowRuntimeException(ModuleErrorCode.InvalidMessageReceived,
+                    Context.I18N.GetFStr("InvalidMessageReceived", message.GetType().Name));
+            }
 
-            Next = new SequenceRunFlowTask(Context);
+            if (IsOptionEnabled(message, "RunAll"))
+            {
+                this.Next = new RunAllSequenceFlowTask(Context);
+            }
+            else if (IsOptionEnabled(message, "RunSequence"))
+            {
+                this.Next = new RunSingleSequenceFlowTask(Context);
+            }
+            else if (IsOptionEnabled(message, "RunSetup"))
+            {
+                this.Next = new RunTestProjectFlowTask(Context);
+            }
+            else
+            {
+                Context.LogSession.Print(LogLevel.Fatal, CommonConst.PlatformSession, 
+                    "Control start message does not contain any valid start params");
+                throw new TestflowRuntimeException(ModuleErrorCode.InvalidMessageReceived,
+                    Context.I18N.GetFStr("InvalidMessageReceived", message.GetType().Name));
+            }
         }
 
         protected override void TaskErrorAction(Exception ex)
@@ -30,6 +61,11 @@ namespace Testflow.SlaveCore.SlaveFlowControl
             };
             Context.SessionTaskEntity.FillSequenceInfo(errorMessage, Context.I18N.GetStr("RuntimeError"));
             Context.UplinkMsgPacker.SendMessage(errorMessage);
+        }
+
+        private bool IsOptionEnabled(ControlMessage message, string option)
+        {
+            return message.Params.ContainsKey(option) && true.ToString().Equals(message.Params[option]);
         }
 
         protected override void TaskAbortAction()

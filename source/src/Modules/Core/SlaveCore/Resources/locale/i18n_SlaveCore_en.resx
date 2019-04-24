@@ -156,6 +156,9 @@
   <data name="RuntimeError" xml:space="preserve">
     <value>Runtime error.</value>
   </data>
+  <data name="SetUpFailed" xml:space="preserve">
+    <value>The "SetUp" sequence is failed.</value>
+  </data>
   <data name="StepForceFailed" xml:space="preserve">
     <value>Step is configured as "Force Failed".</value>
   </data>

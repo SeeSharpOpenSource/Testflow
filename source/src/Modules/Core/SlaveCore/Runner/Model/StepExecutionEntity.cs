@@ -229,7 +229,7 @@ namespace Testflow.SlaveCore.Runner.Model
                     SequenceStatusInfo info = new SequenceStatusInfo(SequenceIndex, this.GetStack(), 
                         StatusReportType.Failed, exception);
                     Context.StatusQueue.Enqueue(info);
-                    throw new SequenceOverException(SequenceIndex);
+                    throw new TaskFailedException(SequenceIndex);
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
