@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using Testflow.Common;
 using Testflow.CoreCommon;
 using Testflow.CoreCommon.Common;
@@ -30,37 +31,56 @@ namespace Testflow.SlaveCore.SlaveFlowControl
                 FlowTaskAction();
                 Next.DoFlowTask();
             }
-            catch (TestflowException ex)
+            catch (ThreadAbortException ex)
             {
-                // TODO
+                Context.State = RuntimeState.Abort;
+                Context.LogSession.Print(LogLevel.Warn, CommonConst.PlatformSession, ex, "Task aborted.");
+                TaskAbortAction();
             }
             catch (Exception ex)
             {
                 Context.State = RuntimeState.Error;
                 // 失败后打印日志并发送错误信息
-                Context.LogSession.Print(LogLevel.Fatal, CommonConst.PlatformLogSession, ex, "Runtime exception occured.");
-                StatusMessage errorMessage = new StatusMessage(MessageNames.ErrorStatusName, Context.State, Context.SessionId)
-                {
-                    ExceptionInfo = new SequenceFailedInfo(ex),
-                };
-
-                Context.SessionTaskEntity.FillSequenceInfo(errorMessage, Context.I18N.GetStr("RuntimeError"));
+                Context.LogSession.Print(LogLevel.Fatal, CommonConst.PlatformLogSession, ex,
+                    "Runtime exception occured.");
+                TaskErrorAction(ex);
+                // 发送运行时异常错误
+                RuntimeErrorMessage errorMessage = new RuntimeErrorMessage(Context.SessionId, ex);
                 Context.UplinkMsgPacker.SendMessage(errorMessage);
-                StopTaskAction();
             }
         }
 
         /// <summary>
-        /// 完成当前流程的任务
+        /// 流程执行的代码
         /// </summary>
         protected abstract void FlowTaskAction();
 
-        protected abstract void StopTaskAction();
+        /// <summary>
+        /// 任务中间出现异常的处理
+        /// </summary>
+        protected abstract void TaskErrorAction(Exception ex);
 
-        public abstract void AbortAction();
+        /// <summary>
+        /// 任务被Abort时处理的代码
+        /// </summary>
+        protected virtual void TaskAbortAction()
+        {
+            ControlMessage abortMessage = new ControlMessage(MessageNames.CtrlAbort, Context.SessionId)
+            {
+                Index = Context.MsgIndex,
+            };
+            abortMessage.Params.Add("AbortSuccess", true.ToString());
+            Context.UplinkMsgPacker.SendMessage(abortMessage);
+        }
 
+        /// <summary>
+        /// 返回心跳消息的代码
+        /// </summary>
         public abstract MessageBase GetHeartBeatMessage();
 
+        /// <summary>
+        /// 下一个流程节点
+        /// </summary>
         public abstract SlaveFlowTaskBase Next { get; protected set; }
 
         public abstract void Dispose();

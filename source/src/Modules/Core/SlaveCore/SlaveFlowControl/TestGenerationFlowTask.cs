@@ -20,7 +20,7 @@ namespace Testflow.SlaveCore.SlaveFlowControl
         protected override void FlowTaskAction()
         {
             Context.State = RuntimeState.TestGen;
-            
+
             // 发送测试开始消息
             TestGenMessage testGenStartMessage = new TestGenMessage(MessageNames.TestGenName, Context.SessionId,
                 CommonConst.PlatformSession, GenerationStatus.InProgress);
@@ -60,14 +60,17 @@ namespace Testflow.SlaveCore.SlaveFlowControl
             this.Next = new CtrlStartProcessFlowTask(Context);
         }
 
-        protected override void StopTaskAction()
+        protected override void TaskErrorAction(Exception ex)
         {
-            // ignore
+            Context.LogSession.Print(LogLevel.Error, CommonConst.PlatformLogSession, "Test Generation failed.");
+            TestGenMessage testGenFailMessage = new TestGenMessage(MessageNames.TestGenName, Context.SessionId,
+                CommonConst.PlatformSession, GenerationStatus.Failed);
+            Context.UplinkMsgPacker.SendMessage(testGenFailMessage);
         }
 
-        public override void AbortAction()
+        protected override void TaskAbortAction()
         {
-            // ignore
+            
         }
 
         public override MessageBase GetHeartBeatMessage()

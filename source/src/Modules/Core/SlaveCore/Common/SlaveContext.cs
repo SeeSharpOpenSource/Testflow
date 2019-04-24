@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading;
 using Newtonsoft.Json;
 using Testflow.CoreCommon.Common;
+using Testflow.CoreCommon.Messages;
 using Testflow.Data;
 using Testflow.Data.Sequence;
 using Testflow.Log;
@@ -33,6 +34,7 @@ namespace Testflow.SlaveCore.Common
             _valueConvertor.Add(typeof(char).Name, strValue => char.Parse(strValue));
             _valueConvertor.Add(typeof(byte).Name, strValue => byte.Parse(strValue));
 
+            this._msgIndex = -1;
             SessionId = this.GetProperty<int>("Session");
             State = RuntimeState.NotAvailable;
             this.StatusQueue = new LocalEventQueue<SequenceStatusInfo>(CoreConstants.DefaultEventsQueueSize);
@@ -40,6 +42,11 @@ namespace Testflow.SlaveCore.Common
             this.I18N = I18N.GetInstance(Constants.I18nName);
             this.MessageTransceiver = new MessageTransceiver(this, SessionId);
             this.UplinkMsgPacker = new StatusMonitor(this);
+            this.FlowControlThread = null;
+            this.RmtGenMessage = null;
+            this.CtrlStartMessage = null;
+            this.WatchDatas = new Dictionary<string, string>(Constants.DefaultRuntimeSize);
+            this.BreakPoints = new HashSet<string>();
         }
 
         public I18N I18N { get; }
@@ -69,6 +76,19 @@ namespace Testflow.SlaveCore.Common
         public LocalEventQueue<SequenceStatusInfo> StatusQueue { get; }
 
         public StatusMonitor UplinkMsgPacker { get; }
+
+        public Thread FlowControlThread { get; set; }
+
+        public RmtGenMessage RmtGenMessage { get; set; }
+
+        public ControlMessage CtrlStartMessage { get; set; }
+
+        public HashSet<string> BreakPoints { get; }
+
+        public Dictionary<string, string> WatchDatas { get; }
+
+        private long _msgIndex;
+        public long MsgIndex => Interlocked.Increment(ref _msgIndex);
 
         private int _runtimeState;
 

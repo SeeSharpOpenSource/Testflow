@@ -1,4 +1,7 @@
-﻿using Testflow.CoreCommon.Messages;
+﻿using System;
+using Testflow.CoreCommon.Common;
+using Testflow.CoreCommon.Data;
+using Testflow.CoreCommon.Messages;
 using Testflow.Runtime;
 using Testflow.SlaveCore.Common;
 
@@ -20,12 +23,17 @@ namespace Testflow.SlaveCore.SlaveFlowControl
             this.Next = null;
         }
 
-        protected override void StopTaskAction()
+        protected override void TaskErrorAction(Exception ex)
         {
-            throw new System.NotImplementedException();
+            StatusMessage errorMessage = new StatusMessage(MessageNames.ErrorStatusName, Context.State, Context.SessionId)
+            {
+                ExceptionInfo = new SequenceFailedInfo(ex),
+            };
+            Context.SessionTaskEntity.FillSequenceInfo(errorMessage, Context.I18N.GetStr("RuntimeError"));
+            Context.UplinkMsgPacker.SendMessage(errorMessage); ;
         }
 
-        public override void AbortAction()
+        protected override void TaskAbortAction()
         {
             throw new System.NotImplementedException();
         }

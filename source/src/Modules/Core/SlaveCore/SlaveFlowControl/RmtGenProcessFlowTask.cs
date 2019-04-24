@@ -1,4 +1,6 @@
-﻿using Testflow.Common;
+﻿using System;
+using System.Threading;
+using Testflow.Common;
 using Testflow.CoreCommon;
 using Testflow.CoreCommon.Common;
 using Testflow.CoreCommon.Messages;
@@ -20,15 +22,11 @@ namespace Testflow.SlaveCore.SlaveFlowControl
         {
             Context.State = RuntimeState.Idle;
 
-            LocalMessageQueue<MessageBase> messageQueue = Context.MessageTransceiver.MessageQueue;
-            // 首先接收RmtGenMessage
-            MessageBase message = messageQueue.WaitUntilMessageCome();
-            RmtGenMessage rmtGenMessage = (RmtGenMessage)message;
-
-            if (null == rmtGenMessage)
+            RmtGenMessage rmtGenMessage;
+            // 等待接收到RmtGenMessage为止
+            while (null == (rmtGenMessage = Context.RmtGenMessage))
             {
-                throw new TestflowRuntimeException(ModuleErrorCode.InvalidMessageReceived,
-                    Context.I18N.GetFStr("InvalidMessageReceived", message.GetType().Name));
+                Thread.Yield();
             }
 
             SequenceManager.SequenceManager sequenceManager = new SequenceManager.SequenceManager();
@@ -47,16 +45,17 @@ namespace Testflow.SlaveCore.SlaveFlowControl
             }
 
             sequenceManager.Dispose();
+            Context.RmtGenMessage = null;
 
             this.Next = new TestGenerationFlowTask(Context);
         }
 
-        protected override void StopTaskAction()
+        protected override void TaskErrorAction(Exception ex)
         {
             // ignore
         }
 
-        public override void AbortAction()
+        protected override void TaskAbortAction()
         {
             // ignore
         }

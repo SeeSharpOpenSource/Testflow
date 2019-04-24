@@ -46,6 +46,7 @@
   <ItemGroup>
     <Compile Include="AppDomainTestLauncher.cs" />
     <Compile Include="Common\Constants.cs" />
+    <Compile Include="Common\DownlinkMessageProcessor.cs" />
     <Compile Include="Common\UplinkMessagePacker.cs" />
     <Compile Include="Common\ModuleUtils.cs" />
     <Compile Include="Common\SequenceOverException.cs" />
