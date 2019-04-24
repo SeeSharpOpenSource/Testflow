@@ -103,8 +103,6 @@ namespace Testflow.MasterCore.StatusManage
         private PerformanceStatus _performanceStatus;
         private ISessionGenerationInfo _generationInfo;
 
-        public long HeartBeatIndex => Thread.VolatileRead(ref _heatBeatIndex);
-
         public RuntimeState State
         {
             get { return (RuntimeState) _state; }
@@ -239,8 +237,6 @@ namespace Testflow.MasterCore.StatusManage
             {
                 _generationInfo.SequenceStatus[sequenceIndex] = generationState;
             }
-
-            FlipHeatBeatIndex();
             return true;
         }
 
@@ -349,8 +345,6 @@ namespace Testflow.MasterCore.StatusManage
                     throw new InvalidProgramException();
                     break;
             }
-
-            FlipHeatBeatIndex();
             return true;
         }
 
@@ -474,11 +468,6 @@ namespace Testflow.MasterCore.StatusManage
         }
 
         #endregion
-
-        private void FlipHeatBeatIndex()
-        {
-            Interlocked.Increment(ref _heatBeatIndex);
-        }
 
 //        private void SetErrorTestResults()
 
