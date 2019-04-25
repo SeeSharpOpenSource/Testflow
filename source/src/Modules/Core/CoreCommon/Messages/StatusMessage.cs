@@ -24,6 +24,9 @@ namespace Testflow.CoreCommon.Messages
 
         public Dictionary<int, string> FailedInfo { get; set; }
 
+        /// <summary>
+        /// 触发关键位置的序列索引号
+        /// </summary>
         public List<int> InterestedSequence { get; set; }
 
         public Dictionary<string, string> WatchData { get; }
@@ -35,6 +38,10 @@ namespace Testflow.CoreCommon.Messages
             this.State = state;
             this.WatchData = new Dictionary<string, string>(CoreConstants.DefaultRuntimeSize);
             this.InterestedSequence = new List<int>(CoreConstants.DefaultRuntimeSize);
+            this.Stacks = new List<CallStack>(CoreConstants.DefaultRuntimeSize);
+            this.SequenceStates = new List<RuntimeState>(CoreConstants.DefaultRuntimeSize);
+            this.Results = new List<StepResult>(CoreConstants.DefaultRuntimeSize);
+            this.FailedInfo = new Dictionary<int, string>(CoreConstants.DefaultRuntimeSize);
         }
 
         public StatusMessage(SerializationInfo info, StreamingContext context) : base(info, context)
@@ -52,6 +59,22 @@ namespace Testflow.CoreCommon.Messages
             if (null == InterestedSequence)
             {
                 InterestedSequence = new List<int>(1);
+            }
+            if (null == WatchData)
+            {
+                this.WatchData = new Dictionary<string, string>(1);
+            }
+            if (null == Stacks)
+            {
+                this.Stacks = new List<CallStack>(1);
+            }
+            if (null == SequenceStates)
+            {
+                this.SequenceStates = new List<RuntimeState>(1);
+            }
+            if (null == Results)
+            {
+                this.Results = new List<StepResult>(1);
             }
         }
 

@@ -11,6 +11,7 @@ using Testflow.CoreCommon.Messages;
 using Testflow.Data.Sequence;
 using Testflow.MasterCore.Common;
 using Testflow.MasterCore.TestMaintain.Container;
+using Testflow.Runtime;
 using Testflow.Utility.MessageUtil;
 
 namespace Testflow.MasterCore.TestMaintain
@@ -159,6 +160,8 @@ namespace Testflow.MasterCore.TestMaintain
             configData.Add("ConnectionTimeout", _globalInfo.ConfigData.GetProperty<int>("ConnectionTimeout").ToString());
             configData.Add("SyncTimeout", _globalInfo.ConfigData.GetProperty<int>("SyncTimeout").ToString());
             configData.Add("TestTimeout", _globalInfo.ConfigData.GetProperty<int>("TestTimeout").ToString());
+            configData.Add("RuntimeType", _globalInfo.ConfigData.GetProperty<RuntimeType>("RuntimeType").ToString());
+
 
             return JsonConvert.SerializeObject(configData);
         }
