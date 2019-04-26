@@ -61,6 +61,18 @@ namespace Testflow.SlaveCore.SlaveFlowControl
         protected abstract void TaskErrorAction(Exception ex);
 
         /// <summary>
+        /// 返回心跳消息的代码
+        /// </summary>
+        public abstract MessageBase GetHeartBeatMessage();
+
+        /// <summary>
+        /// 下一个流程节点
+        /// </summary>
+        public abstract SlaveFlowTaskBase Next { get; protected set; }
+
+        public abstract void Dispose();
+
+        /// <summary>
         /// 任务被Abort时处理的代码
         /// </summary>
         protected virtual void TaskAbortAction()
@@ -73,16 +85,13 @@ namespace Testflow.SlaveCore.SlaveFlowControl
             Context.UplinkMsgPacker.SendMessage(abortMessage);
         }
 
-        /// <summary>
-        /// 返回心跳消息的代码
-        /// </summary>
-        public abstract MessageBase GetHeartBeatMessage();
-
-        /// <summary>
-        /// 下一个流程节点
-        /// </summary>
-        public abstract SlaveFlowTaskBase Next { get; protected set; }
-
-        public abstract void Dispose();
+        // TODO 暂时写死，使用AppDomain为单位计算
+        protected void FillPerformance(StatusMessage message)
+        {
+            AppDomain currentDomain = AppDomain.CurrentDomain;
+            message.Performance.ProcessorTime = currentDomain.MonitoringTotalProcessorTime.TotalMilliseconds;
+            message.Performance.MemoryUsed = currentDomain.MonitoringSurvivedMemorySize;
+            message.Performance.MemoryAllocated = currentDomain.MonitoringTotalAllocatedMemorySize;
+        }
     }
 }

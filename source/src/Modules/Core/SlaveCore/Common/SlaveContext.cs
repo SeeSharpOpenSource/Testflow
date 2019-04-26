@@ -45,8 +45,10 @@ namespace Testflow.SlaveCore.Common
             this.FlowControlThread = null;
             this.RmtGenMessage = null;
             this.CtrlStartMessage = null;
-            this.WatchDatas = new Dictionary<string, string>(Constants.DefaultRuntimeSize);
+            this.WatchDatas = new HashSet<string>();
+            this.ReturnDatas = new HashSet<string>();
             this.BreakPoints = new HashSet<string>();
+            this.RuntimeType = GetProperty<RuntimeType>("RuntimeType");
         }
 
         public I18N I18N { get; }
@@ -85,7 +87,11 @@ namespace Testflow.SlaveCore.Common
 
         public HashSet<string> BreakPoints { get; }
 
-        public Dictionary<string, string> WatchDatas { get; }
+        public RuntimeType RuntimeType { get; }
+
+        public HashSet<string> WatchDatas { get; }
+
+        public HashSet<string> ReturnDatas { get; }
 
         private long _msgIndex;
         public long MsgIndex => Interlocked.Increment(ref _msgIndex);

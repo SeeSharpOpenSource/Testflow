@@ -90,6 +90,22 @@ namespace Testflow.SlaveCore.Runner.Model
             }
         }
 
+        public SequenceTaskEntity GetSequenceTaskEntity(int index)
+        {
+            switch (index)
+            {
+                case CommonConst.SetupIndex:
+                    return _setUp;
+                    break;
+                case CommonConst.TeardownIndex:
+                    return _tearDown;
+                    break;
+                default:
+                    return _sequenceEntities[index];
+                    break;
+            }
+        }
+
         /// <summary>
         /// 心跳包中填充状态
         /// </summary>

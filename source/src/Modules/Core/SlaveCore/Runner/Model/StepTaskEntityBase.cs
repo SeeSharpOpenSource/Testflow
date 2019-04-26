@@ -54,7 +54,7 @@ namespace Testflow.SlaveCore.Runner.Model
         protected readonly SlaveContext Context;
         protected readonly ISequenceStep StepData;
 
-        public StepResult Result { get; private set; }
+        public StepResult Result { get; protected set; }
         public int SequenceIndex { get; }
 
         protected StepTaskEntityBase(ISequenceStep step, SlaveContext context)
@@ -75,7 +75,14 @@ namespace Testflow.SlaveCore.Runner.Model
         public abstract void InitializeParamsValues();
 
         // 该方法只有在某个Sequence没有关键信息上报时使用。
-        public abstract void FillStatusInfo(StatusMessage statusMessage);
+        /// <summary>
+        /// 当指定时间内该序列没有额外信息到达时传递运行时状态的信息
+        /// </summary>
+        public virtual void FillStatusInfo(StatusMessage statusMessage)
+        {
+            statusMessage.Stacks.Add(GetStack());
+            statusMessage.Results.Add(this.Result);
+        }
 
         public abstract void Invoke();
     }

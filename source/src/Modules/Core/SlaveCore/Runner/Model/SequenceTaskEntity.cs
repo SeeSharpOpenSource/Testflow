@@ -2,6 +2,7 @@
 using System.Reflection;
 using System.Threading;
 using Testflow.Common;
+using Testflow.CoreCommon.Data;
 using Testflow.CoreCommon.Messages;
 using Testflow.Data.Sequence;
 using Testflow.Runtime;
@@ -65,47 +66,62 @@ namespace Testflow.SlaveCore.Runner.Model
             {
                 this.State = RuntimeState.Running;
                 SequenceStatusInfo startStatusInfo = new SequenceStatusInfo(Index, _stepEntityRoot.GetStack(),
-                    StatusReportType.Start);
+                    StatusReportType.Start, StepResult.NotAvailable);
                 _context.StatusQueue.Enqueue(startStatusInfo);
 
                 _stepEntityRoot.Invoke();
 
                 this.State = RuntimeState.Over;
 
+                StepTaskEntityBase currentStep = StepTaskEntityBase.GetCurrentStep(Index);
                 SequenceStatusInfo overStatusInfo = new SequenceStatusInfo(Index,
-                    StepTaskEntityBase.GetCurrentStep(Index).GetStack(), StatusReportType.Over);
+                    currentStep.GetStack(), StatusReportType.Over, 
+                    currentStep.Result);
 
                 _context.StatusQueue.Enqueue(overStatusInfo);
             }
             catch (TaskFailedException ex)
             {
                 this.State = RuntimeState.Failed;
+                StepTaskEntityBase currentStep = StepTaskEntityBase.GetCurrentStep(Index);
                 SequenceStatusInfo errorStatusInfo = new SequenceStatusInfo(Index,
-                    StepTaskEntityBase.GetCurrentStep(Index).GetStack(), StatusReportType.Failed, ex);
+                    currentStep.GetStack(), StatusReportType.Failed, currentStep.Result, ex);
                 this._context.StatusQueue.Enqueue(errorStatusInfo);
                 _context.LogSession.Print(LogLevel.Info, Index, "Step force failed.");
             }
             catch (TestflowAssertException ex)
             {
                 this.State = RuntimeState.Failed;
+                StepTaskEntityBase currentStep = StepTaskEntityBase.GetCurrentStep(Index);
                 SequenceStatusInfo errorStatusInfo = new SequenceStatusInfo(Index,
-                    StepTaskEntityBase.GetCurrentStep(Index).GetStack(), StatusReportType.Failed, ex);
+                    currentStep.GetStack(), StatusReportType.Failed, currentStep.Result, ex);
                 this._context.StatusQueue.Enqueue(errorStatusInfo);
                 _context.LogSession.Print(LogLevel.Fatal, Index, "Assert exception catched.");
+            }
+            catch (ThreadAbortException)
+            {
+                this.State = RuntimeState.Abort;
+                StepTaskEntityBase currentStep = StepTaskEntityBase.GetCurrentStep(Index);
+                SequenceStatusInfo statusInfo = new SequenceStatusInfo(Index,
+                    currentStep.GetStack(), StatusReportType.Error, currentStep.Result);
+                this._context.StatusQueue.Enqueue(statusInfo);
+                _context.LogSession.Print(LogLevel.Warn, Index, $"Sequence {Index} execution aborted");
             }
             catch (TestflowException ex)
             {
                 this.State = RuntimeState.Error;
+                StepTaskEntityBase currentStep = StepTaskEntityBase.GetCurrentStep(Index);
                 SequenceStatusInfo errorStatusInfo = new SequenceStatusInfo(Index,
-                    StepTaskEntityBase.GetCurrentStep(Index).GetStack(), StatusReportType.Failed, ex);
+                    currentStep.GetStack(), StatusReportType.Error, currentStep.Result, ex);
                 this._context.StatusQueue.Enqueue(errorStatusInfo);
                 _context.LogSession.Print(LogLevel.Error, Index, ex, "Inner exception catched.");
             }
             catch (TargetInvocationException ex)
             {
-                this.State = RuntimeState.Error;
+                this.State = RuntimeState.Failed;
+                StepTaskEntityBase currentStep = StepTaskEntityBase.GetCurrentStep(Index);
                 SequenceStatusInfo errorStatusInfo = new SequenceStatusInfo(Index,
-                    StepTaskEntityBase.GetCurrentStep(Index).GetStack(), StatusReportType.Error, ex.InnerException);
+                    currentStep.GetStack(), StatusReportType.Failed, currentStep.Result, ex.InnerException);
                 this._context.StatusQueue.Enqueue(errorStatusInfo);
                 _context.LogSession.Print(LogLevel.Fatal, Index, ex, "Invocation exception catched.");
             }
@@ -113,8 +129,9 @@ namespace Testflow.SlaveCore.Runner.Model
             {
                 this.State = RuntimeState.Error;
                 _context.LogSession.Print(LogLevel.Fatal, Index, ex, "Runtime exception catched.");
+                StepTaskEntityBase currentStep = StepTaskEntityBase.GetCurrentStep(Index);
                 SequenceStatusInfo errorStatusInfo = new SequenceStatusInfo(Index,
-                    StepTaskEntityBase.GetCurrentStep(Index).GetStack(), StatusReportType.Error, ex);
+                    currentStep.GetStack(), StatusReportType.Error, currentStep.Result, ex);
                 this._context.StatusQueue.Enqueue(errorStatusInfo);
             }
 
@@ -122,14 +139,15 @@ namespace Testflow.SlaveCore.Runner.Model
 
         public void FillStatusInfo(StatusMessage message)
         {
-            // 如果是外部调用且该序列已经执行结束或者message中已经有了当前序列的信息，则说明该序列在前面的消息中已经标记结束，直接返回。
-            if (message.InterestedSequence.Contains(this.Index) || this.State > RuntimeState.AbortRequested)
+            // 如果是外部调用且该序列已经执行结束或者未开始或者message中已经有了当前序列的信息，则说明该序列在前面的消息中已经标记结束，直接返回。
+            if (message.InterestedSequence.Contains(this.Index) || this.State > RuntimeState.AbortRequested ||
+                this.State == RuntimeState.StartIdle)
             {
                 return;
             }
-            message.Stacks.Add(StepTaskEntityBase.GetCurrentStep(Index).GetStack());
             message.SequenceStates.Add(this.State);
-            message.Results.Add(StepResult.NotAvailable);
+            StepTaskEntityBase currentStep = StepTaskEntityBase.GetCurrentStep(Index);
+            currentStep.FillStatusInfo(message);
         }
 
         public void FillStatusInfo(StatusMessage message, string errorInfo)

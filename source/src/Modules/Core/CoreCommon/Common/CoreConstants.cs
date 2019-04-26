@@ -20,6 +20,9 @@
 
         public const string UpLinkMQName = @".\Private$\TestflowUpLinkQueue";
         public const string DownLinkMQName = @".\Private$\TestflowDownLinkQueue";
+
+        public const string NullValue = "NULL";
+        public const string ErrorVarValue = "InvalidValue";
         
         #region 事件名称
 

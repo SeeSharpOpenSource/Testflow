@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using Testflow.SlaveCore.Common;
+using Testflow.MasterCore.Common;
 
 namespace Testflow.MasterCore.ObjectManage
 {

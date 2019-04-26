@@ -30,11 +30,6 @@ namespace Testflow.SlaveCore.Runner.Model
             throw new System.NotImplementedException();
         }
 
-        public override void FillStatusInfo(StatusMessage statusMessage)
-        {
-            throw new System.NotImplementedException();
-        }
-
         public override void Invoke()
         {
             throw new System.NotImplementedException();

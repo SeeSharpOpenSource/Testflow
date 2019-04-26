@@ -29,14 +29,13 @@ namespace Testflow.CoreCommon.Messages
         /// </summary>
         public List<int> InterestedSequence { get; set; }
 
-        public Dictionary<string, string> WatchData { get; }
+        public Dictionary<string, string> WatchData { get; set; }
 
         public SequenceFailedInfo ExceptionInfo { get; set; }
 
         public StatusMessage(string name, RuntimeState state, int id) : base(name, id, MessageType.Status)
         {
             this.State = state;
-            this.WatchData = new Dictionary<string, string>(CoreConstants.DefaultRuntimeSize);
             this.InterestedSequence = new List<int>(CoreConstants.DefaultRuntimeSize);
             this.Stacks = new List<CallStack>(CoreConstants.DefaultRuntimeSize);
             this.SequenceStates = new List<RuntimeState>(CoreConstants.DefaultRuntimeSize);

@@ -194,52 +194,58 @@ namespace Testflow.SlaveCore.Runner.Model
             NextStep?.InitializeParamsValues();
         }
 
-        /// <summary>
-        /// 当指定时间内该序列没有额外信息到达时传递运行时状态的信息
-        /// </summary>
-        public override void FillStatusInfo(StatusMessage statusMessage)
-        {
-            statusMessage.Stacks.Add(GetStack());
-            statusMessage.Results.Add(StepResult.NotAvailable);
-        }
-
         public override void Invoke()
         {
-            switch (StepData.Behavior)
+            this.Result = StepResult.Error;
+            try
             {
-                case RunBehavior.Normal:
-                    ExecuteSequenceStep();
-                    break;
-                case RunBehavior.Skip:
-                    break;
-                case RunBehavior.ForceSuccess:
-                    try
-                    {
+                switch (StepData.Behavior)
+                {
+                    case RunBehavior.Normal:
                         ExecuteSequenceStep();
-                    }
-                    catch (ApplicationException ex)
-                    {
-                        Context.LogSession.Print(LogLevel.Warn, SequenceIndex, ex, "Execute failed but force success.");
-                    }
-                    break;
-                case RunBehavior.ForceFailed:
-                    ExecuteSequenceStep();
-                    TestflowAssertException exception = new TestflowAssertException(ModuleErrorCode.ForceFailed, 
-                        Context.I18N.GetStr("StepForceFailed"));
-                    SequenceStatusInfo info = new SequenceStatusInfo(SequenceIndex, this.GetStack(), 
-                        StatusReportType.Failed, exception);
-                    Context.StatusQueue.Enqueue(info);
-                    throw new TaskFailedException(SequenceIndex);
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException();
+                        this.Result = StepResult.Pass;
+                        break;
+                    case RunBehavior.Skip:
+                        this.Result = StepResult.Skip;
+                        break;
+                    case RunBehavior.ForceSuccess:
+                        try
+                        {
+                            ExecuteSequenceStep();
+                            this.Result = StepResult.Pass;
+                        }
+                        catch (TaskFailedException ex)
+                        {
+                            this.Result = StepResult.Failed;
+                            Context.LogSession.Print(LogLevel.Warn, SequenceIndex, ex,
+                                "Execute failed but force success.");
+                        }
+                        break;
+                    case RunBehavior.ForceFailed:
+                        ExecuteSequenceStep();
+                        this.Result = StepResult.Failed;
+                        TestflowAssertException exception = new TestflowAssertException(ModuleErrorCode.ForceFailed,
+                            Context.I18N.GetStr("StepForceFailed"));
+                        SequenceStatusInfo info = new SequenceStatusInfo(SequenceIndex, this.GetStack(),
+                            StatusReportType.Failed, this.Result, exception);
+                        Context.StatusQueue.Enqueue(info);
+                        throw new TaskFailedException(SequenceIndex);
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
             }
-            if (StepData.RecordStatus)
+            finally
             {
-                SequenceStatusInfo statusInfo = new SequenceStatusInfo(StepData.Index, this.GetStack(), StatusReportType.Record);
-
-                Context.StatusQueue.Enqueue(statusInfo);
+                // 如果当前step被标记为记录状态，并且不是强制失败，则返回状态信息
+                if (StepData.RecordStatus && RunBehavior.ForceFailed != StepData.Behavior)
+                {
+                    SequenceStatusInfo statusInfo = new SequenceStatusInfo(StepData.Index, this.GetStack(), 
+                        StatusReportType.Record, Result);
+                    Context.StatusQueue.Enqueue(statusInfo);
+                }
             }
+
             NextStep?.Invoke();
         }
 
