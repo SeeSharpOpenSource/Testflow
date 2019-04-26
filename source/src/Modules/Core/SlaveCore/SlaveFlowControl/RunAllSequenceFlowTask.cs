@@ -163,6 +163,8 @@ namespace Testflow.SlaveCore.SlaveFlowControl
 
         public override void Dispose()
         {
+            _blockEvent?.Reset();
+            _blockEvent?.Dispose();
             if (null != _sequenceThreads)
             {
                 TaskAbortAction();

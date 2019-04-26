@@ -1,34 +1,83 @@
 ﻿using System;
+using System.Threading;
+using Testflow.Common;
+using Testflow.CoreCommon.Common;
+using Testflow.CoreCommon.Data;
 using Testflow.CoreCommon.Messages;
+using Testflow.Runtime;
+using Testflow.Runtime.Data;
 using Testflow.SlaveCore.Common;
+using Testflow.SlaveCore.Data;
+using Testflow.SlaveCore.Runner.Model;
 
 namespace Testflow.SlaveCore.SlaveFlowControl
 {
     internal class RunSingleSequenceFlowTask : SlaveFlowTaskBase
     {
-        public RunSingleSequenceFlowTask(SlaveContext context) : base(context)
+        private readonly int _sequenceIndex;
+        public RunSingleSequenceFlowTask(int sequenceIndex,SlaveContext context) : base(context)
         {
+            _sequenceIndex = sequenceIndex;
         }
 
         protected override void FlowTaskAction()
         {
-            throw new NotImplementedException();
+            Context.State = RuntimeState.Running;
+
+            SessionTaskEntity sessionTaskEntity = Context.SessionTaskEntity;
+
+            sessionTaskEntity.InvokeSetUp();
+            RuntimeState setUpState = sessionTaskEntity.GetSequenceTaskState(CommonConst.SetupIndex);
+            // 如果SetUp执行失败，则执行TearDown，且配置所有序列为失败状态，并发送所有序列都失败的信息
+            if (setUpState > RuntimeState.Success)
+            {
+                sessionTaskEntity.InvokeTearDown();
+                for (int i = 0; i < sessionTaskEntity.SequenceCount; i++)
+                {
+                    sessionTaskEntity.GetSequenceTaskEntity(i).State = RuntimeState.Failed;
+
+                    TaskFailedException failedException = new TaskFailedException(i, Context.I18N.GetStr("SetUpFailed"));
+                    SequenceStatusInfo statusInfo = new SequenceStatusInfo(i, null, StatusReportType.Failed, StepResult.NotAvailable,
+                        failedException);
+                    Context.StatusQueue.Enqueue(statusInfo);
+                }
+                return;
+            }
+
+            sessionTaskEntity.InvokeSequence(_sequenceIndex);
+
+            sessionTaskEntity.InvokeTearDown();
+
+            Context.State = RuntimeState.Over;
+            this.Next = null;
         }
 
         protected override void TaskErrorAction(Exception ex)
         {
-            throw new NotImplementedException();
+            StatusMessage errorMessage = new StatusMessage(MessageNames.ErrorStatusName, Context.State, Context.SessionId)
+            {
+                ExceptionInfo = new SequenceFailedInfo(ex),
+            };
+            Context.SessionTaskEntity.FillSequenceInfo(errorMessage, Context.I18N.GetStr("RuntimeError"));
+            Context.UplinkMsgPacker.SendMessage(errorMessage);
         }
 
         public override MessageBase GetHeartBeatMessage()
         {
-            throw new NotImplementedException();
+            StatusMessage statusMessage = new StatusMessage(MessageNames.HearBeatStatusName, Context.State, Context.SessionId);
+            SessionTaskEntity sessionTaskEntity = Context.SessionTaskEntity;
+            sessionTaskEntity.FillSequenceInfo(statusMessage);
+
+            FillPerformance(statusMessage);
+            statusMessage.WatchData = Context.VariableMapper.GetWatchDataValues();
+
+            return statusMessage;
         }
 
         public override SlaveFlowTaskBase Next { get; protected set; }
         public override void Dispose()
         {
-            throw new NotImplementedException();
+            // ignore
         }
     }
 }

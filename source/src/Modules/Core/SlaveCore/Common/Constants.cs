@@ -14,5 +14,7 @@
         public const string TaskThreadNameFormt = "TaskThread:Session'{0}'Sequence'{1}'";
 
         public const string TaskRootThreadNameFormat = "TaskThread:Session'{0}'Root";
+
+        public const int WakeTimerInterval = 500;
     }
 }

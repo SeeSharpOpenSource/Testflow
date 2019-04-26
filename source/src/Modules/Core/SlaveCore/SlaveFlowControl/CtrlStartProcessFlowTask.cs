@@ -36,9 +36,9 @@ namespace Testflow.SlaveCore.SlaveFlowControl
             {
                 this.Next = new RunAllSequenceFlowTask(Context);
             }
-            else if (IsOptionEnabled(message, "RunSequence"))
+            else if (message.Params.ContainsKey("RunSequence"))
             {
-                this.Next = new RunSingleSequenceFlowTask(Context);
+                this.Next = new RunSingleSequenceFlowTask(int.Parse(message.Params["RunSequence"]), Context);
             }
             else if (IsOptionEnabled(message, "RunSetup"))
             {
@@ -51,6 +51,7 @@ namespace Testflow.SlaveCore.SlaveFlowControl
                 throw new TestflowRuntimeException(ModuleErrorCode.InvalidMessageReceived,
                     Context.I18N.GetFStr("InvalidMessageReceived", message.GetType().Name));
             }
+            Context.CtrlStartMessage = null;
         }
 
         protected override void TaskErrorAction(Exception ex)
