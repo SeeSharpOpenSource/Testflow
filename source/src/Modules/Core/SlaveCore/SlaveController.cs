@@ -37,7 +37,7 @@ namespace Testflow.SlaveCore
 
             SlaveFlowTaskBase taskEntrance = SlaveFlowTaskBase.GetFlowTaskEntrance(_context);
 
-            _context.StatusMonitor.Start();
+            _context.UplinkMsgProcessor.Start();
 
             _flowTaskThread = new Thread(taskEntrance.DoFlowTask)
             {
@@ -60,7 +60,7 @@ namespace Testflow.SlaveCore
                 {
                     Index = _context.MsgIndex
                 };
-                _context.StatusMonitor.SendMessage(runtimeErrorMessage);
+                _context.UplinkMsgProcessor.SendMessage(runtimeErrorMessage);
             }
             finally
             {
@@ -75,7 +75,7 @@ namespace Testflow.SlaveCore
             {
                 _flowTaskThread.Join(Constants.ThreadAbortJoinTime);
             }
-            _context.StatusMonitor?.Stop();
+            _context.UplinkMsgProcessor?.Stop();
             _downlinkMsgProcessor?.Stop();
         }
 

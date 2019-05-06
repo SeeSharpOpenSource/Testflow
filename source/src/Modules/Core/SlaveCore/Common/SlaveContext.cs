@@ -41,7 +41,7 @@ namespace Testflow.SlaveCore.Common
             this.LogSession = TODO;
             this.I18N = I18N.GetInstance(Constants.I18nName);
             this.MessageTransceiver = new MessageTransceiver(this, SessionId);
-            this.StatusMonitor = new StatusMonitor(this);
+            this.UplinkMsgProcessor = new UplinkMessageProcessor(this);
             this.FlowControlThread = null;
             this.RmtGenMessage = null;
             this.CtrlStartMessage = null;
@@ -73,7 +73,7 @@ namespace Testflow.SlaveCore.Common
 
         public LocalEventQueue<SequenceStatusInfo> StatusQueue { get; }
 
-        public StatusMonitor StatusMonitor { get; }
+        public UplinkMessageProcessor UplinkMsgProcessor { get; }
 
         public Thread FlowControlThread { get; set; }
         

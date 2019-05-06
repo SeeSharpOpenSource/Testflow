@@ -12,7 +12,7 @@ namespace Testflow.SlaveCore.Common
     /// <summary>
     /// 上行消息包装器，如果指定时间内无消息上报，则自动上传中间状态消息
     /// </summary>
-    internal class StatusMonitor : IDisposable
+    internal class UplinkMessageProcessor : IDisposable
     {
         private readonly SlaveContext _context;
         private readonly MessageTransceiver _transceiver;
@@ -23,7 +23,7 @@ namespace Testflow.SlaveCore.Common
 
         public Func<MessageBase> HeartbeatMsgGenerator { get; set; }
 
-        public StatusMonitor(SlaveContext context)
+        public UplinkMessageProcessor(SlaveContext context)
         {
             this._transceiver = _context.MessageTransceiver;
             this._context = context;

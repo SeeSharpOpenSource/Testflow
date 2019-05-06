@@ -47,7 +47,7 @@
     <Compile Include="AppDomainTestLauncher.cs" />
     <Compile Include="Common\Constants.cs" />
     <Compile Include="Common\DownlinkMessageProcessor.cs" />
-    <Compile Include="Common\StatusMonitor.cs" />
+    <Compile Include="Common\UplinkMessageProcessor.cs" />
     <Compile Include="Common\ModuleUtils.cs" />
     <Compile Include="Common\TaskFailedException.cs" />
     <Compile Include="SlaveFlowControl\CtrlStartProcessFlowTask.cs" />

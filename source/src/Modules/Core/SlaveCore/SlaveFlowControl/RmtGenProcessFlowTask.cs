@@ -57,7 +57,7 @@ namespace Testflow.SlaveCore.SlaveFlowControl
             {
                 Index = Context.MsgIndex
             };
-            Context.StatusMonitor.SendMessage(testGenMessage);
+            Context.UplinkMsgProcessor.SendMessage(testGenMessage);
             base.TaskAbortAction();
         }
 

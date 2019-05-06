@@ -124,7 +124,7 @@ namespace Testflow.SlaveCore.SlaveFlowControl
                 Index = Context.MsgIndex
             };
             Context.SessionTaskEntity.FillSequenceInfo(errorMessage, Context.I18N.GetStr("RuntimeError"));
-            Context.StatusMonitor.SendMessage(errorMessage);
+            Context.UplinkMsgProcessor.SendMessage(errorMessage);
             ModuleUtils.FillPerformance(errorMessage);
             errorMessage.WatchData = Context.VariableMapper.GetReturnDataValues();
         }

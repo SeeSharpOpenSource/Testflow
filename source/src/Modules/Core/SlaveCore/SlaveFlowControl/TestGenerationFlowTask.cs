@@ -32,7 +32,7 @@ namespace Testflow.SlaveCore.SlaveFlowControl
             {
                 Index = Context.MsgIndex
             };
-            Context.StatusMonitor.SendMessage(testGenStartMessage);
+            Context.UplinkMsgProcessor.SendMessage(testGenStartMessage);
 
             // 构造变量映射器
             Context.VariableMapper = new VariableMapper(Context);
@@ -66,7 +66,7 @@ namespace Testflow.SlaveCore.SlaveFlowControl
             {
                 Index = Context.MsgIndex
             };
-            Context.StatusMonitor.SendMessage(testGenOverMessage);
+            Context.UplinkMsgProcessor.SendMessage(testGenOverMessage);
 
             this.Next = new CtrlStartProcessFlowTask(Context);
         }
@@ -78,7 +78,7 @@ namespace Testflow.SlaveCore.SlaveFlowControl
             {
                 Index = Context.MsgIndex
             };
-            Context.StatusMonitor.SendMessage(testGenMessage);
+            Context.UplinkMsgProcessor.SendMessage(testGenMessage);
             base.TaskAbortAction();
         }
 
@@ -90,7 +90,7 @@ namespace Testflow.SlaveCore.SlaveFlowControl
             {
                 Index = Context.MsgIndex
             };
-            Context.StatusMonitor.SendMessage(testGenFailMessage);
+            Context.UplinkMsgProcessor.SendMessage(testGenFailMessage);
         }
         
         public override MessageBase GetHeartBeatMessage()

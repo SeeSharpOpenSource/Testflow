@@ -32,7 +32,7 @@ namespace Testflow.SlaveCore.SlaveFlowControl
             try
             {
                 // 配置心跳包生成委托
-                Context.StatusMonitor.HeartbeatMsgGenerator = GetHeartBeatMessage;
+                Context.UplinkMsgProcessor.HeartbeatMsgGenerator = GetHeartBeatMessage;
                 FlowTaskAction();
                 Next.DoFlowTask();
             }
@@ -54,7 +54,7 @@ namespace Testflow.SlaveCore.SlaveFlowControl
                 {
                     Index = Context.MsgIndex
                 };
-                Context.StatusMonitor.SendMessage(errorMessage);
+                Context.UplinkMsgProcessor.SendMessage(errorMessage);
             }
         }
 
@@ -90,7 +90,7 @@ namespace Testflow.SlaveCore.SlaveFlowControl
                 Index = Context.MsgIndex,
             };
             abortMessage.Params.Add("AbortSuccess", true.ToString());
-            Context.StatusMonitor.SendMessage(abortMessage);
+            Context.UplinkMsgProcessor.SendMessage(abortMessage);
         }
     }
 }
