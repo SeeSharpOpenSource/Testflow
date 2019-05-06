@@ -31,6 +31,8 @@ namespace Testflow.SlaveCore
 
         public void StartSlaveTask()
         {
+            _context.MessageTransceiver.StartReceive();
+
             _downlinkMsgProcessor = new DownlinkMessageProcessor(_context);
 
             SlaveFlowTaskBase taskEntrance = SlaveFlowTaskBase.GetFlowTaskEntrance(_context);

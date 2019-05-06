@@ -78,6 +78,10 @@ namespace Testflow.SlaveCore.Common
                         IMessage receive = _downLinkMessenger.Receive();
                         _messageQueue.Enqueue((MessageBase)message);
                     }
+                    else
+                    {
+                        Thread.Yield();
+                    }
                 }
             }
             catch (ThreadAbortException)

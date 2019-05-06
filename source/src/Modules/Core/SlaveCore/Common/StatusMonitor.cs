@@ -186,10 +186,10 @@ namespace Testflow.SlaveCore.Common
         public void SendMessage(MessageBase message)
         {
             _transceiver.SendMessage(message);
-//            if (!_cancellation.IsCancellationRequested)
-//            {
-//                _waitTimer.Change(_heartBeatInterval, _heartBeatInterval);
-//            }
+            if (!_cancellation.IsCancellationRequested)
+            {
+                _waitTimer.Change(_heartBeatInterval, _heartBeatInterval);
+            }
         }
 
 
