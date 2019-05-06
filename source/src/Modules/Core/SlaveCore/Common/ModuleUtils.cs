@@ -6,8 +6,11 @@ using System.Reflection;
 using System.Text.RegularExpressions;
 using Testflow.Common;
 using Testflow.CoreCommon;
+using Testflow.CoreCommon.Data;
+using Testflow.CoreCommon.Messages;
 using Testflow.Data;
 using Testflow.Data.Sequence;
+using Testflow.Runtime;
 using Testflow.SlaveCore.Runner.Model;
 using Testflow.Utility.I18nUtil;
 
@@ -160,6 +163,20 @@ namespace Testflow.SlaveCore.Common
             }
             paramProperty.SetValue(parentValue, paramValue);
             return varValue;
+        }
+
+        // TODO 暂时写死，使用AppDomain为单位计算
+        public static void FillPerformance(StatusMessage message)
+        {
+            AppDomain currentDomain = AppDomain.CurrentDomain;
+            message.Performance.ProcessorTime = currentDomain.MonitoringTotalProcessorTime.TotalMilliseconds;
+            message.Performance.MemoryUsed = currentDomain.MonitoringSurvivedMemorySize;
+            message.Performance.MemoryAllocated = currentDomain.MonitoringTotalAllocatedMemorySize;
+        }
+
+        public static CallStack GetSequenceStack(int index)
+        {
+            return StepTaskEntityBase.GetCurrentStep(index).GetStack();
         }
     }
 }

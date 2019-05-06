@@ -41,7 +41,7 @@ namespace Testflow.SlaveCore.Common
             this.LogSession = TODO;
             this.I18N = I18N.GetInstance(Constants.I18nName);
             this.MessageTransceiver = new MessageTransceiver(this, SessionId);
-            this.UplinkMsgPacker = new StatusMonitor(this);
+            this.StatusMonitor = new StatusMonitor(this);
             this.FlowControlThread = null;
             this.RmtGenMessage = null;
             this.CtrlStartMessage = null;
@@ -59,10 +59,6 @@ namespace Testflow.SlaveCore.Common
 
         public MessageTransceiver MessageTransceiver { get; }
 
-        public SlaveController Controller { get; set; }
-
-        public TestRunner Runner { get; set; }
-
         public RunnerType SequenceType { get; set; }
 
         public ISequenceFlowContainer Sequence { get; set; }
@@ -77,14 +73,23 @@ namespace Testflow.SlaveCore.Common
 
         public LocalEventQueue<SequenceStatusInfo> StatusQueue { get; }
 
-        public StatusMonitor UplinkMsgPacker { get; }
+        public StatusMonitor StatusMonitor { get; }
 
         public Thread FlowControlThread { get; set; }
-
+        
+        /// <summary>
+        /// 测试生成消息实例，全局唯一
+        /// </summary>
         public RmtGenMessage RmtGenMessage { get; set; }
 
+        /// <summary>
+        /// 控制开始消息，可以接收到多个
+        /// </summary>
         public ControlMessage CtrlStartMessage { get; set; }
 
+        /// <summary>
+        /// 断点信息
+        /// </summary>
         public HashSet<string> BreakPoints { get; }
 
         public RuntimeType RuntimeType { get; }
@@ -140,7 +145,7 @@ namespace Testflow.SlaveCore.Common
 
         public void Dispose()
         {
-            Runner?.Dispose();
+            MessageTransceiver?.Dispose();
         }
     }
 }

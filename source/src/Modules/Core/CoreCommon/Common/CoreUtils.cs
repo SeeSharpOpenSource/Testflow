@@ -30,7 +30,7 @@ namespace Testflow.CoreCommon.Common
             return runtimeVariableName.Append(variable.Name).ToString();
         }
 
-        public static string GetRuntimeVariableName(string variableName, ICallStack stack)
+        public static string GetRuntimeVariableName(string variableName, CallStack stack)
         {
             StringBuilder runtimeVarName = new StringBuilder(50);
             return runtimeVarName.Append(stack.SessionIndex)

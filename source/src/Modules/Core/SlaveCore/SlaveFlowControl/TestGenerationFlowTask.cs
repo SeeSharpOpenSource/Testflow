@@ -16,15 +16,23 @@ namespace Testflow.SlaveCore.SlaveFlowControl
         public TestGenerationFlowTask(SlaveContext context) : base(context)
         {
         }
-
+        /// <summary>
+        /// <localize>
+        ///<zh-CHS>中文</zh-CHS>
+        ///<en>English</en>
+        ///</localize>
+        /// </summary>
         protected override void FlowTaskAction()
         {
             Context.State = RuntimeState.TestGen;
 
             // 发送测试开始消息
             TestGenMessage testGenStartMessage = new TestGenMessage(MessageNames.TestGenName, Context.SessionId,
-                CommonConst.PlatformSession, GenerationStatus.InProgress);
-            Context.UplinkMsgPacker.SendMessage(testGenStartMessage);
+                CommonConst.PlatformSession, GenerationStatus.InProgress)
+            {
+                Index = Context.MsgIndex
+            };
+            Context.StatusMonitor.SendMessage(testGenStartMessage);
 
             // 构造变量映射器
             Context.VariableMapper = new VariableMapper(Context);
@@ -54,25 +62,37 @@ namespace Testflow.SlaveCore.SlaveFlowControl
 
             // 发送生成结束的消息
             TestGenMessage testGenOverMessage = new TestGenMessage(MessageNames.TestGenName, Context.SessionId,
-                CommonConst.PlatformSession, GenerationStatus.Success);
-            Context.UplinkMsgPacker.SendMessage(testGenOverMessage);
+                CommonConst.PlatformSession, GenerationStatus.Success)
+            {
+                Index = Context.MsgIndex
+            };
+            Context.StatusMonitor.SendMessage(testGenOverMessage);
 
             this.Next = new CtrlStartProcessFlowTask(Context);
+        }
+
+        protected override void TaskAbortAction()
+        {
+            TestGenMessage testGenMessage = new TestGenMessage(MessageNames.TestGenName, Context.SessionId,
+                CommonConst.PlatformLogSession, GenerationStatus.Failed)
+            {
+                Index = Context.MsgIndex
+            };
+            Context.StatusMonitor.SendMessage(testGenMessage);
+            base.TaskAbortAction();
         }
 
         protected override void TaskErrorAction(Exception ex)
         {
             Context.LogSession.Print(LogLevel.Error, CommonConst.PlatformLogSession, "Test Generation failed.");
             TestGenMessage testGenFailMessage = new TestGenMessage(MessageNames.TestGenName, Context.SessionId,
-                CommonConst.PlatformSession, GenerationStatus.Failed);
-            Context.UplinkMsgPacker.SendMessage(testGenFailMessage);
+                CommonConst.PlatformSession, GenerationStatus.Failed)
+            {
+                Index = Context.MsgIndex
+            };
+            Context.StatusMonitor.SendMessage(testGenFailMessage);
         }
-
-        protected override void TaskAbortAction()
-        {
-            
-        }
-
+        
         public override MessageBase GetHeartBeatMessage()
         {
             // 发送生成结束的消息

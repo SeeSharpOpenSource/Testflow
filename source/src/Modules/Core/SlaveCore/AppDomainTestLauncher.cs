@@ -9,6 +9,7 @@ namespace Testflow.SlaveCore
     public class AppDomainTestLauncher : MarshalByRefObject, IDisposable
     {
         private SlaveContext _slaveContext;
+        private SlaveController _slaveController;
 
         public AppDomainTestLauncher(string configDataStr)
         {
@@ -22,14 +23,13 @@ namespace Testflow.SlaveCore
 
         public void Start()
         {
-            SlaveController slaveController = new SlaveController(_slaveContext);
-            _slaveContext.Controller = slaveController;
-            slaveController.StartslaveTask();
+            _slaveController = new SlaveController(_slaveContext);
+            _slaveController.StartSlaveTask();
         }
 
         public void Dispose()
         {
-            _slaveContext.Dispose();
+            _slaveController.Dispose();
         }
     }
 }

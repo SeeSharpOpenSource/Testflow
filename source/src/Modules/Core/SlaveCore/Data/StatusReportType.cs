@@ -18,18 +18,23 @@
         DebugHitted = 2,
 
         /// <summary>
+        /// 同步请求
+        /// </summary>
+        SyncRequested = 3,
+
+        /// <summary>
         /// 执行失败
         /// </summary>
-        Failed = 3,
+        Failed = 4,
 
         /// <summary>
         /// 序列结束
         /// </summary>
-        Over = 4,
+        Over = 5,
 
         /// <summary>
         /// 执行错误
         /// </summary>
-        Error = 5
+        Error = 6
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using Testflow.Common;
 using Testflow.CoreCommon;
 using Testflow.CoreCommon.Common;
@@ -19,7 +20,8 @@ namespace Testflow.SlaveCore
     {
         private readonly MessageTransceiver _transceiver;
         private readonly SlaveContext _context;
-        private TestRunner _runner;
+        private Thread _flowTaskThread;
+        private DownlinkMessageProcessor _downlinkMsgProcessor;
 
         public SlaveController(SlaveContext context)
         {
@@ -27,45 +29,57 @@ namespace Testflow.SlaveCore
             this._context = context;
         }
 
-        public void StartslaveTask()
+        public void StartSlaveTask()
         {
-            
+            _downlinkMsgProcessor = new DownlinkMessageProcessor(_context);
 
+            SlaveFlowTaskBase taskEntrance = SlaveFlowTaskBase.GetFlowTaskEntrance(_context);
+
+            _context.StatusMonitor.Start();
+
+            _flowTaskThread = new Thread(taskEntrance.DoFlowTask)
+            {
+                IsBackground = true,
+                Name = string.Format(Constants.TaskRootThreadNameFormat, _context.SessionId)
+            };
+            // 开始流程处理线程
+            _flowTaskThread.Start();
+            try
+            {
+                // 在主线程内开始侦听下行消息并处理
+                _downlinkMsgProcessor.StartListen();
+            }
+            catch (Exception ex)
+            {
+                _context.LogSession.Print(LogLevel.Fatal, CommonConst.PlatformLogSession, ex,
+                    "TestflowRuntimeException caught.");
+                // 发送异常错误信息
+                RuntimeErrorMessage runtimeErrorMessage = new RuntimeErrorMessage(_context.SessionId, ex)
+                {
+                    Index = _context.MsgIndex
+                };
+                _context.StatusMonitor.SendMessage(runtimeErrorMessage);
+            }
+            finally
+            {
+                StopSlaveTask();
+            }
         }
 
-        private void TaskFlowAction()
+        private void StopSlaveTask()
         {
-            
-        }
-
-        private void StartTestWork(SessionTaskEntity sessionExecutionModel)
-        {
-            _runner = TestRunner.CreateRunner(_context);
-            _runner.Start(sessionExecutionModel);
-        }
-
-        private void StateMonitoring()
-        {
-            throw new NotImplementedException();
-        }
-
-        private void SendGenerationOverMessage()
-        {
-            throw new NotImplementedException();
-        }
-
-        private void StartDownLinkMessageListening()
-        {
-            throw new NotImplementedException();
-        }
-
-        public void StopSlaveTask()
-        {
-
+            _flowTaskThread.Abort();
+            if (_flowTaskThread.IsAlive)
+            {
+                _flowTaskThread.Join(Constants.ThreadAbortJoinTime);
+            }
+            _context.StatusMonitor?.Stop();
+            _downlinkMsgProcessor?.Stop();
         }
 
         public void Dispose()
         {
+            StopSlaveTask();
             _transceiver.Dispose();
             _context.Dispose();
         }

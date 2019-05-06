@@ -37,8 +37,8 @@ namespace Testflow.SlaveCore.SlaveFlowControl
                     sessionTaskEntity.GetSequenceTaskEntity(i).State = RuntimeState.Failed;
 
                     TaskFailedException failedException = new TaskFailedException(i, Context.I18N.GetStr("SetUpFailed"));
-                    SequenceStatusInfo statusInfo = new SequenceStatusInfo(i, null, StatusReportType.Failed, StepResult.NotAvailable,
-                        failedException);
+                    SequenceStatusInfo statusInfo = new SequenceStatusInfo(i, ModuleUtils.GetSequenceStack(i), 
+                        StatusReportType.Failed, StepResult.NotAvailable, failedException);
                     Context.StatusQueue.Enqueue(statusInfo);
                 }
                 return;
@@ -57,9 +57,12 @@ namespace Testflow.SlaveCore.SlaveFlowControl
             StatusMessage errorMessage = new StatusMessage(MessageNames.ErrorStatusName, Context.State, Context.SessionId)
             {
                 ExceptionInfo = new SequenceFailedInfo(ex),
+                Index = Context.MsgIndex
             };
             Context.SessionTaskEntity.FillSequenceInfo(errorMessage, Context.I18N.GetStr("RuntimeError"));
-            Context.UplinkMsgPacker.SendMessage(errorMessage);
+            Context.StatusMonitor.SendMessage(errorMessage);
+            ModuleUtils.FillPerformance(errorMessage);
+            errorMessage.WatchData = Context.VariableMapper.GetReturnDataValues();
         }
 
         public override MessageBase GetHeartBeatMessage()
@@ -68,7 +71,7 @@ namespace Testflow.SlaveCore.SlaveFlowControl
             SessionTaskEntity sessionTaskEntity = Context.SessionTaskEntity;
             sessionTaskEntity.FillSequenceInfo(statusMessage);
 
-            FillPerformance(statusMessage);
+            ModuleUtils.FillPerformance(statusMessage);
             statusMessage.WatchData = Context.VariableMapper.GetWatchDataValues();
 
             return statusMessage;

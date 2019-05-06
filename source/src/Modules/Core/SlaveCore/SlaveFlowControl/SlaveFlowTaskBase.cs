@@ -15,6 +15,11 @@ namespace Testflow.SlaveCore.SlaveFlowControl
     /// </summary>
     internal abstract class SlaveFlowTaskBase : IDisposable
     {
+        public static SlaveFlowTaskBase GetFlowTaskEntrance(SlaveContext context)
+        {
+            return new RmtGenProcessFlowTask(context);
+        }
+
         protected readonly SlaveContext Context;
 
         protected SlaveFlowTaskBase(SlaveContext context)
@@ -27,7 +32,7 @@ namespace Testflow.SlaveCore.SlaveFlowControl
             try
             {
                 // 配置心跳包生成委托
-                Context.UplinkMsgPacker.HeartbeatMsgGenerator = GetHeartBeatMessage;
+                Context.StatusMonitor.HeartbeatMsgGenerator = GetHeartBeatMessage;
                 FlowTaskAction();
                 Next.DoFlowTask();
             }
@@ -45,8 +50,11 @@ namespace Testflow.SlaveCore.SlaveFlowControl
                     "Runtime exception occured.");
                 TaskErrorAction(ex);
                 // 发送运行时异常错误
-                RuntimeErrorMessage errorMessage = new RuntimeErrorMessage(Context.SessionId, ex);
-                Context.UplinkMsgPacker.SendMessage(errorMessage);
+                RuntimeErrorMessage errorMessage = new RuntimeErrorMessage(Context.SessionId, ex)
+                {
+                    Index = Context.MsgIndex
+                };
+                Context.StatusMonitor.SendMessage(errorMessage);
             }
         }
 
@@ -82,16 +90,7 @@ namespace Testflow.SlaveCore.SlaveFlowControl
                 Index = Context.MsgIndex,
             };
             abortMessage.Params.Add("AbortSuccess", true.ToString());
-            Context.UplinkMsgPacker.SendMessage(abortMessage);
-        }
-
-        // TODO 暂时写死，使用AppDomain为单位计算
-        protected void FillPerformance(StatusMessage message)
-        {
-            AppDomain currentDomain = AppDomain.CurrentDomain;
-            message.Performance.ProcessorTime = currentDomain.MonitoringTotalProcessorTime.TotalMilliseconds;
-            message.Performance.MemoryUsed = currentDomain.MonitoringSurvivedMemorySize;
-            message.Performance.MemoryAllocated = currentDomain.MonitoringTotalAllocatedMemorySize;
+            Context.StatusMonitor.SendMessage(abortMessage);
         }
     }
 }

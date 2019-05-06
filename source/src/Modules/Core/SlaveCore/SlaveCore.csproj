@@ -47,7 +47,7 @@
     <Compile Include="AppDomainTestLauncher.cs" />
     <Compile Include="Common\Constants.cs" />
     <Compile Include="Common\DownlinkMessageProcessor.cs" />
-    <Compile Include="Common\UplinkMessagePacker.cs" />
+    <Compile Include="Common\StatusMonitor.cs" />
     <Compile Include="Common\ModuleUtils.cs" />
     <Compile Include="Common\TaskFailedException.cs" />
     <Compile Include="SlaveFlowControl\CtrlStartProcessFlowTask.cs" />
@@ -67,9 +67,6 @@
     <Compile Include="Runner\Model\StepTaskEntityBase.cs" />
     <Compile Include="Data\VariableMapper.cs" />
     <Compile Include="Runner\AssemblyInvoker.cs" />
-    <Compile Include="Runner\ParallelTestRunner.cs" />
-    <Compile Include="Runner\SequentialTestRunner.cs" />
-    <Compile Include="Runner\TestRunner.cs" />
     <Compile Include="Common\SlaveContext.cs" />
     <Compile Include="SlaveController.cs" />
     <Compile Include="Resources\locale\i18n_SlaveCore_en.Designer.cs">

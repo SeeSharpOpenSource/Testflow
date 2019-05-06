@@ -51,6 +51,13 @@ namespace Testflow.SlaveCore.SlaveFlowControl
                 throw new TestflowRuntimeException(ModuleErrorCode.InvalidMessageReceived,
                     Context.I18N.GetFStr("InvalidMessageReceived", message.GetType().Name));
             }
+            StatusMessage startMessage = new StatusMessage(MessageNames.StartStatusName, RuntimeState.Running,
+                Context.SessionId)
+            {
+                Index = Context.MsgIndex
+            };
+            Context.StatusMonitor.SendMessage(startMessage);
+            
             Context.CtrlStartMessage = null;
         }
 
@@ -59,21 +66,20 @@ namespace Testflow.SlaveCore.SlaveFlowControl
             StatusMessage errorMessage = new StatusMessage(MessageNames.ErrorStatusName, Context.State, Context.SessionId)
             {
                 ExceptionInfo = new SequenceFailedInfo(ex),
+                Index = Context.MsgIndex
             };
             Context.SessionTaskEntity.FillSequenceInfo(errorMessage, Context.I18N.GetStr("RuntimeError"));
-            Context.UplinkMsgPacker.SendMessage(errorMessage);
+            Context.StatusMonitor.SendMessage(errorMessage);
+
+            ModuleUtils.FillPerformance(errorMessage);
+            errorMessage.WatchData = Context.VariableMapper.GetReturnDataValues();
         }
 
         private bool IsOptionEnabled(ControlMessage message, string option)
         {
             return message.Params.ContainsKey(option) && true.ToString().Equals(message.Params[option]);
         }
-
-        protected override void TaskAbortAction()
-        {
-            // ignore
-        }
-
+        
         public override MessageBase GetHeartBeatMessage()
         {
             return new StatusMessage(MessageNames.HearBeatStatusName, Context.State, Context.SessionId);

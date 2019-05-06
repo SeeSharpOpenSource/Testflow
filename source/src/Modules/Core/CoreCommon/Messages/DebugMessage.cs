@@ -3,6 +3,7 @@ using System.Runtime.ConstrainedExecution;
 using System.Runtime.Serialization;
 using Testflow.CoreCommon.Common;
 using Testflow.CoreCommon.Data;
+using Testflow.Runtime;
 
 namespace Testflow.CoreCommon.Messages
 {

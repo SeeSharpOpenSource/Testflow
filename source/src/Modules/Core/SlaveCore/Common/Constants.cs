@@ -15,6 +15,10 @@
 
         public const string TaskRootThreadNameFormat = "TaskThread:Session'{0}'Root";
 
+        public const string StatusMonitorThread = "MonitorThread:Session'{0}'";
+
         public const int WakeTimerInterval = 500;
+
+        public const int KeyStatusSendInterval = 100;
     }
 }

@@ -50,16 +50,22 @@ namespace Testflow.SlaveCore.SlaveFlowControl
             this.Next = new TestGenerationFlowTask(Context);
         }
 
+        protected override void TaskAbortAction()
+        {
+            TestGenMessage testGenMessage = new TestGenMessage(MessageNames.TestGenName, Context.SessionId,
+                CommonConst.PlatformLogSession, GenerationStatus.Failed)
+            {
+                Index = Context.MsgIndex
+            };
+            Context.StatusMonitor.SendMessage(testGenMessage);
+            base.TaskAbortAction();
+        }
+
         protected override void TaskErrorAction(Exception ex)
         {
             // ignore
         }
-
-        protected override void TaskAbortAction()
-        {
-            // ignore
-        }
-
+        
         public override MessageBase GetHeartBeatMessage()
         {
             return new TestGenMessage(MessageNames.TestGenName, Context.SessionId, CommonConst.PlatformSession,
