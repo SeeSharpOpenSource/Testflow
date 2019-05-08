@@ -41,6 +41,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Attributes\AssertionAttribute.cs" />
     <Compile Include="Synchronous\SynchronizedFunctionAttribute.cs" />
     <Compile Include="Attributes\HideAttribute.cs" />
     <Compile Include="Attributes\TestflowTypeAttribute.cs" />
