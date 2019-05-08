@@ -61,6 +61,15 @@ namespace Testflow.Resources.locale {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to 断言失败。预期值：&lt;{0}&gt;；实际值：&lt;{1}&gt;。.
+        /// </summary>
+        internal static string AssertFailedInfo {
+            get {
+                return ResourceManager.GetString("AssertFailedInfo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to 平台未初始化。.
         /// </summary>
         internal static string PlatformNotInitialized {

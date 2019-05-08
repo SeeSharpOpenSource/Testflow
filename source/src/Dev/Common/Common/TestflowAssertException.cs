@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Runtime.Remoting.Proxies;
+using Testflow.Common.I18nUtil;
 
 namespace Testflow.Common
 {
@@ -13,18 +15,19 @@ namespace Testflow.Common
         /// </summary>
         /// <param name="errorCode">错误码</param>
         /// <param name="message">异常信息</param>
-        public TestflowAssertException(int errorCode, string message) : base(errorCode, message)
+        public TestflowAssertException(string message) : base(CommonErrorCode.AssertionFailed, message)
         {
         }
 
         /// <summary>
         /// 创建TestflowAssertException的实例
         /// </summary>
-        /// <param name="errorCode">错误码</param>
-        /// <param name="message">异常信息</param>
-        /// <param name="innerException">内部异常</param>
-        public TestflowAssertException(int errorCode, string message, Exception innerException) : base(errorCode, message, innerException)
+        /// <param name="expected"></param>
+        /// <param name="real"></param>
+        public TestflowAssertException(string expected, string real): base(CommonErrorCode.AssertionFailed, 
+            I18N.GetInstance(CommonConst.I18nName).GetFStr("AssertFailedInfo", expected, real))
         {
+            
         }
     }
 }

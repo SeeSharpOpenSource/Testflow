@@ -117,6 +117,9 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="AssertFailedInfo" xml:space="preserve">
+    <value>Assertion failed. Expected value:&lt;{0}&gt;; Real value:&lt;{1}&gt;.</value>
+  </data>
   <data name="PlatformNotInitialized" xml:space="preserve">
     <value>The testflow platform is not initialized.</value>
   </data>

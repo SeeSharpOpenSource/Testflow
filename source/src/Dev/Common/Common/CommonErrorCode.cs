@@ -20,6 +20,11 @@
         /// </summary>
         public const int I18nRuntimeError = 3 | CommonErrorMask;
 
+        /// <summary>
+        /// 国际化模块运行时异常
+        /// </summary>
+        public const int AssertionFailed = 4 | CommonErrorMask;
+
         #region 各模块异常码掩码定义
 
         /// <summary>

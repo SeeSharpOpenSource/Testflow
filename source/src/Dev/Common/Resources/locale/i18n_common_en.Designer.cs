@@ -61,6 +61,15 @@ namespace Testflow.Resources.locale {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Assertion failed. Expected value:&lt;{0}&gt;; Real value:&lt;{1}&gt;..
+        /// </summary>
+        internal static string AssertFailedInfo {
+            get {
+                return ResourceManager.GetString("AssertFailedInfo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The testflow platform is not initialized..
         /// </summary>
         internal static string PlatformNotInitialized {
