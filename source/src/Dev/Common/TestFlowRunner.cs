@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Threading;
-using Testflow.Common;
+using Testflow.Usr;
 using Testflow.DesignTime;
-using Testflow.Common.I18nUtil;
+using Testflow.Usr.I18nUtil;
 using Testflow.Modules;
 using Testflow.Runtime;
 

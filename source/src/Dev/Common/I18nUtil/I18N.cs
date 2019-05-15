@@ -4,7 +4,7 @@ using System.Linq;
 using System.Resources;
 using System.Threading;
 
-namespace Testflow.Common.I18nUtil
+namespace Testflow.Usr.I18nUtil
 {
     /// <summary>
     /// 国际化功能类

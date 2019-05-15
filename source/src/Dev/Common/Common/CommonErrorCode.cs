@@ -1,4 +1,4 @@
-﻿namespace Testflow.Common
+﻿namespace Testflow.Usr
 {
     /// <summary>
     /// Testflow公共异常码定义

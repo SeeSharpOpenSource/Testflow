@@ -18,5 +18,7 @@
         public const string HearBeatStatusName = "HeartBeat";
 
         public const string TestGenName = "TestGen";
+
+        public const string CallBackName = "CallBack";
     }
 }

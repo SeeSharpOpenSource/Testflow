@@ -1,0 +1,33 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<log4net>
+  <appender name ="FileAppender" type ="log4net.Appender.RollingFileAppender,log4net">
+    <param name="File" value="Log/" />
+    <layout type="log4net.Layout.PatternLayout">
+      <conversionPattern value="%-4timestamp %-5level [%thread] %logger %ndc - %message%newline" />
+    </layout>
+    <Encoding value="UTF-8" />
+    <lockingModel type="log4net.Appender.FileAppender+MinimalLock" />
+    <param name="MaxSizeRollBackups" value="100" />
+    <param name="StaticLogFileName" value="false" />
+    <param name="RollingStyle" value="Date" />
+    <param name="DatePattern" value="yyyyMMdd/yyyyMMdd&quot;-TimerServer.log&quot;" />
+    <param name="maximumFileSize" value="500KB" />
+    <param name="CountDirection" value="1" />
+  </appender>
+  <appender name ="RemoteAppender" type ="Testflow.Logger.Appender.MsgQueueAppender">
+    <layout type="log4net.Layout.PatternLayout">
+      <conversionPattern value="%-4timestamp %-5level [%thread] %logger %ndc - %message%newline" />
+    </layout>
+  </appender>
+  <root>
+    <level value ="Warn" />
+    <appender-ref ref="FileAppender"/>
+  </root>
+  <loger name="logger.platform">
+    <level value ="Warn" />
+  </loger>
+  <loger name="logger.remote">
+    <level value ="Warn" />
+    <appender-ref ref="RemoteAppender"/>
+  </loger>
+</log4net>

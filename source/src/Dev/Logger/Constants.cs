@@ -7,7 +7,8 @@
         public const string I18NName = "logger";
         public const string LogQueueName = @".\testflowlog\Journal$";
 
-        public const string PlatformLogName = "Testflow.Platform";
-        public const string RuntimeLogName = "Testflow.Runtime";
+        public const string PlatformLogName = "logger.platform";
+        public const string RuntimeLogName = "logger.remote";
+
     }
 }

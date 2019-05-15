@@ -32,5 +32,10 @@ namespace Testflow.Data.Description
         /// 该程序集支持对外暴露的变量类型
         /// </summary>
         IList<ITypeData> VariableTypes { get; set; }
+
+        /// <summary>
+        /// 库的类型
+        /// </summary>
+        string LibraryType { get; set; }
     }
 }

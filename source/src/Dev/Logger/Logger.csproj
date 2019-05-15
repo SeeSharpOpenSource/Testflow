@@ -45,8 +45,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Appender\MsgQueueAppender.cs" />
     <Compile Include="Constants.cs" />
-    <Compile Include="ILogAppender.cs" />
     <Compile Include="ModuleErrorCode.cs" />
     <Compile Include="PlatformLogSession.cs" />
     <Compile Include="LogMessage.cs" />
@@ -88,6 +88,9 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>i18n_logger_zh.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="logconfig.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

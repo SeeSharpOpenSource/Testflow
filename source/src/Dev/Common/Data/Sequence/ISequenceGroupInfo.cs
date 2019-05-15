@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Xml;
 using System.Xml.Serialization;
-using Testflow.Common;
+using Testflow.Usr;
 
 namespace Testflow.Data.Sequence
 {

@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Threading;
-using Testflow.Common;
+using Testflow.Usr;
 using Testflow.CoreCommon.Common;
 using Testflow.CoreCommon.Data;
 using Testflow.CoreCommon.Messages;
@@ -186,7 +186,9 @@ namespace Testflow.SlaveCore.Common
         public void SendMessage(MessageBase message)
         {
             _transceiver.SendMessage(message);
-            if (!_cancellation.IsCancellationRequested)
+            // 如果过程未结束，并且发送的是StatusMaintainer接收的消息，则重置心跳包发送timer
+            if (!_cancellation.IsCancellationRequested &&
+                (message.Type == MessageType.Status || message.Type == MessageType.TestGen))
             {
                 _waitTimer.Change(_heartBeatInterval, _heartBeatInterval);
             }

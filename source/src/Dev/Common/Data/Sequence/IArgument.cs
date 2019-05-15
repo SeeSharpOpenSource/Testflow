@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Xml.Serialization;
-using Testflow.Common;
+using Testflow.Usr;
 using Testflow.Data.Description;
 
 namespace Testflow.Data.Sequence

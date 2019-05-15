@@ -2,7 +2,7 @@
 using System.Runtime.Serialization;
 using System.Threading;
 
-namespace Testflow.Common
+namespace Testflow.Usr
 {
     /// <summary>
     /// 进度标识器

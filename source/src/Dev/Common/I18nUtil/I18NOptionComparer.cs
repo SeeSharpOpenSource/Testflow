@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Testflow.Common.I18nUtil
+namespace Testflow.Usr.I18nUtil
 {
     internal class I18NOptionComparer : IEqualityComparer<I18NOption>
     {

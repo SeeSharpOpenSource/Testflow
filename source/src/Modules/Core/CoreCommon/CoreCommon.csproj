@@ -61,6 +61,7 @@
     <Compile Include="Data\PerformanceData.cs" />
     <Compile Include="Data\SequenceFailedInfo.cs" />
     <Compile Include="Data\SyncResourceInfo.cs" />
+    <Compile Include="Messages\CallBackMessage.cs" />
     <Compile Include="Messages\ControlMessage.cs" />
     <Compile Include="Messages\DebugMessage.cs" />
     <Compile Include="Messages\MessageBase.cs" />

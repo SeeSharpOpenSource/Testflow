@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
-using Testflow.Common;
+using Testflow.Usr;
 using Testflow.CoreCommon;
 using Testflow.CoreCommon.Common;
 using Testflow.CoreCommon.Messages;
@@ -224,8 +224,7 @@ namespace Testflow.SlaveCore.Runner.Model
                     case RunBehavior.ForceFailed:
                         ExecuteSequenceStep();
                         this.Result = StepResult.Failed;
-                        TestflowAssertException exception = new TestflowAssertException(ModuleErrorCode.ForceFailed,
-                            Context.I18N.GetStr("StepForceFailed"));
+                        TestflowAssertException exception = new TestflowAssertException(Context.I18N.GetStr("StepForceFailed"));
                         SequenceStatusInfo info = new SequenceStatusInfo(SequenceIndex, this.GetStack(),
                             StatusReportType.Failed, this.Result, exception);
                         Context.StatusQueue.Enqueue(info);

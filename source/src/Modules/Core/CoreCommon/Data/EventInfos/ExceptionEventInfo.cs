@@ -1,5 +1,5 @@
 ﻿using System;
-using Testflow.Common;
+using Testflow.Usr;
 using Testflow.CoreCommon.Messages;
 
 namespace Testflow.CoreCommon.Data.EventInfos

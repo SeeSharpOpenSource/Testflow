@@ -1,4 +1,4 @@
-﻿namespace Testflow.Common
+﻿namespace Testflow.Usr
 {
     /// <summary>
     /// 公共常量类

@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Runtime.Remoting.Proxies;
-using Testflow.Common.I18nUtil;
+using Testflow.Usr.I18nUtil;
 
-namespace Testflow.Common
+namespace Testflow.Usr
 {
     /// <summary>
     /// Testflow的断言异常

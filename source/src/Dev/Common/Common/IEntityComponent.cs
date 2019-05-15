@@ -1,7 +1,7 @@
 ﻿using System;
 using Testflow.Data.Sequence;
 
-namespace Testflow.Common
+namespace Testflow.Usr
 {
     /// <summary>
     /// 

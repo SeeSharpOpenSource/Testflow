@@ -3,7 +3,7 @@ using System.Collections.Concurrent;
 using System.Linq;
 using System.Resources;
 using System.Threading;
-using Testflow.Common;
+using Testflow.Usr;
 
 namespace Testflow.Utility.I18nUtil
 {

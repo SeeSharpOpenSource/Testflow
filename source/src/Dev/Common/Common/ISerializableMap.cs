@@ -2,7 +2,7 @@
 using System.Runtime.Serialization;
 using System.Xml.Serialization;
 
-namespace Testflow.Common
+namespace Testflow.Usr
 {
     /// <summary>
     /// 可序列化的键值集合

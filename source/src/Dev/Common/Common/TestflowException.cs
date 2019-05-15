@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Testflow.Common
+namespace Testflow.Usr
 {
     /// <summary>
     /// Testflow的异常基类

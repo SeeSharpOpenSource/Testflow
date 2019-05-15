@@ -38,6 +38,11 @@
         /// <summary>
         /// 运行时异常消息
         /// </summary>
-        RuntimeError = 6
+        RuntimeError = 6,
+
+        /// <summary>
+        /// 回调返回消息
+        /// </summary>
+        CallBack = 7
     }
 }

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Testflow.Common
+namespace Testflow.Usr
 {
     /// <summary>
     /// 属性可扩展组件的接口

@@ -1,4 +1,4 @@
-﻿namespace Testflow.Common
+﻿namespace Testflow.Usr
 {
     /// <summary>
     /// 可拷贝接口

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Xml.Serialization;
-using Testflow.Common;
+using Testflow.Usr;
 using Testflow.Data.Description;
 
 namespace Testflow.Data.Sequence
