@@ -2,7 +2,7 @@
 using System.IO;
 using System.Reflection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Testflow.Common;
+using Testflow.Usr;
 using Testflow.Data;
 using Testflow.Data.Sequence;
 using Testflow.SequenceManager;
