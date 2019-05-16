@@ -51,22 +51,171 @@ namespace Testflow.DataMaintainer
             DataModelMapper = new DataModelMapper();
         }
 
-        public abstract int GetTestInstanceCount(string fileterString);
-        public abstract TestInstanceData GetTestInstanceData(string runtimeHash);
-        public abstract IList<TestInstanceData> GetTestInstanceDatas(string filterString);
-        public abstract void AddData(TestInstanceData testInstance);
-        public abstract void UpdateData(TestInstanceData testInstance);
-        public abstract void DeleteTestInstance(string fileterString);
-        public abstract IList<SessionResultData> GetSessionResults(string runtimeHash);
-        public abstract SessionResultData GetSessionResult(string runtimeHash, int sessionId);
-        public abstract void AddData(SessionResultData sessionResult);
-        public abstract void UpdateData(SessionResultData sessionResult);
-        public abstract IList<SequenceResultData> GetSequenceResultDatas(string runtimeHash, int sessionId);
-        public abstract SequenceResultData GetSequenceResultData(string runtimeHash, int sessionId, int sequenceIndex);
-        public abstract void AddData(SequenceResultData sequenceResult);
-        public abstract void UpdateData(SequenceResultData sequenceResult);
-        public abstract void AddData(PerformanceStatus performanceStatus);
-        public abstract void AddData(RuntimeStatusData runtimeStatus);
+        public virtual int GetTestInstanceCount(string fileterString)
+        {
+            string cmd = SqlCommandFactory.CreateCalcCountCmd(string.Empty, DataBaseItemNames.InstanceTableName);
+            using (DbDataReader dataReader = ExecuteReadCommand(cmd))
+            {
+                bool read = dataReader.Read();
+                return (int)dataReader[0];
+            }
+        }
+
+        public virtual TestInstanceData GetTestInstanceData(string runtimeHash)
+        {
+            string filter = $"{DataBaseItemNames.RuntimeIdColumn}='{runtimeHash}'";
+            string cmd = SqlCommandFactory.CreateQueryCmd(filter, DataBaseItemNames.InstanceTableName);
+            DbDataReader dataReader = ExecuteReadCommand(cmd);
+            TestInstanceData instanceData;
+            if (dataReader.Read())
+            {
+                instanceData = new TestInstanceData();
+                DataModelMapper.ReadToObject(dataReader, instanceData);
+            }
+            else
+            {
+                instanceData = null;
+            }
+            return instanceData;
+        }
+
+        public virtual IList<TestInstanceData> GetTestInstanceDatas(string filterString)
+        {
+            string cmd = SqlCommandFactory.CreateQueryCmd(filterString, DataBaseItemNames.InstanceTableName);
+            DbDataReader dataReader = ExecuteReadCommand(cmd);
+            List<TestInstanceData> testInstanceDatas = new List<TestInstanceData>(50);
+            while (dataReader.Read())
+            {
+                TestInstanceData instanceData = new TestInstanceData();
+                DataModelMapper.ReadToObject(dataReader, instanceData);
+                testInstanceDatas.Add(instanceData);
+            }
+            return testInstanceDatas;
+        }
+
+        public virtual void AddData(TestInstanceData testInstance)
+        {
+            
+        }
+
+        public virtual void UpdateData(TestInstanceData testInstance)
+        {
+            
+        }
+
+        public virtual void DeleteTestInstance(string fileterString)
+        {
+            string deleteCmd = SqlCommandFactory.CreateDeleteCmd(DataBaseItemNames.StatusTableName, fileterString);
+            ExecuteWriteCommand(deleteCmd);
+
+            deleteCmd = SqlCommandFactory.CreateDeleteCmd(DataBaseItemNames.PerformanceTableName, fileterString);
+            ExecuteWriteCommand(deleteCmd);
+
+            deleteCmd = SqlCommandFactory.CreateDeleteCmd(DataBaseItemNames.SequenceResultColumn, fileterString);
+            ExecuteWriteCommand(deleteCmd);
+
+            deleteCmd = SqlCommandFactory.CreateDeleteCmd(DataBaseItemNames.SessionTableName, fileterString);
+            ExecuteWriteCommand(deleteCmd);
+
+            deleteCmd = SqlCommandFactory.CreateDeleteCmd(DataBaseItemNames.InstanceTableName, fileterString);
+            ExecuteWriteCommand(deleteCmd);
+        }
+
+        public virtual IList<SessionResultData> GetSessionResults(string runtimeHash)
+        {
+            string filter = $"{DataBaseItemNames.RuntimeIdColumn}='{runtimeHash}'";
+            List<SessionResultData> resultDatas = new List<SessionResultData>(10);
+
+            string cmd = SqlCommandFactory.CreateQueryCmd(filter, DataBaseItemNames.SessionTableName);
+
+            DbDataReader dataReader = ExecuteReadCommand(cmd);
+            while (dataReader.Read())
+            {
+                SessionResultData sessionResultData = new SessionResultData();
+                DataModelMapper.ReadToObject(dataReader, sessionResultData);
+                resultDatas.Add(sessionResultData);
+            }
+
+            return resultDatas;
+        }
+
+        public virtual SessionResultData GetSessionResult(string runtimeHash, int sessionId)
+        {
+            string filter = $"{DataBaseItemNames.RuntimeIdColumn}='{runtimeHash}' AND {DataBaseItemNames.SessionIdColumn}={sessionId}";
+            string cmd = SqlCommandFactory.CreateQueryCmd(filter, DataBaseItemNames.SessionTableName);
+
+            DbDataReader dataReader = ExecuteReadCommand(cmd);
+
+            SessionResultData sessionResultData = null;
+            if (dataReader.Read())
+            {
+                sessionResultData = new SessionResultData();
+                DataModelMapper.ReadToObject(dataReader, sessionResultData);
+            }
+            return sessionResultData;
+        }
+
+        public virtual void AddData(SessionResultData sessionResult)
+        {
+            
+        }
+
+        public virtual void UpdateData(SessionResultData sessionResult)
+        {
+            
+        }
+
+        public virtual IList<SequenceResultData> GetSequenceResultDatas(string runtimeHash, int sessionId)
+        {
+            string filter = $"{DataBaseItemNames.RuntimeIdColumn}='{runtimeHash}' AND {DataBaseItemNames.SessionIdColumn}={sessionId}";
+            string cmd = SqlCommandFactory.CreateQueryCmd(filter, DataBaseItemNames.SequenceTableName);
+
+            DbDataReader dataReader = ExecuteReadCommand(cmd);
+            List<SequenceResultData> resultDatas = new List<SequenceResultData>(10);
+            while (dataReader.Read())
+            {
+                SequenceResultData sequenceResultData = new SequenceResultData();
+                DataModelMapper.ReadToObject(dataReader, sequenceResultData);
+                resultDatas.Add(sequenceResultData);
+            }
+            return resultDatas;
+        }
+
+        public virtual SequenceResultData GetSequenceResultData(string runtimeHash, int sessionId, int sequenceIndex)
+        {
+            string filter = $"{DataBaseItemNames.RuntimeIdColumn}='{runtimeHash}' AND {DataBaseItemNames.SessionIdColumn}={sessionId} AND " +
+                            $"{DataBaseItemNames.SequenceIndexColumn}={sequenceIndex}";
+            string cmd = SqlCommandFactory.CreateQueryCmd(filter, DataBaseItemNames.SequenceTableName);
+
+            DbDataReader dataReader = ExecuteReadCommand(cmd);
+            SequenceResultData sequenceResultData = null;
+            if (dataReader.Read())
+            {
+                sequenceResultData = new SequenceResultData();
+                DataModelMapper.ReadToObject(dataReader, sequenceResultData);
+            }
+            return sequenceResultData;
+        }
+
+        public virtual void AddData(SequenceResultData sequenceResult)
+        {
+            
+        }
+
+        public virtual void UpdateData(SequenceResultData sequenceResult)
+        {
+            
+        }
+
+        public virtual void AddData(PerformanceStatus performanceStatus)
+        {
+            
+        }
+
+        public virtual void AddData(RuntimeStatusData runtimeStatus)
+        {
+            
+        }
 
         protected DbDataReader ExecuteReadCommand(string command)
         {
