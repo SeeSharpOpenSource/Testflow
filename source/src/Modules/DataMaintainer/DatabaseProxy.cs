@@ -16,6 +16,7 @@ namespace Testflow.DataMaintainer
         protected readonly I18N I18N;
 
         protected readonly IModuleConfigData ConfigData;
+        protected DataModelMapper DataModelMapper;
 
         protected DatabaseProxy(IModuleConfigData configData, bool isRuntimeModuleModule)
         {
@@ -46,6 +47,8 @@ namespace Testflow.DataMaintainer
                 Logger.Print(LogLevel.Fatal, CommonConst.PlatformLogSession, ex, "Connect db failed.");
                 throw new TestflowRuntimeException(ModuleErrorCode.ConnectDbFailed, I18N.GetStr("ConnectDbFailed"), ex);
             }
+
+            DataModelMapper = new DataModelMapper();
         }
 
         public abstract int GetTestInstanceCount(string fileterString);
@@ -77,7 +80,7 @@ namespace Testflow.DataMaintainer
             catch (DbException ex)
             {
                 Logger.Print(LogLevel.Fatal, CommonConst.PlatformLogSession, ex, "Database operation failed.");
-                throw new TestflowRuntimeException(ModuleErrorCode.ConnectDbFailed, I18N.GetStr("DbOperationFailed"), ex);
+                throw new TestflowRuntimeException(ModuleErrorCode.DbOperationFailed, I18N.GetStr("DbOperationFailed"), ex);
             }
         }
 
@@ -93,7 +96,7 @@ namespace Testflow.DataMaintainer
             catch (DbException ex)
             {
                 Logger.Print(LogLevel.Fatal, CommonConst.PlatformLogSession, ex, "Database operation failed.");
-                throw new TestflowRuntimeException(ModuleErrorCode.ConnectDbFailed, I18N.GetStr("DbOperationFailed"), ex);
+                throw new TestflowRuntimeException(ModuleErrorCode.DbOperationFailed, I18N.GetStr("DbOperationFailed"), ex);
             }
         }
 

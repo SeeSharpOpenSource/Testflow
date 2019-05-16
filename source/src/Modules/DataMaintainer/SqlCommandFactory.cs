@@ -8,25 +8,25 @@ namespace Testflow.DataMaintainer
         const string Delim = ",";
         const string AssignChar = "=";
         const string WhereFormat = " WHERE ({0})";
-        public static string CreateQueryCmd(string fileter, string tableName, params string[] columnName)
+        public static string CreateQueryCmd(string filter, string tableName, params string[] columnName)
         {
             const string cmdFormat = "SELECTE {0} FROM {1}";
             string columnNames = columnName.Length == 0 ? "*" : string.Join(Delim, columnName);
             string cmd = string.Format(cmdFormat, columnNames, tableName);
-            if (!string.IsNullOrWhiteSpace(fileter))
+            if (!string.IsNullOrWhiteSpace(filter))
             {
-                cmd += string.Format(WhereFormat, fileter);
+                cmd += string.Format(WhereFormat, filter);
             }
             return cmd;
         }
 
-        public static string CreateCalcCountCmd(string fileter, string tableName)
+        public static string CreateCalcCountCmd(string filter, string tableName)
         {
             const string cmdFormat = "SELECTE COUNT (*) FROM {0}";
             string cmd = string.Format(cmdFormat, tableName);
-            if (!string.IsNullOrWhiteSpace(fileter))
+            if (!string.IsNullOrWhiteSpace(filter))
             {
-                cmd += string.Format(WhereFormat, fileter);
+                cmd += string.Format(WhereFormat, filter);
             }
             return cmd;
         }
@@ -58,6 +58,17 @@ namespace Testflow.DataMaintainer
             }
             valuePairStr.Remove(valuePairStr.Length - 1, 1);
             return string.Format(cmdFormat, tableName, valuePairStr, string.Format(WhereFormat, filter));
+        }
+
+        public static string CreateDeleteCmd(string tableName, string filter)
+        {
+            const string cmdFormat = "DELETE FROM {0}";
+            string cmd = string.Format(cmdFormat, tableName);
+            if (!string.IsNullOrWhiteSpace(filter))
+            {
+                cmd += string.Format(WhereFormat, filter);
+            }
+            return cmd;
         }
     }
 }

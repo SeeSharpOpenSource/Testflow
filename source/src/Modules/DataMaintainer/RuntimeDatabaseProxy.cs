@@ -18,17 +18,17 @@ namespace Testflow.DataMaintainer
 
         public override int GetTestInstanceCount(string fileterString)
         {
-            throw new System.NotImplementedException();
+            throw new System.InvalidProgramException();
         }
 
         public override TestInstanceData GetTestInstanceData(string runtimeHash)
         {
-            throw new System.NotImplementedException();
+            throw new System.InvalidProgramException();
         }
 
         public override IList<TestInstanceData> GetTestInstanceDatas(string filterString)
         {
-            throw new System.NotImplementedException();
+            throw new System.InvalidProgramException();
         }
 
         public override void AddData(TestInstanceData testInstance)
