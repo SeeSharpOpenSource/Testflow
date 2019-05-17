@@ -48,7 +48,6 @@
   <ItemGroup>
     <Compile Include="Constants.cs" />
     <Compile Include="DataBaseItemNames.cs" />
-    <Compile Include="DataConvertor.cs" />
     <Compile Include="DataMaintainer.cs" />
     <Compile Include="DataModelMapper.cs" />
     <Compile Include="DesigntimeDatabaseProxy.cs" />
