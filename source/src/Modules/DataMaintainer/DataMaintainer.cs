@@ -8,14 +8,18 @@ namespace Testflow.DataMaintainer
     {
         public IModuleConfigData ConfigData { get; set; }
 
+        private DatabaseProxy _databaseProxy;
+
         public void RuntimeInitialize()
         {
-            throw new System.NotImplementedException();
+            _databaseProxy?.Dispose();
+            _databaseProxy = new RuntimeDatabaseProxy(ConfigData);
         }
 
         public void DesigntimeInitialize()
         {
-            throw new System.NotImplementedException();
+            _databaseProxy?.Dispose();
+            _databaseProxy = new DesigntimeDatabaseProxy(ConfigData);
         }
 
         public void ApplyConfig(IModuleConfigData configData)
@@ -25,87 +29,87 @@ namespace Testflow.DataMaintainer
 
         public int GetTestInstanceCount(string fileterString)
         {
-            throw new System.NotImplementedException();
+            return _databaseProxy.GetTestInstanceCount(fileterString);
         }
 
         public TestInstanceData GetTestInstanceData(string runtimeHash)
         {
-            throw new System.NotImplementedException();
+            return _databaseProxy.GetTestInstanceData(runtimeHash);
         }
 
         public IList<TestInstanceData> GetTestInstanceDatas(string filterString)
         {
-            throw new System.NotImplementedException();
+            return _databaseProxy.GetTestInstanceDatas(filterString);
         }
 
         public void AddData(TestInstanceData testInstance)
         {
-            throw new System.NotImplementedException();
+            _databaseProxy.AddData(testInstance);
         }
 
         public void UpdateData(TestInstanceData testInstance)
         {
-            throw new System.NotImplementedException();
+            _databaseProxy.UpdateData(testInstance);
         }
 
         public void DeleteTestInstance(string fileterString)
         {
-            throw new System.NotImplementedException();
+            _databaseProxy.DeleteTestInstance(fileterString);
         }
 
         public IList<SessionResultData> GetSessionResults(string runtimeHash)
         {
-            throw new System.NotImplementedException();
+            return _databaseProxy.GetSessionResults(runtimeHash);
         }
 
         public SessionResultData GetSessionResult(string runtimeHash, int sessionId)
         {
-            throw new System.NotImplementedException();
+            return _databaseProxy.GetSessionResult(runtimeHash, sessionId);
         }
 
         public void AddData(SessionResultData sessionResult)
         {
-            throw new System.NotImplementedException();
+            _databaseProxy.AddData(sessionResult);
         }
 
         public void UpdateData(SessionResultData sessionResult)
         {
-            throw new System.NotImplementedException();
+            _databaseProxy.UpdateData(sessionResult);
         }
 
         public IList<SequenceResultData> GetSequenceResultDatas(string runtimeHash, int sessionId)
         {
-            throw new System.NotImplementedException();
+            return _databaseProxy.GetSequenceResultDatas(runtimeHash, sessionId);
         }
 
         public SequenceResultData GetSequenceResultData(string runtimeHash, int sessionId, int sequenceIndex)
         {
-            throw new System.NotImplementedException();
+            return _databaseProxy.GetSequenceResultData(runtimeHash, sessionId, sequenceIndex);
         }
 
         public void AddData(SequenceResultData sequenceResult)
         {
-            throw new System.NotImplementedException();
+            _databaseProxy.AddData(sequenceResult);
         }
 
         public void UpdateData(SequenceResultData sequenceResult)
         {
-            throw new System.NotImplementedException();
+            _databaseProxy.UpdateData(sequenceResult);
         }
 
         public void AddData(PerformanceStatus performanceStatus)
         {
-            throw new System.NotImplementedException();
+            _databaseProxy.AddData(performanceStatus);
         }
 
         public void AddData(RuntimeStatusData runtimeStatus)
         {
-            throw new System.NotImplementedException();
+            _databaseProxy.AddData(runtimeStatus);
         }
 
         public void Dispose()
         {
-            throw new System.NotImplementedException();
+            _databaseProxy?.Dispose();
         }
     }
 }

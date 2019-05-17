@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Data;
 using System.Data.Common;
 using Testflow.Modules;
 using Testflow.Runtime.Data;
@@ -95,30 +97,59 @@ namespace Testflow.DataMaintainer
 
         public virtual void AddData(TestInstanceData testInstance)
         {
-            
+            Dictionary<string, string> columnToValue = DataModelMapper.GetColumnValueMapping(testInstance);
+            string cmd = SqlCommandFactory.CreateInsertCmd(DataBaseItemNames.InstanceTableName, columnToValue);
+            ExecuteWriteCommand(cmd);
         }
 
         public virtual void UpdateData(TestInstanceData testInstance)
         {
-            
+            // 获取原数据，转换为键值对类型
+            TestInstanceData lastInstanceData = GetTestInstanceData(testInstance.RuntimeHash);
+            Dictionary<string, string> lastInstanceValues = DataModelMapper.GetColumnValueMapping(lastInstanceData);
+
+            Dictionary<string, string> columnToValue = DataModelMapper.GetColumnValueMapping(testInstance);
+            // 比较并创建更新命令
+            string filter = $"{DataBaseItemNames.RuntimeIdColumn}='{testInstance.RuntimeHash}'";
+            string cmd = SqlCommandFactory.CreateUpdateCmd(DataBaseItemNames.InstanceTableName, lastInstanceValues,
+                columnToValue, filter);
+            ExecuteWriteCommand(cmd);
         }
 
         public virtual void DeleteTestInstance(string fileterString)
         {
-            string deleteCmd = SqlCommandFactory.CreateDeleteCmd(DataBaseItemNames.StatusTableName, fileterString);
-            ExecuteWriteCommand(deleteCmd);
+            DbTransaction transaction = null;
+            try
+            {
+                // 删除TestInstance需要执行事务流程
+                transaction = Connection.BeginTransaction(IsolationLevel.Serializable);
 
-            deleteCmd = SqlCommandFactory.CreateDeleteCmd(DataBaseItemNames.PerformanceTableName, fileterString);
-            ExecuteWriteCommand(deleteCmd);
+                string deleteCmd = SqlCommandFactory.CreateDeleteCmd(DataBaseItemNames.StatusTableName, fileterString);
+                ExecuteWriteCommand(deleteCmd, transaction);
 
-            deleteCmd = SqlCommandFactory.CreateDeleteCmd(DataBaseItemNames.SequenceResultColumn, fileterString);
-            ExecuteWriteCommand(deleteCmd);
+                deleteCmd = SqlCommandFactory.CreateDeleteCmd(DataBaseItemNames.PerformanceTableName, fileterString);
+                ExecuteWriteCommand(deleteCmd, transaction);
 
-            deleteCmd = SqlCommandFactory.CreateDeleteCmd(DataBaseItemNames.SessionTableName, fileterString);
-            ExecuteWriteCommand(deleteCmd);
+                deleteCmd = SqlCommandFactory.CreateDeleteCmd(DataBaseItemNames.SequenceResultColumn, fileterString);
+                ExecuteWriteCommand(deleteCmd, transaction);
 
-            deleteCmd = SqlCommandFactory.CreateDeleteCmd(DataBaseItemNames.InstanceTableName, fileterString);
-            ExecuteWriteCommand(deleteCmd);
+                deleteCmd = SqlCommandFactory.CreateDeleteCmd(DataBaseItemNames.SessionTableName, fileterString);
+                ExecuteWriteCommand(deleteCmd, transaction);
+
+                deleteCmd = SqlCommandFactory.CreateDeleteCmd(DataBaseItemNames.InstanceTableName, fileterString);
+                ExecuteWriteCommand(deleteCmd, transaction);
+
+                transaction.Commit();
+            }
+            catch (Exception)
+            {
+                transaction?.Rollback();
+                throw;
+            }
+            finally
+            {
+                transaction?.Dispose();
+            }
         }
 
         public virtual IList<SessionResultData> GetSessionResults(string runtimeHash)
@@ -157,12 +188,22 @@ namespace Testflow.DataMaintainer
 
         public virtual void AddData(SessionResultData sessionResult)
         {
-            
+            Dictionary<string, string> columnToValue = DataModelMapper.GetColumnValueMapping(sessionResult);
+            string cmd = SqlCommandFactory.CreateInsertCmd(DataBaseItemNames.SessionTableName, columnToValue);
+            ExecuteWriteCommand(cmd);
         }
 
         public virtual void UpdateData(SessionResultData sessionResult)
         {
-            
+            SessionResultData lastSessionResult = GetSessionResult(sessionResult.RuntimeHash, sessionResult.Session);
+            Dictionary<string, string> lastSessionValues = DataModelMapper.GetColumnValueMapping(lastSessionResult);
+
+            Dictionary<string, string> columnToValue = DataModelMapper.GetColumnValueMapping(sessionResult);
+
+            string filter = $"{DataBaseItemNames.RuntimeIdColumn}='{sessionResult.RuntimeHash}' AND {DataBaseItemNames.SessionIdColumn}={sessionResult.Session}";
+            string cmd = SqlCommandFactory.CreateUpdateCmd(DataBaseItemNames.SessionTableName, lastSessionValues,
+                columnToValue, filter);
+            ExecuteWriteCommand(cmd);
         }
 
         public virtual IList<SequenceResultData> GetSequenceResultDatas(string runtimeHash, int sessionId)
@@ -199,31 +240,54 @@ namespace Testflow.DataMaintainer
 
         public virtual void AddData(SequenceResultData sequenceResult)
         {
-            
+            Dictionary<string, string> columnToValue = DataModelMapper.GetColumnValueMapping(sequenceResult);
+            string cmd = SqlCommandFactory.CreateInsertCmd(DataBaseItemNames.SequenceTableName, columnToValue);
+            ExecuteWriteCommand(cmd);
         }
 
         public virtual void UpdateData(SequenceResultData sequenceResult)
         {
-            
+            SequenceResultData lastSequenceResult = GetSequenceResultData(sequenceResult.RuntimeHash,
+                sequenceResult.Session, sequenceResult.SequenceIndex);
+
+
+            Dictionary<string, string> lastSequenceValues = DataModelMapper.GetColumnValueMapping(lastSequenceResult);
+
+            Dictionary<string, string> columnToValue = DataModelMapper.GetColumnValueMapping(sequenceResult);
+
+            string filter =
+                $"{DataBaseItemNames.RuntimeIdColumn}='{sequenceResult.RuntimeHash}' AND {DataBaseItemNames.SessionIdColumn}={sequenceResult.Session} AND {DataBaseItemNames.SequenceIndexColumn}={sequenceResult.SequenceIndex}";
+
+            string cmd = SqlCommandFactory.CreateUpdateCmd(DataBaseItemNames.SequenceTableName, lastSequenceValues,
+                columnToValue, filter);
+            ExecuteWriteCommand(cmd);
         }
 
         public virtual void AddData(PerformanceStatus performanceStatus)
         {
-            
+            Dictionary<string, string> columnToValue = DataModelMapper.GetColumnValueMapping(performanceStatus);
+            string cmd = SqlCommandFactory.CreateInsertCmd(DataBaseItemNames.PerformanceTableName, columnToValue);
+            ExecuteWriteCommand(cmd);
         }
 
         public virtual void AddData(RuntimeStatusData runtimeStatus)
         {
-            
+            Dictionary<string, string> columnToValue = DataModelMapper.GetColumnValueMapping(runtimeStatus);
+            string cmd = SqlCommandFactory.CreateInsertCmd(DataBaseItemNames.StatusTableName, columnToValue);
+            ExecuteWriteCommand(cmd);
         }
 
-        protected DbDataReader ExecuteReadCommand(string command)
+        protected DbDataReader ExecuteReadCommand(string command, DbTransaction transaction = null)
         {
             try
             {
                 DbCommand dbCommand = Connection.CreateCommand();
                 dbCommand.CommandText = command;
                 dbCommand.CommandTimeout = Constants.CommandTimeout;
+                if (null != transaction)
+                {
+                    dbCommand.Transaction = transaction;
+                }
                 return dbCommand.ExecuteReader();
             }
             catch (DbException ex)
@@ -233,13 +297,17 @@ namespace Testflow.DataMaintainer
             }
         }
 
-        protected void ExecuteWriteCommand(string command)
+        protected void ExecuteWriteCommand(string command, DbTransaction transaction = null)
         {
             try
             {
                 DbCommand dbCommand = Connection.CreateCommand();
                 dbCommand.CommandText = command;
                 dbCommand.CommandTimeout = Constants.CommandTimeout;
+                if (null != transaction)
+                {
+                    dbCommand.Transaction = transaction;
+                }
                 dbCommand.ExecuteNonQuery();
             }
             catch (DbException ex)
@@ -248,7 +316,7 @@ namespace Testflow.DataMaintainer
                 throw new TestflowRuntimeException(ModuleErrorCode.DbOperationFailed, I18N.GetStr("DbOperationFailed"), ex);
             }
         }
-
+        
         public void Dispose()
         {
             Connection?.Close();

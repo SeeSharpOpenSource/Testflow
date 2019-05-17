@@ -13,6 +13,8 @@ namespace Testflow.DataMaintainer
         // 对应表格->每个表格的映射表->表格列名和属性名的正反映射
         private readonly Dictionary<string, Dictionary<string, string>> _tableToColumnPropertyMapping;
 
+        private readonly Dictionary<string, Func<object, string>> _valueToStrConvertor;
+
         public DataModelMapper()
         {
             _typeToTableMapping = new Dictionary<string, string>(10)
@@ -70,6 +72,20 @@ namespace Testflow.DataMaintainer
                     }
                 }
             };
+
+            this._valueToStrConvertor = new Dictionary<string, Func<object, string>>(10);
+            this._valueToStrConvertor.Add(typeof (int).Name, new Func<object, string>((value) => value.ToString()));
+            this._valueToStrConvertor.Add(typeof (double).Name, new Func<object, string>((value) => value.ToString()));
+            this._valueToStrConvertor.Add(typeof (uint).Name, new Func<object, string>((value) => value.ToString()));
+            this._valueToStrConvertor.Add(typeof (short).Name, new Func<object, string>((value) => value.ToString()));
+            this._valueToStrConvertor.Add(typeof (ushort).Name, new Func<object, string>((value) => value.ToString()));
+            this._valueToStrConvertor.Add(typeof (byte).Name, new Func<object, string>((value) => value.ToString()));
+            this._valueToStrConvertor.Add(typeof (char).Name, new Func<object, string>((value) => value.ToString()));
+            this._valueToStrConvertor.Add(typeof (long).Name, new Func<object, string>((value) => value.ToString()));
+            this._valueToStrConvertor.Add(typeof (ulong).Name, new Func<object, string>((value) => value.ToString()));
+            this._valueToStrConvertor.Add(typeof (float).Name, new Func<object, string>((value) => value.ToString()));
+            this._valueToStrConvertor.Add(typeof (string).Name, new Func<object, string>((value) => $"'{value}'"));
+            this._valueToStrConvertor.Add(typeof (DateTime).Name, new Func<object, string>((value) => value.ToString()));
         }
 
         public TDataType ReadToObject<TDataType>(DbDataReader reader, TDataType dataObj) where TDataType : class
@@ -91,6 +107,25 @@ namespace Testflow.DataMaintainer
                 propertyInfo.SetValue(dataObj, propertyValue);
             }
             return dataObj;
+        }
+
+        public Dictionary<string, string> GetColumnValueMapping<TDataType>(TDataType dataObj) where TDataType : class
+        {
+            Type type = dataObj.GetType();
+            PropertyInfo[] properties = type.GetProperties(BindingFlags.Instance | BindingFlags.Public);
+            Dictionary<string, string> columnValueMapping = new Dictionary<string, string>(properties.Length);
+            foreach (PropertyInfo propertyInfo in properties)
+            {
+                string columnName = GetTableColumnName(type.Name, propertyInfo.Name);
+                Type propertyType = propertyInfo.PropertyType;
+                object value = propertyInfo.GetValue(dataObj);
+                if (null == value) continue;
+                string valueStr = propertyType.IsEnum
+                    ? value.ToString()
+                    : _valueToStrConvertor[propertyType.Name].Invoke(value);
+                columnValueMapping.Add(columnName, valueStr);
+            }
+            return columnValueMapping;
         }
 
         private string GetTableColumnName(string typeName, string propertyName)
