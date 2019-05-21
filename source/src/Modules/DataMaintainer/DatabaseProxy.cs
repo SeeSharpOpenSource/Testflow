@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
+using System.Data.SQLite;
 using System.IO;
 using System.Text;
 using Testflow.Modules;
@@ -16,7 +17,7 @@ namespace Testflow.DataMaintainer
         public bool IsRuntimeModule { get; }
 
         protected readonly ILogService Logger;
-        protected readonly DbConnection Connection;
+        protected DbConnection Connection;
         protected readonly I18N I18N;
 
         protected readonly IModuleConfigData ConfigData;
@@ -27,22 +28,24 @@ namespace Testflow.DataMaintainer
             this.ConfigData = configData;
             IsRuntimeModule = isRuntimeModuleModule;
 
-            I18NOption i18NOption = new I18NOption(this.GetType().Assembly, "i18n_datamaintain_zh.resx", "i18n_datamaintain_zh.resx")
+            I18NOption i18NOption = new I18NOption(this.GetType().Assembly, "i18n_datamaintain_zh", "i18n_datamaintain_en")
             {
                 Name = Constants.I18nName
             };
             I18N.InitInstance(i18NOption);
             I18N = I18N.GetInstance(Constants.I18nName);
+            Logger = TestflowRunner.GetInstance().LogService;
             try
             {
-                Logger = TestflowRunner.GetInstance().LogService;
-                DbProviderFactory factory = DbProviderFactories.GetFactory("System.Data.SQLite");
-                Connection = factory.CreateConnection();
-                if (null == Connection)
-                {
-                    Logger.Print(LogLevel.Fatal, CommonConst.PlatformLogSession, "Connect db failed.");
-                    throw new TestflowRuntimeException(ModuleErrorCode.ConnectDbFailed, I18N.GetStr("ConnectDbFailed"));
-                }
+                // 使用DbProviderFactory方式连接需要在App.Config文件中定义DbProviderFactories节点
+                // 但是App.Config文件只在入口Assembly中时才会被默认加载，所以目前写死为SqlConnection
+//                DbProviderFactory factory = DbProviderFactories.GetFactory("System.Data.SQLite");
+//                Connection = factory.CreateConnection();
+//                if (null == Connection)
+//                {
+//                    Logger.Print(LogLevel.Fatal, CommonConst.PlatformLogSession, "Connect db failed.");
+//                    throw new TestflowRuntimeException(ModuleErrorCode.ConnectDbFailed, I18N.GetStr("ConnectDbFailed"));
+//                }
                 InitializeDatabaseAndConnection();
             }
             catch (DbException ex)
@@ -131,7 +134,7 @@ namespace Testflow.DataMaintainer
                 deleteCmd = SqlCommandFactory.CreateDeleteCmd(DataBaseItemNames.PerformanceTableName, fileterString);
                 ExecuteWriteCommand(deleteCmd, transaction);
 
-                deleteCmd = SqlCommandFactory.CreateDeleteCmd(DataBaseItemNames.SequenceResultColumn, fileterString);
+                deleteCmd = SqlCommandFactory.CreateDeleteCmd(DataBaseItemNames.SequenceTableName, fileterString);
                 ExecuteWriteCommand(deleteCmd, transaction);
 
                 deleteCmd = SqlCommandFactory.CreateDeleteCmd(DataBaseItemNames.SessionTableName, fileterString);
@@ -329,11 +332,16 @@ namespace Testflow.DataMaintainer
             {
                 testflowHome += Path.DirectorySeparatorChar;
             }
-            string databaseFilePath = $"{testflowHome}{CommonConst.DataDir}{Path.DirectorySeparatorChar}{Constants.DataBaseName}";
-            Connection.ConnectionString = $"Data Source={databaseFilePath}";
+            string databaseFilePath =
+                $"{testflowHome}{CommonConst.DataDir}{Path.DirectorySeparatorChar}{Constants.DataBaseName}";
+            // 使用DbProviderFactory方式连接需要在App.Config文件中定义DbProviderFactories节点
+            // 但是App.Config文件只在入口Assembly中时才会被默认加载，所以目前写死为SqlConnection
+//            Connection.ConnectionString = $"Data Source={databaseFilePath}";
+
             // 如果已经存在则直接跳出
             if (File.Exists(databaseFilePath))
             {
+                Connection = new SQLiteConnection($"Data Source={databaseFilePath}");
                 Connection.Open();
                 return;
             }
@@ -342,14 +350,15 @@ namespace Testflow.DataMaintainer
             {
                 Directory.CreateDirectory(CommonConst.DataDir);
             }
-
+            Connection = new SQLiteConnection($"Data Source={databaseFilePath}");
             DbTransaction transaction = null;
             try
             {
                 const string endDelim = ";";
+                const string commentPrefix = "--";
                 Connection.Open();
                 string sqlFilePath =
-                    $"{CommonConst.EnvironmentVariable}{Path.DirectorySeparatorChar}{Constants.SqlFileName}";
+                    $"{testflowHome}{CommonConst.DeployDir}{Path.DirectorySeparatorChar}{Constants.SqlFileName}";
                 using (StreamReader reader = new StreamReader(sqlFilePath, Encoding.UTF8))
                 {
                     StringBuilder createTableCmd = new StringBuilder(500);
@@ -357,6 +366,11 @@ namespace Testflow.DataMaintainer
                     transaction = Connection.BeginTransaction(IsolationLevel.Serializable);
                     while (null != (lineData = reader.ReadLine()))
                     {
+                        lineData = lineData.Trim();
+                        if (lineData.StartsWith(commentPrefix))
+                        {
+                            continue;
+                        }
                         createTableCmd.Append(lineData);
                         if (lineData.EndsWith(endDelim))
                         {
@@ -374,6 +388,7 @@ namespace Testflow.DataMaintainer
             {
                 transaction?.Rollback();
                 transaction?.Dispose();
+                Connection?.Dispose();
                 // 如果失败则删除文件
                 File.Delete(databaseFilePath);
                 throw;

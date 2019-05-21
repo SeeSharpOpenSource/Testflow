@@ -34,8 +34,8 @@ namespace Testflow.DataMaintainer
         public static string CreateInsertCmd(string tableName, Dictionary<string, string> keyValues)
         {
             const string cmdFormat = "INSERT INTO {0} ({1}) VALUES ({2})";
-            string valueStr = string.Join(Delim, keyValues.Keys);
-            string columnStr = string.Join(Delim, keyValues.Values);
+            string columnStr = string.Join(Delim, keyValues.Keys);
+            string valueStr = string.Join(Delim, keyValues.Values);
             return string.Format(cmdFormat, tableName, columnStr, valueStr);
         }
 

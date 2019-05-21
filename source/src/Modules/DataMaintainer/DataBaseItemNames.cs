@@ -16,6 +16,8 @@
         #region Column names
 
         public const string RuntimeIdColumn = "RuntimeHash";
+        public const string InstanceNameColumn = "InstanceName";
+        public const string SequenceGroupNameColumn = "SequenceGroupName";
         public const string NameColumn = "Name";
         public const string DescriptionColumn = "Description";
         public const string ProjectNameColumn = "TestProjectName";

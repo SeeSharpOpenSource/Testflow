@@ -11,42 +11,42 @@ namespace Testflow.DataMaintainer
 
         public override void AddData(TestInstanceData testInstance)
         {
-            throw new System.InvalidProgramException();
+            throw new System.InvalidOperationException();
         }
 
         public override void UpdateData(TestInstanceData testInstance)
         {
-            throw new System.InvalidProgramException();
+            throw new System.InvalidOperationException();
         }
 
         public override void AddData(SessionResultData sessionResult)
         {
-            throw new System.InvalidProgramException();
+            throw new System.InvalidOperationException();
         }
 
         public override void UpdateData(SessionResultData sessionResult)
         {
-            throw new System.InvalidProgramException();
+            throw new System.InvalidOperationException();
         }
 
         public override void AddData(SequenceResultData sequenceResult)
         {
-            throw new System.InvalidProgramException();
+            throw new System.InvalidOperationException();
         }
 
         public override void UpdateData(SequenceResultData sequenceResult)
         {
-            throw new System.InvalidProgramException();
+            throw new System.InvalidOperationException();
         }
 
         public override void AddData(PerformanceStatus performanceStatus)
         {
-            throw new System.InvalidProgramException();
+            throw new System.InvalidOperationException();
         }
 
         public override void AddData(RuntimeStatusData runtimeStatus)
         {
-            throw new System.InvalidProgramException();
+            throw new System.InvalidOperationException();
         }
     }
 }

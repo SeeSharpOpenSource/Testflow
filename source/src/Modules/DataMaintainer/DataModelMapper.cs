@@ -85,7 +85,7 @@ namespace Testflow.DataMaintainer
             this._valueToStrConvertor.Add(typeof (ulong).Name, new Func<object, string>((value) => value.ToString()));
             this._valueToStrConvertor.Add(typeof (float).Name, new Func<object, string>((value) => value.ToString()));
             this._valueToStrConvertor.Add(typeof (string).Name, new Func<object, string>((value) => $"'{value}'"));
-            this._valueToStrConvertor.Add(typeof (DateTime).Name, new Func<object, string>((value) => value.ToString()));
+            this._valueToStrConvertor.Add(typeof (DateTime).Name, new Func<object, string>((value) => $"'{((DateTime)value).ToString("yyyy-MM-ddTHH:mm:ss.fffzzz")}'"));
         }
 
         public TDataType ReadToObject<TDataType>(DbDataReader reader, TDataType dataObj) where TDataType : class
@@ -121,7 +121,7 @@ namespace Testflow.DataMaintainer
                 object value = propertyInfo.GetValue(dataObj);
                 if (null == value) continue;
                 string valueStr = propertyType.IsEnum
-                    ? value.ToString()
+                    ? $"'{value}'"
                     : _valueToStrConvertor[propertyType.Name].Invoke(value);
                 columnValueMapping.Add(columnName, valueStr);
             }
