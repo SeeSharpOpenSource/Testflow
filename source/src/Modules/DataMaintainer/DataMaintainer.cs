@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading;
 using Testflow.Modules;
 using Testflow.Runtime.Data;
 
@@ -12,13 +13,25 @@ namespace Testflow.DataMaintainer
 
         public void RuntimeInitialize()
         {
+            if (_databaseProxy.IsRuntimeModule && null != _databaseProxy)
+            {
+                return;
+            }
             _databaseProxy?.Dispose();
+            _databaseProxy = null;
+            Thread.MemoryBarrier();
             _databaseProxy = new RuntimeDatabaseProxy(ConfigData);
         }
 
         public void DesigntimeInitialize()
         {
+            if (!_databaseProxy.IsRuntimeModule && null != _databaseProxy)
+            {
+                return;
+            }
             _databaseProxy?.Dispose();
+            _databaseProxy = null;
+            Thread.MemoryBarrier();
             _databaseProxy = new DesigntimeDatabaseProxy(ConfigData);
         }
 
