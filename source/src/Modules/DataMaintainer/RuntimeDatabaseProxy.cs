@@ -10,7 +10,7 @@ namespace Testflow.DataMaintainer
         {
         }
 
-        public override int GetTestInstanceCount(string fileterString)
+        public override int GetTestInstanceCount(string filterString)
         {
             throw new System.InvalidProgramException();
         }

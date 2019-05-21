@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
+using System.IO;
+using System.Text;
 using Testflow.Modules;
 using Testflow.Runtime.Data;
 using Testflow.Usr;
@@ -41,8 +43,7 @@ namespace Testflow.DataMaintainer
                     Logger.Print(LogLevel.Fatal, CommonConst.PlatformLogSession, "Connect db failed.");
                     throw new TestflowRuntimeException(ModuleErrorCode.ConnectDbFailed, I18N.GetStr("ConnectDbFailed"));
                 }
-                Connection.ConnectionString = $"Data Source={Constants.DataBaseName}";
-                Connection.Open();
+                InitializeDatabaseAndConnection();
             }
             catch (DbException ex)
             {
@@ -53,9 +54,9 @@ namespace Testflow.DataMaintainer
             DataModelMapper = new DataModelMapper();
         }
 
-        public virtual int GetTestInstanceCount(string fileterString)
+        public virtual int GetTestInstanceCount(string filterString)
         {
-            string cmd = SqlCommandFactory.CreateCalcCountCmd(string.Empty, DataBaseItemNames.InstanceTableName);
+            string cmd = SqlCommandFactory.CreateCalcCountCmd(filterString, DataBaseItemNames.InstanceTableName);
             using (DbDataReader dataReader = ExecuteReadCommand(cmd))
             {
                 bool read = dataReader.Read();
@@ -316,7 +317,69 @@ namespace Testflow.DataMaintainer
                 throw new TestflowRuntimeException(ModuleErrorCode.DbOperationFailed, I18N.GetStr("DbOperationFailed"), ex);
             }
         }
-        
+
+        private void InitializeDatabaseAndConnection()
+        {
+            string testflowHome = Environment.GetEnvironmentVariable(CommonConst.EnvironmentVariable);
+            if (string.IsNullOrWhiteSpace(testflowHome))
+            {
+                testflowHome = Environment.CurrentDirectory;
+            }
+            if (testflowHome.EndsWith(Path.DirectorySeparatorChar.ToString()))
+            {
+                testflowHome += Path.DirectorySeparatorChar;
+            }
+            string databaseFilePath = $"{testflowHome}{CommonConst.DataDir}{Path.DirectorySeparatorChar}{Constants.DataBaseName}";
+            Connection.ConnectionString = $"Data Source={databaseFilePath}";
+            // 如果已经存在则直接跳出
+            if (File.Exists(databaseFilePath))
+            {
+                Connection.Open();
+                return;
+            }
+            string databaseFileDir = $"{testflowHome}{CommonConst.DataDir}";
+            if (!Directory.Exists(databaseFileDir))
+            {
+                Directory.CreateDirectory(CommonConst.DataDir);
+            }
+
+            DbTransaction transaction = null;
+            try
+            {
+                const string endDelim = ";";
+                Connection.Open();
+                string sqlFilePath =
+                    $"{CommonConst.EnvironmentVariable}{Path.DirectorySeparatorChar}{Constants.SqlFileName}";
+                using (StreamReader reader = new StreamReader(sqlFilePath, Encoding.UTF8))
+                {
+                    StringBuilder createTableCmd = new StringBuilder(500);
+                    string lineData;
+                    transaction = Connection.BeginTransaction(IsolationLevel.Serializable);
+                    while (null != (lineData = reader.ReadLine()))
+                    {
+                        createTableCmd.Append(lineData);
+                        if (lineData.EndsWith(endDelim))
+                        {
+                            DbCommand dbCommand = Connection.CreateCommand();
+                            dbCommand.CommandText = createTableCmd.ToString();
+                            dbCommand.Transaction = transaction;
+                            dbCommand.ExecuteNonQuery();
+                            createTableCmd.Clear();
+                        }
+                    }
+                    transaction.Commit();
+                }
+            }
+            catch (Exception)
+            {
+                transaction?.Rollback();
+                transaction?.Dispose();
+                // 如果失败则删除文件
+                File.Delete(databaseFilePath);
+                throw;
+            }
+        }
+
         public void Dispose()
         {
             Connection?.Close();

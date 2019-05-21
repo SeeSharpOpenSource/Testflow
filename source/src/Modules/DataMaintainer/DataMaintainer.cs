@@ -24,7 +24,7 @@ namespace Testflow.DataMaintainer
 
         public void ApplyConfig(IModuleConfigData configData)
         {
-            throw new System.NotImplementedException();
+            // TODO
         }
 
         public int GetTestInstanceCount(string fileterString)
