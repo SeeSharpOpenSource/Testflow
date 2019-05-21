@@ -42,7 +42,7 @@ namespace Testflow.DataMaintainer
                     throw new TestflowRuntimeException(ModuleErrorCode.ConnectDbFailed, I18N.GetStr("ConnectDbFailed"));
                 }
                 Connection.ConnectionString = $"Data Source={Constants.DataBaseName}";
-                Connection.Close();
+                Connection.Open();
             }
             catch (DbException ex)
             {
