@@ -42,6 +42,21 @@
         internal const string I18nName = "LoggerI18N";
 
         /// <summary>
+        /// 标记Testflow根目录的环境变量
+        /// </summary>
+        public const string EnvironmentVariable = "TESTFLOW_HOME";
+
+        /// <summary>
+        /// 数据文件目录
+        /// </summary>
+        public const string DataDir = "data";
+
+        /// <summary>
+        /// 部署文件目录
+        /// </summary>
+        public const string DeployDir = "deploy";
+
+        /// <summary>
         /// 平台日志会话id
         /// </summary>
         public const int PlatformLogSession = 1000000;
