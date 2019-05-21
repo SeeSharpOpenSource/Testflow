@@ -10,7 +10,7 @@ namespace Testflow.DataMaintainer
         const string WhereFormat = " WHERE ({0})";
         public static string CreateQueryCmd(string filter, string tableName, params string[] columnName)
         {
-            const string cmdFormat = "SELECTE {0} FROM {1}";
+            const string cmdFormat = "SELECT {0} FROM {1}";
             string columnNames = columnName.Length == 0 ? "*" : string.Join(Delim, columnName);
             string cmd = string.Format(cmdFormat, columnNames, tableName);
             if (!string.IsNullOrWhiteSpace(filter))
@@ -22,7 +22,7 @@ namespace Testflow.DataMaintainer
 
         public static string CreateCalcCountCmd(string filter, string tableName)
         {
-            const string cmdFormat = "SELECTE COUNT (*) FROM {0}";
+            const string cmdFormat = "SELECT COUNT (*) FROM {0}";
             string cmd = string.Format(cmdFormat, tableName);
             if (!string.IsNullOrWhiteSpace(filter))
             {

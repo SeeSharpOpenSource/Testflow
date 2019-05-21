@@ -62,8 +62,12 @@ namespace Testflow.DataMaintainer
             string cmd = SqlCommandFactory.CreateCalcCountCmd(filterString, DataBaseItemNames.InstanceTableName);
             using (DbDataReader dataReader = ExecuteReadCommand(cmd))
             {
-                bool read = dataReader.Read();
-                return (int)dataReader[0];
+                int count = 0;
+                if (dataReader.Read())
+                {
+                    count = dataReader.GetInt32(0);
+                }
+                return count;
             }
         }
 
