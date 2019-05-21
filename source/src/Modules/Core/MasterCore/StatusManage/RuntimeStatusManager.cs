@@ -244,7 +244,7 @@ namespace Testflow.MasterCore.StatusManage
                 case MessageType.Sync:
                 case MessageType.RuntimeError:
                 default:
-                    throw new InvalidProgramException();
+                    throw new InvalidOperationException();
             }
             return handleResult;
         }
@@ -295,7 +295,7 @@ namespace Testflow.MasterCore.StatusManage
                     stateHandle.HandleStatusMessage(statusMessage);
                     break;
                 default:
-                    throw new InvalidProgramException();
+                    throw new InvalidOperationException();
                     break;
             }
             return result;

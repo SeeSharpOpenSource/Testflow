@@ -45,7 +45,7 @@ namespace Testflow.SlaveCore.Runner.Model
                     }
                     break;
                 default:
-                    throw new InvalidProgramException();
+                    throw new InvalidOperationException();
             }
         }
 

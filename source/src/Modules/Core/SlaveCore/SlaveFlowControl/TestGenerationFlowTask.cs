@@ -49,7 +49,7 @@ namespace Testflow.SlaveCore.SlaveFlowControl
                         sequenceGroup.TypeDatas);
                     break;
                 default:
-                    throw new InvalidProgramException();
+                    throw new InvalidOperationException();
             }
 
             // 加载用到的程序集

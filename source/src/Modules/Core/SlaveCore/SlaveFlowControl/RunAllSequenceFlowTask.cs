@@ -83,7 +83,7 @@ namespace Testflow.SlaveCore.SlaveFlowControl
                     _blockEvent.Dispose();
                     break;
                 default:
-                    throw new InvalidProgramException();
+                    throw new InvalidOperationException();
             }
 
             sessionTaskEntity.InvokeTearDown();

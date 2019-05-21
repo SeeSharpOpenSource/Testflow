@@ -32,7 +32,7 @@ namespace Testflow.SlaveCore.Runner.Model
                     return new StepCallBackEntity(stepData, context);
                     break;
                 default:
-                    throw new InvalidProgramException();
+                    throw new InvalidOperationException();
                     break;
             }
         }

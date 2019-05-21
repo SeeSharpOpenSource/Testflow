@@ -73,7 +73,7 @@ namespace Testflow.SlaveCore.Common
                     case StatusReportType.Error:
                         break;
                     default:
-                        throw new InvalidProgramException();
+                        throw new InvalidOperationException();
                 }
             }
             else

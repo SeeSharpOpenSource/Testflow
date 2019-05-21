@@ -151,7 +151,7 @@ namespace Testflow.SlaveCore.Runner.Model
                         this.Constructor = Context.TypeInvoker.GetConstructor(StepData.Function);
                         break;
                     default:
-                        throw new InvalidProgramException();
+                        throw new InvalidOperationException();
                 }
             }
             NextStep.GenerateInvokeInfo();

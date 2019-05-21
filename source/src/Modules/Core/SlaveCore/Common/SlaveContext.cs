@@ -38,7 +38,7 @@ namespace Testflow.SlaveCore.Common
             SessionId = this.GetProperty<int>("Session");
             State = RuntimeState.NotAvailable;
             this.StatusQueue = new LocalEventQueue<SequenceStatusInfo>(CoreConstants.DefaultEventsQueueSize);
-            this.LogSession = TODO;
+//            this.LogSession = TODO;
             this.I18N = I18N.GetInstance(Constants.I18nName);
             this.MessageTransceiver = new MessageTransceiver(this, SessionId);
             this.UplinkMsgProcessor = new UplinkMessageProcessor(this);

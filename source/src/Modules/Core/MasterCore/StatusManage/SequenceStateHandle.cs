@@ -220,7 +220,7 @@ namespace Testflow.MasterCore.StatusManage
                 case MessageNames.ResultStatusName:
                     break;
                 default:
-                    throw new InvalidProgramException();
+                    throw new InvalidOperationException();
                     break;
             }
         }

@@ -88,7 +88,7 @@ namespace Testflow.SlaveCore.Runner
                     bindingFlags |= BindingFlags.Static;
                     break;
                 default:
-                    throw new InvalidProgramException();
+                    throw new InvalidOperationException();
             }
             parameterTypes = new Type[function.ParameterType.Count];
             modifiers = new ParameterModifier[function.ParameterType.Count];
@@ -124,7 +124,7 @@ namespace Testflow.SlaveCore.Runner
                     constructor = classType.GetConstructor(bindingFlags, null, parameterTypes, modifiers);
                     break;
                 default:
-                    throw new InvalidProgramException();
+                    throw new InvalidOperationException();
             }
             return constructor;
         }

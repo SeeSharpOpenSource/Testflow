@@ -342,7 +342,7 @@ namespace Testflow.MasterCore.StatusManage
                         Session, runtimeStatusInfo);
                     break;
                 default:
-                    throw new InvalidProgramException();
+                    throw new InvalidOperationException();
                     break;
             }
             return true;
