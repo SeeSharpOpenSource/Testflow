@@ -13,7 +13,7 @@ namespace Testflow.DataMaintainer
 
         public void RuntimeInitialize()
         {
-            if (_databaseProxy.IsRuntimeModule && null != _databaseProxy)
+            if (null != _databaseProxy && _databaseProxy.IsRuntimeModule)
             {
                 return;
             }
@@ -25,7 +25,7 @@ namespace Testflow.DataMaintainer
 
         public void DesigntimeInitialize()
         {
-            if (!_databaseProxy.IsRuntimeModule && null != _databaseProxy)
+            if (null != _databaseProxy && !_databaseProxy.IsRuntimeModule)
             {
                 return;
             }

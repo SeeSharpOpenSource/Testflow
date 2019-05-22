@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.Common;
+using System.Net.Sockets;
 using System.Reflection;
 using Testflow.Runtime.Data;
 
@@ -14,6 +15,8 @@ namespace Testflow.DataMaintainer
         private readonly Dictionary<string, Dictionary<string, string>> _tableToColumnPropertyMapping;
 
         private readonly Dictionary<string, Func<object, string>> _valueToStrConvertor;
+
+        private readonly Dictionary<string, Func<object, object>> _rawDataToValueConvertor;
 
         public DataModelMapper()
         {
@@ -85,7 +88,21 @@ namespace Testflow.DataMaintainer
             this._valueToStrConvertor.Add(typeof (ulong).Name, new Func<object, string>((value) => value.ToString()));
             this._valueToStrConvertor.Add(typeof (float).Name, new Func<object, string>((value) => value.ToString()));
             this._valueToStrConvertor.Add(typeof (string).Name, new Func<object, string>((value) => $"'{value}'"));
-            this._valueToStrConvertor.Add(typeof (DateTime).Name, new Func<object, string>((value) => $"'{((DateTime)value).ToString("yyyy-MM-ddTHH:mm:ss.fffzzz")}'"));
+            this._valueToStrConvertor.Add(typeof (DateTime).Name,
+                new Func<object, string>((value) => $"'{((DateTime) value).ToString("yyyy-MM-ddTHH:mm:ss.fffzzz")}'"));
+
+            this._rawDataToValueConvertor = new Dictionary<string, Func<object, object>>(10);
+            this._rawDataToValueConvertor.Add(typeof(int).Name, new Func<object, object>((rawValue) => Convert.ToInt32(rawValue)));
+            this._rawDataToValueConvertor.Add(typeof(double).Name, new Func<object, object>((rawValue) => Convert.ToDouble(rawValue)));
+            this._rawDataToValueConvertor.Add(typeof(uint).Name, new Func<object, object>((rawValue) => Convert.ToUInt32(rawValue)));
+            this._rawDataToValueConvertor.Add(typeof(short).Name, new Func<object, object>((rawValue) => Convert.ToInt16(rawValue)));
+            this._rawDataToValueConvertor.Add(typeof(ushort).Name, new Func<object, object>((rawValue) => Convert.ToUInt16(rawValue)));
+            this._rawDataToValueConvertor.Add(typeof(byte).Name, new Func<object, object>((rawValue) => Convert.ToByte(rawValue)));
+            this._rawDataToValueConvertor.Add(typeof(char).Name, new Func<object, object>((rawValue) => Convert.ToChar(rawValue)));
+            this._rawDataToValueConvertor.Add(typeof(long).Name, new Func<object, object>((rawValue) => rawValue));
+            this._rawDataToValueConvertor.Add(typeof(ulong).Name, new Func<object, object>((rawValue) => Convert.ToUInt64(rawValue)));
+            this._rawDataToValueConvertor.Add(typeof(float).Name, new Func<object, object>((rawValue) => Convert.ToSingle(rawValue)));
+            this._rawDataToValueConvertor.Add(typeof(string).Name, new Func<object, object>((rawValue) => rawValue));
         }
 
         public TDataType ReadToObject<TDataType>(DbDataReader reader, TDataType dataObj) where TDataType : class
@@ -100,9 +117,18 @@ namespace Testflow.DataMaintainer
                 {
                     continue;
                 }
-                if (typeof (DateTime).Name.Equals(typeof (TDataType).Name))
+                Type propertyType = propertyInfo.PropertyType;
+                if (typeof (DateTime).Name.Equals(propertyType.Name))
                 {
                     propertyValue = DateTime.Parse((string)propertyValue);
+                }
+                else if (propertyType.IsEnum)
+                {
+                    propertyValue = Enum.Parse(propertyType, (string)propertyValue);
+                }
+                else
+                {
+                    propertyValue = _rawDataToValueConvertor[propertyType.Name].Invoke(propertyValue);
                 }
                 propertyInfo.SetValue(dataObj, propertyValue);
             }
