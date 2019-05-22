@@ -20,6 +20,22 @@ namespace Testflow.DataMaintainer
             return cmd;
         }
 
+        public static string CreateQueryCmdWithOrder(string filter, string tableName, params string[] orderColumns)
+        {
+            const string cmdFormat = "SELECT * FROM {0}";
+            const string orderFormat = " ORDER BY {0}";
+            string orderColumnStr = orderColumns.Length == 0
+                ? ""
+                : string.Format(orderFormat, string.Join(Delim, orderColumns));
+            string cmd = string.Format(cmdFormat, tableName);
+            if (!string.IsNullOrWhiteSpace(filter))
+            {
+                cmd += string.Format(WhereFormat, filter);
+            }
+            cmd += orderColumnStr;
+            return cmd;
+        }
+
         public static string CreateCalcCountCmd(string filter, string tableName)
         {
             const string cmdFormat = "SELECT COUNT (*) FROM {0}";
@@ -41,7 +57,7 @@ namespace Testflow.DataMaintainer
 
         public static string CreateUpdateCmd(string tableName, Dictionary<string, string> lastValues, Dictionary<string, string> newValues, string filter)
         {
-            const string cmdFormat = "UPDATE {0} SET ({1}){2}";
+            const string cmdFormat = "UPDATE {0} SET {1}{2}";
             StringBuilder valuePairStr = new StringBuilder(200);
             foreach (KeyValuePair<string, string> keyValuePair in newValues)
             {

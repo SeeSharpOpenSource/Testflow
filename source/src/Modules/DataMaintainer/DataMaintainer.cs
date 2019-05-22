@@ -45,14 +45,14 @@ namespace Testflow.DataMaintainer
             return _databaseProxy.GetTestInstanceCount(fileterString);
         }
 
-        public TestInstanceData GetTestInstanceData(string runtimeHash)
+        public TestInstanceData GetTestInstance(string runtimeHash)
         {
-            return _databaseProxy.GetTestInstanceData(runtimeHash);
+            return _databaseProxy.GetTestInstance(runtimeHash);
         }
 
-        public IList<TestInstanceData> GetTestInstanceDatas(string filterString)
+        public IList<TestInstanceData> GetTestInstances(string filterString)
         {
-            return _databaseProxy.GetTestInstanceDatas(filterString);
+            return _databaseProxy.GetTestInstances(filterString);
         }
 
         public void AddData(TestInstanceData testInstance)
@@ -90,14 +90,14 @@ namespace Testflow.DataMaintainer
             _databaseProxy.UpdateData(sessionResult);
         }
 
-        public IList<SequenceResultData> GetSequenceResultDatas(string runtimeHash, int sessionId)
+        public IList<SequenceResultData> GetSequenceResults(string runtimeHash, int sessionId)
         {
-            return _databaseProxy.GetSequenceResultDatas(runtimeHash, sessionId);
+            return _databaseProxy.GetSequenceResults(runtimeHash, sessionId);
         }
 
-        public SequenceResultData GetSequenceResultData(string runtimeHash, int sessionId, int sequenceIndex)
+        public SequenceResultData GetSequenceResult(string runtimeHash, int sessionId, int sequenceIndex)
         {
-            return _databaseProxy.GetSequenceResultData(runtimeHash, sessionId, sequenceIndex);
+            return _databaseProxy.GetSequenceResult(runtimeHash, sessionId, sequenceIndex);
         }
 
         public void AddData(SequenceResultData sequenceResult)
@@ -118,6 +118,26 @@ namespace Testflow.DataMaintainer
         public void AddData(RuntimeStatusData runtimeStatus)
         {
             _databaseProxy.AddData(runtimeStatus);
+        }
+
+        public IList<PerformanceStatus> GetPerformanceStatus(string runtimeHash, int session)
+        {
+            return _databaseProxy.GetPerformanceStatus(runtimeHash, session);
+        }
+
+        public PerformanceStatus GetPerformanceStatusByIndex(string runtimeHash, long index)
+        {
+            return _databaseProxy.GetPerformanceStatusByIndex(runtimeHash, index);
+        }
+
+        public IList<RuntimeStatusData> GetRuntimeStatus(string runtimeHash, int session)
+        {
+            return _databaseProxy.GetRuntimeStatus(runtimeHash, session);
+        }
+
+        public RuntimeStatusData GetRuntimeStatusByIndex(string runtimeHash, long index)
+        {
+            return _databaseProxy.GetRuntimeStatusByIndex(runtimeHash, index);
         }
 
         public void Dispose()

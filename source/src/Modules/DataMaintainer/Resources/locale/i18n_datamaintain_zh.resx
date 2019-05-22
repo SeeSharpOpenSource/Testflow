@@ -123,4 +123,7 @@
   <data name="DbOperationFailed" xml:space="preserve">
     <value>数据库操作失败。</value>
   </data>
+  <data name="DbOperationTimeout" xml:space="preserve">
+    <value>数据库操作超时。</value>
+  </data>
 </root>

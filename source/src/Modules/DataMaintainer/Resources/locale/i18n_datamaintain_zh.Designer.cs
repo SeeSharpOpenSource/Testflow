@@ -77,5 +77,14 @@ namespace Testflow.DataMaintainer.Resources.locale {
                 return ResourceManager.GetString("DbOperationFailed", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 数据库操作超时。.
+        /// </summary>
+        internal static string DbOperationTimeout {
+            get {
+                return ResourceManager.GetString("DbOperationTimeout", resourceCulture);
+            }
+        }
     }
 }

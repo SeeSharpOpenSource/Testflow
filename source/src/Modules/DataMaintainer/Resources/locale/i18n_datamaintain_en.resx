@@ -123,4 +123,7 @@
   <data name="DbOperationFailed" xml:space="preserve">
     <value>Database operation failed.</value>
   </data>
+  <data name="DbOperationTimeout" xml:space="preserve">
+    <value>Database operation timeout.</value>
+  </data>
 </root>
