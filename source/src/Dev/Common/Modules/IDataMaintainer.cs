@@ -21,12 +21,12 @@ namespace Testflow.Modules
         /// <summary>
         /// 获取指定运行时Hash的TestInstance数据
         /// </summary>
-        TestInstanceData GetTestInstanceData(string runtimeHash);
+        TestInstanceData GetTestInstance(string runtimeHash);
 
         /// <summary>
         /// 返回所有符合过滤字符串的TestInstance条目
         /// </summary>
-        IList<TestInstanceData> GetTestInstanceDatas(string filterString);
+        IList<TestInstanceData> GetTestInstances(string filterString);
 
         /// <summary>
         /// 记录TestInstanceData
@@ -66,12 +66,12 @@ namespace Testflow.Modules
         /// <summary>
         /// 获取某个运行实例的某个会话的所有序列执行结果
         /// </summary>
-        IList<SequenceResultData> GetSequenceResultDatas(string runtimeHash, int sessionId);
+        IList<SequenceResultData> GetSequenceResults(string runtimeHash, int sessionId);
 
         /// <summary>
         /// 获取某个运行实例的某个会话的某个序列的执行结果
         /// </summary>
-        SequenceResultData GetSequenceResultData(string runtimeHash, int sessionId, int sequenceIndex);
+        SequenceResultData GetSequenceResult(string runtimeHash, int sessionId, int sequenceIndex);
 
         /// <summary>
         /// 记录SequenceResultData
@@ -96,6 +96,26 @@ namespace Testflow.Modules
         /// 记录RuntimeStatusData
         /// </summary>
         void AddData(RuntimeStatusData runtimeStatus);
+
+        /// <summary>
+        /// 获取某个会话的所有性能状态信息
+        /// </summary>
+        IList<PerformanceStatus> GetPerformanceStatus(string runtimeHash, int session);
+
+        /// <summary>
+        /// 获取某个会话的某个ID的性能数据
+        /// </summary>
+        PerformanceStatus GetPerformanceStatusByIndex(string runtimeHash, long index);
+
+        /// <summary>
+        /// 获取某个会话的运行时信息
+        /// </summary>
+        IList<RuntimeStatusData> GetRuntimeStatus(string runtimeHash, int session);
+
+        /// <summary>
+        /// 获取某个会话某个索引的运行时信息
+        /// </summary>
+        RuntimeStatusData GetRuntimeStatusByIndex(string runtimeHash, long index);
 
         #endregion
     }
