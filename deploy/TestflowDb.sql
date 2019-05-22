@@ -68,8 +68,8 @@ CREATE TABLE Testflow_PerformanceDatas(
 	SessionId INTEGER NOT NULL,
 	StatusIndex INTEGER NOT NULL,
 	RecordTime TEXT NOT NULL,
-	MemoryUsed REAL NOT NULL,
-	MemoryAllocated REAL NOT NULL,
+	MemoryUsed INTEGER NOT NULL,
+	MemoryAllocated INTEGER NOT NULL,
 	ProcessorTime REAL NOT NULL,
 	PRIMARY KEY (RuntimeHash,StatusIndex),
 	FOREIGN KEY (RuntimeHash) REFERENCES Testflow_TestInstances(RuntimeHash)
