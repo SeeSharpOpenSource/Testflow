@@ -55,7 +55,7 @@ namespace Testflow.DataMaintainerTest
             Type intType = typeof(int);
             FieldInfo fieldInfo = runnerType.GetField("_runnerInst", BindingFlags.Static | BindingFlags.NonPublic);
             fieldInfo.SetValue(null, fakeTestflowRunner);
-            fakeTestflowRunner.SetLogService(new LogService());
+            fakeTestflowRunner.SetLogService(null);
 
             _dataMaintainer = new DataMaintainer.DataMaintainer();
 
