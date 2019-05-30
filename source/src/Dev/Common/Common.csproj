@@ -79,9 +79,6 @@
     <Compile Include="I18nUtil\I18N.cs" />
     <Compile Include="I18nUtil\I18NOption.cs" />
     <Compile Include="I18nUtil\I18NOptionComparer.cs" />
-    <Compile Include="Log\LogFormatter.cs" />
-    <Compile Include="Log\LogData.cs" />
-    <Compile Include="Log\ILogSession.cs" />
     <Compile Include="Modules\IModuleConfigData.cs" />
     <Compile Include="Modules\IWarningInfo.cs" />
     <Compile Include="Resources\locale\i18n_common_en.Designer.cs">
