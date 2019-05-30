@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading;
 using log4net;
 using Testflow.Usr;
-using Testflow.Log;
 using Testflow.Modules;
 using Testflow.Runtime;
 using Testflow.Utility.I18nUtil;
@@ -17,7 +16,6 @@ namespace Testflow.Logger
     /// </summary>
     public class LogService : ILogService
     {
-        private readonly Dictionary<int, LocalLogSession> _runtimeLogSessions;
         private PlatformLogSession _platformLogSession;
         private readonly I18N _i18N;
         private Messenger _messenger;
@@ -45,7 +43,6 @@ namespace Testflow.Logger
                     I18N i18N = I18N.GetInstance(Constants.I18NName);
                     throw new TestflowRuntimeException(CommonErrorCode.InternalError, i18N.GetStr("InstAlreadyExist"));
                 }
-                _runtimeLogSessions = new Dictionary<int, LocalLogSession>(Constants.DefaultLogStreamSize);
                 I18NOption i18NOption = new I18NOption(this.GetType().Assembly, "i18n_logger_zh", "i18n_logger_en")
                 {
                     Name = Constants.I18NName
@@ -57,59 +54,45 @@ namespace Testflow.Logger
             }
         }
 
-        IModuleConfigData IController.ConfigData { get; set; }
+        public IModuleConfigData ConfigData { get; set; }
 
-        void IController.RuntimeInitialize()
+        public void RuntimeInitialize()
         {
-            this._platformLogSession = new PlatformLogSession(-1);
+            if (null == _platformLogSession)
+            {
+                this._platformLogSession = new PlatformLogSession(_messenger);
+            }
             MessengerOption option = new MessengerOption(Constants.LogQueueName, typeof(LogMessage));
             _messenger = Messenger.GetMessenger(option);
-            InitializeRuntimeSession();
-            _messenger.RegisterConsumer(_runtimeLogSessions.Values.ToArray());
-            foreach (LocalLogSession logSession in _runtimeLogSessions.Values)
-            {
-                logSession.Dispose();
-            }
-            _runtimeLogSessions.Clear();
         }
 
-        private void InitializeRuntimeSession()
+        public void DesigntimeInitialize()
         {
-            _runtimeLogSessions.Clear();
-            foreach (IRuntimeSession runtimeSession in _testflowInst.RuntimeService.Sessions)
+            _messenger?.Dispose();
+            if (null == _platformLogSession)
             {
-                _runtimeLogSessions.Add(runtimeSession.ID, new LocalLogSession(runtimeSession.ID));
+                this._platformLogSession = new PlatformLogSession(_messenger);
             }
         }
 
-        void IController.DesigntimeInitialize()
-        {
-            _platformLogSession = new PlatformLogSession(CommonConst.PlatformLogSession);
-        }
-
-        void IController.ApplyConfig(IModuleConfigData configData)
+        public void ApplyConfig(IModuleConfigData configData)
         {
             // TODO to implement
         }
 
         public LogLevel LogLevel { get; set; }
 
-        void ILogService.Print(LogLevel logLevel, int sequenceIndex, string message)
+        public void Print(LogLevel logLevel, int sessionId, string message)
         {
-            _platformLogSession.Print(logLevel, sequenceIndex, message);
+            _platformLogSession.Print(logLevel, sessionId, message);
         }
 
-        void ILogService.Print(LogLevel logLevel, int sequenceIndex, Exception exception, string message)
+        public void Print(LogLevel logLevel, int sessionId, Exception exception, string message)
         {
-            _platformLogSession.Print(logLevel, sequenceIndex, exception, message);
+            _platformLogSession.Print(logLevel, sessionId, exception, message);
         }
 
-        LogLevel ILogService.RuntimeLogLevel { get; set; }
-
-        ILogSession ILogService.GetLogSession(int sessionId)
-        {
-            return _runtimeLogSessions.ContainsKey(sessionId) ?_runtimeLogSessions[sessionId] : null;
-        }
+        public LogLevel RuntimeLogLevel { get; set; }
 
         public void Print(LogLevel logLevel, int sessionId, int sequenceIndex, string message)
         {
@@ -120,21 +103,7 @@ namespace Testflow.Logger
         {
             _platformLogSession.Print(logLevel, Constants.DesigntimeSessionId, exception, message);
         }
-
-        public void DestroyLogStream(int sessionId)
-        {
-            if (_runtimeLogSessions.ContainsKey(sessionId))
-            {
-                _runtimeLogSessions[sessionId].Dispose();
-                _runtimeLogSessions.Remove(sessionId);
-            }
-        }
-
-        public void DestroyLogStream()
-        {
-            throw new NotImplementedException();
-        }
-
+        
         /// <summary>
         /// 停止运行时日志
         /// </summary>
@@ -147,13 +116,11 @@ namespace Testflow.Logger
         void IDisposable.Dispose()
         {
             _platformLogSession?.Dispose();
-            foreach (LocalLogSession logSession in _runtimeLogSessions.Values)
+            if (null != _messenger)
             {
-                logSession.Dispose();
+                _messenger.Clear();
+                Messenger.DestroyMessenger(Constants.LogQueueName);
             }
-            _runtimeLogSessions.Clear();
-            _messenger.Clear();
-            Messenger.DestroyMessenger(Constants.LogQueueName);
             LogManager.Shutdown();
         }
     }

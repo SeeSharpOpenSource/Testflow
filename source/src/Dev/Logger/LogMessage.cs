@@ -15,7 +15,6 @@ namespace Testflow.Logger
         public LogMessage()
         {
             this.Id = -1;
-            this.SeqId = -1;
             this.Msg = null;
             this.Ex = null;
             this.Level = (int) LogLevel.Trace;
@@ -25,10 +24,9 @@ namespace Testflow.Logger
         /// <summary>
         /// 使用消息初始化日志消息
         /// </summary>
-        public LogMessage(int sessionId, int sequenceId, LogLevel logLevel, string message)
+        public LogMessage(int sessionId, LogLevel logLevel, string message)
         {
             this.Id = sessionId;
-            this.SeqId = sequenceId;
             this.Msg = message;
             this.Level = (int) logLevel;
             this.Ex = null;
@@ -38,10 +36,9 @@ namespace Testflow.Logger
         /// <summary>
         /// 使用异常初始化日志消息
         /// </summary>
-        public LogMessage(int sessionId, int sequenceId, LogLevel logLevel, Exception exception)
+        public LogMessage(int sessionId, LogLevel logLevel, Exception exception)
         {
             this.Id = sessionId;
-            this.SeqId = sequenceId;
             this.Ex = exception;
             this.Level = (int) logLevel;
             this.Msg = null;
@@ -52,11 +49,6 @@ namespace Testflow.Logger
         /// 会话ID
         /// </summary>
         public int Id { get; set; }
-
-        /// <summary>
-        /// 序列的ID
-        /// </summary>
-        public int SeqId { get; set; }
 
         /// <summary>
         /// 日志级别
@@ -77,5 +69,10 @@ namespace Testflow.Logger
         /// 日志时间
         /// </summary>
         public DateTime Time { get; set; }
+
+        /// <summary>
+        /// 全局唯一的索引号
+        /// </summary>
+        public long Index { get; set; }
     }
 }

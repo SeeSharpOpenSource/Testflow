@@ -1,87 +1,91 @@
 ﻿using System;
+using System.IO;
+using System.Linq;
 using log4net;
+using log4net.Appender;
+using log4net.Core;
+using log4net.Repository;
+using log4net.Repository.Hierarchy;
 using Testflow.Usr;
 using Testflow.Utility.I18nUtil;
-using Testflow.Log;
+using Testflow.Utility.MessageUtil;
 
 namespace Testflow.Logger
 {
     /// <summary>
     /// 内部日志会话
     /// </summary>
-    internal class PlatformLogSession : ILogSession, IDisposable
+    public class PlatformLogSession : LogSession
     {
-        private readonly ILog _logger;
-
+        private readonly Messenger _messenger;
         /// <summary>
         /// 内部日志会话
         /// </summary>
-        /// <param name="sessionId"></param>
-        public PlatformLogSession(int sessionId)
+        public PlatformLogSession(Messenger messenger) : base(CommonConst.PlatformLogSession, Constants.PlatformLogName)
         {
-            SessionId = sessionId;
-            _logger = LogManager.GetLogger(Constants.PlatformLogName);
+            _messenger = messenger;
 
-            // TODO to implement
-        }
-
-        public int SessionId { get; }
-
-        public void Print(LogLevel logLevel, int sequenceIndex, string message)
-        {
-            switch (logLevel)
+            string testflowHome = Environment.GetEnvironmentVariable(CommonConst.EnvironmentVariable);
+            if (string.IsNullOrWhiteSpace(testflowHome))
             {
-                case LogLevel.Debug:
-                    _logger.Debug(message);
-                    break;
-                case LogLevel.Info:
-                    _logger.Info(message);
-                    break;
-                case LogLevel.Warn:
-                    _logger.Warn(message);
-                    break;
-                case LogLevel.Error:
-                    _logger.Error(message);
-                    break;
-                case LogLevel.Fatal:
-                    _logger.Fatal(message);
-                    break;
-                default:
-                    I18N i18N = I18N.GetInstance(Constants.I18NName);
-                    throw new TestflowRuntimeException(ModuleErrorCode.InvalidLogArgument, i18N.GetStr("InvalidLogArgument"));
-                    break;
+                testflowHome = "..";
+            }
+            char dirSeparator = Path.DirectorySeparatorChar;
+            string logPath = $"{testflowHome}{dirSeparator}{Constants.PlatformLogDir}";
+            string configFilePath = $"{testflowHome}{dirSeparator}{Constants.PlatformConfFile}";
+
+            try
+            {
+                log4net.Config.XmlConfigurator.Configure(new FileInfo(configFilePath));
+                Repository = LogManager.GetRepository();
+                IAppender[] appenders = Repository.GetAppenders();
+                RollingFileAppender appender = appenders.First(item => item.Name.Equals(Constants.RootAppender)) as RollingFileAppender;
+                string originalLogFile = appender.File;
+
+                appender.File = logPath;
+                appender.ActivateOptions();
+                if (File.Exists(originalLogFile))
+                {
+                    File.Delete(originalLogFile);
+                }
+                
+
+                Logger = LogManager.GetLogger(Constants.PlatformLogName);
+            }
+            catch (LogException ex)
+            {
+                TestflowRuntimeException exception = new TestflowRuntimeException(ModuleErrorCode.LogQueueInitFailed,
+                    ex.Message, ex);
+                throw exception;
             }
         }
 
-        public void Print(LogLevel logLevel, int sequenceIndex, Exception exception, string message = "")
+        public override void Print(LogLevel logLevel, int sessionId, Exception exception, string message = "")
         {
-            switch (logLevel)
-            {
-                case LogLevel.Debug:
-                    _logger.Debug(message, exception);
-                    break;
-                case LogLevel.Info:
-                    _logger.Info(message, exception);
-                    break;
-                case LogLevel.Warn:
-                    _logger.Warn(message, exception);
-                    break;
-                case LogLevel.Error:
-                    _logger.Error(message, exception);
-                    break;
-                case LogLevel.Fatal:
-                    _logger.Fatal(message, exception);
-                    break;
-                default:
-                    I18N i18N = I18N.GetInstance(Constants.I18NName);
-                    throw new TestflowRuntimeException(ModuleErrorCode.InvalidLogArgument, i18N.GetStr("InvalidLogArgument"));
-                    break;
-            }
+//            if (sessionId != CommonConst.PlatformLogSession)
+//            {
+//                if (logLevel >= this.LogLevel)
+//                {
+//                    LogMessage logMessage = new LogMessage(sessionId, logLevel, message);
+//                    _messenger.Send(logMessage, FormatterType.Xml);
+//                }
+//                return;
+//            }
+            base.Print(logLevel, sessionId, exception, message);
         }
 
-        public void Dispose()
+        public override void Print(LogLevel logLevel, int sessionId, string message)
         {
-            // ignore
+//            if (sessionId != CommonConst.PlatformLogSession)
+//            {
+//                if (logLevel >= this.LogLevel)
+//                {
+//                    LogMessage logMessage = new LogMessage(sessionId, logLevel, message);
+//                    _messenger.Send(logMessage, FormatterType.Xml);
+//                }
+//                return;
+//            }
+            base.Print(logLevel, sessionId, message);
         }
     }
 }

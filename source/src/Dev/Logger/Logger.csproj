@@ -45,13 +45,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Appender\MsgQueueAppender.cs" />
     <Compile Include="Constants.cs" />
+    <Compile Include="ILogSession.cs" />
     <Compile Include="ModuleErrorCode.cs" />
     <Compile Include="PlatformLogSession.cs" />
     <Compile Include="LogMessage.cs" />
     <Compile Include="LogService.cs" />
-    <Compile Include="LocalLogSession.cs" />
     <Compile Include="RemoteLoggerSession.cs" />
     <Compile Include="Resources\i18n_logger_en.Designer.cs">
       <DependentUpon>i18n_logger_en.resx</DependentUpon>
@@ -66,7 +65,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="configure\log4net.config" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>

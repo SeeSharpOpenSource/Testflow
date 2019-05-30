@@ -1,7 +1,12 @@
 ﻿using System;
+using System.IO;
+using System.Linq;
+using System.Text;
 using System.Threading;
+using log4net;
+using log4net.Appender;
+using log4net.Core;
 using Testflow.Usr;
-using Testflow.Log;
 using Testflow.Utility.MessageUtil;
 
 namespace Testflow.Logger
@@ -9,70 +14,83 @@ namespace Testflow.Logger
     /// <summary>
     /// 远程日志会话
     /// </summary>
-    public class RemoteLoggerSession : ILogSession
+    public class RemoteLoggerSession : LogSession
     {
-        private static RemoteLoggerSession _inst;
-        private static object _instLock = new object();
-        private readonly Messenger _messenger;
-        private readonly LogLevel _logLevel;
-        private FormatterType _formatter;
-        private readonly Type[] _targetType;
-
-        private RemoteLoggerSession(int sessionId, LogLevel logLevel, FormatterType formatter)
-        {
-            _logLevel = logLevel;
-            this.SessionId = sessionId;
-            _formatter = formatter;
-            this._targetType = new Type[] {typeof(LogMessage)};
-            MessengerOption messengerOption = new MessengerOption(Constants.LogQueueName);
-            _messenger = Messenger.GetMessenger(messengerOption);
-        }
-
+        //        private readonly Messenger _messenger;
         /// <summary>
-        /// 获取RemobeLoggerSession的实例
+        /// 创建远程日志会话
         /// </summary>
-        public static RemoteLoggerSession GetInstance(int sessionId, LogLevel logLevel, FormatterType formatter)
+        /// <param name="instanceName">运行实例名称</param>
+        /// <param name="sessionName">运行会话名称</param>
+        /// <param name="sessionId">会话ID</param>
+        /// <param name="logLevel">日志级别</param>
+        /// <exception cref="TestflowRuntimeException"></exception>
+        public RemoteLoggerSession(string instanceName, string sessionName, int sessionId, LogLevel logLevel) : base(sessionId, Constants.SlaveLogName)
         {
-            if (null != _inst && _inst.SessionId == sessionId)
+            
+            //            Type[] _targetType = new Type[] {typeof(LogMessage)};
+            //            MessengerOption messengerOption = new MessengerOption(Constants.LogQueueName);
+            //            _messenger = Messenger.GetMessenger(messengerOption);
+            string testflowHome = Environment.GetEnvironmentVariable(CommonConst.EnvironmentVariable);
+            if (string.IsNullOrWhiteSpace(testflowHome))
             {
-                return _inst;
+                testflowHome = "..";
             }
-            lock (_instLock)
+            char dirSeparator = Path.DirectorySeparatorChar;
+            string logPath = GetSlaveLogPath(instanceName, sessionName, testflowHome);
+            string configFilePath = $"{testflowHome}{dirSeparator}{Constants.SlaveConfFile}";
+
+            try
             {
-                Thread.MemoryBarrier();
-                if (null != _inst && sessionId == _inst.SessionId)
+                log4net.Config.XmlConfigurator.Configure(new FileInfo(configFilePath));
+                Repository = LogManager.GetRepository();
+                IAppender[] appenders = Repository.GetAppenders();
+                RollingFileAppender appender = appenders.First(item => item.Name.Equals(Constants.RootAppender)) as RollingFileAppender;
+                string originalLogFile = appender.File;
+
+                appender.File = logPath;
+                appender.ActivateOptions();
+                if (File.Exists(originalLogFile))
                 {
-                    return _inst;
+                    File.Delete(originalLogFile);
                 }
-                if (null == _inst)
-                {
-                    _inst = new RemoteLoggerSession(sessionId, logLevel, formatter);
-                    return _inst;
-                }
+                Logger = LogManager.GetLogger(Constants.PlatformLogName);
+                LogLevel = logLevel;
             }
-            return null;
+            catch (LogException ex)
+            {
+                TestflowRuntimeException exception = new TestflowRuntimeException(ModuleErrorCode.LogQueueInitFailed,
+                    ex.Message, ex);
+                throw exception;
+            }
         }
 
-        public int SessionId { get; }
-
-        void ILogSession.Print(LogLevel logLevel, int sequenceIndex, string message)
+        private static string GetSlaveLogPath(string instanceName, string sessionName, string testflowHome)
         {
-            if (logLevel < this._logLevel)
+            char dirSeparator = Path.DirectorySeparatorChar;
+            StringBuilder logPath = new StringBuilder(200);
+            logPath.Append(testflowHome)
+                .Append(dirSeparator)
+                .Append(instanceName)
+                .Append(dirSeparator)
+                .Append(sessionName)
+                .Append(Constants.LogFilePostfix);
+            // 如果不存在该文件说明原来没有执行过当前instance，直接返回默认路径
+            if (!File.Exists(logPath.ToString()))
             {
-                return;
+                return logPath.ToString();
             }
-            LogMessage logMessage = new LogMessage(SessionId, sequenceIndex, logLevel, message);
-            _messenger.Send(logMessage, _formatter, _targetType);
-        }
-
-        void ILogSession.Print(LogLevel logLevel, int sequenceIndex, Exception exception, string message = "")
-        {
-            if (logLevel < this._logLevel)
+            int removeLength = 1 + sessionName.Length + Constants.LogFilePostfix.Length;
+            logPath.Remove(logPath.Length - removeLength, removeLength);
+            int index = 1;
+            string newInstanceDir = instanceName;
+            do
             {
-                return;
-            }
-            LogMessage logMessage = new LogMessage(SessionId, sequenceIndex, logLevel, exception);
-            _messenger.Send(logMessage, _formatter, _targetType);
+                logPath.Remove(logPath.Length - newInstanceDir.Length, newInstanceDir.Length);
+                newInstanceDir = $"{instanceName}_{index++}";
+                logPath.Append(newInstanceDir);
+            } while (Directory.Exists(logPath.ToString()));
+            return logPath.Append(dirSeparator).Append(sessionName).Append(Constants.LogFilePostfix).ToString();
         }
     }
 }
