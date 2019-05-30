@@ -17,14 +17,11 @@ namespace Testflow.Logger
     /// </summary>
     public class PlatformLogSession : LogSession
     {
-        private readonly Messenger _messenger;
         /// <summary>
         /// 内部日志会话
         /// </summary>
-        public PlatformLogSession(Messenger messenger) : base(CommonConst.PlatformLogSession, Constants.PlatformLogName)
+        public PlatformLogSession() : base(CommonConst.PlatformLogSession, Constants.PlatformLogName)
         {
-            _messenger = messenger;
-
             string testflowHome = Environment.GetEnvironmentVariable(CommonConst.EnvironmentVariable);
             if (string.IsNullOrWhiteSpace(testflowHome))
             {

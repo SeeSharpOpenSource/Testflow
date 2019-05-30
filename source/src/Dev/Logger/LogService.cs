@@ -18,7 +18,6 @@ namespace Testflow.Logger
     {
         private PlatformLogSession _platformLogSession;
         private readonly I18N _i18N;
-        private Messenger _messenger;
         private readonly TestflowContext _context;
         private readonly TestflowRunner _testflowInst;
 
@@ -60,18 +59,18 @@ namespace Testflow.Logger
         {
             if (null == _platformLogSession)
             {
-                this._platformLogSession = new PlatformLogSession(_messenger);
+                this._platformLogSession = new PlatformLogSession();
             }
-            MessengerOption option = new MessengerOption(Constants.LogQueueName, typeof(LogMessage));
-            _messenger = Messenger.GetMessenger(option);
+//            MessengerOption option = new MessengerOption(Constants.LogQueueName, typeof(LogMessage));
+//            _messenger = Messenger.GetMessenger(option);
         }
 
         public void DesigntimeInitialize()
         {
-            _messenger?.Dispose();
+//            _messenger?.Dispose();
             if (null == _platformLogSession)
             {
-                this._platformLogSession = new PlatformLogSession(_messenger);
+                this._platformLogSession = new PlatformLogSession();
             }
         }
 
@@ -104,23 +103,14 @@ namespace Testflow.Logger
             _platformLogSession.Print(logLevel, Constants.DesigntimeSessionId, exception, message);
         }
         
-        /// <summary>
-        /// 停止运行时日志
-        /// </summary>
-        public void StopRuntimeLogging()
-        {
-            _messenger.Dispose();
-            _messenger = null;
-        }
-
         void IDisposable.Dispose()
         {
             _platformLogSession?.Dispose();
-            if (null != _messenger)
-            {
-                _messenger.Clear();
-                Messenger.DestroyMessenger(Constants.LogQueueName);
-            }
+//            if (null != _messenger)
+//            {
+//                _messenger.Clear();
+//                Messenger.DestroyMessenger(Constants.LogQueueName);
+//            }
             LogManager.Shutdown();
         }
     }
