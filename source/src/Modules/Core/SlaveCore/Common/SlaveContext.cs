@@ -1,17 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Threading;
 using Newtonsoft.Json;
 using Testflow.CoreCommon.Common;
 using Testflow.CoreCommon.Messages;
 using Testflow.Data;
 using Testflow.Data.Sequence;
-using Testflow.Log;
+using Testflow.Logger;
 using Testflow.Runtime;
 using Testflow.SlaveCore.Data;
 using Testflow.SlaveCore.Runner;
 using Testflow.SlaveCore.Runner.Model;
 using Testflow.SlaveCore.SlaveFlowControl;
+using Testflow.Usr;
 using Testflow.Utility.I18nUtil;
 
 namespace Testflow.SlaveCore.Common
@@ -38,7 +40,9 @@ namespace Testflow.SlaveCore.Common
             SessionId = this.GetProperty<int>("Session");
             State = RuntimeState.NotAvailable;
             this.StatusQueue = new LocalEventQueue<SequenceStatusInfo>(CoreConstants.DefaultEventsQueueSize);
-//            this.LogSession = TODO;
+            string instanceName = _configData["InstanceName"];
+            string sessionName = _configData["SessionName"];
+            this.LogSession = new RemoteLoggerSession(instanceName, sessionName,SessionId, GetProperty<LogLevel>("LogLevel"));
             this.I18N = I18N.GetInstance(Constants.I18nName);
             this.MessageTransceiver = new MessageTransceiver(this, SessionId);
             this.UplinkMsgProcessor = new UplinkMessageProcessor(this);
@@ -55,7 +59,7 @@ namespace Testflow.SlaveCore.Common
 
         public int SessionId { get; }
 
-        public ILogSession LogSession { get; }
+        public LogSession LogSession { get; }
 
         public MessageTransceiver MessageTransceiver { get; }
 
