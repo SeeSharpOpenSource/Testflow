@@ -48,11 +48,28 @@ namespace Testflow.MasterCore.TestMaintain
             // ignore
         }
 
-        public void StartHost()
+        public void StartHost(ISequenceFlowContainer sequenceData)
         {
-            foreach (RuntimeContainer container in _runtimeContainers.Values)
+            if (sequenceData is ISequenceGroup)
             {
-                container.Start(GetSlaveHostConfigData(container.Session));
+                _runtimeContainers[0].Start(GetSlaveHostConfigData(_runtimeContainers[0].Session, sequenceData.Name));
+            }
+            else
+            {
+                ITestProject testProject = sequenceData as ITestProject;
+                foreach (RuntimeContainer container in _runtimeContainers.Values)
+                {
+                    string sessionName = null;
+                    if (CommonConst.TestGroupSession == container.Session)
+                    {
+                        sessionName = Constants.TestProjectSessionName;
+                    }
+                    else
+                    {
+                        sessionName = testProject.SequenceGroups[container.Session].Name;
+                    }
+                    container.Start(GetSlaveHostConfigData(container.Session, sessionName));
+                }
             }
         }
 
@@ -147,7 +164,7 @@ namespace Testflow.MasterCore.TestMaintain
             throw new System.NotImplementedException();
         }
 
-        private string GetSlaveHostConfigData(int session)
+        private string GetSlaveHostConfigData(int session, string sessionName)
         {
             Dictionary<string, string> configData = new Dictionary<string, string>();
             configData.Add("Session", session.ToString());
@@ -161,7 +178,8 @@ namespace Testflow.MasterCore.TestMaintain
             configData.Add("SyncTimeout", _globalInfo.ConfigData.GetProperty<int>("SyncTimeout").ToString());
             configData.Add("TestTimeout", _globalInfo.ConfigData.GetProperty<int>("TestTimeout").ToString());
             configData.Add("RuntimeType", _globalInfo.ConfigData.GetProperty<RuntimeType>("RuntimeType").ToString());
-
+            configData.Add("SessionName", sessionName);
+            configData.Add("InstanceName", _globalInfo.ConfigData.GetProperty<string>("TestName"));
 
             return JsonConvert.SerializeObject(configData);
         }

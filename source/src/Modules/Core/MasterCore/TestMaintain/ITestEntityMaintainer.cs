@@ -17,7 +17,7 @@ namespace Testflow.MasterCore.TestMaintain
 
         void DisconnectHost(int sessionId);
 
-        void StartHost();
+        void StartHost(ISequenceFlowContainer sequenceData);
 
         void FreeHosts();
 

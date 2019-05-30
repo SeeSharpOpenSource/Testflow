@@ -92,7 +92,7 @@ namespace Testflow.MasterCore.Core
 
         public void StartTestGeneration()
         {
-            _testsMaintainer.StartHost();
+            _testsMaintainer.StartHost(_sequenceData);
             ISequenceManager sequenceManager = _globalInfo.TestflowRunner.SequenceManager;
             if (_sequenceData is ITestProject)
             {

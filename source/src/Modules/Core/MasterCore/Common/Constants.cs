@@ -17,6 +17,7 @@ namespace Testflow.MasterCore.Common
         public const int EventQueueTimeOut = 500;
 
         public const int OperationTimeout = 1000;
+        public const string TestProjectSessionName = "TestProjectSession";
 
         #region Block事件状态值定义
 
