@@ -45,15 +45,48 @@ namespace Testflow.Logger
                 {
                     File.Delete(originalLogFile);
                 }
-                
 
                 Logger = LogManager.GetLogger(Constants.PlatformLogName);
+                SetOriginalLevel();
             }
             catch (LogException ex)
             {
                 TestflowRuntimeException exception = new TestflowRuntimeException(ModuleErrorCode.LogQueueInitFailed,
                     ex.Message, ex);
                 throw exception;
+            }
+        }
+
+        private void SetOriginalLevel()
+        {
+            Level level = ((Hierarchy) Repository).Root.Level;
+            if (level == Level.Trace)
+            {
+                this.LogLevel = LogLevel.Trace;
+            }
+            else if (level == Level.Debug)
+            {
+                this.LogLevel = LogLevel.Debug;
+            }
+            else if (level == Level.Warn)
+            {
+                this.LogLevel = LogLevel.Warn;
+            }
+            else if (level == Level.Info)
+            {
+                this.LogLevel = LogLevel.Info;
+            }
+            else if (level == Level.Error)
+            {
+                this.LogLevel = LogLevel.Error;
+            }
+            else if (level == Level.Fatal)
+            {
+                this.LogLevel = LogLevel.Fatal;
+            }
+            else if (level == Level.Off)
+            {
+                this.LogLevel = LogLevel.Off;
             }
         }
 

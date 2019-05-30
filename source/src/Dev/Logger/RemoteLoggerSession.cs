@@ -45,7 +45,7 @@ namespace Testflow.Logger
                 log4net.Config.XmlConfigurator.Configure(new FileInfo(configFilePath));
                 Repository = LogManager.GetRepository();
                 IAppender[] appenders = Repository.GetAppenders();
-                RollingFileAppender appender = appenders.First(item => item.Name.Equals(Constants.RootAppender)) as RollingFileAppender;
+                RollingFileAppender appender = appenders.First(item => item.Name.Equals(Constants.SlaveAppender)) as RollingFileAppender;
                 string originalLogFile = appender.File;
 
                 appender.File = logPath;
@@ -65,22 +65,19 @@ namespace Testflow.Logger
             }
         }
 
-        private static string GetSlaveLogPath(string instanceName, string sessionName, string testflowHome)
+        private string GetSlaveLogPath(string instanceName, string sessionName, string testflowHome)
         {
             char dirSeparator = Path.DirectorySeparatorChar;
+            string logFileName = string.Format(Constants.SlaveLogNameFormat, SessionId, sessionName);
             StringBuilder logPath = new StringBuilder(200);
-            logPath.Append(testflowHome)
-                .Append(dirSeparator)
-                .Append(instanceName)
-                .Append(dirSeparator)
-                .Append(sessionName)
-                .Append(Constants.LogFilePostfix);
+            logPath.Append(testflowHome).Append(dirSeparator).Append(Constants.SlaveLogDir).Append(dirSeparator)
+                .Append(instanceName).Append(dirSeparator).Append(logFileName).Append(Constants.LogFilePostfix);
             // 如果不存在该文件说明原来没有执行过当前instance，直接返回默认路径
             if (!File.Exists(logPath.ToString()))
             {
                 return logPath.ToString();
             }
-            int removeLength = 1 + sessionName.Length + Constants.LogFilePostfix.Length;
+            int removeLength = 1 + logFileName.Length + Constants.LogFilePostfix.Length;
             logPath.Remove(logPath.Length - removeLength, removeLength);
             int index = 1;
             string newInstanceDir = instanceName;
@@ -90,7 +87,7 @@ namespace Testflow.Logger
                 newInstanceDir = $"{instanceName}_{index++}";
                 logPath.Append(newInstanceDir);
             } while (Directory.Exists(logPath.ToString()));
-            return logPath.Append(dirSeparator).Append(sessionName).Append(Constants.LogFilePostfix).ToString();
+            return logPath.Append(dirSeparator).Append(logFileName).Append(Constants.LogFilePostfix).ToString();
         }
     }
 }

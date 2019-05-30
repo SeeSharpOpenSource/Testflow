@@ -36,8 +36,35 @@ namespace Testflow.Logger
             get { return _logLevel; }
             set
             {
-                ((Hierarchy)Repository).Root.Level = (Level)Enum.Parse(typeof(Level), value.ToString());
+                log4net.Repository.Hierarchy.Logger rootLogger = (log4net.Repository.Hierarchy.Logger) Logger.Logger;
+                switch (value)
+                {
+                    case LogLevel.Trace:
+                        rootLogger.Level = Level.Trace;
+                        break;
+                    case LogLevel.Debug:
+                        rootLogger.Level = Level.Debug;
+                        break;
+                    case LogLevel.Info:
+                        rootLogger.Level = Level.Info;
+                        break;
+                    case LogLevel.Warn:
+                        rootLogger.Level = Level.Warn;
+                        break;
+                    case LogLevel.Error:
+                        rootLogger.Level = Level.Error;
+                        break;
+                    case LogLevel.Fatal:
+                        rootLogger.Level = Level.Fatal;
+                        break;
+                    case LogLevel.Off:
+                        rootLogger.Level = Level.Off;
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException(nameof(value), value, null);
+                }
                 _logLevel = value;
+                ((Hierarchy)LogManager.GetRepository()).RaiseConfigurationChanged(EventArgs.Empty);
             }
         }
 

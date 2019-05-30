@@ -13,6 +13,8 @@
         public const string PlatformLogDir = @"Log\platform\";
         public const string SlaveLogDir = @"Log";
 
+        public const string SlaveLogNameFormat = "session{0}_{1}";
+
         public const string LogFilePostfix = ".log";
 
         public const string PlatformConfFile = @"deploy\platformlog.xml";

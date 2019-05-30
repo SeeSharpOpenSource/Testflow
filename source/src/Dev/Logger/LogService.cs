@@ -48,7 +48,6 @@ namespace Testflow.Logger
                 };
                 _i18N = I18N.GetInstance(i18NOption);
                 _testflowInst = TestflowRunner.GetInstance();
-                _context = _testflowInst.Context;
                 _inst = this;
             }
         }
@@ -79,7 +78,11 @@ namespace Testflow.Logger
             // TODO to implement
         }
 
-        public LogLevel LogLevel { get; set; }
+        public LogLevel LogLevel
+        {
+            get { return _platformLogSession.LogLevel; }
+            set { _platformLogSession.LogLevel = value; }
+        }
 
         public void Print(LogLevel logLevel, int sessionId, string message)
         {

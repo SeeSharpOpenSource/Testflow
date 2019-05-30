@@ -46,7 +46,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Constants.cs" />
-    <Compile Include="ILogSession.cs" />
+    <Compile Include="LogSession.cs" />
     <Compile Include="ModuleErrorCode.cs" />
     <Compile Include="PlatformLogSession.cs" />
     <Compile Include="LogMessage.cs" />
