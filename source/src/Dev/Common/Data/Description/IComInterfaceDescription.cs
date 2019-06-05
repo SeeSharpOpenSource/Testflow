@@ -26,7 +26,7 @@ namespace Testflow.Data.Description
         /// <summary>
         /// 当前程序集中包含的所有类列表
         /// </summary>
-        IList<IClassInterfaceDescription> Functions { get; }
+        IList<IClassInterfaceDescription> Classes { get; }
 
         /// <summary>
         /// 该程序集支持对外暴露的变量类型
@@ -36,6 +36,6 @@ namespace Testflow.Data.Description
         /// <summary>
         /// 库的类型
         /// </summary>
-        string LibraryType { get; set; }
+        string Category { get; set; }
     }
 }

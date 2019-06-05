@@ -24,5 +24,10 @@
         /// 参数默认值
         /// </summary>
         string DefaultValue { get; set; }
+
+        /// <summary>
+        /// 是否为可选参数
+        /// </summary>
+        bool IsOptional { get; set; }
     }
 }
