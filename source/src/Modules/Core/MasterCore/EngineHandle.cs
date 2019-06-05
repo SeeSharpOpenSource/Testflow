@@ -20,8 +20,8 @@ namespace Testflow.MasterCore
 
         public EngineHandle()
         {
-            I18NOption i18NOption = new I18NOption(typeof (EngineHandle).Assembly, "i18n_engineCore_zh.resx",
-                "i18n_engineCore_en.resx")
+            I18NOption i18NOption = new I18NOption(typeof (EngineHandle).Assembly, "i18n_engineCore_zh",
+                "i18n_engineCore_en")
             {
                 Name = Constants.I18nName
             };
