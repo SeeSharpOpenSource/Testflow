@@ -94,7 +94,7 @@ namespace Testflow.Modules
         /// 创建空白的TypeData
         /// </summary>
         /// <returns></returns>
-        ITypeData CreateTypeData();
+        ITypeData CreateTypeData(ITypeDescription typeDescription);
 
         /// <summary>
         /// 创建空白的Variable
@@ -107,9 +107,8 @@ namespace Testflow.Modules
         /// </summary>
         /// <returns></returns>
         IAssemblyInfo CreateAssemblyInfo();
-
+        
         #endregion
-
 
         #region 序列化相关
 

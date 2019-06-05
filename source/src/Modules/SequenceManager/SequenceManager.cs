@@ -133,9 +133,14 @@ namespace Testflow.SequenceManager
             return new ParameterData();
         }
 
-        public ITypeData CreateTypeData()
+        public ITypeData CreateTypeData(ITypeDescription description)
         {
-            return new TypeData();
+            return new TypeData()
+            {
+                AssemblyName = description.AssemblyName,
+                Name = description.Name,
+                Namespace = description.Namespace
+            };
         }
 
         public IVariable CreateVarialbe()
