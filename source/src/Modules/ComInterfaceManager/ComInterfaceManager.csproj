@@ -40,7 +40,58 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AssemblyDescriptionLoader.cs" />
+    <Compile Include="Constants.cs" />
+    <Compile Include="Data\ArgumentDescription.cs" />
+    <Compile Include="Data\ClassInterfaceDescription.cs" />
+    <Compile Include="Data\ComInterfaceDescription.cs" />
+    <Compile Include="Data\FunctionInterfaceDescription.cs" />
+    <Compile Include="Data\PropertyDescription.cs" />
+    <Compile Include="Data\TypeDescription.cs" />
+    <Compile Include="DescriptionCollections.cs" />
+    <Compile Include="DescriptionLoaderManager.cs" />
+    <Compile Include="InterfaceManager.cs" />
+    <Compile Include="ModuleErrorCode.cs" />
+    <Compile Include="ModuleUtils.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Resources\locale\i18n_commanager_en.Designer.cs">
+      <DependentUpon>i18n_commanager_en.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="Resources\locale\i18n_commanager_zh.Designer.cs">
+      <DependentUpon>i18n_commanager_zh.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Dev\Common\Common.csproj">
+      <Project>{1681cdd7-0cc2-49d2-9e82-7b03b52db283}</Project>
+      <Name>Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Dev\Logger\Logger.csproj">
+      <Project>{dc3cd3de-1b8e-4847-b752-63352f35f1e2}</Project>
+      <Name>Logger</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Dev\UserLibInterface\UserLibInterface.csproj">
+      <Project>{c286714c-de6e-4643-9b56-245fb0f3a322}</Project>
+      <Name>UserLibInterface</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Dev\Utility\Utility.csproj">
+      <Project>{35105702-e8d2-4465-a118-687b6c85c466}</Project>
+      <Name>Utility</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\locale\i18n_commanager_en.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>i18n_commanager_en.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\locale\i18n_commanager_zh.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>i18n_commanager_zh.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
