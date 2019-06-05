@@ -5,6 +5,7 @@ using System.Reflection;
 using Testflow.ComInterfaceManager.Data;
 using Testflow.Data;
 using Testflow.Data.Description;
+using Testflow.Usr;
 using Testflow.Usr.Common;
 
 namespace Testflow.ComInterfaceManager
@@ -17,6 +18,8 @@ namespace Testflow.ComInterfaceManager
         }
 
         public Exception Exception { get; private set; }
+
+        public int ErrorCode { get; set; }
 
         public ComInterfaceDescription LoadAssemblyDescription(IAssemblyInfo assemblyInfo)
         {
@@ -33,26 +36,51 @@ namespace Testflow.ComInterfaceManager
             catch (Exception ex)
             {
                 this.Exception = ex;
+                this.ErrorCode = ModuleErrorCode.LibraryLoadError;
                 assemblyInfo.Available = false;
                 return null;
             }
-            ComInterfaceDescription descriptionData = new ComInterfaceDescription();
-            descriptionData.Assembly = assemblyInfo;
-            // TODO 加载xml文件注释
-            foreach (Type typeInfo in assembly.GetExportedTypes())
+
+            if (string.IsNullOrWhiteSpace(assemblyInfo.AssemblyName))
             {
-                HideAttribute hideAttribute = typeInfo.GetCustomAttribute<HideAttribute>();
-                
-                //如果隐藏属性为true，则隐藏该类型
-                if ((null != hideAttribute && hideAttribute.Hide))
+                assemblyInfo.AssemblyName = assembly.GetName().Name;
+                assemblyInfo.Available = true;
+                assemblyInfo.Version = assembly.ImageRuntimeVersion;
+            }
+            else
+            {
+                if (!CheckVersion(assemblyInfo.Version, assembly))
                 {
-                    continue;
+                    return null;
                 }
-                AddClassDescription(descriptionData, typeInfo);
             }
 
-            Exception = null;
-            return descriptionData;
+            try
+            {
+                ComInterfaceDescription descriptionData = new ComInterfaceDescription();
+                descriptionData.Assembly = assemblyInfo;
+                // TODO 加载xml文件注释
+                foreach (Type typeInfo in assembly.GetExportedTypes())
+                {
+                    HideAttribute hideAttribute = typeInfo.GetCustomAttribute<HideAttribute>();
+                
+                    //如果隐藏属性为true，则隐藏该类型
+                    if ((null != hideAttribute && hideAttribute.Hide))
+                    {
+                        continue;
+                    }
+                    AddClassDescription(descriptionData, typeInfo);
+                }
+
+                Exception = null;
+                return descriptionData;
+            }
+            catch (Exception ex)
+            {
+                Exception = ex;
+                this.ErrorCode = ModuleErrorCode.LibraryLoadError;
+                return null;
+            }
         }
 
         private void AddClassDescription(ComInterfaceDescription comDescription, Type classType)
@@ -298,6 +326,31 @@ namespace Testflow.ComInterfaceManager
                 paramDescription.DefaultValue = parameterInfo.DefaultValue.ToString();
             }
             return paramDescription;
+        }
+
+        public bool CheckVersion(string writeVersion, Assembly assembly)
+        {
+            const char delim = '.';
+            string[] versionElem = writeVersion.Split(delim);
+            int major = int.Parse(versionElem[0]);
+            int minor = int.Parse(versionElem[1]);
+            int revision = versionElem.Length > 2 ? int.Parse(versionElem[2]) : 0;
+
+            Version libVersion = assembly.GetName().Version;
+            if (libVersion.Major == major && libVersion.Minor == minor && libVersion.Revision == revision)
+            {
+                return true;
+            }
+            if (libVersion.Major > major || libVersion.Minor > minor && libVersion.Revision > revision)
+            {
+                ErrorCode = ModuleErrorCode.HighVersion;
+                return true;
+            }
+            else
+            {
+                ErrorCode = ModuleErrorCode.LowVersion;
+                return false;
+            }
         }
     }
 }

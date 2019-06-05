@@ -1,9 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Reflection;
 using System.Text;
 using Testflow.ComInterfaceManager.Data;
 using Testflow.Data;
 using Testflow.Data.Description;
 using Testflow.Modules;
+using Testflow.Usr;
 
 namespace Testflow.ComInterfaceManager
 {
@@ -11,7 +14,7 @@ namespace Testflow.ComInterfaceManager
     {
         // 使用TypeDescription信息更新VariableTypes和Class中的ClassType信息
         public static void ValidateComDescription(ISequenceManager sequenceManager, ComInterfaceDescription description, 
-            DescriptionCollections descriptionCollection)
+            DescriptionDataTable descriptionCollection)
         {
             int componentId = description.ComponentId;
             foreach (ITypeDescription typeDescription in description.TypeDescriptions)
@@ -59,7 +62,7 @@ namespace Testflow.ComInterfaceManager
         }
 
         private static ITypeData GetTypeDataByDescription(ISequenceManager sequenceManager,
-            DescriptionCollections descriptionCollection, ITypeDescription typeDescription)
+            DescriptionDataTable descriptionCollection, ITypeDescription typeDescription)
         {
             string classFullName = GetFullName(typeDescription);
             ITypeData classType;
@@ -76,7 +79,7 @@ namespace Testflow.ComInterfaceManager
         }
 
         private static void InitializeArgumentType(ISequenceManager sequenceManager,
-            DescriptionCollections descriptionCollection, IArgumentDescription argumentDescription)
+            DescriptionDataTable descriptionCollection, IArgumentDescription argumentDescription)
         {
             ArgumentDescription argDescription = (ArgumentDescription) argumentDescription;
             string fullName = GetFullName(argDescription.TypeDescription);
@@ -93,16 +96,22 @@ namespace Testflow.ComInterfaceManager
             argDescription.TypeDescription = null;
         }
 
-        public static string GetFullName(ITypeData typeData)
+        public static string GetFullName(string namespaceStr, string name)
         {
             const string fullNameFormat = "{0}.{1}";
-            return string.Format(fullNameFormat, typeData.Namespace, typeData.Name);
+            return string.Format(fullNameFormat, namespaceStr, name);
         }
 
         public static string GetFullName(ITypeDescription typeDescription)
         {
             const string fullNameFormat = "{0}.{1}";
             return string.Format(fullNameFormat, typeDescription.Namespace, typeDescription.Name);
+        }
+
+        public static string GetFullName(ITypeData typeData)
+        {
+            const string fullNameFormat = "{0}.{1}";
+            return string.Format(fullNameFormat, typeData.Namespace, typeData.Name);
         }
 
         public static string GetSignature(string className, FunctionInterfaceDescription funcDescription)
@@ -119,6 +128,19 @@ namespace Testflow.ComInterfaceManager
                 paramStr.Remove(paramStr.Length - 1, 1);
             }
             return string.Format(signatureFormat, className, funcDescription.Name, paramStr);
+        }
+
+        public static void SetComponentId(ComInterfaceDescription comDescription, int index)
+        {
+            comDescription.ComponentId = index;
+            foreach (IClassInterfaceDescription classDescription in comDescription.Classes)
+            {
+                classDescription.ComponentIndex = index;
+                foreach (IFuncInterfaceDescription funcDescription in classDescription.Functions)
+                {
+                    funcDescription.ComponentIndex = index;
+                }
+            }
         }
     }
 }

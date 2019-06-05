@@ -117,4 +117,10 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="LowAssemblyVersion" xml:space="preserve">
+    <value>The version of assembly '{0}' is lower than version defined in data.</value>
+  </data>
+  <data name="RuntimeError" xml:space="preserve">
+    <value>Runtime error occured when loading assembly.</value>
+  </data>
 </root>

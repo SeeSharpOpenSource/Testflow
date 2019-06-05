@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using Testflow.ComInterfaceManager.Data;
 using Testflow.Data;
@@ -8,14 +9,14 @@ using Testflow.Usr;
 
 namespace Testflow.ComInterfaceManager
 {
-    internal class DescriptionCollections : IDisposable
+    internal class DescriptionDataTable : IDisposable
     {
         private Dictionary<string, ITypeData> _typeMapping;
         private IDictionary<string, ComInterfaceDescription> _descriptions;
         private ReaderWriterLockSlim _lock;
         private int _nextComIndex;
 
-        public DescriptionCollections()
+        public DescriptionDataTable()
         {
             this._descriptions = new Dictionary<string, ComInterfaceDescription>(200);
             this._typeMapping = new Dictionary<string, ITypeData>(1000);
@@ -23,7 +24,7 @@ namespace Testflow.ComInterfaceManager
             _nextComIndex = 0;
         }
 
-        public int NextComId => Interlocked.Increment(ref _nextComIndex);
+        protected int NextComId => Interlocked.Increment(ref _nextComIndex);
         public bool Add(ComInterfaceDescription description)
         {
             bool addSuccess = false;
@@ -35,6 +36,8 @@ namespace Testflow.ComInterfaceManager
             }
             _lock.ExitWriteLock();
             
+            ModuleUtils.SetComponentId(description, _nextComIndex);
+
             return addSuccess;
         }
         
@@ -42,6 +45,14 @@ namespace Testflow.ComInterfaceManager
         {
             _lock.EnterReadLock();
             bool containsKey = _descriptions.ContainsKey(assemblyName);
+            _lock.ExitReadLock();
+            return containsKey;
+        }
+
+        public bool Contains(int componentId)
+        {
+            _lock.EnterReadLock();
+            bool containsKey = _descriptions.Any(item => item.Value.ComponentId == componentId);
             _lock.ExitReadLock();
             return containsKey;
         }
@@ -63,23 +74,39 @@ namespace Testflow.ComInterfaceManager
         {
             _lock.EnterWriteLock();
             _descriptions.Clear();
+            _typeMapping.Clear();
             _lock.ExitWriteLock();
         }
 
-        public ComInterfaceDescription this[string assemblyName]
+        public ComInterfaceDescription GetComDescription(string assemblyName)
         {
-            get
-            {
-                ComInterfaceDescription description = null;
-                _lock.EnterReadLock();
+            ComInterfaceDescription description = null;
+            _lock.EnterReadLock();
 
-                if (_descriptions.ContainsKey(assemblyName))
-                {
-                    description = _descriptions[assemblyName];
-                }
-                _lock.ExitReadLock();
-                return description;
+            if (_descriptions.ContainsKey(assemblyName))
+            {
+                description = _descriptions[assemblyName];
             }
+            _lock.ExitReadLock();
+            return description;
+        }
+
+        public ComInterfaceDescription GetComDescription(int componentId)
+        {
+            _lock.EnterReadLock();
+            ComInterfaceDescription description =
+                _descriptions.Values.FirstOrDefault(item => item.ComponentId == componentId);
+            _lock.ExitReadLock();
+            return description;
+        }
+
+        public ComInterfaceDescription GetComDescriptionByPath(string path)
+        {
+            _lock.EnterReadLock();
+            ComInterfaceDescription description =
+                _descriptions.Values.FirstOrDefault(item => item.Assembly.Path.Equals(path));
+            _lock.ExitReadLock();
+            return description;
         }
 
         public void RemoveAssembly(string assemblyName)

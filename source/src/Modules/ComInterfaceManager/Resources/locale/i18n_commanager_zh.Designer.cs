@@ -59,5 +59,23 @@ namespace Testflow.ComInterfaceManager.Resources.locale {
                 resourceCulture = value;
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 程序集&quot;{0}&quot;的版本号低于序列数据中定义的版本号。.
+        /// </summary>
+        internal static string LowAssemblyVersion {
+            get {
+                return ResourceManager.GetString("LowAssemblyVersion", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 加载程序集出现运行时错误。.
+        /// </summary>
+        internal static string RuntimeError {
+            get {
+                return ResourceManager.GetString("RuntimeError", resourceCulture);
+            }
+        }
     }
 }

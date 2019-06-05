@@ -59,5 +59,23 @@ namespace Testflow.ComInterfaceManager.Resources.locale {
                 resourceCulture = value;
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The version of assembly &apos;{0}&apos; is lower than version defined in data..
+        /// </summary>
+        internal static string LowAssemblyVersion {
+            get {
+                return ResourceManager.GetString("LowAssemblyVersion", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Runtime error occured when loading assembly..
+        /// </summary>
+        internal static string RuntimeError {
+            get {
+                return ResourceManager.GetString("RuntimeError", resourceCulture);
+            }
+        }
     }
 }
