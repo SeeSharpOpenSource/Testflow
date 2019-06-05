@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Testflow.Attributes
+namespace Testflow.Usr.Common
 {
     /// <summary>
     /// 在Testflow中被使用的元素注解

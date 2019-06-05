@@ -61,7 +61,7 @@ namespace Testflow.Usr.Resources.locale {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Algorithms.
+        ///   Looks up a localized string similar to Algorithm.
         /// </summary>
         internal static string Algorithm {
             get {
@@ -72,18 +72,18 @@ namespace Testflow.Usr.Resources.locale {
         /// <summary>
         ///   Looks up a localized string similar to Assertion.
         /// </summary>
-        internal static string Assert {
+        internal static string Assertion {
             get {
-                return ResourceManager.GetString("Assert", resourceCulture);
+                return ResourceManager.GetString("Assertion", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to FlowControl.
         /// </summary>
-        internal static string FlowContrl {
+        internal static string FlowControl {
             get {
-                return ResourceManager.GetString("FlowContrl", resourceCulture);
+                return ResourceManager.GetString("FlowControl", resourceCulture);
             }
         }
         
@@ -126,9 +126,9 @@ namespace Testflow.Usr.Resources.locale {
         /// <summary>
         ///   Looks up a localized string similar to Tools.
         /// </summary>
-        internal static string ToolBox {
+        internal static string Tools {
             get {
-                return ResourceManager.GetString("ToolBox", resourceCulture);
+                return ResourceManager.GetString("Tools", resourceCulture);
             }
         }
     }

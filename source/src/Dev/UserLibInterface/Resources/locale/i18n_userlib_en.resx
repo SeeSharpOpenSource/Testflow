@@ -118,12 +118,12 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="Algorithm" xml:space="preserve">
-    <value>Algorithms</value>
+    <value>Algorithm</value>
   </data>
-  <data name="Assert" xml:space="preserve">
+  <data name="Assertion" xml:space="preserve">
     <value>Assertion</value>
   </data>
-  <data name="FlowContrl" xml:space="preserve">
+  <data name="FlowControl" xml:space="preserve">
     <value>FlowControl</value>
   </data>
   <data name="Function" xml:space="preserve">
@@ -138,7 +138,7 @@
   <data name="Platform" xml:space="preserve">
     <value>Platform</value>
   </data>
-  <data name="ToolBox" xml:space="preserve">
+  <data name="Tools" xml:space="preserve">
     <value>Tools</value>
   </data>
 </root>
