@@ -256,13 +256,13 @@ namespace Testflow.SlaveCore.Runner
             if (libVersion.Major > major || libVersion.Minor > minor && libVersion.Revision > revision)
             {
                 string assmblyName = assembly.GetName().Name;
-                _context.LogSession.Print(LogLevel.Error, CommonConst.PlatformLogSession, $"The version of library {assmblyName} is lower than the version defined in sequence.");
-                throw new TestflowDataException(ModuleErrorCode.UnavailableLibrary, _context.I18N.GetFStr("InvalidLibVersion", assmblyName));
+                _context.LogSession.Print(LogLevel.Warn, CommonConst.PlatformLogSession, $"The version of library {assmblyName} is higher than the version defined in sequence.");
             }
             else
             {
                 string assmblyName = assembly.GetName().Name;
-                _context.LogSession.Print(LogLevel.Warn, CommonConst.PlatformLogSession, $"The version of library {assmblyName} is higher than the version defined in sequence.");
+                _context.LogSession.Print(LogLevel.Error, CommonConst.PlatformLogSession, $"The version of library {assmblyName} is lower than the version defined in sequence.");
+                throw new TestflowDataException(ModuleErrorCode.UnavailableLibrary, _context.I18N.GetFStr("InvalidLibVersion", assmblyName));
             }
         }
     }
