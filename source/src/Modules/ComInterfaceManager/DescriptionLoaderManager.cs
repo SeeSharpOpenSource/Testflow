@@ -23,9 +23,12 @@ namespace Testflow.ComInterfaceManager
         public DescriptionLoaderManager()
         {
             _loaderDomain = AppDomain.CreateDomain(Constants.AppDomainName);
-            _assemblyFullName = this.GetType().Assembly.FullName;
-            _loaderName = typeof(AssemblyDescriptionLoader).Name;
-            _loader = (AssemblyDescriptionLoader)_loaderDomain.CreateInstanceAndUnwrap(_assemblyFullName, _loaderName);
+//            _loaderDomain.Load()
+            Type loaderType = typeof(AssemblyDescriptionLoader);
+//            _loaderName = $"{loaderType.Namespace}.{loaderType.Name}";
+            _assemblyFullName = loaderType.Assembly.Location;
+            _loaderName = loaderType.FullName;
+            _loader = (AssemblyDescriptionLoader)_loaderDomain.CreateInstanceFromAndUnwrap(_assemblyFullName, _loaderName);
             _sequenceManager = TestflowRunner.GetInstance().SequenceManager;
         }
 

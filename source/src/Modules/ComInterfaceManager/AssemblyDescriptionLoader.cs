@@ -5,16 +5,19 @@ using System.Reflection;
 using Testflow.ComInterfaceManager.Data;
 using Testflow.Data;
 using Testflow.Data.Description;
+using Testflow.SequenceManager.SequenceElements;
 using Testflow.Usr;
 using Testflow.Usr.Common;
 
 namespace Testflow.ComInterfaceManager
 {
-    internal class AssemblyDescriptionLoader : MarshalByRefObject
+    public class AssemblyDescriptionLoader : MarshalByRefObject
     {
         public AssemblyDescriptionLoader()
         {
-
+            Assembly.LoadFile(typeof (AssemblyDescriptionLoader).Assembly.Location);
+            Assembly.LoadFile(typeof (IAssemblyInfo).Assembly.Location);
+            Assembly.LoadFile(typeof (AssemblyInfo).Assembly.Location);
         }
 
         public Exception Exception { get; private set; }
