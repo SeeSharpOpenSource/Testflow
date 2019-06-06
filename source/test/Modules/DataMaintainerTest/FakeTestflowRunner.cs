@@ -42,9 +42,9 @@ namespace Testflow.DataMaintainerTest
             public int ComponentId { get; set; }
             public string Signature { get; }
             public IAssemblyInfo Assembly { get; set; }
-            public IList<IClassInterfaceDescription> Functions { get; }
+            public IList<IClassInterfaceDescription> Classes { get; }
             public IList<ITypeData> VariableTypes { get; set; }
-            public string LibraryType { get; set; }
+            public string Category { get; set; }
         }
     }
 }

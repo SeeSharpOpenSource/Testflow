@@ -341,7 +341,9 @@ namespace Testflow.SequenceManagerTest
         public bool IsGeneric { get; set; }
         public IArgumentDescription Return { get; set; }
         public IList<IArgumentDescription> Arguments { get; set; }
+        public IList<IArgumentDescription> Properties { get; set; }
         public string Signature { get; set; }
+        public string Category { get; set; }
 
         public TestFuncDescription()
         {
@@ -408,6 +410,7 @@ namespace Testflow.SequenceManagerTest
             public ITypeData Type { get; set; }
             public ArgumentModifier Modifier { get; set; }
             public string DefaultValue { get; set; }
+            public bool IsOptional { get; set; }
         }
     }
 }
