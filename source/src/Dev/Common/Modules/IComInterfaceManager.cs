@@ -79,5 +79,15 @@ namespace Testflow.Modules
         /// <param name="propertyType">过滤的Type全名，包括命名空间。如果不指定可以配置为null</param>
         /// <returns></returns>
         IList<string> GetTypeProperties(ITypeData type, ITypeData propertyType = null);
+
+        /// <summary>
+        /// 获取所有接口描述信息的列表
+        /// </summary>
+        IList<IComInterfaceDescription> GetComponentDescriptions();
+
+        /// <summary>
+        /// 获取所有类型信息的列表
+        /// </summary>
+        IList<ITypeData> GetTypeDatas();
     }
 }
