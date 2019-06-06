@@ -120,7 +120,13 @@
   <data name="LowAssemblyVersion" xml:space="preserve">
     <value>The version of assembly '{0}' is lower than version defined in data.</value>
   </data>
+  <data name="PropertyNotFound" xml:space="preserve">
+    <value>The property '{1}' cannot be found in type '{0}'.</value>
+  </data>
   <data name="RuntimeError" xml:space="preserve">
     <value>Runtime error occured when loading assembly.</value>
+  </data>
+  <data name="TypeNotFound" xml:space="preserve">
+    <value>Type {0} cannot be loaded from current assembly.</value>
   </data>
 </root>

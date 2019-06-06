@@ -23,6 +23,8 @@ namespace Testflow.ComInterfaceManager
 
         public ComInterfaceDescription LoadAssemblyDescription(IAssemblyInfo assemblyInfo)
         {
+            Exception = null;
+            ErrorCode = 0;
             if (!File.Exists(assemblyInfo.Path))
             {
                 assemblyInfo.Available = false;
@@ -71,8 +73,6 @@ namespace Testflow.ComInterfaceManager
                     }
                     AddClassDescription(descriptionData, typeInfo);
                 }
-
-                Exception = null;
                 return descriptionData;
             }
             catch (Exception ex)
@@ -328,7 +328,7 @@ namespace Testflow.ComInterfaceManager
             return paramDescription;
         }
 
-        public bool CheckVersion(string writeVersion, Assembly assembly)
+        private bool CheckVersion(string writeVersion, Assembly assembly)
         {
             const char delim = '.';
             string[] versionElem = writeVersion.Split(delim);
@@ -350,6 +350,60 @@ namespace Testflow.ComInterfaceManager
             {
                 ErrorCode = ModuleErrorCode.LowVersion;
                 return false;
+            }
+        }
+
+        public ITypeDescription GetPropertyType(ITypeData typeData, string propertyStr)
+        {
+            const char delim = '.';
+            string[] propertyElems = propertyStr.Split(delim);
+            Exception = null;
+            ErrorCode = 0;
+            try
+            {
+                Type dataType = Type.GetType(ModuleUtils.GetFullName(typeData));
+                if (null == dataType)
+                {
+                    ErrorCode = ModuleErrorCode.TypeCannotLoad;
+                    return null;
+                }
+                foreach (string propertyElem in propertyElems)
+                {
+                    if (string.IsNullOrWhiteSpace(propertyElem))
+                    {
+                        continue;
+                    }
+                    PropertyInfo propertyInfo = dataType.GetProperty(propertyElem,
+                        BindingFlags.Instance | BindingFlags.Public);
+                    if (null == propertyInfo)
+                    {
+                        ErrorCode = ModuleErrorCode.PropertyNotFound;
+                        return null;
+                    }
+                    dataType = propertyInfo.PropertyType;
+                }
+
+                TestflowCategoryAttribute categoryAttribute = dataType.GetCustomAttribute<TestflowCategoryAttribute>();
+                string category = null == categoryAttribute ? string.Empty : categoryAttribute.CategoryString;
+
+                DescriptionAttribute descriptionAttribute = dataType.GetCustomAttribute<DescriptionAttribute>();
+                string description = null == descriptionAttribute ? string.Empty : descriptionAttribute.Description;
+
+                TypeDescription typeDescription = new TypeDescription()
+                {
+                    AssemblyName = dataType.Assembly.GetName().Name,
+                    Category = category,
+                    Description = description,
+                    Name = dataType.Name,
+                    Namespace = dataType.Namespace
+                };
+                return typeDescription;
+            }
+            catch (Exception ex)
+            {
+                this.ErrorCode = ModuleErrorCode.LibraryLoadError;
+                this.Exception = ex;
+                return null;
             }
         }
     }

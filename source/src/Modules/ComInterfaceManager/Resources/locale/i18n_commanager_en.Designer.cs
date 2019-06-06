@@ -70,11 +70,29 @@ namespace Testflow.ComInterfaceManager.Resources.locale {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The property &apos;{1}&apos; cannot be found in type &apos;{0}&apos;..
+        /// </summary>
+        internal static string PropertyNotFound {
+            get {
+                return ResourceManager.GetString("PropertyNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Runtime error occured when loading assembly..
         /// </summary>
         internal static string RuntimeError {
             get {
                 return ResourceManager.GetString("RuntimeError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Type {0} cannot be loaded from current assembly..
+        /// </summary>
+        internal static string TypeNotFound {
+            get {
+                return ResourceManager.GetString("TypeNotFound", resourceCulture);
             }
         }
     }

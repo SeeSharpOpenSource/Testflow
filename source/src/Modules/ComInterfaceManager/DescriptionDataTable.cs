@@ -138,6 +138,16 @@ namespace Testflow.ComInterfaceManager
             return _typeMapping[fullName];
         }
 
+        public IList<IComInterfaceDescription> GetComponentDescriptions()
+        {
+            return new List<IComInterfaceDescription>(_descriptions.Values);
+        }
+
+        public IList<ITypeData> GetTypeDatas()
+        {
+            return new List<ITypeData>(_typeMapping.Values);
+        }
+
         public void AddTypeData(string fullName, ITypeData typeData)
         {
             _lock.EnterWriteLock();

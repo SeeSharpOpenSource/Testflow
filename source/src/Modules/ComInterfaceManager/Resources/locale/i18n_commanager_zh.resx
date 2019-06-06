@@ -120,7 +120,13 @@
   <data name="LowAssemblyVersion" xml:space="preserve">
     <value>程序集"{0}"的版本号低于序列数据中定义的版本号。</value>
   </data>
+  <data name="PropertyNotFound" xml:space="preserve">
+    <value>类型”{0}“中不存在属性”{1}“。</value>
+  </data>
   <data name="RuntimeError" xml:space="preserve">
     <value>加载程序集出现运行时错误。</value>
+  </data>
+  <data name="TypeNotFound" xml:space="preserve">
+    <value>当前程序集中无法加载类型“{0}”。</value>
   </data>
 </root>

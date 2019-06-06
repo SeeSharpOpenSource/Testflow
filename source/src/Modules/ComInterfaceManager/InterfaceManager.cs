@@ -118,12 +118,22 @@ namespace Testflow.ComInterfaceManager
 
         public ITypeData GetPropertyType(ITypeData variableType, string propertyName)
         {
-            throw new System.NotImplementedException();
+            return _loaderManager.GetPropertyType(variableType, propertyName, _descriptionData);
         }
 
         public IList<string> GetTypeProperties(ITypeData type, ITypeData propertyType = null)
         {
             throw new System.NotImplementedException();
+        }
+
+        public IList<IComInterfaceDescription> GetComponentDescriptions()
+        {
+            return _descriptionData.GetComponentDescriptions();
+        }
+
+        public IList<ITypeData> GetTypeDatas()
+        {
+            return _descriptionData.GetTypeDatas();
         }
 
         public void Dispose()

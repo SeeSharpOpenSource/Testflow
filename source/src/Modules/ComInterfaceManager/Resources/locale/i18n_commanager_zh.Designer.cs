@@ -70,11 +70,29 @@ namespace Testflow.ComInterfaceManager.Resources.locale {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to 类型”{0}“中不存在属性”{1}“。.
+        /// </summary>
+        internal static string PropertyNotFound {
+            get {
+                return ResourceManager.GetString("PropertyNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to 加载程序集出现运行时错误。.
         /// </summary>
         internal static string RuntimeError {
             get {
                 return ResourceManager.GetString("RuntimeError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 当前程序集中无法加载类型“{0}”。.
+        /// </summary>
+        internal static string TypeNotFound {
+            get {
+                return ResourceManager.GetString("TypeNotFound", resourceCulture);
             }
         }
     }
