@@ -36,7 +36,7 @@ namespace Testflow.ComInterfaceManager
             }
             _lock.ExitWriteLock();
             
-            ModuleUtils.SetComponentId(description, _nextComIndex);
+            ModuleUtils.SetComponentId(description, NextComId);
 
             return addSuccess;
         }

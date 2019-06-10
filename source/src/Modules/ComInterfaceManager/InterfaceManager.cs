@@ -33,6 +33,9 @@ namespace Testflow.ComInterfaceManager
 
         public void DesigntimeInitialize()
         {
+            _descriptionData?.Dispose();
+            _loaderManager?.Dispose();
+
             _descriptionData = new DescriptionDataTable();
             _loaderManager = new DescriptionLoaderManager();
         }

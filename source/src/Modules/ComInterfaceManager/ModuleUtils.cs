@@ -21,6 +21,10 @@ namespace Testflow.ComInterfaceManager
             {
                 ITypeData classType = GetTypeDataByDescription(sequenceManager, descriptionCollection, typeDescription);
                 description.VariableTypes.Add(classType);
+                if (null != typeDescription.Enumerations)
+                {
+                    description.Enumerations.Add(GetFullName(typeDescription), typeDescription.Enumerations);
+                }
             }
             description.TypeDescriptions.Clear();
             description.TypeDescriptions = null;

@@ -1,69 +1,70 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using Testflow.ComInterfaceManager.Data;
 using Testflow.Data;
 using Testflow.Data.Description;
 using Testflow.SequenceManager.SequenceElements;
-using Testflow.Usr;
 using Testflow.Usr.Common;
 
 namespace Testflow.ComInterfaceManager
 {
     public class AssemblyDescriptionLoader : MarshalByRefObject
     {
+        private readonly HashSet<string> _ignoreMethod;
         public AssemblyDescriptionLoader()
         {
-            Assembly.LoadFile(typeof (AssemblyDescriptionLoader).Assembly.Location);
-            Assembly.LoadFile(typeof (IAssemblyInfo).Assembly.Location);
-            Assembly.LoadFile(typeof (AssemblyInfo).Assembly.Location);
+            _ignoreMethod = new HashSet<string>()
+            {
+                "ToString",
+                "Equals",
+                "GetHashCode",
+                "GetType"
+            };
         }
 
         public Exception Exception { get; private set; }
 
         public int ErrorCode { get; set; }
 
-        public ComInterfaceDescription LoadAssemblyDescription(IAssemblyInfo assemblyInfo)
+        public ComInterfaceDescription LoadAssemblyDescription(string path, ref string assemblyName, ref string version)
         {
             Exception = null;
             ErrorCode = 0;
-            if (!File.Exists(assemblyInfo.Path))
+            if (!File.Exists(path))
             {
-                assemblyInfo.Available = false;
                 return null;
             }
             Assembly assembly;
             try
             {
-                assembly = Assembly.LoadFile(assemblyInfo.Path);
+                assembly = Assembly.LoadFile(path);
             }
             catch (Exception ex)
             {
                 this.Exception = ex;
                 this.ErrorCode = ModuleErrorCode.LibraryLoadError;
-                assemblyInfo.Available = false;
                 return null;
             }
 
-            if (string.IsNullOrWhiteSpace(assemblyInfo.AssemblyName))
+            if (string.IsNullOrWhiteSpace(assemblyName))
             {
-                assemblyInfo.AssemblyName = assembly.GetName().Name;
-                assemblyInfo.Available = true;
-                assemblyInfo.Version = assembly.ImageRuntimeVersion;
+                assemblyName = assembly.GetName().Name;
+                version = assembly.GetName().Version.ToString();
             }
             else
             {
-                if (!CheckVersion(assemblyInfo.Version, assembly))
+                if (!CheckVersion(version, assembly))
                 {
                     return null;
                 }
             }
-
             try
             {
                 ComInterfaceDescription descriptionData = new ComInterfaceDescription();
-                descriptionData.Assembly = assemblyInfo;
+//                descriptionData.Assembly = assemblyInfo;
                 // TODO 加载xml文件注释
                 foreach (Type typeInfo in assembly.GetExportedTypes())
                 {
@@ -74,7 +75,14 @@ namespace Testflow.ComInterfaceManager
                     {
                         continue;
                     }
-                    AddClassDescription(descriptionData, typeInfo);
+                    if (typeInfo.IsEnum || typeInfo.IsValueType || typeInfo == typeof(string))
+                    {
+                        AddDataTypeDescription(descriptionData, typeInfo, assemblyName);
+                    }
+                    else if (typeInfo.IsClass)
+                    {
+                        AddClassDescription(descriptionData, typeInfo, assemblyName);
+                    }
                 }
                 return descriptionData;
             }
@@ -86,7 +94,33 @@ namespace Testflow.ComInterfaceManager
             }
         }
 
-        private void AddClassDescription(ComInterfaceDescription comDescription, Type classType)
+        private void AddDataTypeDescription(ComInterfaceDescription descriptionData, Type classType, string assemblyName)
+        {
+            TestflowCategoryAttribute category = classType.GetCustomAttribute<TestflowCategoryAttribute>();
+            DescriptionAttribute descriptionAttr = classType.GetCustomAttribute<DescriptionAttribute>();
+
+            string typeCategory = null != category ? category.CategoryString : string.Empty;
+            string classDescriptionStr = (null != descriptionAttr) ? descriptionAttr.Description : string.Empty;
+
+            TypeDescription typeDescription = new TypeDescription()
+            {
+                AssemblyName = assemblyName,
+                Category = typeCategory,
+                Description = classDescriptionStr,
+                Name = classType.Name,
+                Namespace = classType.Namespace
+            };
+
+            // 枚举类型需要添加枚举值到类型信息中
+            if (classType.IsEnum)
+            {
+                typeDescription.Enumerations = Enum.GetNames(classType);
+            }
+
+            descriptionData.TypeDescriptions.Add(typeDescription);
+        }
+
+        private void AddClassDescription(ComInterfaceDescription comDescription, Type classType, string assemblyName)
         {
             TestflowTypeAttribute testflowType = classType.GetCustomAttribute<TestflowTypeAttribute>();
             TestflowCategoryAttribute category = classType.GetCustomAttribute<TestflowCategoryAttribute>();
@@ -97,18 +131,12 @@ namespace Testflow.ComInterfaceManager
 
             TypeDescription typeDescription = new TypeDescription()
             {
-                AssemblyName = comDescription.Assembly.AssemblyName,
+                AssemblyName = assemblyName,
                 Category = typeCategory,
                 Name = classType.Name,
                 Namespace = classType.Namespace,
                 Description = classDescriptionStr,
             };
-
-            if (null != testflowType && !testflowType.IsTestflowDataType)
-            {
-                comDescription.TypeDescriptions.Add(typeDescription);
-            }
-
             ClassInterfaceDescription classDescription = new ClassInterfaceDescription()
             {
                 ClassTypeDescription = typeDescription,
@@ -120,13 +148,27 @@ namespace Testflow.ComInterfaceManager
             AddMethodDescription(classType, classDescription);
 
             comDescription.Classes.Add(classDescription);
+
+            // 如果是Testflow数据类型，则添加到数据类型列表中。默认所有的实例类都是Testflow数据类型(包含实例方法，并且有公开的实例属性)
+            if (null == testflowType || testflowType.IsTestflowDataType || 
+                classDescription.Functions.Any(item => item.FuncType == FunctionType.InstanceFunction) ||
+                classDescription.Functions.Any(item => item.FuncType == FunctionType.Constructor && 
+                null != item.Properties && item.Properties.Count > 0))
+            {
+                comDescription.TypeDescriptions.Add(typeDescription);
+            }
         }
 
-        private static void AddMethodDescription(Type classType, ClassInterfaceDescription classDescription)
+        private void AddMethodDescription(Type classType, ClassInterfaceDescription classDescription)
         {
-            MethodInfo[] methods = classType.GetMethods(BindingFlags.Public);
+            MethodInfo[] methods = classType.GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static);
             foreach (MethodInfo methodInfo in methods)
             {
+                // 跳过忽略方法
+                if (_ignoreMethod.Contains(methodInfo.Name))
+                {
+                    continue;
+                }
                 DescriptionAttribute descriptionAttribute = methodInfo.GetCustomAttribute<DescriptionAttribute>();
                 string descriptionStr = (null == descriptionAttribute)
                     ? string.Empty
@@ -275,10 +317,10 @@ namespace Testflow.ComInterfaceManager
                 ArgumentDescription paramDescription = GetParameterInfo(parameterInfo);
                 funcDescription.Arguments.Add(paramDescription);
             }
-            funcDescription.Return = GetParameterInfo(method.ReturnParameter);
+            funcDescription.Return = GetReturnInfo(method.ReturnParameter);
         }
 
-        // 构造一个参数信息
+        // 构造参数信息
         private static ArgumentDescription GetParameterInfo(ParameterInfo parameterInfo)
         {
             VariableType argumentType = VariableType.Undefined;
@@ -304,7 +346,7 @@ namespace Testflow.ComInterfaceManager
                 AssemblyName = propertyType.Assembly.GetName().Name,
                 Category = string.Empty,
                 Description = descriptionStr,
-                Name = parameterInfo.Name,
+                Name = propertyType.Name,
                 Namespace = propertyType.Namespace
             };
 
@@ -328,6 +370,50 @@ namespace Testflow.ComInterfaceManager
             {
                 paramDescription.DefaultValue = parameterInfo.DefaultValue.ToString();
             }
+            return paramDescription;
+        }
+
+        // 构造一个参数信息
+        private static ArgumentDescription GetReturnInfo(ParameterInfo parameterInfo)
+        {
+            VariableType argumentType = VariableType.Undefined;
+            Type propertyType = parameterInfo.ParameterType;
+            if ("Void".Equals(propertyType.Name))
+            {
+                return null;
+            }
+            if (propertyType.IsValueType || propertyType == typeof(string))
+            {
+                argumentType = VariableType.Value;
+            }
+            else if (propertyType.IsClass)
+            {
+                argumentType = VariableType.Class;
+            }
+            else if (propertyType.IsEnum)
+            {
+                argumentType = VariableType.Enumeration;
+            }
+
+            TypeDescription typeDescription = new TypeDescription()
+            {
+                AssemblyName = propertyType.Assembly.GetName().Name,
+                Category = string.Empty,
+                Description = string.Empty,
+                Name = parameterInfo.Name,
+                Namespace = propertyType.Namespace
+            };
+
+            ArgumentDescription paramDescription = new ArgumentDescription()
+            {
+                Name = parameterInfo.Name,
+                ArgumentType = argumentType,
+                Description = string.Empty,
+                Modifier = ArgumentModifier.None,
+                DefaultValue = string.Empty,
+                TypeDescription = typeDescription,
+                IsOptional = false,
+            };
             return paramDescription;
         }
 

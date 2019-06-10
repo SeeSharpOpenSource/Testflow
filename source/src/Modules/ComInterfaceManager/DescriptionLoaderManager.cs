@@ -35,8 +35,14 @@ namespace Testflow.ComInterfaceManager
         public ComInterfaceDescription LoadAssemblyDescription(IAssemblyInfo assemblyInfo, 
             DescriptionDataTable descriptionCollection)
         {
-            ComInterfaceDescription assemblyDescription = _loader.LoadAssemblyDescription(assemblyInfo);
+            string assemblyName = assemblyInfo.AssemblyName;
+            string version = assemblyInfo.Version;
+            ComInterfaceDescription assemblyDescription = _loader.LoadAssemblyDescription(assemblyInfo.Path, ref assemblyName, ref version);
             CheckAssemblyDescription(assemblyDescription, assemblyInfo.AssemblyName);
+
+            assemblyInfo.Version = version;
+            assemblyDescription.Assembly = assemblyInfo;
+
             ModuleUtils.ValidateComDescription(_sequenceManager, assemblyDescription, descriptionCollection);
             descriptionCollection.Add(assemblyDescription);
             // 如果一个AppDomain载入过多的程序集，则卸载该AppDomain，构造新的AppDomain
@@ -55,8 +61,15 @@ namespace Testflow.ComInterfaceManager
         {
             IAssemblyInfo assemblyInfo = _sequenceManager.CreateAssemblyInfo();
             assemblyInfo.Path = path;
-            ComInterfaceDescription assemblyDescription = _loader.LoadAssemblyDescription(assemblyInfo);
+            string assemblyName = string.Empty;
+            string version = string.Empty;
+            ComInterfaceDescription assemblyDescription = _loader.LoadAssemblyDescription(path, ref assemblyName, ref version);
             CheckAssemblyDescription(assemblyDescription, assemblyInfo.AssemblyName);
+
+            assemblyInfo.AssemblyName = assemblyName;
+            assemblyInfo.Version = version;
+            assemblyDescription.Assembly = assemblyInfo;
+
             ModuleUtils.ValidateComDescription(_sequenceManager, assemblyDescription, descriptionCollection);
             descriptionCollection.Add(assemblyDescription);
             // 如果一个AppDomain载入过多的程序集，则卸载该AppDomain，构造新的AppDomain
