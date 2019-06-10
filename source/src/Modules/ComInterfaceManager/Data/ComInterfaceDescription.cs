@@ -13,6 +13,7 @@ namespace Testflow.ComInterfaceManager.Data
             this.Classes = new List<IClassInterfaceDescription>(20);
             this.VariableTypes = new List<ITypeData>(20);
             this.TypeDescriptions = new List<ITypeDescription>(20);
+            this.Enumerations = new Dictionary<string, string[]>(20);
         }
 
         public string Name { get; set; }
@@ -24,5 +25,6 @@ namespace Testflow.ComInterfaceManager.Data
         public IList<ITypeData> VariableTypes { get; set; }
         public List<ITypeDescription> TypeDescriptions { get; set; }
         public string Category { get; set; }
+        public IDictionary<string, string[]> Enumerations { get; set; }
     }
 }

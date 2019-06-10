@@ -29,7 +29,7 @@ namespace Testflow.Data.Description
         IList<IClassInterfaceDescription> Classes { get; }
 
         /// <summary>
-        /// 该程序集支持对外暴露的变量类型
+        /// 该程序集支持对外开放的变量类型
         /// </summary>
         IList<ITypeData> VariableTypes { get; set; }
 
@@ -37,5 +37,10 @@ namespace Testflow.Data.Description
         /// 库的类型
         /// </summary>
         string Category { get; set; }
+
+        /// <summary>
+        /// 所有枚举类型对应的枚举值
+        /// </summary>
+        IDictionary<string, string[]> Enumerations { get; set; }
     }
 }

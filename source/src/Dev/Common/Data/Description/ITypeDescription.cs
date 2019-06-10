@@ -1,4 +1,6 @@
-﻿namespace Testflow.Data.Description
+﻿using System.Collections.Generic;
+
+namespace Testflow.Data.Description
 {
     /// <summary>
     /// 类型描述信息
@@ -29,5 +31,10 @@
         /// 功能类别
         /// </summary>
         string Category { get; set; }
+
+        /// <summary>
+        /// 枚举值，只在类型为枚举时生效
+        /// </summary>
+        string[] Enumerations { get; set; }
     }
 }
