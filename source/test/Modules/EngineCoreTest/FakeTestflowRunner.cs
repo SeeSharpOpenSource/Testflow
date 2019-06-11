@@ -1,0 +1,66 @@
+﻿using System.Collections.Generic;
+using Testflow.ComInterfaceManager;
+using Testflow.Data;
+using Testflow.Data.Description;
+using Testflow.Logger;
+using Testflow.MasterCore;
+using Testflow.Modules;
+
+namespace Testflow.EngineCoreTest
+{
+    public class FakeTestflowRunner : TestflowRunner
+    {
+        public FakeTestflowRunner(TestflowRunnerOptions options) : base(options)
+        {
+        }
+
+        public override IComInterfaceManager ComInterfaceManager { get; protected set; }
+        public override IConfigurationManager ConfigurationManager { get; protected set; }
+        public override IDataMaintainer DataMaintainer { get; protected set; }
+        public override IEngineController EngineController { get; protected set; }
+        public override ILogService LogService { get; protected set; }
+        public override IParameterChecker ParameterChecker { get; protected set; }
+        public override IResultManager ResultManager { get; protected set; }
+        public override ISequenceManager SequenceManager { get; protected set; }
+        public override void Initialize()
+        {
+            this.LogService = new LogService();
+            this.DataMaintainer = new DataMaintainer.DataMaintainer();
+            this.EngineController = new EngineHandle();
+            this.SequenceManager = new SequenceManager.SequenceManager();
+            this.ComInterfaceManager = new InterfaceManager();
+
+            ModuleConfigData configData = new ModuleConfigData();
+            configData.InitExtendProperties();
+
+            SequenceManager.ApplyConfig(configData);
+            LogService.ApplyConfig(configData);
+            EngineController.ApplyConfig(configData);
+            DataMaintainer.ApplyConfig(configData);
+            ComInterfaceManager.ApplyConfig(configData);
+
+            SequenceManager.DesigntimeInitialize();
+            LogService.RuntimeInitialize();
+            EngineController.RuntimeInitialize();
+            DataMaintainer.RuntimeInitialize();
+            ComInterfaceManager.DesigntimeInitialize();
+        }
+
+        public override void Dispose()
+        {
+        }
+
+        public class FakeComInterface : IComInterfaceDescription
+        {
+            public string Name { get; set; }
+            public string Description { get; set; }
+            public int ComponentId { get; set; }
+            public string Signature { get; }
+            public IAssemblyInfo Assembly { get; set; }
+            public IList<IClassInterfaceDescription> Classes { get; }
+            public IList<ITypeData> VariableTypes { get; set; }
+            public string Category { get; set; }
+            public IDictionary<string, string[]> Enumerations { get; set; }
+        }
+    }
+}

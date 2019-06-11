@@ -35,7 +35,24 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Castle.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\Castle.Core.4.4.0\lib\net45\Castle.Core.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Moq, Version=4.11.0.0, Culture=neutral, PublicKeyToken=69f491c39445e920, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\Moq.4.11.0\lib\net45\Moq.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=4.0.4.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\System.Runtime.CompilerServices.Unsafe.4.5.0\lib\netstandard1.0\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Threading.Tasks.Extensions, Version=4.2.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\System.Threading.Tasks.Extensions.4.5.1\lib\portable-net45+win8+wp8+wpa81\System.Threading.Tasks.Extensions.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
   </ItemGroup>
   <Choose>
     <When Condition="('$(VisualStudioVersion)' == '10.0' or '$(VisualStudioVersion)' == '') and '$(TargetFrameworkVersion)' == 'v3.5'">
@@ -50,7 +67,56 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="RuntimeEngineTest.cs" />
+    <Compile Include="FakeTestflowRunner.cs" />
+    <Compile Include="ModuleConfigData.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SequenceCreator.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\src\Dev\Common\Common.csproj">
+      <Project>{1681cdd7-0cc2-49d2-9e82-7b03b52db283}</Project>
+      <Name>Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\src\Dev\Logger\Logger.csproj">
+      <Project>{dc3cd3de-1b8e-4847-b752-63352f35f1e2}</Project>
+      <Name>Logger</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\src\Dev\Utility\Utility.csproj">
+      <Project>{35105702-e8d2-4465-a118-687b6c85c466}</Project>
+      <Name>Utility</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\src\Modules\ComInterfaceManager\ComInterfaceManager.csproj">
+      <Project>{5b1a7351-8d30-49aa-8fab-c8920a0cfdf4}</Project>
+      <Name>ComInterfaceManager</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\src\Modules\Core\CoreCommon\CoreCommon.csproj">
+      <Project>{97802083-7497-483f-9e2b-7f05cdaa4124}</Project>
+      <Name>CoreCommon</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\src\Modules\Core\MasterCore\MasterCore.csproj">
+      <Project>{51c4feb2-23f1-4617-b574-fc6d69a9d290}</Project>
+      <Name>MasterCore</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\src\Modules\DataMaintainer\DataMaintainer.csproj">
+      <Project>{cf05b3ce-b2b5-4309-93f7-fa5e07327a25}</Project>
+      <Name>DataMaintainer</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\src\Modules\SequenceManager\SequenceManager.csproj">
+      <Project>{6c461d7e-7ea4-4bf2-9168-82180132a0c9}</Project>
+      <Name>SequenceManager</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\src\TestflowLoader\TestflowLoader.csproj">
+      <Project>{eed9d949-aad6-42a6-bf18-3cc1004ca442}</Project>
+      <Name>TestflowLoader</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\EngineCoreTestLib\EngineCoreTestLib.csproj">
+      <Project>{26070f54-64b4-4f52-995d-7646f0520307}</Project>
+      <Name>EngineCoreTestLib</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">
