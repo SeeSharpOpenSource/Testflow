@@ -61,6 +61,24 @@ namespace Testflow.ComInterfaceManager.Resources.locale {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to 参数‘{0}’的类型数据无效。.
+        /// </summary>
+        internal static string InvalidArgType {
+            get {
+                return ResourceManager.GetString("InvalidArgType", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 无法找到程序集‘{0}’所在的库文件。.
+        /// </summary>
+        internal static string LibNotFound {
+            get {
+                return ResourceManager.GetString("LibNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to 程序集&quot;{0}&quot;的版本号低于序列数据中定义的版本号。.
         /// </summary>
         internal static string LowAssemblyVersion {

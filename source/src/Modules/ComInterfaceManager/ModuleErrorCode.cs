@@ -9,5 +9,6 @@ namespace Testflow.ComInterfaceManager
         public const int LowVersion = 3 | CommonErrorCode.ComInterfaceErrorMask;
         public const int TypeCannotLoad = 4 | CommonErrorCode.ComInterfaceErrorMask;
         public const int PropertyNotFound = 5 | CommonErrorCode.ComInterfaceErrorMask;
+        public const int LibraryNotFound = 6 | CommonErrorCode.ComInterfaceErrorMask;
     }
 }

@@ -38,7 +38,7 @@ namespace Testflow.ComInterfaceManager
             string assemblyName = assemblyInfo.AssemblyName;
             string version = assemblyInfo.Version;
             ComInterfaceDescription assemblyDescription = _loader.LoadAssemblyDescription(assemblyInfo.Path, ref assemblyName, ref version);
-            CheckAssemblyDescription(assemblyDescription, assemblyInfo.AssemblyName);
+            CheckAssemblyDescription(assemblyDescription, assemblyInfo.AssemblyName, assemblyInfo.Path);
 
             assemblyInfo.Version = version;
             assemblyDescription.Assembly = assemblyInfo;
@@ -64,7 +64,7 @@ namespace Testflow.ComInterfaceManager
             string assemblyName = string.Empty;
             string version = string.Empty;
             ComInterfaceDescription assemblyDescription = _loader.LoadAssemblyDescription(path, ref assemblyName, ref version);
-            CheckAssemblyDescription(assemblyDescription, assemblyInfo.AssemblyName);
+            CheckAssemblyDescription(assemblyDescription, assemblyInfo.AssemblyName, path);
 
             assemblyInfo.AssemblyName = assemblyName;
             assemblyInfo.Version = version;
@@ -135,19 +135,17 @@ namespace Testflow.ComInterfaceManager
             }
         }
 
-        private void CheckAssemblyDescription(ComInterfaceDescription description, string assemblyName)
+        private void CheckAssemblyDescription(ComInterfaceDescription description, string assemblyName, string path)
         {
+            if (null != description && _loader.Exception == null && _loader.ErrorCode == 0)
+            {
+                return;
+            }
             I18N i18N = I18N.GetInstance(Constants.I18nName);
             ILogService logService = TestflowRunner.GetInstance().LogService;
-            if (null == description && null != _loader.Exception)
-            {
-                throw new TestflowRuntimeException(ModuleErrorCode.LibraryLoadError,
-                    i18N.GetFStr("RuntimeError", _loader.Exception.Message), _loader.Exception);
-            }
             switch (_loader.ErrorCode)
             {
                 case ModuleErrorCode.HighVersion:
-
                     logService.Print(LogLevel.Warn, CommonConst.PlatformLogSession,
                         $"The version of assembly '{assemblyName}' is higher than version defined in data.");
                     break;
@@ -158,8 +156,34 @@ namespace Testflow.ComInterfaceManager
                         i18N.GetFStr("LowAssemblyVersion", assemblyName));
                     break;
                 case ModuleErrorCode.LibraryLoadError:
-                    throw new TestflowRuntimeException(ModuleErrorCode.LibraryLoadError, i18N.GetStr("RuntimeError"));
+                    if (null != _loader.Exception)
+                    {
+                        throw new TestflowRuntimeException(ModuleErrorCode.LibraryLoadError,
+                            i18N.GetFStr(_loader.Exception.Message), _loader.Exception);
+                    }
+                    else
+                    {
+                        throw new TestflowRuntimeException(ModuleErrorCode.LibraryLoadError, 
+                            i18N.GetStr("RuntimeError"));
+                    }
+                case ModuleErrorCode.LibraryNotFound:
+                    string assembly = assemblyName;
+                    if (string.IsNullOrWhiteSpace(assembly))
+                    {
+                        assembly = path;
+                    }
+                    throw new TestflowRuntimeException(ModuleErrorCode.LibraryNotFound, i18N.GetFStr("LibNotFound", assembly));
                 default:
+                    if (null != _loader.Exception)
+                    {
+                        throw new TestflowRuntimeException(ModuleErrorCode.LibraryLoadError,
+                            i18N.GetFStr("RuntimeError", _loader.Exception.Message), _loader.Exception);
+                    }
+                    if (null == description)
+                    {
+                        throw new TestflowRuntimeException(ModuleErrorCode.LibraryLoadError, 
+                            i18N.GetStr("RuntimeError"));
+                    }
                     break;
             }
         }

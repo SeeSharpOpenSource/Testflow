@@ -7,6 +7,7 @@ using Testflow.ComInterfaceManager.Data;
 using Testflow.Data;
 using Testflow.Data.Description;
 using Testflow.SequenceManager.SequenceElements;
+using Testflow.Usr;
 using Testflow.Usr.Common;
 
 namespace Testflow.ComInterfaceManager
@@ -14,6 +15,7 @@ namespace Testflow.ComInterfaceManager
     public class AssemblyDescriptionLoader : MarshalByRefObject
     {
         private readonly HashSet<string> _ignoreMethod;
+        private readonly HashSet<string> _ignoreClass;
         public AssemblyDescriptionLoader()
         {
             _ignoreMethod = new HashSet<string>()
@@ -22,6 +24,12 @@ namespace Testflow.ComInterfaceManager
                 "Equals",
                 "GetHashCode",
                 "GetType"
+            };
+
+            _ignoreClass = new HashSet<string>()
+            {
+                "Exception",
+                "Log"
             };
         }
 
@@ -35,6 +43,7 @@ namespace Testflow.ComInterfaceManager
             ErrorCode = 0;
             if (!File.Exists(path))
             {
+                this.ErrorCode = ModuleErrorCode.LibraryNotFound;
                 return null;
             }
             Assembly assembly;
@@ -63,18 +72,22 @@ namespace Testflow.ComInterfaceManager
             }
             try
             {
-                ComInterfaceDescription descriptionData = new ComInterfaceDescription();
+                ComInterfaceDescription descriptionData = new ComInterfaceDescription()
+                {
+                    Category = string.Empty
+                };
 //                descriptionData.Assembly = assemblyInfo;
                 // TODO 加载xml文件注释
                 foreach (Type typeInfo in assembly.GetExportedTypes())
                 {
                     HideAttribute hideAttribute = typeInfo.GetCustomAttribute<HideAttribute>();
                 
-                    //如果隐藏属性为true，则隐藏该类型
-                    if ((null != hideAttribute && hideAttribute.Hide))
+                    //如果隐藏属性为true，则隐藏该类型。如果是屏蔽类型，则跳过
+                    if ((null != hideAttribute && hideAttribute.Hide) || _ignoreClass.Any(item => typeInfo.Name.EndsWith(item)))
                     {
                         continue;
                     }
+                    
                     if (typeInfo.IsEnum || typeInfo.IsValueType || typeInfo == typeof(string))
                     {
                         AddDataTypeDescription(descriptionData, typeInfo, assemblyName);
@@ -147,13 +160,13 @@ namespace Testflow.ComInterfaceManager
             AddConstructorDescription(classType, classDescription);
             AddMethodDescription(classType, classDescription);
 
+            classDescription.IsStatic = classDescription.Functions.All(
+                item => item.FuncType != FunctionType.Constructor && item.FuncType != FunctionType.InstanceFunction);
+
             comDescription.Classes.Add(classDescription);
 
             // 如果是Testflow数据类型，则添加到数据类型列表中。默认所有的实例类都是Testflow数据类型(包含实例方法，并且有公开的实例属性)
-            if (null == testflowType || testflowType.IsTestflowDataType || 
-                classDescription.Functions.Any(item => item.FuncType == FunctionType.InstanceFunction) ||
-                classDescription.Functions.Any(item => item.FuncType == FunctionType.Constructor && 
-                null != item.Properties && item.Properties.Count > 0))
+            if (!classDescription.IsStatic && (null == testflowType || testflowType.IsTestflowDataType))
             {
                 comDescription.TypeDescriptions.Add(typeDescription);
             }
@@ -162,10 +175,16 @@ namespace Testflow.ComInterfaceManager
         private void AddMethodDescription(Type classType, ClassInterfaceDescription classDescription)
         {
             MethodInfo[] methods = classType.GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static);
+            bool isStatic = methods.All(item => item.IsStatic || _ignoreMethod.Contains(item.Name));
             foreach (MethodInfo methodInfo in methods)
             {
-                // 跳过忽略方法
+                // 忽略object对象继承方法和实例类的getset方法
                 if (_ignoreMethod.Contains(methodInfo.Name))
+                {
+                    continue;
+                }
+                if (!isStatic && (methodInfo.Name.StartsWith(Constants.GetPrefix) || 
+                    methodInfo.Name.StartsWith(Constants.SetPrefix)))
                 {
                     continue;
                 }
@@ -287,7 +306,7 @@ namespace Testflow.ComInterfaceManager
                     AssemblyName = propertyType.Assembly.GetName().Name,
                     Category = string.Empty,
                     Description = descriptionStr,
-                    Name = propertyInfo.Name,
+                    Name = propertyType.Name,
                     Namespace = propertyType.Namespace
                 };
 

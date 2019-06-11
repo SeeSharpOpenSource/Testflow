@@ -61,6 +61,24 @@ namespace Testflow.ComInterfaceManager.Resources.locale {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The type data of argument &apos;{0}&apos; is invalid..
+        /// </summary>
+        internal static string InvalidArgType {
+            get {
+                return ResourceManager.GetString("InvalidArgType", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The library file of assembly &apos;{0}&apos; cannot be found..
+        /// </summary>
+        internal static string LibNotFound {
+            get {
+                return ResourceManager.GetString("LibNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The version of assembly &apos;{0}&apos; is lower than version defined in data..
         /// </summary>
         internal static string LowAssemblyVersion {

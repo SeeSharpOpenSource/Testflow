@@ -7,6 +7,7 @@ using Testflow.Data;
 using Testflow.Data.Description;
 using Testflow.Modules;
 using Testflow.Usr;
+using Testflow.Utility.I18nUtil;
 
 namespace Testflow.ComInterfaceManager
 {
@@ -86,6 +87,17 @@ namespace Testflow.ComInterfaceManager
             DescriptionDataTable descriptionCollection, IArgumentDescription argumentDescription)
         {
             ArgumentDescription argDescription = (ArgumentDescription) argumentDescription;
+            // 如果类型描述类为空且TypeData非空，则说明该argDescription已经被修改过，无需再执行处理
+            if (argDescription.TypeDescription == null)
+            {
+                if (null == argDescription.Type)
+                {
+                    I18N i18N = I18N.GetInstance(Constants.I18nName);
+                    throw new TestflowRuntimeException(ModuleErrorCode.TypeCannotLoad,
+                        i18N.GetFStr("InvalidArgType", argDescription.Name));
+                }
+                return;
+            }
             string fullName = GetFullName(argDescription.TypeDescription);
             if (descriptionCollection.ContainsType(fullName))
             {
