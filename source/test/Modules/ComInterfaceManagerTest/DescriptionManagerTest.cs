@@ -28,8 +28,26 @@ namespace Testflow.ComInterfaceManagerTest
         [TestMethod]
         public void LoadDllInterfaceTest()
         {
+            // 未编写自动化监测，需要手动检查description的值
             IComInterfaceDescription description = _interfaceManager.GetComponentInterface(
-                @"C:\SeeSharp\JYTEK\SeeSharpTools\Bin\SeeSharpTools.JY.ArrayUtility.dll");
+                @"C:\SeeSharp\JYTEK\Hardware\DSA\JYPCI69527\Bin\JYPCI69527.dll");
+            //            Assembly assembly =
+            //                Assembly.LoadFile(@"C:\SeeSharp\JYTEK\SeeSharpTools\Bin\SeeSharpTools.JY.ArrayUtility.dll");
+            //            IClassInterfaceDescription classDescription = description.Classes[0];
+            //            Type classType =
+            //                assembly.GetType($"{classDescription.ClassType.Namespace}.{classDescription.ClassType.Name}");
+            //            IFuncInterfaceDescription funcDescription = classDescription.Functions[0];
+            //            Type[] parameterTypes = new Type[funcDescription.Arguments.Count];
+            //            ParameterModifier[] modifiers = new ParameterModifier[funcDescription.Arguments.Count];
+            //            Type[] arguments = classType.GenericTypeArguments;
+            //            Type[] genericArguments = classType.GetGenericArguments();
+            //            for (int i = 0; i < funcDescription.Arguments.Count; i++)
+            //            {
+            //                string name = $"{funcDescription.Arguments[i].Type.Namespace}.{funcDescription.Arguments[i].Type.Name}";
+            //                parameterTypes[i] = assembly.GetType(name);
+            //                modifiers[i] = new ParameterModifier();
+            //            }
+            //            classType.GetMethod(funcDescription.Name, BindingFlags.Instance | BindingFlags.Public, null, parameterTypes, modifiers);
         }
     }
 }
