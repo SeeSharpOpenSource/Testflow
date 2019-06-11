@@ -117,5 +117,21 @@ namespace Testflow.Logger
 //            }
             base.Print(logLevel, sessionId, message);
         }
+
+        public override void Dispose()
+        {
+            IAppender[] appenders = Repository.GetAppenders();
+            RollingFileAppender appender = appenders.First(item => item.Name.Equals(Constants.RootAppender)) as RollingFileAppender;
+            string logFile = (null != appender) ? appender.File : string.Empty;
+            base.Dispose();
+            if (!string.IsNullOrWhiteSpace(logFile) && File.Exists(logFile))
+            {
+                FileInfo fileInfo = new FileInfo(logFile);
+                if (fileInfo.Length == 0)
+                {
+                    File.Delete(logFile);
+                }
+            }
+        }
     }
 }

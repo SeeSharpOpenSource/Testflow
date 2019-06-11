@@ -122,7 +122,7 @@ namespace Testflow.Logger
             }
         }
 
-        public void Dispose()
+        public virtual void Dispose()
         {
             LoggerManager.ShutdownRepository(_loggerName);
         }
