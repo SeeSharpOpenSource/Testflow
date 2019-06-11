@@ -45,6 +45,7 @@ namespace Testflow.DataMaintainerTest
             public IList<IClassInterfaceDescription> Classes { get; }
             public IList<ITypeData> VariableTypes { get; set; }
             public string Category { get; set; }
+            public IDictionary<string, string[]> Enumerations { get; set; }
         }
     }
 }
