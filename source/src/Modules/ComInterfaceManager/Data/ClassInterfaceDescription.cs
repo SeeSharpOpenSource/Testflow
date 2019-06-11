@@ -17,6 +17,7 @@ namespace Testflow.ComInterfaceManager.Data
         public int ComponentIndex { get; set; }
         public int ClassId { get; set; }
         public ITypeData ClassType { get; set; }
+        public bool IsStatic { get; set; }
         public ITypeDescription ClassTypeDescription { get; set; }
         public IList<IFuncInterfaceDescription> Functions { get; set; }
     }
