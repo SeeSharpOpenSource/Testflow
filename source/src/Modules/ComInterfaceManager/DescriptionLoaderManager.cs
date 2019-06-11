@@ -32,6 +32,29 @@ namespace Testflow.ComInterfaceManager
             _sequenceManager = TestflowRunner.GetInstance().SequenceManager;
         }
 
+        public void LoadDefaultAssemblyDescription(DescriptionDataTable descriptionCollection)
+        {
+            LoadMscorLibDescription(descriptionCollection);
+        }
+
+        private void LoadMscorLibDescription(DescriptionDataTable descriptionCollection)
+        {
+            Assembly assembly = typeof (int).Assembly;
+            ComInterfaceDescription mscoreLibDescription = _loader.LoadMscorlibDescription();
+
+            IAssemblyInfo assemblyInfo = _sequenceManager.CreateAssemblyInfo();
+            assemblyInfo.Path = assembly.Location;
+            assemblyInfo.AssemblyName = assembly.GetName().Name;
+
+            assemblyInfo.Version = assembly.GetName().Version.ToString();
+
+            CheckAssemblyDescription(mscoreLibDescription, assemblyInfo.AssemblyName, assemblyInfo.Path);
+            ModuleUtils.ValidateComDescription(_sequenceManager, mscoreLibDescription, descriptionCollection);
+            assemblyInfo.Available = true;
+            mscoreLibDescription.Assembly = assemblyInfo;
+            descriptionCollection.Add(mscoreLibDescription);
+        }
+
         public ComInterfaceDescription LoadAssemblyDescription(IAssemblyInfo assemblyInfo, 
             DescriptionDataTable descriptionCollection)
         {
@@ -44,6 +67,7 @@ namespace Testflow.ComInterfaceManager
             assemblyDescription.Assembly = assemblyInfo;
 
             ModuleUtils.ValidateComDescription(_sequenceManager, assemblyDescription, descriptionCollection);
+            assemblyInfo.Available = true;
             descriptionCollection.Add(assemblyDescription);
             // 如果一个AppDomain载入过多的程序集，则卸载该AppDomain，构造新的AppDomain
 //            if (_assemblyCount > Constants.MaxAssemblyCount)
@@ -71,6 +95,7 @@ namespace Testflow.ComInterfaceManager
             assemblyDescription.Assembly = assemblyInfo;
 
             ModuleUtils.ValidateComDescription(_sequenceManager, assemblyDescription, descriptionCollection);
+            assemblyInfo.Available = true;
             descriptionCollection.Add(assemblyDescription);
             // 如果一个AppDomain载入过多的程序集，则卸载该AppDomain，构造新的AppDomain
 //            if (_assemblyCount > Constants.MaxAssemblyCount)

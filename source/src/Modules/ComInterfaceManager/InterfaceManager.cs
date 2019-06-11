@@ -38,6 +38,7 @@ namespace Testflow.ComInterfaceManager
 
             _descriptionData = new DescriptionDataTable();
             _loaderManager = new DescriptionLoaderManager();
+            _loaderManager.LoadDefaultAssemblyDescription(_descriptionData);
         }
 
         public void ApplyConfig(IModuleConfigData configData)

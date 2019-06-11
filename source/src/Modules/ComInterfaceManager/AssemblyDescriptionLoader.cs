@@ -74,7 +74,9 @@ namespace Testflow.ComInterfaceManager
             {
                 ComInterfaceDescription descriptionData = new ComInterfaceDescription()
                 {
-                    Category = string.Empty
+                    Category = string.Empty,
+                    Signature = assembly.FullName,
+                    Name = assembly.GetName().Name
                 };
 //                descriptionData.Assembly = assemblyInfo;
                 // TODO 加载xml文件注释
@@ -419,13 +421,13 @@ namespace Testflow.ComInterfaceManager
                 AssemblyName = propertyType.Assembly.GetName().Name,
                 Category = string.Empty,
                 Description = string.Empty,
-                Name = parameterInfo.Name,
+                Name = propertyType.Name,
                 Namespace = propertyType.Namespace
             };
 
             ArgumentDescription paramDescription = new ArgumentDescription()
             {
-                Name = parameterInfo.Name,
+                Name = string.Empty,
                 ArgumentType = argumentType,
                 Description = string.Empty,
                 Modifier = ArgumentModifier.None,
@@ -513,6 +515,67 @@ namespace Testflow.ComInterfaceManager
                 this.Exception = ex;
                 return null;
             }
+        }
+
+        public ComInterfaceDescription LoadMscorlibDescription()
+        {
+            Assembly mscorAssembly = typeof(int).Assembly;
+            ComInterfaceDescription description = new ComInterfaceDescription()
+            {
+                Category = LibraryCategory.Platform.ToString(),
+                Description = "mscorelib",
+                Name = mscorAssembly.GetName().Name,
+                Signature = mscorAssembly.GetName().Name,
+            };
+            List<Type> loadTypes = new List<Type>()
+            {
+                typeof (object),
+                typeof (bool),
+                typeof (double),
+                typeof (float),
+                typeof (long),
+                typeof (ulong),
+                typeof (int),
+                typeof (uint),
+                typeof (short),
+                typeof (ushort),
+                typeof (char),
+                typeof (byte),
+                typeof (string),
+                typeof (Array),
+                typeof (IntPtr),
+                typeof (UIntPtr)
+            };
+            foreach (Type loadType in loadTypes)
+            {
+                LoadTypeDescriptionByType(loadType, description, mscorAssembly);
+            }
+            return description;
+        }
+
+        private void LoadTypeDescriptionByType(Type type, ComInterfaceDescription comDescription, Assembly assembly)
+        {
+            TypeDescription typeDescription = new TypeDescription()
+            {
+                AssemblyName = assembly.GetName().Name,
+                Category = LibraryCategory.Platform.ToString(),
+                Description = "",
+                Name = type.Name,
+                Namespace = type.Namespace
+            };
+
+            ClassInterfaceDescription classDescription = new ClassInterfaceDescription()
+            {
+                ClassTypeDescription = typeDescription,
+                IsStatic = false,
+                Name = typeDescription.Name
+            };
+
+            AddConstructorDescription(type, classDescription);
+            AddMethodDescription(type, classDescription);
+
+            comDescription.Classes.Add(classDescription);
+            comDescription.TypeDescriptions.Add(typeDescription);
         }
     }
 }
