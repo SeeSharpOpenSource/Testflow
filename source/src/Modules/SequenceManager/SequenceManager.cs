@@ -16,7 +16,7 @@ namespace Testflow.SequenceManager
     {
         private static SequenceManager _instance = null;
         private static object _instLock = new object();
-        private readonly TypeMaintainer _typeMaintainer;
+        private TypeMaintainer _typeMaintainer;
 
         public SequenceManager()
         {
@@ -41,7 +41,6 @@ namespace Testflow.SequenceManager
 
                 this.ConfigData = null;
                 this.Version = string.Empty;
-                _typeMaintainer = new TypeMaintainer();
                 _instance = this;
             }
         }
@@ -51,12 +50,18 @@ namespace Testflow.SequenceManager
 
         public void RuntimeInitialize()
         {
-
+            if (null == _typeMaintainer)
+            {
+                _typeMaintainer = new TypeMaintainer();
+            }
         }
 
         public void DesigntimeInitialize()
         {
-
+            if (null == _typeMaintainer)
+            {
+                _typeMaintainer = new TypeMaintainer();
+            }
         }
 
         public void ApplyConfig(IModuleConfigData configData)
