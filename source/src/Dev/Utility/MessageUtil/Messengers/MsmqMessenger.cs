@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Messaging;
+using MessageQueuing;
 using Testflow.Usr;
 using Testflow.Utility.I18nUtil;
 
@@ -52,6 +53,9 @@ namespace Testflow.Utility.MessageUtil.Messengers
                         break;
                     case FormatterType.Bin:
                         formatter = new BinaryMessageFormatter();
+                        break;
+                        case FormatterType.Json:
+                            formatter = new JsonMessageFormatter<IMessage>();
                         break;
                     default:
                         break;

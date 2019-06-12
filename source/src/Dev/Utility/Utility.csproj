@@ -31,6 +31,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="NetJSON, Version=1.3.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\NetJSON.1.3.0\lib\net40\NetJSON.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Messaging" />
@@ -45,6 +49,7 @@
     <Compile Include="Collections\Convertor\EnumConvertor.cs" />
     <Compile Include="Collections\Convertor\ValueConvertor.cs" />
     <Compile Include="Collections\SerializableMap.cs" />
+    <Compile Include="MessageUtil\JsonFormatter.cs" />
     <Compile Include="ModuleErrorCode.cs" />
     <Compile Include="UtilityConstants.cs" />
     <Compile Include="I18nUtil\I18N.cs" />
@@ -104,6 +109,9 @@
       <Project>{1681cdd7-0cc2-49d2-9e82-7b03b52db283}</Project>
       <Name>Common</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
