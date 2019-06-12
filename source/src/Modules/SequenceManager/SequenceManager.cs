@@ -273,13 +273,15 @@ namespace Testflow.SequenceManager
         {
             _typeMaintainer.VerifyVariableTypes(testProject);
             _typeMaintainer.RefreshUsedAssemblyAndType(testProject);
-
+            ModuleUtils.ValidateParent(testProject);
         }
 
-        public void ValidateSequenceData(ISequenceGroup sequenceGroup)
+        public void ValidateSequenceData(ISequenceGroup sequenceGroup, ITestProject parent = null)
         {
             _typeMaintainer.VerifyVariableTypes(sequenceGroup);
-            _typeMaintainer.RefreshUsedAssemblyAndType(sequenceGroup); ;
+            _typeMaintainer.RefreshUsedAssemblyAndType(sequenceGroup);
+            ModuleUtils.ValidateParent(sequenceGroup, parent);
+            ((SequenceGroup)sequenceGroup).RefreshSignature();
         }
 
         public void Dispose()

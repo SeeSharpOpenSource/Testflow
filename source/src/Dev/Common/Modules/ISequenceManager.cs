@@ -186,7 +186,7 @@ namespace Testflow.Modules
         /// <summary>
         /// 生效序列数据，处理所有连带配置
         /// </summary>
-        void ValidateSequenceData(ISequenceGroup sequenceGroup);
+        void ValidateSequenceData(ISequenceGroup sequenceGroup, ITestProject parent = null);
 
         #endregion
 
