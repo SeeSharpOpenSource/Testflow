@@ -31,5 +31,14 @@ namespace Testflow.EngineCoreTest
             runnerInstance.EngineController.SetSequenceData(testProjectData);
             runnerInstance.EngineController.Start();
         }
+
+        [TestMethod]
+        public void SequenceGroupSequentialTest()
+        {
+            ITestProject testProjectData = _sequenceCreator.GetSequencialTestProjectData();
+            TestflowRunner runnerInstance = TestflowRunner.GetInstance();
+            runnerInstance.EngineController.SetSequenceData(testProjectData.SequenceGroups[0]);
+            runnerInstance.EngineController.Start();
+        }
     }
 }

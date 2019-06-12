@@ -31,7 +31,7 @@ namespace Testflow.EngineCoreTest
 
             Properties.Add("TestGenReportInterval", 500);
             Properties.Add("TestRunReportInterval", 500);
-            Properties.Add("EngineQueueFormat", FormatterType.Xml);
+            Properties.Add("EngineQueueFormat", FormatterType.Json);
             Properties.Add("EngineSyncMessenger", true);
             Properties.Add("RuntimeType", RuntimeType.Debug);
             Properties.Add("MessageReceiveTimeout", 10000);
@@ -42,6 +42,7 @@ namespace Testflow.EngineCoreTest
             Properties.Add("StopTimeout", 10000);
             Properties.Add("TestGenTimeout", 1200000);
             Properties.Add("AbortTimeout", 20000);
+            Properties.Add("MessengerType", MessengerType.MSMQ);
 
             this.Version = "3.5.6";
             this.Name = "Test Name";

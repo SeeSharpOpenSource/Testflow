@@ -33,17 +33,17 @@ namespace Testflow.EngineCoreTest
             ModuleConfigData configData = new ModuleConfigData();
             configData.InitExtendProperties();
 
-            SequenceManager.ApplyConfig(configData);
             LogService.ApplyConfig(configData);
-            EngineController.ApplyConfig(configData);
-            DataMaintainer.ApplyConfig(configData);
             ComInterfaceManager.ApplyConfig(configData);
+            SequenceManager.ApplyConfig(configData);
+            DataMaintainer.ApplyConfig(configData);
+            EngineController.ApplyConfig(configData);
 
-            SequenceManager.DesigntimeInitialize();
             LogService.RuntimeInitialize();
-            EngineController.RuntimeInitialize();
-            DataMaintainer.RuntimeInitialize();
             ComInterfaceManager.DesigntimeInitialize();
+            SequenceManager.DesigntimeInitialize();
+            DataMaintainer.RuntimeInitialize();
+            EngineController.RuntimeInitialize();
         }
 
         public override void Dispose()

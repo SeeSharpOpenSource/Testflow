@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using EngineCoreTestLib;
 using Testflow.Data;
+using Testflow.Data.Description;
 using Testflow.Data.Sequence;
 using Testflow.Modules;
 using Testflow.SequenceManager.SequenceElements;
@@ -24,33 +26,18 @@ namespace Testflow.EngineCoreTest
 
         public SequenceCreator()
         {
-            _sequenceManager = TestflowRunner.GetInstance().SequenceManager;
+            TestflowRunner testflowRunner = TestflowRunner.GetInstance();
+            _sequenceManager = testflowRunner.SequenceManager;
+            IComInterfaceManager interfaceManager = testflowRunner.ComInterfaceManager;
 
-            Type intClassType = typeof(int);
-            _intAssemblyInfo = new AssemblyInfo()
-            {
-                AssemblyName = intClassType.Assembly.GetName().Name,
-                Path = intClassType.Assembly.Location,
-                Version = intClassType.Assembly.ImageRuntimeVersion
-            };
-            
-            Type testClassType = typeof(RuntimeEngineTest);
-            _testClassAssemblyInfo = new AssemblyInfo()
-            {
-                AssemblyName = testClassType.Assembly.GetName().Name,
-                Path = testClassType.Assembly.Location,
-                Version = testClassType.Assembly.ImageRuntimeVersion
-            };
+            Type testClassType = typeof(CoreTestClass);
+            string location = testClassType.Assembly.Location;
+            IComInterfaceDescription interfaceDescription = interfaceManager.GetComponentInterface(location);
 
-            _intTypeData = _sequenceManager.CreateTypeData();
-            _intTypeData.AssemblyName = intClassType.Name;
-            _intTypeData.Namespace = intClassType.Namespace;
-            _intTypeData.AssemblyName = _intAssemblyInfo.AssemblyName;
 
-            _testClassTypeData = _sequenceManager.CreateTypeData();
-            _testClassTypeData.AssemblyName = _testClassAssemblyInfo.AssemblyName;
-            _testClassTypeData.Name = testClassType.Name;
-            _testClassTypeData.Namespace = _testClassTypeData.Namespace;
+            Type intType = typeof(int);
+            _intTypeData = interfaceManager.GetTypeByName(intType.Name, intType.Namespace);
+            _testClassTypeData = interfaceManager.GetTypeByName(testClassType.Name, testClassType.Namespace);
         }
 
         public ITestProject GetParallelTestProjectData()
@@ -88,7 +75,7 @@ namespace Testflow.EngineCoreTest
             sequence2.Steps.Add(CreateErrorStep("instance"));
 
             sequenceGroup.Sequences.Add(sequence2);
-            _sequenceManager.ValidateSequenceData(sequenceGroup);
+            _sequenceManager.ValidateSequenceData(sequenceGroup, testProject);
 
             testProject.SequenceGroups.Add(sequenceGroup);
 
@@ -206,7 +193,7 @@ namespace Testflow.EngineCoreTest
                 {
                     Description = $"Variable {returnName}",
                     LogRecordLevel = RecordLevel.FinalResult,
-                    Name = instanceName,
+                    Name = returnName,
                     OIRecordLevel = RecordLevel.FinalResult,
                     Parent = parentSequence,
                     ReportRecordLevel = RecordLevel.FinalResult,
