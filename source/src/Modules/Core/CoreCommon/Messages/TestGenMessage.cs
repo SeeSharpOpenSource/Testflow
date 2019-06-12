@@ -1,4 +1,5 @@
-﻿using System.Runtime.Serialization;
+﻿using System;
+using System.Runtime.Serialization;
 using Testflow.CoreCommon.Common;
 using Testflow.Runtime;
 
@@ -7,6 +8,7 @@ namespace Testflow.CoreCommon.Messages
     /// <summary>
     /// 测试生成报告消息
     /// </summary>
+    [Serializable]
     public class TestGenMessage : MessageBase
     {
         // TODO 暂时停止到Sequence级别的报告

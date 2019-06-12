@@ -10,7 +10,8 @@ namespace Testflow.CoreCommon.Messages
     /// <summary>
     /// 运行时消息基类
     /// </summary>
-    public abstract class MessageBase : IMessage, ISerializable
+    [Serializable]
+    public abstract class MessageBase : IMessage
     {
         private static long _index = 0;
 

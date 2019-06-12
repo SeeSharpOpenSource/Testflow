@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Runtime.Serialization;
 using Testflow.CoreCommon.Common;
 using Testflow.CoreCommon.Data;
@@ -10,6 +11,7 @@ namespace Testflow.CoreCommon.Messages
     /// <summary>
     /// 状态报告消息
     /// </summary>
+    [Serializable]
     public class StatusMessage : MessageBase
     {
         public List<CallStack> Stacks { get; set; }

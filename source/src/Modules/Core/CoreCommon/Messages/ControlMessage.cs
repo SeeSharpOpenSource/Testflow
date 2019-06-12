@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Runtime.Serialization;
 using Testflow.CoreCommon.Common;
 
@@ -7,6 +8,7 @@ namespace Testflow.CoreCommon.Messages
     /// <summary>
     /// 引擎控制消息
     /// </summary>
+    [Serializable]
     public class ControlMessage : MessageBase
     {
         public ControlMessage(string name, int id) : base(name, id, MessageType.Ctrl)

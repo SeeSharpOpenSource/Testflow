@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Runtime.ConstrainedExecution;
 using System.Runtime.Serialization;
 using Testflow.CoreCommon.Common;
@@ -10,6 +11,7 @@ namespace Testflow.CoreCommon.Messages
     /// <summary>
     /// 调试数据消息
     /// </summary>
+    [Serializable]
     public class DebugMessage : MessageBase
     {
         public DebugMessage(string name, int id, DebugMessageType msgType) : base(name, id, MessageType.Debug)

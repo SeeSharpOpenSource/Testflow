@@ -1,4 +1,5 @@
-﻿using System.Runtime.Serialization;
+﻿using System;
+using System.Runtime.Serialization;
 using Testflow.CoreCommon.Common;
 using Testflow.CoreCommon.Data;
 
@@ -7,6 +8,7 @@ namespace Testflow.CoreCommon.Messages
     /// <summary>
     /// 资源同步消息请求
     /// </summary>
+    [Serializable]
     public class ResourceSyncMessage : MessageBase
     {
         public SyncResourceInfo SyncInfo { get; set; }

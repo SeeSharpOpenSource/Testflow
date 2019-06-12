@@ -1,13 +1,16 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Runtime.Serialization;
 using Testflow.CoreCommon.Common;
 using Testflow.CoreCommon.Data;
+using Testflow.Usr;
 
 namespace Testflow.CoreCommon.Messages
 {
     /// <summary>
     /// 远程运行器生成消息
     /// </summary>
+    [Serializable]
     public class RmtGenMessage : MessageBase
     {
         public RmtGenMessage(string name, int id, RunnerType type, string sequence) : base(name, id, MessageType.RmtGen)

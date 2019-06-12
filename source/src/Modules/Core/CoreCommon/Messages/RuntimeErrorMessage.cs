@@ -4,6 +4,7 @@ using Testflow.CoreCommon.Common;
 
 namespace Testflow.CoreCommon.Messages
 {
+    [Serializable]
     public class RuntimeErrorMessage : MessageBase
     {
         public string Message { get; set; }
