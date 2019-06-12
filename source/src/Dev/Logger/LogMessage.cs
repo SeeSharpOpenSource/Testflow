@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.Serialization;
 using Testflow.Usr;
 using Testflow.Utility.MessageUtil;
 
@@ -74,5 +75,25 @@ namespace Testflow.Logger
         /// 全局唯一的索引号
         /// </summary>
         public long Index { get; set; }
+
+        public LogMessage(SerializationInfo info, StreamingContext context)
+        {
+            Id = info.GetInt32("Id");
+            Level = info.GetInt32("Level");
+            Msg = info.GetString("Msg");
+            Ex = (Exception) info.GetValue("Ex", typeof(Exception));
+            Time = (DateTime) info.GetValue("Time", typeof(DateTime));
+            Index = info.GetInt32("Index");
+        }
+
+        public void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            info.AddValue("Id", Id);
+            info.AddValue("Level", Level);
+            info.AddValue("Msg", Msg);
+            info.AddValue("Ex", Ex);
+            info.AddValue("Time", Time);
+            info.AddValue("Index", Index);
+        }
     }
 }
