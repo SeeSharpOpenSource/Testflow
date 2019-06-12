@@ -20,6 +20,10 @@ namespace Testflow.MasterCore.EventData
                     this.Add(new TestResultCollection(testProject.SequenceGroups[i], i));
                 }
             }
+            else
+            {
+                this.Add(new TestResultCollection((ISequenceGroup)sequenceData, 0));
+            }
         }
     }
 }
