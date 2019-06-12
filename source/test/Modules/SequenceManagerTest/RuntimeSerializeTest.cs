@@ -27,6 +27,7 @@ namespace Testflow.SequenceManagerTest
             _configData = new TestConfigData();
             _configData.InitExtendProperties();
             _sequenceManager.ApplyConfig(_configData);
+            _sequenceManager.DesigntimeInitialize();
             Directory.CreateDirectory("Test");
         }
 
