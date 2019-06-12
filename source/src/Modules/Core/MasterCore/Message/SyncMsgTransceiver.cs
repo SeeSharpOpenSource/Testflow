@@ -70,7 +70,7 @@ namespace Testflow.MasterCore.Message
         
         protected override void SendMessage(MessageBase message)
         {
-            DownLinkMessenger.Send(message, FormatterType);
+            DownLinkMessenger.Send(message);
         }
 
         private void SynchronousReceive(object state)

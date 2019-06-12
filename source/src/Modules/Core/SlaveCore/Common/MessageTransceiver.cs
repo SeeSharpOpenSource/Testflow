@@ -47,8 +47,7 @@ namespace Testflow.SlaveCore.Common
 
         public void SendMessage(MessageBase message)
         {
-            _uplinkMessenger.Send(message, _slaveContext.GetProperty<FormatterType>("EngineQueueFormat"),
-                message.GetType());
+            _uplinkMessenger.Send(message);
         }
 
         public void StartReceive()
