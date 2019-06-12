@@ -362,7 +362,10 @@ namespace Testflow.SequenceManager.Serializer
                 VerifyTypeIndexes(typeDatas, argument as Argument);
             }
 
-            VerifyTypeIndexes(typeDatas, functionData.ReturnType as Argument);
+            if (null != functionData.ReturnType)
+            {
+                VerifyTypeIndexes(typeDatas, functionData.ReturnType as Argument);
+            }
         }
 
         #endregion
