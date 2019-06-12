@@ -2,23 +2,28 @@
 using System.IO;
 using System.Messaging;
 using System.Text;
+using Newtonsoft.Json;
+using Testflow.Utility.MessageUtil;
 
 namespace MessageQueuing
 {
     /// <summary>
     /// Json格式化器
     /// </summary>
-    /// <typeparam name="T"></typeparam>
-    public class JsonMessageFormatter<T> : IMessageFormatter
+    public class JsonMessageFormatter : IMessageFormatter
     {
         private Encoding encoding;
-        public JsonMessageFormatter()
-        {
-            this.encoding = Encoding.UTF8;
-        }
-        public JsonMessageFormatter(Encoding encoding)
+        private MessengerOption _option;
+        private readonly JsonSerializerSettings _serializerSettings;
+
+        public JsonMessageFormatter(MessengerOption option, Encoding encoding)
         {
             this.encoding = encoding;
+            this._option = option;
+            _serializerSettings = new JsonSerializerSettings()
+            {
+                NullValueHandling = NullValueHandling.Include
+            };
         }
         public bool CanRead(Message message)
         {
@@ -33,7 +38,7 @@ namespace MessageQueuing
         }
         public object Clone()
         {
-            return new JsonMessageFormatter<T>(encoding);
+            return new JsonMessageFormatter(_option, encoding);
         }
         public object Read(Message message)
         {
@@ -41,10 +46,11 @@ namespace MessageQueuing
             {
                 throw new ArgumentNullException("message");
             }
+            Type messageType = _option.GetMsgType.Invoke(message.Label);
             using (var reader = new StreamReader(message.BodyStream, encoding))
             {
                 var json = reader.ReadToEnd();
-                return NetJSON.NetJSON.Deserialize<T>(json);
+                return JsonConvert.DeserializeObject(json, messageType, _serializerSettings);
             }
         }
         public void Write(Message message, object obj)
@@ -53,7 +59,8 @@ namespace MessageQueuing
             {
                 throw new ArgumentNullException("message");
             }
-            string json = NetJSON.NetJSON.Serialize(obj);
+            Type messageType = _option.GetMsgType.Invoke(message.Label);
+            string json = JsonConvert.SerializeObject(obj, messageType, _serializerSettings);
             message.BodyStream = new MemoryStream(encoding.GetBytes(json));
         }
     }

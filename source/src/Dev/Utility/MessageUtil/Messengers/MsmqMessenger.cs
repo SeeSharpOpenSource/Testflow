@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Messaging;
+using System.Text;
 using MessageQueuing;
 using Testflow.Usr;
 using Testflow.Utility.I18nUtil;
@@ -9,6 +10,8 @@ namespace Testflow.Utility.MessageUtil.Messengers
     internal class MsmqMessenger : Messenger
     {
         private MessageQueue _messageQueue;
+        private IMessageFormatter _formatter;
+
         public MsmqMessenger(MessengerOption option) : base(option)
         {
         }
@@ -35,34 +38,15 @@ namespace Testflow.Utility.MessageUtil.Messengers
             return message?.Body as IMessage;
         }
 
-        public override bool Send(IMessage message, FormatterType format, params Type[] targetTypes)
+        public override bool Send(IMessage message)
         {
             if (!_messageQueue.CanWrite)
             {
                 return false;
             }
-            IMessageFormatter formatter = this._messageQueue.Formatter;
-            // 如果Option中没有配置目标类型，则说明每次的Formatter需要单独配置
-            if (null == Option.TargetTypes || 0 == Option.TargetTypes.Length)
-            {
-                targetTypes = Option.TargetTypes;
-                switch (format)
-                {
-                    case FormatterType.Xml:
-                        formatter = new XmlMessageFormatter(targetTypes);
-                        break;
-                    case FormatterType.Bin:
-                        formatter = new BinaryMessageFormatter();
-                        break;
-                        case FormatterType.Json:
-                            formatter = new JsonMessageFormatter<IMessage>();
-                        break;
-                    default:
-                        break;
-                }
-            }
-            Message packagedMessage = new Message(message, formatter);
-            _messageQueue.Send(packagedMessage);
+            Message packagedMessage = new Message(message, _formatter);
+            // 在Label中发送消息的类型名
+            _messageQueue.Send(packagedMessage, message.GetType().Name);
             return true;
         }
 
@@ -81,24 +65,21 @@ namespace Testflow.Utility.MessageUtil.Messengers
                 this._messageQueue = MessageQueue.Create(Option.Path);
 
             }
-            if (null != Option.TargetTypes && 0 < Option.TargetTypes.Length)
+            switch (Option.Formatter)
             {
-                IMessageFormatter formatter;
-                Type[] targetTypes = Option.TargetTypes;
-                switch (Option.Formatter)
-                {
-                    case FormatterType.Xml:
-                        formatter = new XmlMessageFormatter(targetTypes);
-                        break;
-                    case FormatterType.Bin:
-                        formatter = new BinaryMessageFormatter();
-                        break;
-                    default:
-                        throw new NotImplementedException();
-                        break;
-                }
-                this._messageQueue.Formatter = formatter;
+                case FormatterType.Xml:
+                    _formatter = new XmlMessageFormatter(Option.TargetTypes);
+                    break;
+                case FormatterType.Bin:
+                    _formatter = new BinaryMessageFormatter();
+                    break;
+                case FormatterType.Json:
+                    _formatter = new JsonMessageFormatter(Option, Encoding.UTF8);
+                    break;
+                default:
+                    break;
             }
+            this._messageQueue.Formatter = _formatter;
             this._messageQueue.Purge();
         }
 
@@ -125,7 +106,7 @@ namespace Testflow.Utility.MessageUtil.Messengers
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex);
+                throw new TestflowRuntimeException(ModuleErrorCode.MessengerReceiveError, ex.Message, ex);
             }
             this._messageQueue.BeginReceive();
         }

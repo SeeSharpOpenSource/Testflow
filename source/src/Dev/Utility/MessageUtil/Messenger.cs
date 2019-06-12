@@ -169,9 +169,7 @@ namespace Testflow.Utility.MessageUtil
         /// 发送消息，未添加高阶配置，后续再更新
         /// </summary>
         /// <param name="message">待发送的消息</param>
-        /// <param name="format">格式器类型</param>
-        /// <param name="targetTypes">目标类型</param>
-        public abstract bool Send(IMessage message, FormatterType format, params Type[] targetTypes);
+        public abstract bool Send(IMessage message);
 
         /// <summary>
         /// 初始化消息队列

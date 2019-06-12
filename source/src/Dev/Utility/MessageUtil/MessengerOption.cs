@@ -39,6 +39,11 @@ namespace Testflow.Utility.MessageUtil
         public Type[] TargetTypes { get; set; }
 
         /// <summary>
+        /// 根据message动态获取待反序列化数据类型的委托
+        /// </summary>
+        public Func<string, Type> GetMsgType { get; }
+
+        /// <summary>
         /// 创建信使选项类实例
         /// </summary>
         /// <param name="path">消息队列地址</param>
@@ -51,6 +56,21 @@ namespace Testflow.Utility.MessageUtil
             this.ReceiveType = ReceiveType.Asynchronous;
             this.TargetTypes = targetType;
             this.Formatter = FormatterType.Xml;
+        }
+
+        /// <summary>
+        /// 创建信使选项类实例
+        /// </summary>
+        /// <param name="path">消息队列地址</param>
+        /// <param name="getMsgType">返回消息对象类型的委托</param>
+        public MessengerOption(string path, Func<string, Type> getMsgType)
+        {
+            this.Path = path;
+            this.HostAddress = ".";
+            this.Type = MessengerType.MSMQ;
+            this.ReceiveType = ReceiveType.Asynchronous;
+            this.Formatter = FormatterType.Json;
+            this.GetMsgType = getMsgType;
         }
 
         /// <summary>
