@@ -131,7 +131,7 @@ namespace Testflow.SlaveCore.Common
             {
                 throw new ArgumentException($"unexist property {propertyName}");
             }
-            if (!_configData.ContainsKey(dataType.Name) && !dataType.IsEnum)
+            if (!_configData.ContainsKey(propertyName) && !dataType.IsEnum)
             {
                 throw new InvalidCastException($"Unsupported cast type: {dataType.Name}");
             }
