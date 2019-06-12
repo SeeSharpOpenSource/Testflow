@@ -362,7 +362,7 @@ namespace Testflow.SequenceManager
 
         private void RefreshUsedTypeDatas(ITypeDataCollection typeDatas, HashSet<ITypeData> usedTypeDatas)
         {
-            for (int i = typeDatas.Count - 1; i >= 0; i++)
+            for (int i = typeDatas.Count - 1; i >= 0; i--)
             {
                 if (usedTypeDatas.Contains(typeDatas[i]))
                 {
@@ -379,7 +379,7 @@ namespace Testflow.SequenceManager
 
         private void RefreshUsedAssemblies(IAssemblyInfoCollection assemblies, HashSet<string> usedAssembly)
         {
-            for (int i = assemblies.Count - 1; i >= 0; i++)
+            for (int i = assemblies.Count - 1; i >= 0; i--)
             {
                 if (usedAssembly.Contains(assemblies[i].AssemblyName))
                 {
