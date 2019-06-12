@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.Serialization;
 using System.Threading;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Testflow.Utility.MessageUtil;
@@ -16,7 +17,7 @@ namespace Testflow.Dev.UtilityTest
         [TestInitialize]
         public void SetUp()
         {
-            _option = new MessengerOption(MsgQueueName, new Type[] {typeof (TestMessage)});
+            _option = new MessengerOption(MsgQueueName, GetMessageType);
             _messenger = Messenger.GetMessenger(_option);
             IMessageConsumer[] consumers = new IMessageConsumer[MaxSession];
             for (int i = 0; i < MaxSession; i++)
@@ -24,6 +25,11 @@ namespace Testflow.Dev.UtilityTest
                 consumers[i] = new TestConsumer(i);
             }
             _messenger.RegisterConsumer(consumers);
+        }
+
+        private Type GetMessageType(string label)
+        {
+            return typeof (TestMessage);
         }
 
         [TestMethod]
@@ -38,12 +44,12 @@ namespace Testflow.Dev.UtilityTest
         {
             for (int i = 0; i < MaxSession; i++)
             {
-                TestMessage message = new TestMessage()
+                TestMessage message = new TestMessage(0)
                 {
                     Id = i,
                     Message = CreateTestMessage(i)
                 };
-                _messenger.Send(message, FormatterType.Xml);
+                _messenger.Send(message);
                 Thread.Sleep(20);
                 Assert.AreEqual(0, _messenger.MessageCount);
             }
@@ -61,10 +67,27 @@ namespace Testflow.Dev.UtilityTest
         }
     }
 
+    [Serializable]
     public class TestMessage : IMessage
     {
         public int Id { get; set; }
         public string Message { get; set; }
+
+        public TestMessage(int i)
+        {
+        }
+
+        public TestMessage(SerializationInfo info, StreamingContext context)
+        {
+            this.Id = info.GetInt32("Id");
+            this.Message = info.GetString("Message");
+        }
+
+        public void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            info.AddValue("Id", Id);
+            info.AddValue("Message", Message);
+        }
     }
 
     public class TestConsumer : IMessageConsumer
@@ -78,7 +101,10 @@ namespace Testflow.Dev.UtilityTest
         {
             string expect = MessengeTest.CreateTestMessage(SessionId);
             TestMessage testMessage = message as TestMessage;
-            Assert.AreEqual(expect, testMessage?.Message);
+            if (!expect.Equals(testMessage.Message))
+            {
+                throw new AssertFailedException($"Expected:'{expect}'; RealValue:'{testMessage.Message}'");
+            }
         }
     }
 }
