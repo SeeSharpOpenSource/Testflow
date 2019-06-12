@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Globalization;
+using System.Reflection;
 using System.Threading;
 using Testflow.Usr;
 using Testflow.Data.Sequence;
@@ -33,8 +35,10 @@ namespace Testflow.MasterCore.TestMaintain.Container
             string configStr = (string)param;
             Type launcherType = typeof(AppDomainTestLauncher);
             string launcherFullName = $"{launcherType.Namespace}.{launcherType.Name}";
+            _appDomain.Load(launcherType.Assembly.GetName());
             AppDomainTestLauncher launcherInstance = (AppDomainTestLauncher)_appDomain.CreateInstanceAndUnwrap(
-                launcherType.Assembly.GetName().Name, launcherFullName, new object[] { configStr });
+                launcherType.Assembly.GetName().FullName, launcherFullName, false, BindingFlags.Instance | BindingFlags.Public, null,
+                new object[] { configStr }, CultureInfo.CurrentCulture, null);
             launcherInstance.Start();
         }
 
