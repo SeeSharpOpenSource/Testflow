@@ -25,8 +25,8 @@ namespace Testflow.SlaveCore.Common
 
         public UplinkMessageProcessor(SlaveContext context)
         {
-            this._transceiver = _context.MessageTransceiver;
             this._context = context;
+            this._transceiver = _context.MessageTransceiver;
             this._waitTimer = new Timer(SendHeartBeatMessage, null, Timeout.Infinite, Timeout.Infinite);
             this._heartBeatInterval = _context.GetProperty<int>("StatusUploadInterval");
         }

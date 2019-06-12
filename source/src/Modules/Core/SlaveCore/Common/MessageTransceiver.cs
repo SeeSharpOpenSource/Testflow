@@ -23,16 +23,14 @@ namespace Testflow.SlaveCore.Common
 
             // 创建上行队列
             FormatterType formatterType = contextManager.GetProperty<FormatterType>("EngineQueueFormat");
-            MessengerOption receiveOption = new MessengerOption(CoreConstants.UpLinkMQName, typeof(ControlMessage),
-                typeof(DebugMessage), typeof(RmtGenMessage), typeof(StatusMessage), typeof(TestGenMessage))
+            MessengerOption receiveOption = new MessengerOption(CoreConstants.UpLinkMQName, GetMessageType)
             {
                 Type = contextManager.GetProperty<MessengerType>("MessengerType"),
                 Formatter = formatterType
             };
             _uplinkMessenger = Messenger.GetMessenger(receiveOption);
             // 创建下行队列
-            MessengerOption sendOption = new MessengerOption(CoreConstants.DownLinkMQName, typeof(ControlMessage),
-                typeof(DebugMessage), typeof(RmtGenMessage), typeof(StatusMessage), typeof(TestGenMessage))
+            MessengerOption sendOption = new MessengerOption(CoreConstants.DownLinkMQName, GetMessageType)
             {
                 Type = contextManager.GetProperty<MessengerType>("MessengerType"),
                 Formatter = formatterType
@@ -108,6 +106,41 @@ namespace Testflow.SlaveCore.Common
         public void Dispose()
         {
             StopReceive();
+        }
+
+        // 为了提高效率，暂时写死，后续优化
+        public Type GetMessageType(string typeName)
+        {
+            switch (typeName)
+            {
+                case "CallBackMessage":
+                    return typeof(CallBackMessage);
+                    break;
+                case "ControlMessage":
+                    return typeof(ControlMessage);
+                    break;
+                case "DebugMessage":
+                    return typeof(DebugMessage);
+                    break;
+                case "ResourceSyncMessage":
+                    return typeof(ResourceSyncMessage);
+                    break;
+                case "RmtGenMessage":
+                    return typeof(RmtGenMessage);
+                    break;
+                case "RuntimeErrorMessage":
+                    return typeof(RuntimeErrorMessage);
+                    break;
+                case "StatusMessage":
+                    return typeof(StatusMessage);
+                    break;
+                case "TestGenMessage":
+                    return typeof(TestGenMessage);
+                    break;
+                default:
+                    throw new NotImplementedException();
+                    break;
+            }
         }
 
         #region 调用WinApi的跨进程同步函数

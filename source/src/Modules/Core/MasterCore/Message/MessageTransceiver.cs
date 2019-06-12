@@ -50,29 +50,28 @@ namespace Testflow.MasterCore.Message
         private SpinLock _operationLock;
 
         protected ModuleGlobalInfo GlobalInfo;
-        protected FormatterType FormatterType;
 
         protected MessageTransceiver(ModuleGlobalInfo globalInfo)
         {
             this.GlobalInfo = globalInfo;
             // 创建上行队列
-            FormatterType = GlobalInfo.ConfigData.GetProperty<FormatterType>("EngineQueueFormat");
-            MessengerOption receiveOption = new MessengerOption(CoreConstants.UpLinkMQName, typeof (ControlMessage),
-                typeof (DebugMessage), typeof (RmtGenMessage), typeof (StatusMessage), typeof (TestGenMessage))
+            FormatterType formatterType = GlobalInfo.ConfigData.GetProperty<FormatterType>("EngineQueueFormat");
+            MessengerOption receiveOption = new MessengerOption(CoreConstants.UpLinkMQName, GetMessageType)
             {
                 Type = MessengerType.MSMQ,
                 HostAddress = Constants.LocalHostAddr,
-                ReceiveType = ReceiveType.Synchronous
+                ReceiveType = ReceiveType.Synchronous,
+                Formatter = formatterType
             };
             UpLinkMessenger = Messenger.GetMessenger(receiveOption);
             this._consumers = new Dictionary<string, IMessageHandler>(Constants.DefaultRuntimeSize);
             // 创建下行队列
-            MessengerOption sendOption = new MessengerOption(CoreConstants.DownLinkMQName, typeof(ControlMessage),
-                typeof(DebugMessage), typeof(RmtGenMessage), typeof(StatusMessage), typeof(TestGenMessage))
+            MessengerOption sendOption = new MessengerOption(CoreConstants.DownLinkMQName, GetMessageType)
             {
                 Type = MessengerType.MSMQ,
                 HostAddress = Constants.LocalHostAddr,
-                ReceiveType = ReceiveType.Synchronous
+                ReceiveType = ReceiveType.Synchronous,
+                Formatter = formatterType
             };
             DownLinkMessenger = Messenger.GetMessenger(sendOption);
             this._operationLock = new SpinLock();
@@ -179,6 +178,41 @@ namespace Testflow.MasterCore.Message
             Stop();
             UpLinkMessenger.Dispose();
             DownLinkMessenger.Dispose();
+        }
+
+        // 为了提高效率，暂时写死，后续优化
+        public Type GetMessageType(string typeName)
+        {
+            switch (typeName)
+            {
+                case "CallBackMessage":
+                    return typeof (CallBackMessage);
+                    break;
+                case "ControlMessage":
+                    return typeof (ControlMessage);
+                    break;
+                case "DebugMessage":
+                    return typeof (DebugMessage);
+                    break;
+                case "ResourceSyncMessage":
+                    return typeof (ResourceSyncMessage);
+                    break;
+                case "RmtGenMessage":
+                    return typeof (RmtGenMessage);
+                    break;
+                case "RuntimeErrorMessage":
+                    return typeof (RuntimeErrorMessage);
+                    break;
+                case "StatusMessage":
+                    return typeof (StatusMessage);
+                    break;
+                case "TestGenMessage":
+                    return typeof (TestGenMessage);
+                    break;
+                default:
+                    throw new NotImplementedException();
+                    break;
+            }
         }
     }
 }
