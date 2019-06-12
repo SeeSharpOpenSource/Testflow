@@ -59,7 +59,7 @@ namespace Testflow.MasterCore.StatusManage
                 RuntimeHash = _stateManageContext.RuntimeHash,
                 Sequence = this.SequenceIndex,
                 Session = Session,
-                Stack = this.RunStack.ToString(),
+                Stack = string.Empty,
                 Time = CurrentTime,
                 ElapsedTime = this.ElapsedTime.TotalMilliseconds,
                 Result = StepResult.NotAvailable,

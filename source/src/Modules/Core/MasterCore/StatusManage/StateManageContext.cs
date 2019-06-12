@@ -15,7 +15,6 @@ namespace Testflow.MasterCore.StatusManage
     internal class StateManageContext
     {
         private readonly ISequenceFlowContainer _sequenceData;
-        private readonly ModuleGlobalInfo _globalInfo;
 
         public StateManageContext(ModuleGlobalInfo globalInfo, ISequenceFlowContainer sequenceData)
         {
@@ -27,8 +26,8 @@ namespace Testflow.MasterCore.StatusManage
             this.TestResults = new TestProjectResults(sequenceData);
             this.TestInstance = new TestInstanceData()
             {
-                Name = _globalInfo.ConfigData.GetProperty<string>("TestName"),
-                Description = _globalInfo.ConfigData.GetProperty<string>("TestDescription"),
+                Name = GlobalInfo.ConfigData.GetProperty<string>("TestName"),
+                Description = GlobalInfo.ConfigData.GetProperty<string>("TestDescription"),
                 TestProjectName = sequenceData.Name,
                 TestProjectDescription = sequenceData.Description,
                 RuntimeHash = globalInfo.RuntimeHash,
