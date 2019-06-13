@@ -23,7 +23,7 @@ namespace Testflow.MasterCore.Message
         private Thread _statusMessageListener;
         private readonly LocalMessageQueue<MessageBase> _statusMessageQueue;
 
-        public SyncMsgTransceiver(ModuleGlobalInfo globalInfo) : base(globalInfo)
+        public SyncMsgTransceiver(ModuleGlobalInfo globalInfo) : base(globalInfo, ReceiveType.Synchronous)
         {
             _engineMessageQueue = new LocalMessageQueue<MessageBase>(Constants.DefaultEventsQueueSize);
             _statusMessageQueue = new LocalMessageQueue<MessageBase>(Constants.DefaultEventsQueueSize);

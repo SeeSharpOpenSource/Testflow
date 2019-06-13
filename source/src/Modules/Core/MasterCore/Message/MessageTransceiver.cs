@@ -51,7 +51,7 @@ namespace Testflow.MasterCore.Message
 
         protected ModuleGlobalInfo GlobalInfo;
 
-        protected MessageTransceiver(ModuleGlobalInfo globalInfo)
+        protected MessageTransceiver(ModuleGlobalInfo globalInfo, ReceiveType receiveType)
         {
             this.GlobalInfo = globalInfo;
             // 创建上行队列
@@ -60,7 +60,7 @@ namespace Testflow.MasterCore.Message
             {
                 Type = MessengerType.MSMQ,
                 HostAddress = Constants.LocalHostAddr,
-                ReceiveType = ReceiveType.Synchronous,
+                ReceiveType = receiveType,
                 Formatter = formatterType
             };
             UpLinkMessenger = Messenger.GetMessenger(receiveOption);
@@ -70,7 +70,7 @@ namespace Testflow.MasterCore.Message
             {
                 Type = MessengerType.MSMQ,
                 HostAddress = Constants.LocalHostAddr,
-                ReceiveType = ReceiveType.Synchronous,
+                ReceiveType = receiveType,
                 Formatter = formatterType
             };
             DownLinkMessenger = Messenger.GetMessenger(sendOption);
