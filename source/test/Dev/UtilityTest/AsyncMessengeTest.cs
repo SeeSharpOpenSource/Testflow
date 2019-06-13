@@ -7,7 +7,7 @@ using Testflow.Utility.MessageUtil;
 namespace Testflow.Dev.UtilityTest
 {
     [TestClass]
-    public class MessengeTest
+    public class AsyncMessengeTest
     {
         private Messenger _messenger;
         private MessengerOption _option;
@@ -44,7 +44,7 @@ namespace Testflow.Dev.UtilityTest
         {
             for (int i = 0; i < MaxSession; i++)
             {
-                TestMessage message = new TestMessage(0)
+                TestMessage message = new TestMessage()
                 {
                     Id = i,
                     Message = CreateTestMessage(i)
@@ -73,7 +73,7 @@ namespace Testflow.Dev.UtilityTest
         public int Id { get; set; }
         public string Message { get; set; }
 
-        public TestMessage(int i)
+        public TestMessage()
         {
         }
 
@@ -99,7 +99,7 @@ namespace Testflow.Dev.UtilityTest
         public int SessionId { get; }
         public void Handle(IMessage message)
         {
-            string expect = MessengeTest.CreateTestMessage(SessionId);
+            string expect = AsyncMessengeTest.CreateTestMessage(SessionId);
             TestMessage testMessage = message as TestMessage;
             if (!expect.Equals(testMessage.Message))
             {

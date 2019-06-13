@@ -50,7 +50,8 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
-    <Compile Include="MessengeTest.cs" />
+    <Compile Include="SyncMessengeTest.cs" />
+    <Compile Include="AsyncMessengeTest.cs" />
     <Compile Include="I18NTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Resources\i18n_test_cn.Designer.cs">
