@@ -9,7 +9,7 @@ namespace Testflow.CoreCommon.Common
 
         public BlockHandle()
         {
-            _waitEvent = new SemaphoreSlim(1);
+            _waitEvent = new SemaphoreSlim(0, 1);
             this._waitState = int.MaxValue;
             this.Timeout = System.Threading.Timeout.Infinite;
         }
