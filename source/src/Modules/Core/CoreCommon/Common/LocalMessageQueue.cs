@@ -10,9 +10,11 @@ namespace Testflow.CoreCommon.Common
 
         private SpinLock _blockLock;
 
+        private int _stopEnqueueFlag;
+
         private readonly AutoResetEvent _blockEvent;
 
-        private int _isblocked;
+        private int _blockCount;
         private int _forceFree;
 
         public LocalMessageQueue(int capacity) : base(capacity)
@@ -20,53 +22,42 @@ namespace Testflow.CoreCommon.Common
             _operationLock = new SpinLock();
             _blockLock = new SpinLock();
             _blockEvent = new AutoResetEvent(false);
-            _isblocked = 0;
+            _blockCount = 0;
             _forceFree = 0;
+            _stopEnqueueFlag = 0;
         }
-        
+
         public TMessageType WaitUntilMessageCome()
         {
             TMessageType message = null;
-            bool getLock = false;
-            _operationLock.Enter(ref getLock);
-
-            if (base.Count > 0)
+            while (true)
             {
-                message = base.Dequeue();
+                bool getLock = false;
+                _operationLock.Enter(ref getLock);
+                if (base.Count > 0)
+                {
+                    message = base.Dequeue();
+                    _operationLock.Exit();
+                    return message;
+                }
+                Thread.VolatileWrite(ref _blockCount, ++_blockCount);
                 _operationLock.Exit();
-                return message;
+                BlockThread();
             }
-            _operationLock.Exit();
-            BlockThread();
-            _operationLock.Enter(ref getLock);
-            // 如果为null，则意味着该阻塞是被停止操作触发的
-            if (0 != base.Count)
-            {
-                message = base.Dequeue();
-            }
-            _operationLock.Exit();
-            return message;
         }
 
         public new void Enqueue(TMessageType item)
         {
+            if (1 == _stopEnqueueFlag)
+            {
+                return;
+            }
             bool getLock = false;
             _operationLock.Enter(ref getLock);
             base.Enqueue(item);
             // 如果被阻塞，则释放等待线程
+            _operationLock.Exit();
             FreeThread();
-            Interlocked.Exchange(ref _isblocked, 0);
-            _operationLock.Exit();
-        }
-
-        public new TMessageType Dequeue()
-        {
-            TMessageType message = null;
-            bool getLock = false;
-            _operationLock.Enter(ref getLock);
-            message = base.Dequeue();
-            _operationLock.Exit();
-            return message;
         }
 
         public new void Clear()
@@ -77,6 +68,11 @@ namespace Testflow.CoreCommon.Common
             _operationLock.Exit();
         }
 
+        public void StopEnqueue()
+        {
+            Thread.VolatileWrite(ref _stopEnqueueFlag, 1);
+        }
+
         /// <summary>
         /// 强制释放lock，让线程继续执行
         /// </summary>
@@ -84,10 +80,10 @@ namespace Testflow.CoreCommon.Common
         {
             bool getLock = false;
             _blockLock.Enter(ref getLock);
-            if (_isblocked == 1)
+            if (_blockCount == 1)
             {
                 _blockEvent.Set();
-                Interlocked.Exchange(ref _isblocked, 0);
+                Interlocked.Exchange(ref _blockCount, 0);
             }
             Thread.VolatileWrite(ref _forceFree, 1);
             _blockLock.Exit();
@@ -95,25 +91,21 @@ namespace Testflow.CoreCommon.Common
 
         private void BlockThread()
         {
-            bool getLock = false;
-            _blockLock.Enter(ref getLock);
-            // 如果未被block，并且消息数大于0，并且没有申请强制释放锁则阻塞线程
-            if (0 == _isblocked && 0 == Count && 0 == _forceFree)
+            // 如果未被block，并且消息数等于0，并且没有申请强制释放锁则阻塞线程
+            if (0 == _forceFree)
             {
                 _blockEvent.WaitOne(Timeout.Infinite);
-                Thread.VolatileWrite(ref _isblocked, 1);
             }
-            _blockLock.Exit();
         }
 
         private void FreeThread()
         {
             bool getLock = false;
             _blockLock.Enter(ref getLock);
-            if (0 != _isblocked && 0 <= Count)
+            if (0 < _blockCount && 0 < Count)
             {
+                Thread.VolatileWrite(ref _blockCount, --_blockCount);
                 _blockEvent.Set();
-                Thread.VolatileWrite(ref _isblocked, 0);
             }
             _blockLock.Exit();
         }
