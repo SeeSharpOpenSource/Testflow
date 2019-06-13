@@ -233,7 +233,8 @@ namespace Testflow.MasterCore.StatusManage
         {
             GenerationStatus generationState = message.State;
             _generationInfo.Status = generationState;
-            foreach (int sequenceIndex in _generationInfo.SequenceStatus.Keys)
+            ICollection<int> sequenceIndexes = new List<int>(_generationInfo.SequenceStatus.Keys);
+            foreach (int sequenceIndex in sequenceIndexes)
             {
                 _generationInfo.SequenceStatus[sequenceIndex] = generationState;
             }
@@ -383,7 +384,8 @@ namespace Testflow.MasterCore.StatusManage
         private ISessionGenerationInfo SetGenerationInfo(TestGenEventInfo eventInfo, GenerationStatus status)
         {
             _generationInfo.Status = status;
-            foreach (int sequenceIndex in _generationInfo.SequenceStatus.Keys)
+            IList<int> sequenceIndexes = new List<int>(_generationInfo.SequenceStatus.Keys);
+            foreach (int sequenceIndex in sequenceIndexes)
             {
                 _generationInfo.SequenceStatus[sequenceIndex] = status;
             }
