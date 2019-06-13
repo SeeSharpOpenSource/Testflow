@@ -28,6 +28,8 @@ namespace Testflow.SlaveCore.SlaveFlowControl
             {
                 Thread.Sleep(10);
             }
+            // 打印状态日志
+            Context.LogSession.Print(LogLevel.Info, Context.SessionId, "RmtGenMessage received");
 
             SequenceManager.SequenceManager sequenceManager = new SequenceManager.SequenceManager();
             Context.SequenceType = rmtGenMessage.SequenceType;

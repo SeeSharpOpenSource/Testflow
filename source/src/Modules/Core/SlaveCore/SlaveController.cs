@@ -1,17 +1,8 @@
 ﻿using System;
 using System.Threading;
 using Testflow.Usr;
-using Testflow.CoreCommon;
-using Testflow.CoreCommon.Common;
-using Testflow.CoreCommon.Data;
 using Testflow.CoreCommon.Messages;
-using Testflow.Data;
-using Testflow.Data.Sequence;
-using Testflow.Runtime;
 using Testflow.SlaveCore.Common;
-using Testflow.SlaveCore.Data;
-using Testflow.SlaveCore.Runner;
-using Testflow.SlaveCore.Runner.Model;
 using Testflow.SlaveCore.SlaveFlowControl;
 
 namespace Testflow.SlaveCore
@@ -31,14 +22,18 @@ namespace Testflow.SlaveCore
 
         public void StartSlaveTask()
         {
+            // 打印状态日志
+            _context.LogSession.Print(LogLevel.Info, _context.SessionId, "Slave controller started.");
+
             _context.MessageTransceiver.StartReceive();
+            _context.LogSession.Print(LogLevel.Info, _context.SessionId, "Slave transceiver started.");
 
             _downlinkMsgProcessor = new DownlinkMessageProcessor(_context);
 
             SlaveFlowTaskBase taskEntrance = SlaveFlowTaskBase.GetFlowTaskEntrance(_context);
 
             _context.UplinkMsgProcessor.Start();
-
+            
             _flowTaskThread = new Thread(taskEntrance.DoFlowTask)
             {
                 IsBackground = true,
@@ -46,6 +41,10 @@ namespace Testflow.SlaveCore
             };
             // 开始流程处理线程
             _flowTaskThread.Start();
+            // 打印状态日志
+            _context.LogSession.Print(LogLevel.Info, _context.SessionId, 
+                $"Flow task thread started, thread:{_flowTaskThread.ManagedThreadId}");
+
             try
             {
                 // 在主线程内开始侦听下行消息并处理
@@ -65,6 +64,7 @@ namespace Testflow.SlaveCore
             finally
             {
                 StopSlaveTask();
+                _context.LogSession.Print(LogLevel.Info, _context.SessionId, "Slave controller  started.");
             }
         }
 

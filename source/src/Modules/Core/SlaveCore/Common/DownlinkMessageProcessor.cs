@@ -20,6 +20,10 @@ namespace Testflow.SlaveCore.Common
 
         public void StartListen()
         {
+            // 打印状态日志
+            _context.LogSession.Print(LogLevel.Info, _context.SessionId, 
+                $"Downlink message processer started, thread{Thread.CurrentThread.ManagedThreadId}.");
+
             _cancellation = new CancellationTokenSource();
 
             // 首先接收RmtGenMessage

@@ -53,6 +53,8 @@ namespace Testflow.SlaveCore.Common
             this.ReturnDatas = new HashSet<string>();
             this.BreakPoints = new HashSet<string>();
             this.RuntimeType = GetProperty<RuntimeType>("RuntimeType");
+
+            LogSession.Print(LogLevel.Info, SessionId, "Slave context constructed.");
         }
 
         public I18N I18N { get; }

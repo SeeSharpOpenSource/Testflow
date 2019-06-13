@@ -1,7 +1,5 @@
 ﻿using System;
 using Testflow.SlaveCore.Common;
-using Testflow.SlaveCore.Runner;
-using Testflow.SlaveCore.SlaveFlowControl;
 using Testflow.Utility.I18nUtil;
 
 namespace Testflow.SlaveCore
@@ -19,6 +17,7 @@ namespace Testflow.SlaveCore
             };
             I18N.InitInstance(i18NOption);
             _slaveContext = new SlaveContext(configDataStr);
+            
         }
 
         public void Start()

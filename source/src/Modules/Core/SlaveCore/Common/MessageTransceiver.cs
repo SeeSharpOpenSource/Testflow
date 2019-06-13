@@ -46,6 +46,9 @@ namespace Testflow.SlaveCore.Common
         public void SendMessage(MessageBase message)
         {
             _uplinkMessenger.Send(message);
+            // 打印状态日志
+            _slaveContext.LogSession.Print(LogLevel.Debug, _slaveContext.SessionId,
+                $"Send message, Type:{message.Type}, Index:{message.Index}.");
         }
 
         public void StartReceive()
@@ -73,7 +76,11 @@ namespace Testflow.SlaveCore.Common
                     if (message.Id == SessionId)
                     {
                         IMessage receive = _downLinkMessenger.Receive();
-                        _messageQueue.Enqueue((MessageBase)message);
+                        MessageBase downlinkMessage = (MessageBase)message;
+                        _messageQueue.Enqueue(downlinkMessage);
+                        // 打印状态日志
+                        _slaveContext.LogSession.Print(LogLevel.Debug, _slaveContext.SessionId,
+                            $"Message received, Type:{downlinkMessage.Type}, Index:{downlinkMessage.Index}.");
                     }
                     else
                     {
@@ -96,6 +103,9 @@ namespace Testflow.SlaveCore.Common
                 _peakThread.Abort();
             }
             _messageQueue.Clear();
+            // 打印状态日志
+            _slaveContext.LogSession.Print(LogLevel.Info, _slaveContext.SessionId,
+                            "Message receive stopped.");
         }
 
         public MessageBase Receive()

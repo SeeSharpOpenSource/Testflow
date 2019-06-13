@@ -33,7 +33,15 @@ namespace Testflow.SlaveCore.SlaveFlowControl
             {
                 // 配置心跳包生成委托
                 Context.UplinkMsgProcessor.HeartbeatMsgGenerator = GetHeartBeatMessage;
+
+                // 打印状态日志
+                Context.LogSession.Print(LogLevel.Info, Context.SessionId, $"{this.GetType().Name} task action started.");
+
                 FlowTaskAction();
+
+                // 打印状态日志
+                Context.LogSession.Print(LogLevel.Info, Context.SessionId, $"{this.GetType().Name} task action over.");
+                
                 Next.DoFlowTask();
             }
             catch (ThreadAbortException ex)
