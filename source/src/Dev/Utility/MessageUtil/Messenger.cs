@@ -121,10 +121,11 @@ namespace Testflow.Utility.MessageUtil
         protected void Initialize()
         {
             this.InitializeMessageQueue();
-            this.RegisterEvent();
-
-            // TODO 同步模式暂时不使用，后期再添加
-//            _messageDispatcher = new MessageDispatcher(this, consumers);
+            // 异步模式时注册事件处理
+            if (Option.ReceiveType == ReceiveType.Asynchronous)
+            {
+                this.RegisterEvent();
+            }
         }
 
         /// <summary>
