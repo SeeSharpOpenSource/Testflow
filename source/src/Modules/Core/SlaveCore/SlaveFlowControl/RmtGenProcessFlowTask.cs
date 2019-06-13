@@ -22,6 +22,9 @@ namespace Testflow.SlaveCore.SlaveFlowControl
         {
             Context.State = RuntimeState.Idle;
 
+            // 打印状态日志
+            Context.LogSession.Print(LogLevel.Debug, Context.SessionId, "Wait for RmtGenMessage.");
+
             RmtGenMessage rmtGenMessage;
             // 等待接收到RmtGenMessage为止
             while (null == (rmtGenMessage = Context.RmtGenMessage))
@@ -29,7 +32,7 @@ namespace Testflow.SlaveCore.SlaveFlowControl
                 Thread.Sleep(10);
             }
             // 打印状态日志
-            Context.LogSession.Print(LogLevel.Info, Context.SessionId, "RmtGenMessage received");
+            Context.LogSession.Print(LogLevel.Debug, Context.SessionId, "RmtGenMessage received.");
 
             SequenceManager.SequenceManager sequenceManager = new SequenceManager.SequenceManager();
             Context.SequenceType = rmtGenMessage.SequenceType;

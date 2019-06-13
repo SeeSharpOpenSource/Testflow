@@ -26,6 +26,9 @@ namespace Testflow.SlaveCore.SlaveFlowControl
 
         protected override void FlowTaskAction()
         {
+            // 打印状态日志
+            Context.LogSession.Print(LogLevel.Info, Context.SessionId, "Start test project setup.");
+
             Context.State = RuntimeState.Running;
 
             SessionTaskEntity sessionTaskEntity = Context.SessionTaskEntity;
@@ -45,14 +48,25 @@ namespace Testflow.SlaveCore.SlaveFlowControl
                         StatusReportType.Failed, StepResult.NotAvailable, failedException);
                     Context.StatusQueue.Enqueue(statusInfo);
                 }
+                // 打印状态日志
+                Context.LogSession.Print(LogLevel.Error, Context.SessionId, "Setup execution failed.");
                 return;
             }
+
+            // 打印状态日志
+            Context.LogSession.Print(LogLevel.Info, Context.SessionId, "Setup execution over.");
 
             this._wakeTimer = new Timer(WakeThreadWhenCtrlMessageCome, null, Constants.WakeTimerInterval, 
                 Constants.WakeTimerInterval);
             _blockEvent.WaitOne();
 
+            // 打印状态日志
+            Context.LogSession.Print(LogLevel.Info, Context.SessionId, "Teardown execution start.");
+
             sessionTaskEntity.InvokeTearDown();
+
+            // 打印状态日志
+            Context.LogSession.Print(LogLevel.Info, Context.SessionId, "Teardown execution over.");
 
             Context.State = RuntimeState.Over;
             this.Next = null;

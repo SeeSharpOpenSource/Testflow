@@ -34,8 +34,18 @@ namespace Testflow.SlaveCore.SlaveFlowControl
             };
             Context.UplinkMsgProcessor.SendMessage(testGenStartMessage);
 
+            // 打印状态日志
+            Context.LogSession.Print(LogLevel.Info, Context.SessionId, "Test generation started.");
+
+            // 打印状态日志
+            Context.LogSession.Print(LogLevel.Debug, Context.SessionId, "Construct variable mapper start.");
+
             // 构造变量映射器
             Context.VariableMapper = new VariableMapper(Context);
+
+            // 打印状态日志
+            Context.LogSession.Print(LogLevel.Debug, Context.SessionId, "Construct AssemblyInvoker start.");
+
             switch (Context.SequenceType)
             {
                 case RunnerType.TestProject:
@@ -51,9 +61,15 @@ namespace Testflow.SlaveCore.SlaveFlowControl
                 default:
                     throw new InvalidOperationException();
             }
+            
+            // 打印状态日志
+            Context.LogSession.Print(LogLevel.Debug, Context.SessionId, "Load assemblies.");
 
             // 加载用到的程序集
             Context.TypeInvoker.LoadAssemblyAndType();
+
+            // 打印状态日志
+            Context.LogSession.Print(LogLevel.Debug, Context.SessionId, "Create session task entity start.");
 
             // 创建序列执行实体
             Context.SessionTaskEntity = new SessionTaskEntity(Context);
@@ -67,6 +83,9 @@ namespace Testflow.SlaveCore.SlaveFlowControl
                 Index = Context.MsgIndex
             };
             Context.UplinkMsgProcessor.SendMessage(testGenOverMessage);
+
+            // 打印状态日志
+            Context.LogSession.Print(LogLevel.Info, Context.SessionId, "Test generation over.");
 
             this.Next = new CtrlStartProcessFlowTask(Context);
         }

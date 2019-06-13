@@ -26,7 +26,7 @@ namespace Testflow.SlaveCore
             _context.LogSession.Print(LogLevel.Info, _context.SessionId, "Slave controller started.");
 
             _context.MessageTransceiver.StartReceive();
-            _context.LogSession.Print(LogLevel.Info, _context.SessionId, "Slave transceiver started.");
+            _context.LogSession.Print(LogLevel.Debug, _context.SessionId, "Slave transceiver started.");
 
             _downlinkMsgProcessor = new DownlinkMessageProcessor(_context);
 
@@ -42,7 +42,7 @@ namespace Testflow.SlaveCore
             // 开始流程处理线程
             _flowTaskThread.Start();
             // 打印状态日志
-            _context.LogSession.Print(LogLevel.Info, _context.SessionId, 
+            _context.LogSession.Print(LogLevel.Debug, _context.SessionId, 
                 $"Flow task thread started, thread:{_flowTaskThread.ManagedThreadId}");
 
             try

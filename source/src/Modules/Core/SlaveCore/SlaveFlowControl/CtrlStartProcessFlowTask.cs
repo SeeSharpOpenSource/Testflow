@@ -21,16 +21,23 @@ namespace Testflow.SlaveCore.SlaveFlowControl
             // 发送测试结束消息
             Context.State = RuntimeState.StartIdle;
 
+            // 打印状态日志
+            Context.LogSession.Print(LogLevel.Debug, Context.SessionId, "Wait for start message.");
+
             ControlMessage message;
             while (null == (message = Context.CtrlStartMessage))
             {
                 Thread.Sleep(10);
             }
+            
             if (!MessageNames.CtrlStart.Equals(message.Name))
             {
                 throw new TestflowRuntimeException(ModuleErrorCode.InvalidMessageReceived,
                     Context.I18N.GetFStr("InvalidMessageReceived", message.GetType().Name));
             }
+
+            // 打印状态日志
+            Context.LogSession.Print(LogLevel.Debug, Context.SessionId, "Start message received.");
 
             if (IsOptionEnabled(message, "RunAll"))
             {

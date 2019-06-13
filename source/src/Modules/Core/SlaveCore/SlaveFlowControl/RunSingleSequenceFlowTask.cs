@@ -22,6 +22,9 @@ namespace Testflow.SlaveCore.SlaveFlowControl
 
         protected override void FlowTaskAction()
         {
+            // 打印状态日志
+            Context.LogSession.Print(LogLevel.Info, Context.SessionId, $"Start run sequence {_sequenceIndex}.");
+
             Context.State = RuntimeState.Running;
 
             SessionTaskEntity sessionTaskEntity = Context.SessionTaskEntity;
@@ -41,6 +44,8 @@ namespace Testflow.SlaveCore.SlaveFlowControl
                         StatusReportType.Failed, StepResult.NotAvailable, failedException);
                     Context.StatusQueue.Enqueue(statusInfo);
                 }
+                // 打印状态日志
+                Context.LogSession.Print(LogLevel.Error, Context.SessionId, "Run setup failed.");
                 return;
             }
 
@@ -50,6 +55,9 @@ namespace Testflow.SlaveCore.SlaveFlowControl
 
             Context.State = RuntimeState.Over;
             this.Next = null;
+
+            // 打印状态日志
+            Context.LogSession.Print(LogLevel.Info, Context.SessionId, "Run single sequence over.");
         }
 
         protected override void TaskErrorAction(Exception ex)

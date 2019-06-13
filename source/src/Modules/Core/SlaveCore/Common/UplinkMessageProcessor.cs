@@ -42,7 +42,7 @@ namespace Testflow.SlaveCore.Common
             _statusPackageThd.Start();
             _waitTimer.Change(_heartBeatInterval, _heartBeatInterval);
             // 打印状态日志
-            _context.LogSession.Print(LogLevel.Info, _context.SessionId, 
+            _context.LogSession.Print(LogLevel.Debug, _context.SessionId, 
                 $"Uplink message processor started, thread:{_statusPackageThd.ManagedThreadId}.");
         }
 
@@ -50,6 +50,9 @@ namespace Testflow.SlaveCore.Common
         {
             _waitTimer?.Change(Timeout.Infinite, Timeout.Infinite);
             _cancellation?.Cancel();
+            // 打印状态日志
+            _context.LogSession.Print(LogLevel.Debug, _context.SessionId,
+                $"Uplink message processor stoped, thread:{_statusPackageThd.ManagedThreadId}.");
         }
 
         private void PackageStatusInfo()

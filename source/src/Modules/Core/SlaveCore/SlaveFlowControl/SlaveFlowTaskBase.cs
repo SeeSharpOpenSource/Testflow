@@ -35,12 +35,12 @@ namespace Testflow.SlaveCore.SlaveFlowControl
                 Context.UplinkMsgProcessor.HeartbeatMsgGenerator = GetHeartBeatMessage;
 
                 // 打印状态日志
-                Context.LogSession.Print(LogLevel.Info, Context.SessionId, $"{this.GetType().Name} task action started.");
+                Context.LogSession.Print(LogLevel.Debug, Context.SessionId, $"{this.GetType().Name} task action started.");
 
                 FlowTaskAction();
 
                 // 打印状态日志
-                Context.LogSession.Print(LogLevel.Info, Context.SessionId, $"{this.GetType().Name} task action over.");
+                Context.LogSession.Print(LogLevel.Debug, Context.SessionId, $"{this.GetType().Name} task action over.");
                 
                 Next.DoFlowTask();
             }
