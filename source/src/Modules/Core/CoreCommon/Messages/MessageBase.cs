@@ -60,7 +60,7 @@ namespace Testflow.CoreCommon.Messages
             this.Type = (MessageType) info.GetValue("Type", typeof (MessageType));
             this.Id = (int) info.GetValue("Id", typeof (int));
             this.Time = (DateTime) info.GetValue("Time", typeof (DateTime));
-            this.Index = (long) info.GetValue("Signature", typeof (long));
+            this.Index = (long) info.GetValue("Index", typeof (long));
         }
 
         public virtual void GetObjectData(SerializationInfo info, StreamingContext context)
@@ -69,7 +69,7 @@ namespace Testflow.CoreCommon.Messages
             info.AddValue("Type", this.Type, typeof(MessageType));
             info.AddValue("Id", this.Id, typeof(int));
             info.AddValue("Time", Time, typeof(DateTime));
-            info.AddValue("Signature", Index);
+            info.AddValue("Index", Index);
         }
 
         private void SetSignature()

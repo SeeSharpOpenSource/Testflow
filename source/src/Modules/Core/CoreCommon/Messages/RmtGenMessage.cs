@@ -43,7 +43,7 @@ namespace Testflow.CoreCommon.Messages
         /// <summary>
         /// 额外参数配置
         /// </summary>
-        public Dictionary<string, string> Params { get; }
+        public Dictionary<string, string> Params { get; set; }
 
         public RmtGenMessage(SerializationInfo info, StreamingContext context) : base(info, context)
         {

@@ -8,7 +8,7 @@ namespace Testflow.CoreCommon.Messages
     [Serializable]
     public class CallBackMessage : MessageBase
     {
-        public List<string> Args { get; }
+        public List<string> Args { get; set; }
 
         /// <summary>
         /// 创建回调返回消息实例

@@ -26,7 +26,7 @@ namespace Testflow.CoreCommon.Messages
         /// <summary>
         /// 控制指令的额外参数
         /// </summary>
-        public Dictionary<string, string> Params { get; }
+        public Dictionary<string, string> Params { get; set; }
 
         public ControlMessage(SerializationInfo info, StreamingContext context) : base(info, context)
         {
