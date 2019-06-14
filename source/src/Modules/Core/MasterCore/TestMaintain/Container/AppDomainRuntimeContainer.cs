@@ -5,6 +5,7 @@ using System.Threading;
 using Testflow.Usr;
 using Testflow.Data.Sequence;
 using Testflow.MasterCore.Common;
+using Testflow.Modules;
 using Testflow.SlaveCore;
 
 namespace Testflow.MasterCore.TestMaintain.Container
@@ -35,18 +36,33 @@ namespace Testflow.MasterCore.TestMaintain.Container
             string configStr = (string)param;
             Type launcherType = typeof(AppDomainTestLauncher);
             string launcherFullName = $"{launcherType.Namespace}.{launcherType.Name}";
-            _appDomain.Load(launcherType.Assembly.GetName());
-            AppDomainTestLauncher launcherInstance = (AppDomainTestLauncher)_appDomain.CreateInstanceAndUnwrap(
-                launcherType.Assembly.GetName().FullName, launcherFullName, false, BindingFlags.Instance | BindingFlags.Public, null,
-                new object[] { configStr }, CultureInfo.CurrentCulture, null);
-            launcherInstance.Start();
+
+            try
+            {
+                _appDomain.Load(launcherType.Assembly.GetName());
+                AppDomainTestLauncher launcherInstance = (AppDomainTestLauncher) _appDomain.CreateInstanceFromAndUnwrap(
+                    launcherType.Assembly.Location, launcherFullName, false, BindingFlags.Instance | BindingFlags.Public,
+                    null,
+                    new object[] {configStr}, CultureInfo.CurrentCulture, null);
+                launcherInstance.Start();
+            }
+            catch (ThreadAbortException ex)
+            {
+                ILogService logService = TestflowRunner.GetInstance().LogService;
+                logService.Print(LogLevel.Warn, CommonConst.PlatformLogSession, "Appdomain thread aborted.");
+            }
+            catch (Exception ex)
+            {
+                ILogService logService = TestflowRunner.GetInstance().LogService;
+                logService.Print(LogLevel.Error, CommonConst.PlatformLogSession, ex, "Exception raised in appdomain thread.");
+            }
         }
 
         public override void Dispose()
         {
-            if (ThreadState.Running == _testThd.ThreadState)
+            if (_testThd.IsAlive)
             {
-                bool over = _testThd.Join(200);
+                bool over = _testThd.Join(2000);
                 if (!over)
                 {
                     _testThd.Abort();
