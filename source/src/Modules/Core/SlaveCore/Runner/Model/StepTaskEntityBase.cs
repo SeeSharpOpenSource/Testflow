@@ -12,24 +12,24 @@ namespace Testflow.SlaveCore.Runner.Model
 {
     internal abstract class StepTaskEntityBase
     {
-        public static StepTaskEntityBase GetStepModel(ISequenceStep stepData, SlaveContext context)
+        public static StepTaskEntityBase GetStepModel(ISequenceStep stepData, SlaveContext context, int sequenceIndex)
         {
             if (stepData.HasSubSteps)
             {
-                return new StepExecutionEntity(stepData, context);
+                return new StepExecutionEntity(stepData, context, sequenceIndex);
             }
             switch (stepData.Function.Type)
             {
                 case FunctionType.Constructor:
                 case FunctionType.InstanceFunction:
                 case FunctionType.StaticFunction:
-                    return new StepExecutionEntity(stepData, context);
+                    return new StepExecutionEntity(stepData, context, sequenceIndex);
                     break;
                 case FunctionType.Assertion:
-                    return new StepAssertEntity(stepData, context);
+                    return new StepAssertEntity(stepData, context, sequenceIndex);
                     break;
                 case FunctionType.CallBack:
-                    return new StepCallBackEntity(stepData, context);
+                    return new StepCallBackEntity(stepData, context, sequenceIndex);
                     break;
                 default:
                     throw new InvalidOperationException();
@@ -57,12 +57,12 @@ namespace Testflow.SlaveCore.Runner.Model
         public StepResult Result { get; protected set; }
         public int SequenceIndex { get; }
 
-        protected StepTaskEntityBase(ISequenceStep step, SlaveContext context)
+        protected StepTaskEntityBase(ISequenceStep step, SlaveContext context, int sequenceIndex)
         {
             this.Context = context;
             this.StepData = step;
             this.Result = StepResult.NotAvailable;
-            this.SequenceIndex = step.Index;
+            this.SequenceIndex = sequenceIndex;
         }
 
         public CallStack GetStack()

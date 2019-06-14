@@ -15,7 +15,7 @@ namespace Testflow.SlaveCore.Runner.Model
 
         public string RealValue { get; }
 
-        public StepAssertEntity(ISequenceStep step, SlaveContext context) : base(step, context)
+        public StepAssertEntity(ISequenceStep step, SlaveContext context, int sequenceIndex) : base(step, context, sequenceIndex)
         {
 
         }

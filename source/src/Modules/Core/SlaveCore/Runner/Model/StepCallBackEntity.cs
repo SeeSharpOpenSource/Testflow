@@ -7,7 +7,7 @@ namespace Testflow.SlaveCore.Runner.Model
 {
     internal class StepCallBackEntity : StepTaskEntityBase
     {
-        public StepCallBackEntity(ISequenceStep step, SlaveContext context) : base(step, context)
+        public StepCallBackEntity(ISequenceStep step, SlaveContext context, int sequenceIndex) : base(step, context, sequenceIndex)
         {
 
         }

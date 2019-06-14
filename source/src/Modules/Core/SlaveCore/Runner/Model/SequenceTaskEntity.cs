@@ -51,7 +51,11 @@ namespace Testflow.SlaveCore.Runner.Model
         {
             this.State = RuntimeState.TestGen;
 
-            _stepEntityRoot = ModuleUtils.CreateStepModelChain(_sequence.Steps, _context);
+            _stepEntityRoot = ModuleUtils.CreateStepModelChain(_sequence.Steps, _context, _sequence.Index);
+            if (null == _stepEntityRoot)
+            {
+                return;
+            }
             _stepEntityRoot.GenerateInvokeInfo();
             _stepEntityRoot.InitializeParamsValues();
 

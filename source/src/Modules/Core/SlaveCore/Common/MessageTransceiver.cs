@@ -26,14 +26,16 @@ namespace Testflow.SlaveCore.Common
             MessengerOption receiveOption = new MessengerOption(CoreConstants.UpLinkMQName, GetMessageType)
             {
                 Type = contextManager.GetProperty<MessengerType>("MessengerType"),
-                Formatter = formatterType
+                Formatter = formatterType,
+                ReceiveType = ReceiveType.Synchronous
             };
             _uplinkMessenger = Messenger.GetMessenger(receiveOption);
             // 创建下行队列
             MessengerOption sendOption = new MessengerOption(CoreConstants.DownLinkMQName, GetMessageType)
             {
                 Type = contextManager.GetProperty<MessengerType>("MessengerType"),
-                Formatter = formatterType
+                Formatter = formatterType,
+                ReceiveType = ReceiveType.Synchronous
             };
             _downLinkMessenger = Messenger.GetMessenger(sendOption);
 

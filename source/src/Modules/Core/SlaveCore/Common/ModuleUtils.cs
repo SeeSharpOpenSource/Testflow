@@ -57,7 +57,7 @@ namespace Testflow.SlaveCore.Common
             return $"{typeData.Namespace}.{typeData.Name}";
         }
 
-        public static StepTaskEntityBase CreateStepModelChain(IList<ISequenceStep> steps, SlaveContext context)
+        public static StepTaskEntityBase CreateStepModelChain(IList<ISequenceStep> steps, SlaveContext context, int sequenceIndex)
         {
             StepTaskEntityBase root = null;
             if (steps.Count == 0)
@@ -65,13 +65,13 @@ namespace Testflow.SlaveCore.Common
                 return root;
             }
 
-            root = StepTaskEntityBase.GetStepModel(steps[0], context);
+            root = StepTaskEntityBase.GetStepModel(steps[0], context, sequenceIndex);
             root.NextStep = null;
             StepTaskEntityBase lastNode = root;
             StepTaskEntityBase currentNode = null;
             for (int i = 1; i < steps.Count; i++)
             {
-                currentNode = StepTaskEntityBase.GetStepModel(steps[i], context);
+                currentNode = StepTaskEntityBase.GetStepModel(steps[i], context, sequenceIndex);
                 lastNode.NextStep = currentNode;
                 lastNode = currentNode;
                 currentNode.NextStep = null;

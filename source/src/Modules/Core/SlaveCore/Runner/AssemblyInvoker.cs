@@ -77,7 +77,7 @@ namespace Testflow.SlaveCore.Runner
             BindingFlags bindingFlags = BindingFlags.Public;
             MethodInfo methodInfo;
             Type[] parameterTypes;
-            ParameterModifier[] modifiers;
+            ParameterModifier[] modifiers = null;
             Type classType = _typeDataMapping[ModuleUtils.GetTypeFullName(function.ClassType)];
             switch (function.Type)
             {
@@ -91,13 +91,20 @@ namespace Testflow.SlaveCore.Runner
                     throw new InvalidOperationException();
             }
             parameterTypes = new Type[function.ParameterType.Count];
-            modifiers = new ParameterModifier[function.ParameterType.Count];
-            for (int i = 0; i < parameterTypes.Length; i++)
+            if (function.ParameterType.Count > 0)
             {
-                parameterTypes[i] = _typeDataMapping[ModuleUtils.GetTypeFullName(function.ParameterType[i].Type)];
-                // TODO 
-                modifiers[i] = new ParameterModifier { [0] = true };
+                modifiers = new ParameterModifier[] { new ParameterModifier(function.ParameterType.Count) };
+                for (int i = 0; i < parameterTypes.Length; i++)
+                {
+                    parameterTypes[i] = _typeDataMapping[ModuleUtils.GetTypeFullName(function.ParameterType[i].Type)];
+                    if (function.ParameterType[i].Modifier != ArgumentModifier.None)
+                    {
+                        modifiers[0][i] = true;
+                        parameterTypes[i] = parameterTypes[i].MakeByRefType();
+                    }
+                }
             }
+            
             methodInfo = classType.GetMethod(function.MethodName, bindingFlags, null, parameterTypes, modifiers);
             return methodInfo;
         }
@@ -107,19 +114,25 @@ namespace Testflow.SlaveCore.Runner
             BindingFlags bindingFlags = BindingFlags.Public;
             ConstructorInfo constructor;
             Type[] parameterTypes;
-            ParameterModifier[] modifiers;
+            ParameterModifier[] modifiers = null;
             Type classType = _typeDataMapping[ModuleUtils.GetTypeFullName(function.ClassType)];
             switch (function.Type)
             {
                 case FunctionType.Constructor:
                     bindingFlags |= BindingFlags.Instance;
                     parameterTypes = new Type[function.ParameterType.Count];
-                    modifiers = new ParameterModifier[function.ParameterType.Count];
-                    for (int i = 0; i < parameterTypes.Length; i++)
+                    if (function.ParameterType.Count > 0)
                     {
-                        parameterTypes[i] = _typeDataMapping[ModuleUtils.GetTypeFullName(function.ParameterType[i].Type)];
-                        // TODO 
-                        modifiers[i] = new ParameterModifier {[0] = true};
+                        modifiers = new ParameterModifier[] { new ParameterModifier(function.ParameterType.Count) };
+                        for (int i = 0; i < parameterTypes.Length; i++)
+                        {
+                            parameterTypes[i] = _typeDataMapping[ModuleUtils.GetTypeFullName(function.ParameterType[i].Type)];
+                            if (function.ParameterType[i].Modifier != ArgumentModifier.None)
+                            {
+                                modifiers[0][i] = true;
+                                parameterTypes[i] = parameterTypes[i].MakeByRefType();
+                            }
+                        }
                     }
                     constructor = classType.GetConstructor(bindingFlags, null, parameterTypes, modifiers);
                     break;

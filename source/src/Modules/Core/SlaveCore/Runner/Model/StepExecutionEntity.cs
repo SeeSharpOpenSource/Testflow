@@ -67,7 +67,7 @@ namespace Testflow.SlaveCore.Runner.Model
 
         #endregion
 
-        public StepExecutionEntity(ISequenceStep step, SlaveContext context) : base(step, context)
+        public StepExecutionEntity(ISequenceStep step, SlaveContext context, int sequenceIndex) : base(step, context, sequenceIndex)
         {
             this.HasLoopCount = false;
             this.HasRetryCount = false;
@@ -88,7 +88,7 @@ namespace Testflow.SlaveCore.Runner.Model
             {
                 this.RetryVar = GetVariableFullName(step.Function.Return, step, session);
             }
-            this.ReturnVar = GetVariableFullName(InstanceVar, step, session);
+//            this.ReturnVar = GetVariableFullName(InstanceVar, step, session);
 
             if (null != step.LoopCounter && step.LoopCounter.MaxValue > 1 && step.LoopCounter.CounterEnabled)
             {
@@ -106,7 +106,7 @@ namespace Testflow.SlaveCore.Runner.Model
 
             if (StepData.HasSubSteps)
             {
-                this.SubStepRoot = ModuleUtils.CreateStepModelChain(StepData.SubSteps, Context);
+                this.SubStepRoot = ModuleUtils.CreateStepModelChain(StepData.SubSteps, Context, sequenceIndex);
             }
             else
             {
@@ -129,7 +129,8 @@ namespace Testflow.SlaveCore.Runner.Model
             {
                 return CoreUtils.GetRuntimeVariableName(session, variable);
             }
-            variable = sequence.Variables.First(item => item.Name.Equals(variableName));
+            ISequenceGroup sequenceGroup = (ISequenceGroup)sequence.Parent;
+            variable = sequenceGroup.Variables.First(item => item.Name.Equals(variableName));
             return CoreUtils.GetRuntimeVariableName(session, variable);
         }
 
@@ -154,7 +155,7 @@ namespace Testflow.SlaveCore.Runner.Model
                         throw new InvalidOperationException();
                 }
             }
-            NextStep.GenerateInvokeInfo();
+            NextStep?.GenerateInvokeInfo();
         }
 
         public override void InitializeParamsValues()
