@@ -63,7 +63,6 @@ namespace Testflow.Utility.MessageUtil.Messengers
             else
             {
                 this._messageQueue = MessageQueue.Create(Option.Path);
-
             }
             switch (Option.Formatter)
             {
@@ -80,7 +79,7 @@ namespace Testflow.Utility.MessageUtil.Messengers
                     break;
             }
             this._messageQueue.Formatter = _formatter;
-            this._messageQueue.Purge();
+//            this._messageQueue.Purge();
         }
 
         protected override void RegisterEvent()
