@@ -11,12 +11,12 @@ namespace Testflow.Runtime
         /// <summary>
         /// 会话索引号
         /// </summary>
-        int SessionIndex { get; }
+        int Session { get; }
 
         /// <summary>
         /// 被调用测试序列
         /// </summary>
-        int Session { get; }
+        int Sequence { get; }
 
         /// <summary>
         /// 序列步骤调用堆栈
