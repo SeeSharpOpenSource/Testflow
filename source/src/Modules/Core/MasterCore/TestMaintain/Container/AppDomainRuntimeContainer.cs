@@ -3,7 +3,6 @@ using System.Globalization;
 using System.Reflection;
 using System.Threading;
 using Testflow.Usr;
-using Testflow.Data.Sequence;
 using Testflow.MasterCore.Common;
 using Testflow.Modules;
 using Testflow.SlaveCore;
@@ -18,6 +17,7 @@ namespace Testflow.MasterCore.TestMaintain.Container
         public AppDomainRuntimeContainer(int sessionId, ModuleGlobalInfo globalInfo,
             params object[] extraParam) : base(sessionId, globalInfo)
         {
+//            RuntimeType runtimeType = globalInfo.ConfigData.GetProperty<RuntimeType>("RuntimeType");
             _appDomain = AppDomain.CreateDomain(GetAppDomainName());
             _testThd = new Thread(StartLauncher)
             {

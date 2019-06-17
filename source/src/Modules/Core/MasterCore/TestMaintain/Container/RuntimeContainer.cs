@@ -19,9 +19,11 @@ namespace Testflow.MasterCore.TestMaintain.Container
             switch (platform)
             {
                 case RuntimePlatform.Clr:
+                    AppDomain.MonitoringIsEnabled = true;
                     return new AppDomainRuntimeContainer(session, globalInfo, extraParam);
                     break;
                 case RuntimePlatform.Common:
+                    AppDomain.MonitoringIsEnabled = false;
                     return new ProcessRuntimeContainer(session, globalInfo, extraParam);
                     break;
                 default:
