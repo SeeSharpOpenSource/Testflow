@@ -19,7 +19,7 @@ namespace Testflow.CoreCommon.Data
         /// </summary>
         public double ProcessorTime { get; set; }
 
-        public PerformanceData(long memoryUsed, long memoryAllocated, ulong processorTime)
+        public PerformanceData(long memoryUsed, long memoryAllocated, double processorTime)
         {
             this.MemoryUsed = memoryUsed;
             this.MemoryAllocated = memoryAllocated;

@@ -4,7 +4,7 @@
     {
         public const string LocalHostAddr = "127.0.0.1";
         public const int DefaultSequenceCapacaity = 10;
-        public const int DefaultRuntimeSize = 10;
+        public const int DefaultRuntimeSize = 5;
         public const string I18nName = "engineCore";
         public const int DefaultEventsQueueSize = 512;
         public const int MaxEventsQueueSize = 12800;
@@ -22,11 +22,15 @@
         public const string DownLinkMQName = @".\Private$\TestflowDownLinkQueue";
 
         public const string NullValue = "NULL";
+
         public const string ErrorVarValue = "InvalidValue";
-        
+
+        public const int EmptyStepIndex = 0;
+
         #region 事件名称
 
         public const string TestGenerationStart = "TestGenerationStart";
+
         public const string TestGenerationReport = "TestGenerationReport";
         public const string TestGenerationEnd = "TestGenerationEnd";
         public const string SequenceStarted = "SequenceStarted";
