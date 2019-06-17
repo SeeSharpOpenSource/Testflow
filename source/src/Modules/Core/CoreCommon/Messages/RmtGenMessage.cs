@@ -20,6 +20,13 @@ namespace Testflow.CoreCommon.Messages
             this.Params = new Dictionary<string, string>(CoreConstants.DefaultRuntimeSize);
         }
 
+        public RmtGenMessage(string name, int id, RunnerType type) : base(name, id, MessageType.RmtGen)
+        {
+            this.SequenceType = type;
+            this.Sequence = null;
+            this.Params = new Dictionary<string, string>(CoreConstants.DefaultRuntimeSize);
+        }
+
         /// <summary>
         /// 测试运行主机的信息
         /// </summary>

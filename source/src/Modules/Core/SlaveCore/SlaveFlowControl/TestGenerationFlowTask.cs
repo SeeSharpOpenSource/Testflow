@@ -84,6 +84,12 @@ namespace Testflow.SlaveCore.SlaveFlowControl
             };
             Context.UplinkMsgProcessor.SendMessage(testGenOverMessage);
 
+            // 发送远程运行器生成结束的消息
+            RmtGenMessage rmtGenMessage = new RmtGenMessage(MessageNames.UpRmtGenMsgName, Context.SessionId,
+                RunnerType.SequenceGroup);
+            rmtGenMessage.Params.Add("MsgType", "Success");
+            Context.UplinkMsgProcessor.SendMessage(rmtGenMessage);
+
             // 打印状态日志
             Context.LogSession.Print(LogLevel.Info, Context.SessionId, "Test generation over.");
 
@@ -98,6 +104,13 @@ namespace Testflow.SlaveCore.SlaveFlowControl
                 Index = Context.MsgIndex
             };
             Context.UplinkMsgProcessor.SendMessage(testGenMessage);
+
+            // 发送远程运行器生成失败的消息
+            RmtGenMessage rmtGenMessage = new RmtGenMessage(MessageNames.UpRmtGenMsgName, Context.SessionId,
+                RunnerType.SequenceGroup);
+            rmtGenMessage.Params.Add("MsgType", "Failed");
+            Context.UplinkMsgProcessor.SendMessage(rmtGenMessage);
+
             base.TaskAbortAction();
         }
 
@@ -110,6 +123,12 @@ namespace Testflow.SlaveCore.SlaveFlowControl
                 Index = Context.MsgIndex
             };
             Context.UplinkMsgProcessor.SendMessage(testGenFailMessage);
+
+            // 发送远程运行器生成失败的消息
+            RmtGenMessage rmtGenMessage = new RmtGenMessage(MessageNames.UpRmtGenMsgName, Context.SessionId,
+                RunnerType.SequenceGroup);
+            rmtGenMessage.Params.Add("MsgType", "Failed");
+            Context.UplinkMsgProcessor.SendMessage(rmtGenMessage);
         }
         
         public override MessageBase GetHeartBeatMessage()
