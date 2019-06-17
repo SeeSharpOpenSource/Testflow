@@ -20,5 +20,9 @@
         public const int WakeTimerInterval = 500;
 
         public const int KeyStatusSendInterval = 100;
+
+        public const string EmptySetupName = "SetUp";
+        public const string EmptyTeardownName = "TearDown";
+
     }
 }

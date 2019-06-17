@@ -57,7 +57,32 @@ namespace Testflow.SlaveCore.Common
             return $"{typeData.Namespace}.{typeData.Name}";
         }
 
-        public static StepTaskEntityBase CreateStepModelChain(IList<ISequenceStep> steps, SlaveContext context, int sequenceIndex)
+        public static StepTaskEntityBase CreateStepModelChain(IList<ISequenceStep> steps, SlaveContext context, 
+            int sequenceIndex)
+        {
+            StepTaskEntityBase root = null;
+            if (steps.Count == 0)
+            {
+                context.LogSession.Print(LogLevel.Debug, context.SessionId,
+                    $"Empty steps created for sequence {sequenceIndex}");
+                return StepTaskEntityBase.GetEmptyStepModel(context, sequenceIndex);
+            }
+
+            root = StepTaskEntityBase.GetStepModel(steps[0], context, sequenceIndex);
+            root.NextStep = null;
+            StepTaskEntityBase lastNode = root;
+            StepTaskEntityBase currentNode = null;
+            for (int i = 1; i < steps.Count; i++)
+            {
+                currentNode = StepTaskEntityBase.GetStepModel(steps[i], context, sequenceIndex);
+                lastNode.NextStep = currentNode;
+                lastNode = currentNode;
+                currentNode.NextStep = null;
+            }
+            return root;
+        }
+
+        public static StepTaskEntityBase CreateSubStepModelChain(IList<ISequenceStep> steps, SlaveContext context, int sequenceIndex)
         {
             StepTaskEntityBase root = null;
             if (steps.Count == 0)
@@ -169,9 +194,19 @@ namespace Testflow.SlaveCore.Common
         public static void FillPerformance(StatusMessage message)
         {
             AppDomain currentDomain = AppDomain.CurrentDomain;
-            message.Performance.ProcessorTime = currentDomain.MonitoringTotalProcessorTime.TotalMilliseconds;
-            message.Performance.MemoryUsed = currentDomain.MonitoringSurvivedMemorySize;
-            message.Performance.MemoryAllocated = currentDomain.MonitoringTotalAllocatedMemorySize;
+            double processorTime = currentDomain.MonitoringTotalProcessorTime.TotalMilliseconds;
+            long survivedMemorySize = currentDomain.MonitoringSurvivedMemorySize;
+            long totalAllocatedMemorySize = currentDomain.MonitoringTotalAllocatedMemorySize;
+            if (null == message.Performance)
+            {
+                message.Performance = new PerformanceData(survivedMemorySize, totalAllocatedMemorySize, processorTime);
+            }
+            else
+            {
+                message.Performance.ProcessorTime = processorTime;
+                message.Performance.MemoryUsed = survivedMemorySize;
+                message.Performance.MemoryAllocated = totalAllocatedMemorySize;
+            }
         }
 
         public static CallStack GetSequenceStack(int index)
