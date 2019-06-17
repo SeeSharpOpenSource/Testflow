@@ -53,6 +53,8 @@ namespace Testflow.MasterCore.Message
             };
             _engineMessageListener.Start(_engineMessageQueue);
             _statusMessageListener.Start(_statusMessageQueue);
+            GlobalInfo.LogService.Print(LogLevel.Info, CommonConst.PlatformLogSession,
+                "Message transceiver started.");
         }
 
         protected override void Stop()
@@ -66,6 +68,9 @@ namespace Testflow.MasterCore.Message
             ModuleUtils.StopThreadWork(_engineMessageListener);
             ModuleUtils.StopThreadWork(_statusMessageListener);
             ZombieCleaner.Stop();
+
+            GlobalInfo.LogService.Print(LogLevel.Info, CommonConst.PlatformLogSession,
+                "Message transceiver stopped.");
         }
         
         protected override void SendMessage(MessageBase message)
@@ -91,6 +96,8 @@ namespace Testflow.MasterCore.Message
                         {
                             _engineMessageQueue.Enqueue(message);
                         }
+                        GlobalInfo.LogService.Print(LogLevel.Debug, CommonConst.PlatformLogSession,
+                            $"Message received, Type:{message.Type}, Index:{message.Index}.");
                     }
                     else
                     {

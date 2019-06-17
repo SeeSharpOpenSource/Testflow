@@ -6,6 +6,7 @@ using Testflow.CoreCommon;
 using Testflow.CoreCommon.Common;
 using Testflow.CoreCommon.Messages;
 using Testflow.MasterCore.Common;
+using Testflow.Modules;
 using Testflow.Utility.I18nUtil;
 using Testflow.Utility.MessageUtil;
 
@@ -144,6 +145,9 @@ namespace Testflow.MasterCore.Message
                     GlobalInfo.I18N.GetStr("CannotSendWhenDeactive"));
             }
             SendMessage(message);
+
+            GlobalInfo.LogService.Print(LogLevel.Debug, CommonConst.PlatformLogSession,
+                $"Send message, Type:{message.Type}, Index:{message.Index}.");
         }
 
         protected IMessageHandler GetConsumer(MessageBase message)

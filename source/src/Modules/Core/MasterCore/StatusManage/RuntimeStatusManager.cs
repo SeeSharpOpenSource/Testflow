@@ -120,7 +120,7 @@ namespace Testflow.MasterCore.StatusManage
             catch (Exception ex)
             {
                 _globalInfo.EventQueue.Enqueue(new ExceptionEventInfo(ex));
-                _globalInfo.LogService.Print(LogLevel.Fatal, CommonConst.PlatformLogSession, ex);
+                _globalInfo.LogService.Print(LogLevel.Fatal, CommonConst.PlatformLogSession, ex, "Engine collapsed by fatal error.");
                 _globalInfo.StateMachine.State = RuntimeState.Collapsed;
             }
         }
