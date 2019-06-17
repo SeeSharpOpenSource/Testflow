@@ -208,13 +208,13 @@ namespace Testflow.MasterCore.Core
         public void AddObject(RuntimeObject runtimeObject)
         {
             BreakPointObject breakPointObject = (BreakPointObject)runtimeObject;
-            AddBreakPoint(breakPointObject.BreakPoint.Session, breakPointObject.BreakPoint);
+            AddBreakPoint(breakPointObject.BreakPoint.Sequence, breakPointObject.BreakPoint);
         }
 
         public void RemoveObject(RuntimeObject runtimeObject)
         {
             BreakPointObject breakPointObject = (BreakPointObject)runtimeObject;
-            RemoveBreakPoint(breakPointObject.BreakPoint.Session, breakPointObject.BreakPoint);
+            RemoveBreakPoint(breakPointObject.BreakPoint.Sequence, breakPointObject.BreakPoint);
         }
     }
 }
