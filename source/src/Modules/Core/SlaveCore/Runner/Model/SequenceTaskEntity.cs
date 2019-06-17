@@ -75,7 +75,7 @@ namespace Testflow.SlaveCore.Runner.Model
 
                 _stepEntityRoot.Invoke();
 
-                this.State = RuntimeState.Over;
+                this.State = RuntimeState.Success;
 
                 StepTaskEntityBase currentStep = StepTaskEntityBase.GetCurrentStep(Index);
                 SequenceStatusInfo overStatusInfo = new SequenceStatusInfo(Index,
