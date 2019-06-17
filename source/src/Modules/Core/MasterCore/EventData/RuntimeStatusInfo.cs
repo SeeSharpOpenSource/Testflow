@@ -36,10 +36,10 @@ namespace Testflow.MasterCore.EventData
             }
             this.State = stateHandle.State;
 
-            for (int i = 0; i < stateHandle.SequenceCount; i++)
+            foreach (int sequenceIndex in stateHandle.SequenceIndexes)
             {
-                CallStacks.Add(stateHandle[i].RunStack);
-                SequenceState.Add(stateHandle[i].State);
+                CallStacks.Add(stateHandle[sequenceIndex].RunStack);
+                SequenceState.Add(stateHandle[sequenceIndex].State);
             }
             this.FailedInfos = failedInfos;
             this.WatchDatas = watchDatas;

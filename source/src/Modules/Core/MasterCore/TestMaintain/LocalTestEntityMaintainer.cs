@@ -102,7 +102,7 @@ namespace Testflow.MasterCore.TestMaintain
             return runtimeContainer;
         }
 
-        public void SendTestGenMessage(int session, string sequenceData)
+        public void SendRmtGenMessage(int session, string sequenceData)
         {
             // TODO 暂时不配置Host信息
             RunnerType runnerType = (session == Constants.TestProjectSessionId)
@@ -180,6 +180,9 @@ namespace Testflow.MasterCore.TestMaintain
             configData.Add("RuntimeType", _globalInfo.ConfigData.GetProperty<RuntimeType>("RuntimeType").ToString());
             configData.Add("SessionName", sessionName);
             configData.Add("InstanceName", _globalInfo.ConfigData.GetProperty<string>("TestName"));
+            configData.Add("DotNetLibDir", "");
+            configData.Add("PlatformLibDir", "");
+            configData.Add("InstanceLibDir", "");
 
             return JsonConvert.SerializeObject(configData);
         }

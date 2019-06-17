@@ -29,16 +29,16 @@ namespace Testflow.MasterCore.Core
         public EngineFlowController(ModuleGlobalInfo globalInfo)
         {
             _globalInfo = globalInfo;
+            this._blockHandle = new BlockHandle()
+            {
+                Timeout = _globalInfo.ConfigData.GetProperty<int>("TestGenTimeout")
+            };
             // TODO 暂时写死，只是用本地测试生成实体
             _testsMaintainer = new LocalTestEntityMaintainer(_globalInfo, _blockHandle);
             if (EnableDebug)
             {
                 _debugManager = new DebugManager(_globalInfo);
             }
-            this._blockHandle = new BlockHandle()
-            {
-                Timeout = _globalInfo.ConfigData.GetProperty<int>("TestGenTimeout")
-            };
         }
 
         public RuntimeType RuntimeType => _globalInfo.ConfigData.GetProperty<RuntimeType>("RuntimeType");
@@ -70,7 +70,7 @@ namespace Testflow.MasterCore.Core
         // TODO 目标平台暂时写死
         private void GenerateTestMaintainer(ISequenceFlowContainer sequenceContainer)
         {
-            _globalInfo.StateMachine.State = RuntimeState.TestGen;
+//            _globalInfo.StateMachine.State = RuntimeState.TestGen;
             if (sequenceContainer is ITestProject)
             {
                 ITestProject testProject = (ITestProject)sequenceContainer;
@@ -97,11 +97,11 @@ namespace Testflow.MasterCore.Core
             if (_sequenceData is ITestProject)
             {
                 ITestProject testProject = _sequenceData as ITestProject;
-                _testsMaintainer.SendTestGenMessage(CoreConstants.TestProjectSessionId,
+                _testsMaintainer.SendRmtGenMessage(CoreConstants.TestProjectSessionId,
                     sequenceManager.RuntimeSerialize(testProject));
                 foreach (ISequenceGroup sequenceGroup in testProject.SequenceGroups)
                 {
-                    _testsMaintainer.SendTestGenMessage(ModuleUtils.GetSessionId(testProject, sequenceGroup), 
+                    _testsMaintainer.SendRmtGenMessage(ModuleUtils.GetSessionId(testProject, sequenceGroup), 
                         sequenceManager.RuntimeSerialize(sequenceGroup));
                 }
                 // 初始化每个模块的监听变量
@@ -112,7 +112,7 @@ namespace Testflow.MasterCore.Core
             }
             else
             {
-                _testsMaintainer.SendTestGenMessage(0, sequenceManager.RuntimeSerialize(_sequenceData as ISequenceGroup));
+                _testsMaintainer.SendRmtGenMessage(0, sequenceManager.RuntimeSerialize(_sequenceData as ISequenceGroup));
                 _debugManager?.SendInitBreakPointMessage(0);
             }
             // 等待远程生成结束

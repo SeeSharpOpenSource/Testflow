@@ -27,7 +27,7 @@ namespace Testflow.MasterCore.TestMaintain
 
         RuntimeContainer Generate(ISequenceGroup sequenceGroup, RuntimePlatform platform, params object[] param);
 
-        void SendTestGenMessage(int session, string sequenceData);
+        void SendRmtGenMessage(int session, string sequenceData);
 
         Dictionary<int, RuntimeContainer> TestContainers { get; }
     }

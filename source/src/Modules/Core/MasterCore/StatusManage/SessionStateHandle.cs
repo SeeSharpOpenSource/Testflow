@@ -128,6 +128,8 @@ namespace Testflow.MasterCore.StatusManage
 
         public TimeSpan ElapsedTime { get; set; }
 
+        public IEnumerable<int> SequenceIndexes => _sequenceHandles.Keys;
+
         public PerformanceData Performance { get; set; }
 
         public void Start()
@@ -217,7 +219,7 @@ namespace Testflow.MasterCore.StatusManage
 
         public void DebugEventProcess(DebugEventInfo eventInfo)
         {
-            _sequenceHandles[eventInfo.BreakPoint.Session].DebugEventProcess(eventInfo, this.SequenceData);
+            _sequenceHandles[eventInfo.BreakPoint.Sequence].DebugEventProcess(eventInfo, this.SequenceData);
         }
 
         public void ExceptionEventProcess(ExceptionEventInfo eventInfo)
@@ -265,7 +267,7 @@ namespace Testflow.MasterCore.StatusManage
                     {
                         if (message.SequenceStates[i] == RuntimeState.Running)
                         {
-                            _sequenceHandles[message.Stacks[i].Session].HandleStatusMessage(message, i);
+                            _sequenceHandles[message.Stacks[i].Sequence].HandleStatusMessage(message, i);
                         }
                     }
                     break;
@@ -278,7 +280,7 @@ namespace Testflow.MasterCore.StatusManage
                         if (sequenceState == RuntimeState.Running || RuntimeState.Blocked == sequenceState ||
                             RuntimeState.DebugBlocked == sequenceState)
                         {
-                            _sequenceHandles[message.Stacks[i].Session].HandleStatusMessage(message, i);
+                            _sequenceHandles[message.Stacks[i].Sequence].HandleStatusMessage(message, i);
                         }
                     }
 
@@ -334,7 +336,7 @@ namespace Testflow.MasterCore.StatusManage
                     {
                         if (message.SequenceStates[i] == RuntimeState.Running)
                         {
-                            _sequenceHandles[message.Stacks[i].Session].HandleStatusMessage(message, i);
+                            _sequenceHandles[message.Stacks[i].Sequence].HandleStatusMessage(message, i);
                         }
                     }
 
