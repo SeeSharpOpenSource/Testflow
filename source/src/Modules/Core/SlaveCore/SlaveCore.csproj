@@ -50,6 +50,7 @@
     <Compile Include="Common\UplinkMessageProcessor.cs" />
     <Compile Include="Common\ModuleUtils.cs" />
     <Compile Include="Common\TaskFailedException.cs" />
+    <Compile Include="Runner\Model\EmptyStepEntity.cs" />
     <Compile Include="SlaveFlowControl\CtrlStartProcessFlowTask.cs" />
     <Compile Include="SlaveFlowControl\RmtGenProcessFlowTask.cs" />
     <Compile Include="SlaveFlowControl\RunAllSequenceFlowTask.cs" />

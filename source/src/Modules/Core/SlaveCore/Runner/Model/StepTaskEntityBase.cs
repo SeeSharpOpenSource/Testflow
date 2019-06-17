@@ -37,6 +37,11 @@ namespace Testflow.SlaveCore.Runner.Model
             }
         }
 
+        public static StepTaskEntityBase GetEmptyStepModel(SlaveContext context, int sequenceIndex)
+        {
+            return new EmptyStepEntity(context, sequenceIndex);
+        }
+
         private static readonly Dictionary<int, StepTaskEntityBase> CurrentModel = new Dictionary<int, StepTaskEntityBase>(Constants.DefaultRuntimeSize);
 
         public static StepTaskEntityBase GetCurrentStep(int sequenceIndex)
@@ -65,9 +70,9 @@ namespace Testflow.SlaveCore.Runner.Model
             this.SequenceIndex = sequenceIndex;
         }
 
-        public CallStack GetStack()
+        public virtual CallStack GetStack()
         {
-            return CallStack.GetStack(StepData);
+            return CallStack.GetStack(Context.SessionId, StepData);
         }
 
         public abstract void GenerateInvokeInfo();

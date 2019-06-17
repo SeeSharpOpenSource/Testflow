@@ -106,7 +106,7 @@ namespace Testflow.SlaveCore.Runner.Model
 
             if (StepData.HasSubSteps)
             {
-                this.SubStepRoot = ModuleUtils.CreateStepModelChain(StepData.SubSteps, Context, sequenceIndex);
+                this.SubStepRoot = ModuleUtils.CreateSubStepModelChain(StepData.SubSteps, Context, sequenceIndex);
             }
             else
             {
