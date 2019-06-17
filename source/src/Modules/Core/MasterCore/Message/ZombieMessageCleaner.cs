@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading;
+using Testflow.CoreCommon.Common;
 using Testflow.Usr;
 using Testflow.CoreCommon.Messages;
 using Testflow.MasterCore.Common;
@@ -43,12 +44,12 @@ namespace Testflow.MasterCore.Message
                 return;
             }
             // 超过超时时间后该消息被取出
-            if (_lastMessageIndex == runtimeMessage.Index)
+            if (_lastMessageIndex == runtimeMessage.Index && runtimeMessage.Type != MessageType.RmtGen)
             {
                 // 取出僵尸消息
                 _messenger.Receive();
                 _globalInfo.LogService.Print(LogLevel.Debug, CommonConst.PlatformLogSession,
-                    $"Zoombie message detected. SessionId:{runtimeMessage.Id} Type:{runtimeMessage} Name:{runtimeMessage.Name}");
+                    $"Zoombie message detected. SessionId:{runtimeMessage.Id}, Type:{runtimeMessage}, Name:{runtimeMessage.Name}, Index:{runtimeMessage.Index}.");
                 
                 // 更新最新的消息
                 message = _messenger.Peak();
