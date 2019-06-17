@@ -1,7 +1,9 @@
-﻿using System.Runtime.Serialization;
+﻿using System;
+using System.Runtime.Serialization;
 
 namespace Testflow.CoreCommon.Data
 {
+    [Serializable]
     public class PerformanceData : ISerializable
     {
         /// <summary>
