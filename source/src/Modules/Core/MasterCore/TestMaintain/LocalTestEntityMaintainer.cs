@@ -75,10 +75,18 @@ namespace Testflow.MasterCore.TestMaintain
 
         public void FreeHost(int id)
         {
-            if (_runtimeContainers.ContainsKey(id))
+            try
             {
-                _runtimeContainers[id].Dispose();
-                _runtimeContainers.Remove(id);
+                if (_runtimeContainers.ContainsKey(id))
+                {
+                    _runtimeContainers[id].Dispose();
+                    _runtimeContainers.Remove(id);
+                }
+            }
+            catch (Exception ex)
+            {
+                _globalInfo.LogService.Print(LogLevel.Warn, CommonConst.PlatformLogSession, ex, 
+                    "Exception raised when free host.");
             }
         }
 
