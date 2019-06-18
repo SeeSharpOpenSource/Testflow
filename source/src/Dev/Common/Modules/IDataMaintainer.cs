@@ -83,6 +83,14 @@ namespace Testflow.Modules
         /// </summary>
         void UpdateData(SequenceResultData sequenceResult);
 
+        /// <summary>
+        /// 获取性能结果
+        /// </summary>
+        /// <param name="session">会话ID</param>
+        /// <param name="performanceResult">性能结果</param>
+        /// <param name="runtimeHash">实例哈希值</param>
+        void GetPerformanceResult(string runtimeHash, int session, IPerformanceResult performanceResult);
+
         #endregion
 
         #region Middle status maintain

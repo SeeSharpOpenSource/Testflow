@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading;
 using Testflow.Modules;
+using Testflow.Runtime;
 using Testflow.Runtime.Data;
 
 namespace Testflow.DataMaintainer
@@ -108,6 +109,11 @@ namespace Testflow.DataMaintainer
         public void UpdateData(SequenceResultData sequenceResult)
         {
             _databaseProxy.UpdateData(sequenceResult);
+        }
+
+        public void GetPerformanceResult(string runtimeHash, int session, IPerformanceResult performanceResult)
+        {
+            _databaseProxy.GetPerformanceResult(runtimeHash, session, performanceResult);
         }
 
         public void AddData(PerformanceStatus performanceStatus)

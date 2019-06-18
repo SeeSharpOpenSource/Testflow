@@ -86,5 +86,27 @@ namespace Testflow.DataMaintainer
             }
             return cmd;
         }
+
+        public static string CreateQueryAverageCmd(string tableName, string columnName, string filter)
+        {
+            const string cmdFormat = "SELECT AVG({1}) FROM {0}";
+            string cmd = string.Format(cmdFormat, tableName, columnName);
+            if (!string.IsNullOrWhiteSpace(filter))
+            {
+                cmd += string.Format(WhereFormat, filter);
+            }
+            return cmd;
+        }
+
+        public static string CreateQueryMaxCmd(string tableName, string columnName, string filter)
+        {
+            const string cmdFormat = "SELECT MAX({1}) FROM {0}";
+            string cmd = string.Format(cmdFormat, tableName, columnName);
+            if (!string.IsNullOrWhiteSpace(filter))
+            {
+                cmd += string.Format(WhereFormat, filter);
+            }
+            return cmd;
+        }
     }
 }

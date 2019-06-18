@@ -7,6 +7,7 @@ using System.IO;
 using System.Text;
 using System.Threading;
 using Testflow.Modules;
+using Testflow.Runtime;
 using Testflow.Runtime.Data;
 using Testflow.Usr;
 using Testflow.Utility.I18nUtil;
@@ -261,6 +262,62 @@ namespace Testflow.DataMaintainer
         public virtual SequenceResultData GetSequenceResult(string runtimeHash, int sessionId, int sequenceIndex)
         {
             return InternalGetSequenceResultData(runtimeHash, sessionId, sequenceIndex);
+        }
+
+        public virtual void GetPerformanceResult(string runtimeHash, int session, IPerformanceResult performance)
+        {
+            string filter =
+                $"{DataBaseItemNames.RuntimeIdColumn}='{runtimeHash}' AND {DataBaseItemNames.SessionIdColumn}={session}";
+            // 最高CPU时间
+            string cmd = SqlCommandFactory.CreateQueryMaxCmd(DataBaseItemNames.PerformanceTableName,
+                DataBaseItemNames.ProcessorTimeColumn, filter);
+            using (DbDataReader reader = ExecuteReadCommand(cmd))
+            {
+                if (reader.Read())
+                {
+                    performance.CpuTime = (ulong) reader.GetDouble(0);
+                }
+            }
+            // 最高分配内存
+            cmd = SqlCommandFactory.CreateQueryMaxCmd(DataBaseItemNames.PerformanceTableName,
+                DataBaseItemNames.MemoryAllocatedColumn, filter);
+            using (DbDataReader reader = ExecuteReadCommand(cmd))
+            {
+                if (reader.Read())
+                {
+                    performance.MaxAllocatedMemory = reader.GetInt64(0);
+                }
+            }
+            // 最高使用内存
+            cmd = SqlCommandFactory.CreateQueryMaxCmd(DataBaseItemNames.PerformanceTableName,
+                DataBaseItemNames.MemoryUsedColumn, filter);
+            using (DbDataReader reader = ExecuteReadCommand(cmd))
+            {
+                if (reader.Read())
+                {
+                    performance.MaxUsedMemory = reader.GetInt64(0);
+                }
+            }
+            // 平均分配内存
+            cmd = SqlCommandFactory.CreateQueryAverageCmd(DataBaseItemNames.PerformanceTableName,
+                DataBaseItemNames.MemoryAllocatedColumn, filter);
+            using (DbDataReader reader = ExecuteReadCommand(cmd))
+            {
+                if (reader.Read())
+                {
+                    performance.AverageAllocatedMemory = reader.GetInt64(0);
+                }
+            }
+            // 平均使用内存
+            cmd = SqlCommandFactory.CreateQueryAverageCmd(DataBaseItemNames.PerformanceTableName,
+                DataBaseItemNames.MemoryUsedColumn, filter);
+            using (DbDataReader reader = ExecuteReadCommand(cmd))
+            {
+                if (reader.Read())
+                {
+                    performance.AverageUsedMemory = reader.GetInt64(0);
+                }
+            }
         }
 
         protected SequenceResultData InternalGetSequenceResultData(string runtimeHash, int sessionId, int sequenceIndex)
