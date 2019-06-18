@@ -29,12 +29,10 @@ namespace Testflow.SlaveCore
             _context.LogSession.Print(LogLevel.Debug, _context.SessionId, "Slave transceiver started.");
 
             _downlinkMsgProcessor = new DownlinkMessageProcessor(_context);
-
-            SlaveFlowTaskBase taskEntrance = SlaveFlowTaskBase.GetFlowTaskEntrance(_context);
-
+            
             _context.UplinkMsgProcessor.Start();
             
-            _flowTaskThread = new Thread(taskEntrance.DoFlowTask)
+            _flowTaskThread = new Thread(TestTaskWork)
             {
                 IsBackground = true,
                 Name = string.Format(Constants.TaskRootThreadNameFormat, _context.SessionId)
@@ -65,6 +63,20 @@ namespace Testflow.SlaveCore
             {
                 StopSlaveTask();
                 _context.LogSession.Print(LogLevel.Info, _context.SessionId, "Slave controller  started.");
+            }
+        }
+
+        private void TestTaskWork(object state)
+        {
+            try
+            {
+                SlaveFlowTaskBase taskEntrance = SlaveFlowTaskBase.GetFlowTaskEntrance(_context);
+                taskEntrance.DoFlowTask();
+            }
+            finally
+            {
+                _context.UplinkMsgProcessor?.Stop();
+                _downlinkMsgProcessor?.Stop();
             }
         }
 
