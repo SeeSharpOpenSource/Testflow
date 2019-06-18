@@ -18,11 +18,9 @@ namespace Testflow.MasterCore.StatusManage
 {
     internal class SessionStateHandle
     {
-        private EventDispatcher _eventDispatcher;
         private readonly StateManageContext _stateManageContext;
         private ISequenceFlowContainer _sequenceData; 
         private readonly Dictionary<int, SequenceStateHandle> _sequenceHandles;
-        private long _heatBeatIndex = -1;
 
         public SessionStateHandle(ITestProject testProject, StateManageContext stateManageContext)
         {
@@ -60,7 +58,6 @@ namespace Testflow.MasterCore.StatusManage
             this.Session = session;
             this.RuntimeHash = _stateManageContext.GlobalInfo.RuntimeHash;
             this.State = RuntimeState.NotAvailable;
-            this._eventDispatcher = _stateManageContext.EventDispatcher;
 
             this.StartGenTime = DateTime.MaxValue;
             this.EndGenTime = DateTime.MaxValue;
@@ -130,7 +127,7 @@ namespace Testflow.MasterCore.StatusManage
 
         public IEnumerable<int> SequenceIndexes => _sequenceHandles.Keys;
 
-        public PerformanceData Performance { get; set; }
+//        public PerformanceData Performance { get; set; }
 
         public void Start()
         {
@@ -246,7 +243,6 @@ namespace Testflow.MasterCore.StatusManage
         public bool HandleStatusMessage(StatusMessage message)
         {
             this.State = message.State;
-            this.Performance = message.Performance;
             IRuntimeStatusInfo runtimeStatusInfo;
             switch (message.Name)
             {
@@ -262,7 +258,10 @@ namespace Testflow.MasterCore.StatusManage
                     _stateManageContext.EventDispatcher.RaiseEvent(Constants.SessionStart,
                         Session, _testResults);
                     // 写入性能记录条目
-                    WritePerformanceStatus();
+                    if (null != message.Performance)
+                    {
+                        WritePerformanceStatus(message.Performance);
+                    }
                     for (int i = 0; i < message.Stacks.Count; i++)
                     {
                         if (message.SequenceStates[i] == RuntimeState.Running)
@@ -276,11 +275,12 @@ namespace Testflow.MasterCore.StatusManage
 
                     for (int i = 0; i < message.Stacks.Count; i++)
                     {
-                        RuntimeState sequenceState = message.SequenceStates[i];
+                        SequenceStateHandle sequenceStateHandle = _sequenceHandles[message.Stacks[i].Sequence];
+                        RuntimeState sequenceState = sequenceStateHandle.State;
                         if (sequenceState == RuntimeState.Running || RuntimeState.Blocked == sequenceState ||
                             RuntimeState.DebugBlocked == sequenceState)
                         {
-                            _sequenceHandles[message.Stacks[i].Sequence].HandleStatusMessage(message, i);
+                            sequenceStateHandle.HandleStatusMessage(message, i);
                         }
                     }
 
@@ -289,7 +289,10 @@ namespace Testflow.MasterCore.StatusManage
                         Session, runtimeStatusInfo);
 
                     // 写入性能记录条目
-                    WritePerformanceStatus();
+                    if (null != message.Performance)
+                    {
+                        WritePerformanceStatus(message.Performance);
+                    }
                     break;
                 case MessageNames.ResultStatusName:
                     this.EndTime = message.Time;
@@ -303,7 +306,10 @@ namespace Testflow.MasterCore.StatusManage
 
                     UpdateSessionResultData(string.Empty);
                     // 写入性能记录条目
-                    WritePerformanceStatus();
+                    if (null != message.Performance)
+                    {
+                        WritePerformanceStatus(message.Performance);
+                    }
                     break;
                 case MessageNames.ErrorStatusName:
                     this.EndTime = message.Time;
@@ -327,7 +333,10 @@ namespace Testflow.MasterCore.StatusManage
                     _stateManageContext.EventDispatcher.RaiseEvent(Constants.SessionOver,
                         Session, _testResults);
                     // 写入性能记录条目
-                    WritePerformanceStatus();
+                    if (null != message.Performance)
+                    {
+                        WritePerformanceStatus(message.Performance);
+                    }
                     break;
                 case MessageNames.HearBeatStatusName:
                     RefreshTime(message);
@@ -407,17 +416,13 @@ namespace Testflow.MasterCore.StatusManage
             _stateManageContext.DatabaseProxy.UpdateData(_sessionResults);
         }
 
-        private void WritePerformanceStatus()
+        private void WritePerformanceStatus(PerformanceData performance)
         {
-            if (null == this.Performance)
-            {
-                return;
-            }
             this._performanceStatus.Index = _stateManageContext.PerfStatusIndex;
             this._performanceStatus.TimeStamp = this.CurrentTime;
-            this._performanceStatus.MemoryAllocated = this.Performance.MemoryAllocated;
-            this._performanceStatus.MemoryUsed = this.Performance.MemoryUsed;
-            this._performanceStatus.ProcessorTime = this.Performance.ProcessorTime;
+            this._performanceStatus.MemoryAllocated = performance.MemoryAllocated;
+            this._performanceStatus.MemoryUsed = performance.MemoryUsed;
+            this._performanceStatus.ProcessorTime = performance.ProcessorTime;
 
             this._stateManageContext.DatabaseProxy.WriteData(this._performanceStatus);
         }
@@ -468,7 +473,7 @@ namespace Testflow.MasterCore.StatusManage
                 varValues = new Dictionary<IVariable, string>(1);
             }
             ulong dataStatusIndex = (ulong) _stateManageContext.DataStatusIndex;
-            return new RuntimeStatusInfo(this, dataStatusIndex, null, varValues);
+            return new RuntimeStatusInfo(this, dataStatusIndex, null, varValues, message.Performance);
         }
 
         #endregion

@@ -22,7 +22,8 @@ namespace Testflow.MasterCore.Common
         #region Block事件状态值定义
 
         public const int RmtGenState = 0;
-        public const int AbortState = 0;
+        public const int WaitOverState = 1;
+        public const int AbortState = 2;
 
         #endregion
 

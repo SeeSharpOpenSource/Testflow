@@ -14,7 +14,8 @@ namespace Testflow.MasterCore.EventData
 {
     internal class RuntimeStatusInfo : IRuntimeStatusInfo
     {
-        public RuntimeStatusInfo(SessionStateHandle stateHandle, ulong statusIndex, List<string> failedInfos, IDictionary<IVariable, string> watchDatas)
+        public RuntimeStatusInfo(SessionStateHandle stateHandle, ulong statusIndex, List<string> failedInfos, IDictionary<IVariable, string> watchDatas, 
+            PerformanceData performance)
         {
             this.Properties = new SerializableMap<string, object>(Constants.DefaultRuntimeSize);
             this.SessionId = stateHandle.Session;
@@ -28,11 +29,11 @@ namespace Testflow.MasterCore.EventData
             this.StartTime = stateHandle.StartTime;
             this.ElapsedTime = stateHandle.ElapsedTime;
             this.CurrentTime = stateHandle.CurrentTime;
-            if (null != stateHandle.Performance)
+            if (null != performance)
             {
-                this.MemoryUsed = stateHandle.Performance.MemoryUsed;
-                this.MemoryAllocated = stateHandle.Performance.MemoryAllocated;
-                this.ProcessorTime = stateHandle.Performance.ProcessorTime;
+                this.MemoryUsed = performance.MemoryUsed;
+                this.MemoryAllocated = performance.MemoryAllocated;
+                this.ProcessorTime = performance.ProcessorTime;
             }
             this.State = stateHandle.State;
 
