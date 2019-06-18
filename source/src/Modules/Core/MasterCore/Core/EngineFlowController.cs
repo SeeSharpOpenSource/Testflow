@@ -25,6 +25,7 @@ namespace Testflow.MasterCore.Core
         private ISequenceFlowContainer _sequenceData;
 
         private readonly BlockHandle _blockHandle;
+        private BlockHandle _abortBlocker;
 
         public EngineFlowController(ModuleGlobalInfo globalInfo)
         {
@@ -230,7 +231,7 @@ namespace Testflow.MasterCore.Core
                         _globalInfo.StateMachine.State = RuntimeState.Abort;
                     }
                     // 同步释放，每个Session的停止都是同步执行的。
-                    _blockHandle.Free(Constants.AbortState);
+                    _abortBlocker.Free(Constants.AbortState);
                     break;
                 default:
                     throw new InvalidOperationException();
@@ -271,21 +272,34 @@ namespace Testflow.MasterCore.Core
                 AbortEventInfo abortEventInfo = new AbortEventInfo(sessionId, true, false);
                 _globalInfo.EventQueue.Enqueue(abortEventInfo);
 
+                if (null == _abortBlocker)
+                {
+                    _abortBlocker = new BlockHandle();
+                }
                 // 目前使用同步Abort，每次只能释放一个
-                _blockHandle.Timeout = _globalInfo.ConfigData.GetProperty<int>("AbortTimeout");
-                _blockHandle.Wait(Constants.AbortState);
+                _abortBlocker.Timeout = _globalInfo.ConfigData.GetProperty<int>("AbortTimeout");
+                _abortBlocker.Wait(Constants.AbortState);
             }
+        }
+
+
+        public void WaitForTaskOver()
+        {
+            // 阻塞线程直到整个任务结束
+            _blockHandle.Wait(Constants.WaitOverState);
         }
 
         public void Stop()
         {
             _testsMaintainer.FreeHosts();
+            _blockHandle.Free(Constants.WaitOverState);
         }
 
         public void Dispose()
         {
-            Abort(CommonConst.BroadcastSession);
             Stop();
+            _abortBlocker?.Dispose();
+            _blockHandle.Dispose();
         }
     }
 }

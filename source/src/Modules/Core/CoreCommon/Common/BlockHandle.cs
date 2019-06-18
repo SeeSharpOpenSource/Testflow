@@ -1,8 +1,9 @@
-﻿using System.Threading;
+﻿using System;
+using System.Threading;
 
 namespace Testflow.CoreCommon.Common
 {
-    public class BlockHandle
+    public class BlockHandle : IDisposable
     {
         private SemaphoreSlim _waitEvent;
         private int _waitState;
@@ -28,6 +29,11 @@ namespace Testflow.CoreCommon.Common
             {
                 _waitEvent.Release();
             }
+        }
+
+        public void Dispose()
+        {
+            _waitEvent?.Dispose();
         }
     }
 }
