@@ -62,6 +62,12 @@ namespace Testflow.SlaveCore.SlaveFlowControl
                 Constants.WakeTimerInterval);
             _blockEvent.WaitOne();
 
+            if (null == Context.CtrlStartMessage)
+            {
+                Context.LogSession.Print(LogLevel.Error, Context.SessionId,
+                    "Receive CtrlMessage without RunTearDown parameter.");
+            }
+
             // 打印状态日志
             Context.LogSession.Print(LogLevel.Info, Context.SessionId, "Teardown execution start.");
 
@@ -80,6 +86,11 @@ namespace Testflow.SlaveCore.SlaveFlowControl
         {
             if (null != Context.CtrlStartMessage)
             {
+                if (!Context.CtrlStartMessage.Params.ContainsKey("RunTearDown") || 
+                    Context.CtrlStartMessage.Params["RunTearDown"].Equals(false.ToString()))
+                {
+                    Context.CtrlStartMessage = null;
+                }
                 _blockEvent.Set();
                 _wakeTimer.Dispose();
             }
@@ -100,7 +111,10 @@ namespace Testflow.SlaveCore.SlaveFlowControl
 
         public override MessageBase GetHeartBeatMessage()
         {
-            StatusMessage statusMessage = new StatusMessage(MessageNames.HearBeatStatusName, Context.State, Context.SessionId);
+            StatusMessage statusMessage = new StatusMessage(MessageNames.HearBeatStatusName, Context.State, Context.SessionId)
+            {
+                Index = Context.MsgIndex
+            };
             SessionTaskEntity sessionTaskEntity = Context.SessionTaskEntity;
             sessionTaskEntity.FillSequenceInfo(statusMessage);
 

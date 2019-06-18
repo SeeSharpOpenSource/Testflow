@@ -104,7 +104,10 @@ namespace Testflow.SlaveCore.SlaveFlowControl
         protected void SendStartMessage()
         {
             StatusMessage statusMessage = new StatusMessage(MessageNames.StartStatusName, RuntimeState.Running,
-                Context.SessionId);
+                Context.SessionId)
+            {
+                Index = Context.MsgIndex
+            };
             ModuleUtils.FillPerformance(statusMessage);
             Context.UplinkMsgProcessor.SendMessage(statusMessage);
         }
@@ -112,7 +115,10 @@ namespace Testflow.SlaveCore.SlaveFlowControl
         protected void SendOverMessage()
         {
             StatusMessage statusMessage = new StatusMessage(MessageNames.ResultStatusName, RuntimeState.Over,
-                Context.SessionId);
+                Context.SessionId)
+            {
+                Index = Context.MsgIndex
+            };
             ModuleUtils.FillPerformance(statusMessage);
             Context.UplinkMsgProcessor.SendMessage(statusMessage);
         }

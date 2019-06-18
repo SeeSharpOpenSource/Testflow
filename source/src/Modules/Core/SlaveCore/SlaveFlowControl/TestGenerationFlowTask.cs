@@ -135,7 +135,10 @@ namespace Testflow.SlaveCore.SlaveFlowControl
         {
             // 发送生成结束的消息
             TestGenMessage testGenOverMessage = new TestGenMessage(MessageNames.TestGenName, Context.SessionId,
-                CommonConst.PlatformSession, GenerationStatus.InProgress);
+                CommonConst.PlatformSession, GenerationStatus.InProgress)
+            {
+                Index = Context.MsgIndex
+            };
             return testGenOverMessage;
         }
 

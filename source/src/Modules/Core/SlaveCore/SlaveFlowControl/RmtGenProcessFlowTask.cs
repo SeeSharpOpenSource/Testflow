@@ -74,7 +74,10 @@ namespace Testflow.SlaveCore.SlaveFlowControl
         public override MessageBase GetHeartBeatMessage()
         {
             return new TestGenMessage(MessageNames.TestGenName, Context.SessionId, CommonConst.PlatformSession,
-                GenerationStatus.Idle);
+                GenerationStatus.Idle)
+            {
+                Index = Context.MsgIndex
+            };
         }
 
         public override SlaveFlowTaskBase Next { get; protected set; }

@@ -58,13 +58,6 @@ namespace Testflow.SlaveCore.SlaveFlowControl
                 throw new TestflowRuntimeException(ModuleErrorCode.InvalidMessageReceived,
                     Context.I18N.GetFStr("InvalidMessageReceived", message.GetType().Name));
             }
-            StatusMessage startMessage = new StatusMessage(MessageNames.StartStatusName, RuntimeState.Running,
-                Context.SessionId)
-            {
-                Index = Context.MsgIndex
-            };
-            Context.UplinkMsgProcessor.SendMessage(startMessage);
-            
             Context.CtrlStartMessage = null;
         }
 
@@ -89,7 +82,10 @@ namespace Testflow.SlaveCore.SlaveFlowControl
         
         public override MessageBase GetHeartBeatMessage()
         {
-            return new StatusMessage(MessageNames.HearBeatStatusName, Context.State, Context.SessionId);
+            return new StatusMessage(MessageNames.HearBeatStatusName, Context.State, Context.SessionId)
+            {
+                Index = Context.MsgIndex
+            };
         }
 
         public override SlaveFlowTaskBase Next { get; protected set; }

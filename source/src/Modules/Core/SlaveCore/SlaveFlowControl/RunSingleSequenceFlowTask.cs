@@ -79,7 +79,10 @@ namespace Testflow.SlaveCore.SlaveFlowControl
 
         public override MessageBase GetHeartBeatMessage()
         {
-            StatusMessage statusMessage = new StatusMessage(MessageNames.HearBeatStatusName, Context.State, Context.SessionId);
+            StatusMessage statusMessage = new StatusMessage(MessageNames.HearBeatStatusName, Context.State, Context.SessionId)
+            {
+                Index = Context.MsgIndex
+            };
             SessionTaskEntity sessionTaskEntity = Context.SessionTaskEntity;
             sessionTaskEntity.FillSequenceInfo(statusMessage);
 
