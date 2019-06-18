@@ -159,6 +159,8 @@ namespace Testflow.MasterCore.StatusManage
 
                         _stateManageContext.EventDispatcher.RaiseEvent(Constants.TestGenerationEnd, testGenEventInfo.Session,
                         _stateManageContext.TestGenerationInfo);
+                        // 测试生成处理结束，释放测试生成阻塞器
+                        _globalInfo.TestGenBlocker.Set();
                     }
                     break;
                 case TestGenState.Error:
@@ -233,6 +235,8 @@ namespace Testflow.MasterCore.StatusManage
             switch (message.Type)
             {
                 case MessageType.Status:
+                    // 等待生成测试处理结束后才能执行Status消息处理
+                    _globalInfo.TestGenBlocker.Wait();
                     handleResult = HandleStatusMessage(message);
                     break;
                 case MessageType.TestGen:

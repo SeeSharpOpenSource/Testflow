@@ -35,11 +35,14 @@ namespace Testflow.MasterCore.Core
                     return;
                 }
                 Thread.VolatileWrite(ref _runtimeState, (int)value);
-                if (!_stateActions.ContainsKey(value))
+                if (_stateActions.ContainsKey(value))
                 {
-                    throw new TestflowInternalException(CommonErrorCode.InternalError, $"Unsupported state {value}");
+                    _stateActions[value].Invoke();
                 }
-                _stateActions[value].Invoke();
+                else
+                {
+//                    throw new TestflowInternalException(CommonErrorCode.InternalError, $"Unsupported state {value}");
+                }
             }
         }
 
