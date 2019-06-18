@@ -21,7 +21,7 @@ namespace Testflow.EngineCoreTest
             Properties.Add("TestName", "Test instance name");
             Properties.Add("TestDescription", "Test instance description");
 
-            Properties.Add("LogLevel", LogLevel.Info);
+            Properties.Add("LogLevel", LogLevel.Debug);
             Properties.Add("PlatformEncoding", Encoding.UTF8);
             Properties.Add("DotNetLibDir", "");
             Properties.Add("PlatformLibDir", "");
@@ -29,13 +29,13 @@ namespace Testflow.EngineCoreTest
             Properties.Add("ModelVersion", "10.12.35");
             Properties.Add("FileEncoding", "utf-8");
 
-            Properties.Add("TestGenReportInterval", 500);
-            Properties.Add("TestRunReportInterval", 500);
+            Properties.Add("TestGenReportInterval", 1000);
+            Properties.Add("TestRunReportInterval", 1000);
             Properties.Add("EngineQueueFormat", FormatterType.Json);
             Properties.Add("EngineSyncMessenger", true);
             Properties.Add("RuntimeType", RuntimeType.Debug);
             Properties.Add("MessageReceiveTimeout", 10000);
-            Properties.Add("StatusUploadInterval", 5000);
+            Properties.Add("StatusUploadInterval", 2000);
             Properties.Add("ConnectionTimeout", 10000);
             Properties.Add("SyncTimeout", 30000);
             Properties.Add("TestTimeout", 3600000);

@@ -169,7 +169,8 @@ namespace Testflow.EngineCoreTest
                 Modifier = ArgumentModifier.None,
                 Name = "waitTime",
                 Type = _intTypeData,
-                TypeIndex = 0
+                TypeIndex = 0,
+                VariableType = VariableType.Value
             };
             step.Function.ParameterType.Add(intArgument);
 
@@ -212,7 +213,8 @@ namespace Testflow.EngineCoreTest
                 Modifier = ArgumentModifier.None,
                 Name = "waitTime",
                 Type = _intTypeData,
-                TypeIndex = 0
+                TypeIndex = 0,
+                VariableType = VariableType.Value
             };
             step.Function = new FunctionData()
             {
@@ -279,7 +281,8 @@ namespace Testflow.EngineCoreTest
                 Modifier = ArgumentModifier.Out,
                 Name = "waitTime",
                 Type = _intTypeData,
-                TypeIndex = 0
+                TypeIndex = 0,
+                VariableType = VariableType.Value
             };
             step.Function.ParameterType = new ArgumentCollection();
             step.Function.ParameterType.Add(intArgument);
@@ -289,7 +292,7 @@ namespace Testflow.EngineCoreTest
             {
                 Index = 0,
                 ParameterType = ParameterType.Value,
-                Value = "100"
+                Value = "100",
             };
             step.Function.Parameters.Add(intParameterData);
             return step;
