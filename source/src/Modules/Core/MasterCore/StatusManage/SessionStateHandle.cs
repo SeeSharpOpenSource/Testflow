@@ -272,8 +272,6 @@ namespace Testflow.MasterCore.StatusManage
                     UpdateSessionResultData(string.Empty);
 
                     SetTestResultStatistics(message.WatchData);
-                    _testResults.Performance = ModuleUtils.GetPerformanceResult(_stateManageContext.DatabaseProxy, RuntimeHash, Session);
-                    _stateManageContext.EventDispatcher.RaiseEvent(Constants.SessionStart, Session, _testResults);
                     // 写入性能记录条目
                     if (null != message.Performance)
                     {
@@ -286,6 +284,10 @@ namespace Testflow.MasterCore.StatusManage
                             _sequenceHandles[message.Stacks[i].Sequence].HandleStatusMessage(message, i);
                         }
                     }
+                    _testResults.Performance = ModuleUtils.GetPerformanceResult(_stateManageContext.DatabaseProxy,
+                        RuntimeHash, Session);
+
+                    _stateManageContext.EventDispatcher.RaiseEvent(Constants.SessionStart, Session, _testResults);
                     break;
                 case MessageNames.ReportStatusName:
                     RefreshTime(message);
@@ -302,21 +304,19 @@ namespace Testflow.MasterCore.StatusManage
                     }
 
                     runtimeStatusInfo = CreateRuntimeStatusInfo(message);
-                    _stateManageContext.EventDispatcher.RaiseEvent(Constants.StatusReceived, Session, runtimeStatusInfo);
 
                     // 写入性能记录条目
                     if (null != message.Performance)
                     {
                         WritePerformanceStatus(message.Performance);
                     }
+                    _stateManageContext.EventDispatcher.RaiseEvent(Constants.StatusReceived, Session, runtimeStatusInfo);
                     break;
                 case MessageNames.ResultStatusName:
                     this.EndTime = message.Time;
                     RefreshTime(message);
 
                     SetTestResultStatistics(message.WatchData);
-                    _testResults.Performance = ModuleUtils.GetPerformanceResult(_stateManageContext.DatabaseProxy, RuntimeHash, Session);
-                    _stateManageContext.EventDispatcher.RaiseEvent(Constants.SessionOver, Session, _testResults);
 
                     UpdateSessionResultData(string.Empty);
                     // 写入性能记录条目
@@ -324,6 +324,10 @@ namespace Testflow.MasterCore.StatusManage
                     {
                         WritePerformanceStatus(message.Performance);
                     }
+                    _testResults.Performance = ModuleUtils.GetPerformanceResult(_stateManageContext.DatabaseProxy,
+                        RuntimeHash, Session);
+                    _testResults.TestOver = true;
+                    _stateManageContext.EventDispatcher.RaiseEvent(Constants.SessionOver, Session, _testResults);
                     break;
                 case MessageNames.ErrorStatusName:
                     this.EndTime = message.Time;
@@ -341,13 +345,15 @@ namespace Testflow.MasterCore.StatusManage
                     UpdateSessionResultData(message.ExceptionInfo.ToString());
 
                     SetTestResultStatistics(message.WatchData);
-                    _testResults.Performance = ModuleUtils.GetPerformanceResult(_stateManageContext.DatabaseProxy, RuntimeHash, Session);
-                    _stateManageContext.EventDispatcher.RaiseEvent(Constants.SessionOver, Session, _testResults);
                     // 写入性能记录条目
                     if (null != message.Performance)
                     {
                         WritePerformanceStatus(message.Performance);
                     }
+                    _testResults.Performance = ModuleUtils.GetPerformanceResult(_stateManageContext.DatabaseProxy,
+                        RuntimeHash, Session);
+                    _testResults.TestOver = true;
+                    _stateManageContext.EventDispatcher.RaiseEvent(Constants.SessionOver, Session, _testResults);
                     break;
                 case MessageNames.HearBeatStatusName:
                     RefreshTime(message);
