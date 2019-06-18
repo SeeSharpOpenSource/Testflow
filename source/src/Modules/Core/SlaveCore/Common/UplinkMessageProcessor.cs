@@ -107,6 +107,7 @@ namespace Testflow.SlaveCore.Common
                     statusMessage.Stacks.Add(statusInfo.Stack);
                     statusMessage.SequenceStates.Add(RuntimeState.Running);
                     statusMessage.Results.Add(statusInfo.Result);
+                    ModuleUtils.FillPerformance(statusMessage);
                     _transceiver.SendMessage(statusMessage);
                     break;
                 case StatusReportType.Record:
@@ -122,6 +123,7 @@ namespace Testflow.SlaveCore.Common
                     {
                         statusMessage.FailedInfo.Add(statusInfo.Sequence, statusInfo.Exception.Message);
                     }
+                    ModuleUtils.FillPerformance(statusMessage);
                     _transceiver.SendMessage(statusMessage);
                     break;
                 case StatusReportType.DebugHitted:
@@ -146,6 +148,7 @@ namespace Testflow.SlaveCore.Common
                     {
                         statusMessage.FailedInfo.Add(statusInfo.Sequence, statusInfo.Exception.Message);
                     }
+                    ModuleUtils.FillPerformance(statusMessage);
                     _transceiver.SendMessage(statusMessage);
                     break;
                 case StatusReportType.Over:
@@ -157,6 +160,7 @@ namespace Testflow.SlaveCore.Common
                     statusMessage.Stacks.Add(statusInfo.Stack);
                     statusMessage.SequenceStates.Add(RuntimeState.Success);
                     statusMessage.Results.Add(statusInfo.Result);
+                    ModuleUtils.FillPerformance(statusMessage);
                     _transceiver.SendMessage(statusMessage);
                     break;
                 case StatusReportType.Error:
@@ -173,6 +177,7 @@ namespace Testflow.SlaveCore.Common
                         statusMessage.FailedInfo.Add(statusInfo.Sequence, statusInfo.Exception.Message);
                         statusMessage.ExceptionInfo = new SequenceFailedInfo(statusInfo.Exception);
                     }
+                    ModuleUtils.FillPerformance(statusMessage);
                     _transceiver.SendMessage(statusMessage);
                     break;
                 default:
