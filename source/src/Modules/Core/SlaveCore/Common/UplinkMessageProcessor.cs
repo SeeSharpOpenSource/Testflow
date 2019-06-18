@@ -164,9 +164,10 @@ namespace Testflow.SlaveCore.Common
                     statusMessage.Stacks.Add(statusInfo.Stack);
                     statusMessage.SequenceStates.Add(RuntimeState.Error);
                     statusMessage.Results.Add(statusInfo.Result);
-                    if (statusInfo.Exception != null && statusInfo.ReportType == StatusReportType.Error)
+                    if (statusInfo.Exception != null)
                     {
                         statusMessage.FailedInfo.Add(statusInfo.Sequence, statusInfo.Exception.Message);
+                        statusMessage.ExceptionInfo = new SequenceFailedInfo(statusInfo.Exception);
                     }
                     _transceiver.SendMessage(statusMessage);
                     break;
