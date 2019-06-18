@@ -12,6 +12,7 @@ namespace Testflow.SlaveCore.Common
     {
         private readonly SlaveContext _context;
         private CancellationTokenSource _cancellation;
+        private LocalMessageQueue<MessageBase> _messageQueue;
 
         public DownlinkMessageProcessor(SlaveContext context)
         {
@@ -27,8 +28,8 @@ namespace Testflow.SlaveCore.Common
             _cancellation = new CancellationTokenSource();
 
             // 首先接收RmtGenMessage
-            LocalMessageQueue<MessageBase> messageQueue = _context.MessageTransceiver.MessageQueue;
-            MessageBase message = messageQueue.WaitUntilMessageCome();
+            _messageQueue = _context.MessageTransceiver.MessageQueue;
+            MessageBase message = _messageQueue.WaitUntilMessageCome();
             RmtGenMessage rmtGenMessage = (RmtGenMessage)message;
             if (null == rmtGenMessage)
             {
@@ -39,7 +40,11 @@ namespace Testflow.SlaveCore.Common
 
             while (!_cancellation.IsCancellationRequested)
             {
-                message = messageQueue.WaitUntilMessageCome();
+                message = _messageQueue.WaitUntilMessageCome();
+                if (null == message)
+                {
+                    continue;
+                }
                 switch (message.Type)
                 {
                     case MessageType.Ctrl:
@@ -61,10 +66,14 @@ namespace Testflow.SlaveCore.Common
                             _context.I18N.GetFStr("InvalidMessageReceived", message.GetType().Name));
                 }
             }
+            _context.LogSession.Print(LogLevel.Debug, _context.SessionId, 
+                $"Downlink message processor stopped, Thread:{Thread.CurrentThread.ManagedThreadId}");
         }
 
         public void Stop()
         {
+            _messageQueue?.StopEnqueue();
+            _messageQueue?.FreeLock();
             _cancellation?.Cancel();
         }
 

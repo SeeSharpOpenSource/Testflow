@@ -62,7 +62,7 @@ namespace Testflow.SlaveCore
             finally
             {
                 StopSlaveTask();
-                _context.LogSession.Print(LogLevel.Info, _context.SessionId, "Slave controller  started.");
+                _context.LogSession.Print(LogLevel.Info, _context.SessionId, "Slave controller  stopped.");
             }
         }
 
