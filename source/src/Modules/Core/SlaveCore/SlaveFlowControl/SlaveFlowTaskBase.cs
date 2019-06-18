@@ -100,5 +100,21 @@ namespace Testflow.SlaveCore.SlaveFlowControl
             abortMessage.Params.Add("AbortSuccess", true.ToString());
             Context.UplinkMsgProcessor.SendMessage(abortMessage);
         }
+
+        protected void SendStartMessage()
+        {
+            StatusMessage statusMessage = new StatusMessage(MessageNames.StartStatusName, RuntimeState.Running,
+                Context.SessionId);
+            ModuleUtils.FillPerformance(statusMessage);
+            Context.UplinkMsgProcessor.SendMessage(statusMessage);
+        }
+
+        protected void SendOverMessage()
+        {
+            StatusMessage statusMessage = new StatusMessage(MessageNames.ResultStatusName, RuntimeState.Over,
+                Context.SessionId);
+            ModuleUtils.FillPerformance(statusMessage);
+            Context.UplinkMsgProcessor.SendMessage(statusMessage);
+        }
     }
 }

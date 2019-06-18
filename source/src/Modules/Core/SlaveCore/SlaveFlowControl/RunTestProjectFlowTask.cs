@@ -26,6 +26,8 @@ namespace Testflow.SlaveCore.SlaveFlowControl
 
         protected override void FlowTaskAction()
         {
+            SendStartMessage();
+
             // 打印状态日志
             Context.LogSession.Print(LogLevel.Info, Context.SessionId, "Start test project setup.");
 
@@ -67,6 +69,8 @@ namespace Testflow.SlaveCore.SlaveFlowControl
 
             // 打印状态日志
             Context.LogSession.Print(LogLevel.Info, Context.SessionId, "Teardown execution over.");
+
+            SendOverMessage();
 
             Context.State = RuntimeState.Over;
             this.Next = null;
