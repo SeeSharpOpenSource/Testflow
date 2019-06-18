@@ -48,8 +48,12 @@ namespace Testflow.SlaveCore.Common
 
         public void Stop()
         {
+            _context.StatusQueue.StopEnqueue();
+            _context.StatusQueue.FreeLock();
+
             _waitTimer?.Change(Timeout.Infinite, Timeout.Infinite);
             _cancellation?.Cancel();
+
             // 打印状态日志
             _context.LogSession.Print(LogLevel.Debug, _context.SessionId,
                 $"Uplink message processor stoped, thread:{_statusPackageThd.ManagedThreadId}.");

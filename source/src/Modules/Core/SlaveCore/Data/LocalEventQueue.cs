@@ -70,7 +70,10 @@ namespace Testflow.SlaveCore.Data
 
         public void StopEnqueue()
         {
+            bool getLock = false;
+            _blockLock.Enter(ref getLock);
             Thread.VolatileWrite(ref _stopEnqueueFlag, 1);
+            _blockLock.Exit();
         }
 
         /// <summary>
@@ -80,7 +83,7 @@ namespace Testflow.SlaveCore.Data
         {
             bool getLock = false;
             _blockLock.Enter(ref getLock);
-            if (_blockCount == 1)
+            if (_blockCount > 0)
             {
                 _blockEvent.Set();
                 Interlocked.Exchange(ref _blockCount, 0);

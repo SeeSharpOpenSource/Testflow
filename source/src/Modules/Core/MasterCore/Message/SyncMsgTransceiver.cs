@@ -48,7 +48,7 @@ namespace Testflow.MasterCore.Message
 
             _statusMessageListener = new Thread(MessageProcessingLoop)
             {
-                Name = "EngineMessageListener",
+                Name = "StatusMessageListener",
                 IsBackground = true
             };
             _engineMessageListener.Start(_engineMessageQueue);
@@ -62,6 +62,9 @@ namespace Testflow.MasterCore.Message
             _cancellation.Cancel();
             ModuleUtils.StopThreadWork(_receiveThread);
             //如果两个队列在被锁的状态则释放锁
+            _engineMessageQueue.StopEnqueue();
+            _statusMessageQueue.StopEnqueue();
+
             _engineMessageQueue.FreeLock();
             _statusMessageQueue.FreeLock();
 
