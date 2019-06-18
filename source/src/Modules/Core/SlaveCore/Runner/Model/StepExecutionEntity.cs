@@ -195,7 +195,7 @@ namespace Testflow.SlaveCore.Runner.Model
             NextStep?.InitializeParamsValues();
         }
 
-        public override void Invoke()
+        protected override void InvokeStep()
         {
             this.Result = StepResult.Error;
             try

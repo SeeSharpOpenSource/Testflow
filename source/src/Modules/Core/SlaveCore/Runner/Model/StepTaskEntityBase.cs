@@ -89,6 +89,12 @@ namespace Testflow.SlaveCore.Runner.Model
             statusMessage.Results.Add(this.Result);
         }
 
-        public abstract void Invoke();
+        public void Invoke()
+        {
+            CurrentModel[SequenceIndex] = this;
+            InvokeStep();
+        }
+
+        protected abstract void InvokeStep();
     }
 }

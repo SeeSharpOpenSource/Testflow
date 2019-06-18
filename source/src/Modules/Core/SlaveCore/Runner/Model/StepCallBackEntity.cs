@@ -22,7 +22,7 @@ namespace Testflow.SlaveCore.Runner.Model
             throw new System.NotImplementedException();
         }
 
-        public override void Invoke()
+        protected override void InvokeStep()
         {
             throw new System.NotImplementedException();
         }
