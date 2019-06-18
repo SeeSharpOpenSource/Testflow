@@ -233,9 +233,28 @@ namespace Testflow.MasterCore.StatusManage
             GenerationStatus generationState = message.State;
             _generationInfo.Status = generationState;
             ICollection<int> sequenceIndexes = new List<int>(_generationInfo.SequenceStatus.Keys);
+            RuntimeState state;
+            switch (generationState)
+            {
+                case GenerationStatus.Idle:
+                    state = RuntimeState.Idle;
+                    break;
+                case GenerationStatus.InProgress:
+                    state = RuntimeState.TestGen;
+                    break;
+                case GenerationStatus.Success:
+                    state = RuntimeState.StartIdle;
+                    break;
+                case GenerationStatus.Failed:
+                    state = RuntimeState.Error;
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
             foreach (int sequenceIndex in sequenceIndexes)
             {
                 _generationInfo.SequenceStatus[sequenceIndex] = generationState;
+                _sequenceHandles[sequenceIndex].State = state;
             }
             return true;
         }
@@ -253,10 +272,8 @@ namespace Testflow.MasterCore.StatusManage
                     UpdateSessionResultData(string.Empty);
 
                     SetTestResultStatistics(message.WatchData);
-                    _testResults.Performance = ModuleUtils.GetPerformanceResult(_stateManageContext.DatabaseProxy,
-                        RuntimeHash, Session);
-                    _stateManageContext.EventDispatcher.RaiseEvent(Constants.SessionStart,
-                        Session, _testResults);
+                    _testResults.Performance = ModuleUtils.GetPerformanceResult(_stateManageContext.DatabaseProxy, RuntimeHash, Session);
+                    _stateManageContext.EventDispatcher.RaiseEvent(Constants.SessionStart, Session, _testResults);
                     // 写入性能记录条目
                     if (null != message.Performance)
                     {
@@ -277,16 +294,14 @@ namespace Testflow.MasterCore.StatusManage
                     {
                         SequenceStateHandle sequenceStateHandle = _sequenceHandles[message.Stacks[i].Sequence];
                         RuntimeState sequenceState = sequenceStateHandle.State;
-                        if (sequenceState == RuntimeState.Running || RuntimeState.Blocked == sequenceState ||
-                            RuntimeState.DebugBlocked == sequenceState)
+                        if (sequenceState == RuntimeState.Running || RuntimeState.Blocked == sequenceState || RuntimeState.DebugBlocked == sequenceState)
                         {
                             sequenceStateHandle.HandleStatusMessage(message, i);
                         }
                     }
 
                     runtimeStatusInfo = CreateRuntimeStatusInfo(message);
-                    _stateManageContext.EventDispatcher.RaiseEvent(Constants.StatusReceived,
-                        Session, runtimeStatusInfo);
+                    _stateManageContext.EventDispatcher.RaiseEvent(Constants.StatusReceived, Session, runtimeStatusInfo);
 
                     // 写入性能记录条目
                     if (null != message.Performance)
@@ -299,10 +314,8 @@ namespace Testflow.MasterCore.StatusManage
                     RefreshTime(message);
 
                     SetTestResultStatistics(message.WatchData);
-                    _testResults.Performance = ModuleUtils.GetPerformanceResult(_stateManageContext.DatabaseProxy,
-                        RuntimeHash, Session);
-                    _stateManageContext.EventDispatcher.RaiseEvent(Constants.SessionOver,
-                        Session, _testResults);
+                    _testResults.Performance = ModuleUtils.GetPerformanceResult(_stateManageContext.DatabaseProxy, RuntimeHash, Session);
+                    _stateManageContext.EventDispatcher.RaiseEvent(Constants.SessionOver, Session, _testResults);
 
                     UpdateSessionResultData(string.Empty);
                     // 写入性能记录条目
@@ -318,8 +331,7 @@ namespace Testflow.MasterCore.StatusManage
                     foreach (SequenceStateHandle sequenceStateHandle in _sequenceHandles.Values)
                     {
                         RuntimeState runtimeState = sequenceStateHandle.State;
-                        if (runtimeState == RuntimeState.Running || runtimeState == RuntimeState.Blocked ||
-                            runtimeState == RuntimeState.DebugBlocked)
+                        if (runtimeState == RuntimeState.Running || runtimeState == RuntimeState.Blocked || runtimeState == RuntimeState.DebugBlocked)
                         {
                             sequenceStateHandle.HandleStatusMessage(message, CommonConst.BroadcastSession);
                         }
@@ -328,10 +340,8 @@ namespace Testflow.MasterCore.StatusManage
                     UpdateSessionResultData(message.ExceptionInfo.ToString());
 
                     SetTestResultStatistics(message.WatchData);
-                    _testResults.Performance = ModuleUtils.GetPerformanceResult(_stateManageContext.DatabaseProxy,
-                        RuntimeHash, Session);
-                    _stateManageContext.EventDispatcher.RaiseEvent(Constants.SessionOver,
-                        Session, _testResults);
+                    _testResults.Performance = ModuleUtils.GetPerformanceResult(_stateManageContext.DatabaseProxy, RuntimeHash, Session);
+                    _stateManageContext.EventDispatcher.RaiseEvent(Constants.SessionOver, Session, _testResults);
                     // 写入性能记录条目
                     if (null != message.Performance)
                     {
@@ -350,8 +360,7 @@ namespace Testflow.MasterCore.StatusManage
                     }
 
                     runtimeStatusInfo = CreateRuntimeStatusInfo(message);
-                    _stateManageContext.EventDispatcher.RaiseEvent(Constants.StatusReceived,
-                        Session, runtimeStatusInfo);
+                    _stateManageContext.EventDispatcher.RaiseEvent(Constants.StatusReceived, Session, runtimeStatusInfo);
                     break;
                 default:
                     throw new InvalidOperationException();
@@ -387,8 +396,6 @@ namespace Testflow.MasterCore.StatusManage
                 this.EndTime = eventInfo.TimeStamp;
             }
         }
-
-
 
         #region 更新各个数据结构的值
 
