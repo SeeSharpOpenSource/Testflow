@@ -153,24 +153,23 @@ namespace Testflow.MasterCore.StatusManage
             switch (eventInfo.GenState)
             {
                 case TestGenState.StartGeneration:
-                    this.State = RuntimeState.TestGen;
                     this.StartGenTime = eventInfo.TimeStamp;
                     RefreshTime(eventInfo);
-
                     SetGenerationInfo(eventInfo, GenerationStatus.InProgress);
+                    SetStateHandleRuntimeState(RuntimeState.TestGen);
                     break;
                 case TestGenState.GenerationOver:
                     this.State = RuntimeState.StartIdle;
                     this.EndGenTime = eventInfo.TimeStamp;
                     RefreshTime(eventInfo);
-
                     SetGenerationInfo(eventInfo, GenerationStatus.Success);
+                    SetStateHandleRuntimeState(RuntimeState.StartIdle);
                     break;
                 case TestGenState.Error:
                     // 更新Handle状态
                     this.State = RuntimeState.Error;
                     RefreshTime(eventInfo);
-
+                    SetStateHandleRuntimeState(RuntimeState.Error);
                     // 停止所有Handle，写入错误数据
                     foreach (SequenceStateHandle sequenceStateHandle in _sequenceHandles.Values)
                     {
@@ -233,29 +232,30 @@ namespace Testflow.MasterCore.StatusManage
             GenerationStatus generationState = message.State;
             _generationInfo.Status = generationState;
             ICollection<int> sequenceIndexes = new List<int>(_generationInfo.SequenceStatus.Keys);
-            RuntimeState state;
-            switch (generationState)
-            {
-                case GenerationStatus.Idle:
-                    state = RuntimeState.Idle;
-                    break;
-                case GenerationStatus.InProgress:
-                    state = RuntimeState.TestGen;
-                    break;
-                case GenerationStatus.Success:
-                    state = RuntimeState.StartIdle;
-                    break;
-                case GenerationStatus.Failed:
-                    state = RuntimeState.Error;
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
+//            RuntimeState state;
+//            switch (generationState)
+//            {
+//                case GenerationStatus.Idle:
+//                    state = RuntimeState.Idle;
+//                    break;
+//                case GenerationStatus.InProgress:
+//                    state = RuntimeState.TestGen;
+//                    break;
+//                case GenerationStatus.Success:
+//                    state = RuntimeState.StartIdle;
+//                    break;
+//                case GenerationStatus.Failed:
+//                    state = RuntimeState.Error;
+//                    break;
+//                default:
+//                    throw new ArgumentOutOfRangeException();
+//            }
             foreach (int sequenceIndex in sequenceIndexes)
             {
                 _generationInfo.SequenceStatus[sequenceIndex] = generationState;
-                _sequenceHandles[sequenceIndex].State = state;
+//                _sequenceHandles[sequenceIndex].State = state;
             }
+//            this.State = state;
             return true;
         }
 
@@ -294,7 +294,8 @@ namespace Testflow.MasterCore.StatusManage
                     {
                         SequenceStateHandle sequenceStateHandle = _sequenceHandles[message.Stacks[i].Sequence];
                         RuntimeState sequenceState = sequenceStateHandle.State;
-                        if (sequenceState == RuntimeState.Running || RuntimeState.Blocked == sequenceState || RuntimeState.DebugBlocked == sequenceState)
+                        if (sequenceState == RuntimeState.StartIdle || sequenceState == RuntimeState.Running || 
+                            RuntimeState.Blocked == sequenceState || RuntimeState.DebugBlocked == sequenceState)
                         {
                             sequenceStateHandle.HandleStatusMessage(message, i);
                         }
@@ -408,6 +409,16 @@ namespace Testflow.MasterCore.StatusManage
                 _generationInfo.SequenceStatus[sequenceIndex] = status;
             }
             return _generationInfo;
+        }
+
+        private void SetStateHandleRuntimeState(RuntimeState state)
+        {
+            this.State = state;
+            IList<int> sequenceIndexes = new List<int>(_generationInfo.SequenceStatus.Keys);
+            foreach (int sequenceIndex in sequenceIndexes)
+            {
+                _sequenceHandles[sequenceIndex].State = state;
+            }
         }
 
         private void UpdateSessionResultData(string failedInfo)
