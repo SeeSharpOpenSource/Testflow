@@ -127,7 +127,7 @@ namespace Testflow.SlaveCore.Runner.Model
                 SequenceStatusInfo errorStatusInfo = new SequenceStatusInfo(Index,
                     currentStep.GetStack(), StatusReportType.Failed, currentStep.Result, ex.InnerException);
                 this._context.StatusQueue.Enqueue(errorStatusInfo);
-                _context.LogSession.Print(LogLevel.Fatal, Index, ex, "Invocation exception catched.");
+                _context.LogSession.Print(LogLevel.Error, Index, ex, "Invocation exception catched.");
             }
             catch (Exception ex)
             {
