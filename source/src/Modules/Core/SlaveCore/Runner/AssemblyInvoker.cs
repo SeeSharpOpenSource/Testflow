@@ -148,7 +148,7 @@ namespace Testflow.SlaveCore.Runner
             Type dataType = _typeDataMapping[ModuleUtils.GetTypeFullName(type)];
             if (dataType.IsValueType)
             {
-                _valueTypeConvertors[dataType.Name].Invoke(valueStr);
+                value = _valueTypeConvertors[dataType.Name].Invoke(valueStr);
             }
             else if (dataType.IsEnum)
             {
