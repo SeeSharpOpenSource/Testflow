@@ -163,7 +163,7 @@ namespace Testflow.SlaveCore.Common
         {
             if (!paramValueStr.Contains(Constants.PropertyDelim))
             {
-                return varValue;
+                return paramValue;
             }
             object parentValue = varValue;
             Type parentType = varValue.GetType();
