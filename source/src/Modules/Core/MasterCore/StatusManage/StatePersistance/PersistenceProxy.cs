@@ -1,6 +1,7 @@
 ﻿using Testflow.MasterCore.Common;
 using Testflow.MasterCore.EventData;
 using Testflow.Modules;
+using Testflow.Runtime;
 using Testflow.Runtime.Data;
 
 namespace Testflow.MasterCore.StatusManage.StatePersistance
@@ -54,6 +55,13 @@ namespace Testflow.MasterCore.StatusManage.StatePersistance
         public void UpdateData(SequenceResultData result)
         {
             _dataMaintainer.UpdateData(result);
+        }
+
+        public IPerformanceResult GetPerformanceResult(int session)
+        {
+            PerformanceResult performanceResult = new PerformanceResult();
+            _dataMaintainer.GetPerformanceResult(_globalInfo.RuntimeHash, session, performanceResult);
+            return performanceResult;
         }
     }
 }

@@ -102,12 +102,6 @@ namespace Testflow.MasterCore.Common
             return GetHashValue(runtimeInfo, encoding);
         }
 
-        public static IPerformanceResult GetPerformanceResult(PersistenceProxy databaseProxy, string runtimeHash, int session)
-        {
-            // TODO not implemented
-            return new PerformanceResult();
-        }
-
         public static string WatchDataToString(IDictionary<string, string> watchData)
         {
             if (null == watchData || watchData.Count == 0)

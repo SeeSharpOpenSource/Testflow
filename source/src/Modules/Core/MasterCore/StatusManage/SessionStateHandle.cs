@@ -284,8 +284,7 @@ namespace Testflow.MasterCore.StatusManage
                             _sequenceHandles[message.Stacks[i].Sequence].HandleStatusMessage(message, i);
                         }
                     }
-                    _testResults.Performance = ModuleUtils.GetPerformanceResult(_stateManageContext.DatabaseProxy,
-                        RuntimeHash, Session);
+                    _testResults.Performance = _stateManageContext.DatabaseProxy.GetPerformanceResult(Session);
 
                     _stateManageContext.EventDispatcher.RaiseEvent(Constants.SessionStart, Session, _testResults);
                     break;
@@ -324,8 +323,7 @@ namespace Testflow.MasterCore.StatusManage
                     {
                         WritePerformanceStatus(message.Performance);
                     }
-                    _testResults.Performance = ModuleUtils.GetPerformanceResult(_stateManageContext.DatabaseProxy,
-                        RuntimeHash, Session);
+                    _testResults.Performance = _stateManageContext.DatabaseProxy.GetPerformanceResult(Session);
                     _testResults.TestOver = true;
                     _stateManageContext.EventDispatcher.RaiseEvent(Constants.SessionOver, Session, _testResults);
                     break;
@@ -350,8 +348,7 @@ namespace Testflow.MasterCore.StatusManage
                     {
                         WritePerformanceStatus(message.Performance);
                     }
-                    _testResults.Performance = ModuleUtils.GetPerformanceResult(_stateManageContext.DatabaseProxy,
-                        RuntimeHash, Session);
+                    _testResults.Performance = _stateManageContext.DatabaseProxy.GetPerformanceResult(Session);
                     _testResults.TestOver = true;
                     _stateManageContext.EventDispatcher.RaiseEvent(Constants.SessionOver, Session, _testResults);
                     break;
