@@ -199,7 +199,7 @@ namespace Testflow.MasterCore.StatusManage
                     SetTestInstanceEndTime(eventInfo.TimeStamp);
                     _stateManageContext.DatabaseProxy.UpdateData(_stateManageContext.TestInstance);
 
-                    _stateManageContext.EventDispatcher.RaiseEvent(Constants.TestProjectOver, eventInfo.Session,
+                    _stateManageContext.EventDispatcher.RaiseEvent(Constants.TestInstanceOver, eventInfo.Session,
                         _stateManageContext.TestResults);
                 }
             }
@@ -219,7 +219,7 @@ namespace Testflow.MasterCore.StatusManage
             SetTestInstanceEndTime(eventInfo.TimeStamp);
             _stateManageContext.DatabaseProxy.UpdateData(_stateManageContext.TestInstance);
 
-            _stateManageContext.EventDispatcher.RaiseEvent(Constants.TestProjectOver, eventInfo.Session,
+            _stateManageContext.EventDispatcher.RaiseEvent(Constants.TestInstanceOver, eventInfo.Session,
                 _stateManageContext.TestResults);
         }
 
@@ -270,7 +270,7 @@ namespace Testflow.MasterCore.StatusManage
                         _stateManageContext.DatabaseProxy.UpdateData(_stateManageContext.TestInstance);
 
                         _globalInfo.StateMachine.State = RuntimeState.Running;
-                        _stateManageContext.EventDispatcher.RaiseEvent(Constants.TestProjectStart,
+                        _stateManageContext.EventDispatcher.RaiseEvent(Constants.TestInstanceStart,
                             CommonConst.TestGroupSession, _stateManageContext.TestResults);
 
                         stateHandle.HandleStatusMessage(statusMessage);
@@ -289,7 +289,7 @@ namespace Testflow.MasterCore.StatusManage
                         _stateManageContext.DatabaseProxy.UpdateData(_stateManageContext.TestInstance);
 
                         _globalInfo.StateMachine.State = RuntimeState.Over;
-                        _stateManageContext.EventDispatcher.RaiseEvent(Constants.TestProjectOver,
+                        _stateManageContext.EventDispatcher.RaiseEvent(Constants.TestInstanceOver,
                             CommonConst.TestGroupSession, _stateManageContext.TestResults);
                     }
                     break;

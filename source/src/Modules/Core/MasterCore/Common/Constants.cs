@@ -35,13 +35,13 @@ namespace Testflow.MasterCore.Common
         public const string SessionGenerationStart = "SessionGenerationStart";
         public const string SessionGenerationReport = "SessionGenerationReport";
         public const string SessionGenerationEnd = "SessionGenerationEnd";
-        public const string TestProjectStart = "TestProjectStart";
+        public const string TestInstanceStart = "TestInstanceStart";
         public const string SessionStart = "SessionStart";
         public const string SequenceStarted = "SequenceStarted";
         public const string StatusReceived = "StatusReceived";
         public const string SequenceOver = "SequenceOver";
         public const string SessionOver = "SessionOver";
-        public const string TestProjectOver = "TestProjectOver";
+        public const string TestInstanceOver = "TestInstanceOver";
         public const string BreakPointHitted = "BreakPointHitted";
 
         #endregion

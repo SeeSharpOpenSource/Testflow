@@ -45,9 +45,9 @@ namespace Testflow.Runtime
         public delegate void BreakPointHittedAction(IDebuggerHandle debuggerHandle, IDebugInformation information);
 
         /// <summary>
-        /// 测试工程所有项目执行结束后的委托
+        /// 测试实例所有项目执行结束后的委托
         /// </summary>
         /// <param name="statistics">执行结束后的统计信息</param>
-        public delegate void TestProjectStatusAction(IList<ITestResultCollection> statistics);
+        public delegate void TestInstanceStatusAction(IList<ITestResultCollection> statistics);
     }
 }

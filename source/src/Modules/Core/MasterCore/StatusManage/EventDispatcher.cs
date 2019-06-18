@@ -46,8 +46,8 @@ namespace Testflow.MasterCore.StatusManage
                 case Constants.SessionGenerationEnd:
                     SessionGenerationEnd += ModuleUtils.GetDeleage<RuntimeDelegate.SessionGenerationAction>(callBack);
                     break;
-                case Constants.TestProjectStart:
-                    TestProjectStart += ModuleUtils.GetDeleage<RuntimeDelegate.TestProjectStatusAction>(callBack);
+                case Constants.TestInstanceStart:
+                    TestInstanceStart += ModuleUtils.GetDeleage<RuntimeDelegate.TestInstanceStatusAction>(callBack);
                     break;
                 case Constants.SessionStart:
                     SessionStart += ModuleUtils.GetDeleage<RuntimeDelegate.SessionStatusAction>(callBack);
@@ -64,8 +64,8 @@ namespace Testflow.MasterCore.StatusManage
                 case Constants.SessionOver:
                     SessionOver += ModuleUtils.GetDeleage<RuntimeDelegate.SessionStatusAction>(callBack);
                     break;
-                case Constants.TestProjectOver:
-                    TestProjectOver += ModuleUtils.GetDeleage<RuntimeDelegate.TestProjectStatusAction>(callBack);
+                case Constants.TestInstanceOver:
+                    TestInstanceOver += ModuleUtils.GetDeleage<RuntimeDelegate.TestInstanceStatusAction>(callBack);
                     break;
                 case Constants.BreakPointHitted:
                     BreakPointHitted += ModuleUtils.GetDeleage<RuntimeDelegate.BreakPointHittedAction>(callBack);
@@ -96,8 +96,8 @@ namespace Testflow.MasterCore.StatusManage
                 case Constants.SessionGenerationEnd:
                     SessionGenerationEnd -= ModuleUtils.GetDeleage<RuntimeDelegate.SessionGenerationAction>(callBack);
                     break;
-                case Constants.TestProjectStart:
-                    TestProjectStart -= ModuleUtils.GetDeleage<RuntimeDelegate.TestProjectStatusAction>(callBack);
+                case Constants.TestInstanceStart:
+                    TestInstanceStart -= ModuleUtils.GetDeleage<RuntimeDelegate.TestInstanceStatusAction>(callBack);
                     break;
                 case Constants.SessionStart:
                     SessionStart -= ModuleUtils.GetDeleage<RuntimeDelegate.SessionStatusAction>(callBack);
@@ -117,8 +117,8 @@ namespace Testflow.MasterCore.StatusManage
                 case Constants.BreakPointHitted:
                     BreakPointHitted -= ModuleUtils.GetDeleage<RuntimeDelegate.BreakPointHittedAction>(callBack);
                     break;
-                case Constants.TestProjectOver:
-                    TestProjectOver -= ModuleUtils.GetDeleage<RuntimeDelegate.TestProjectStatusAction>(callBack);
+                case Constants.TestInstanceOver:
+                    TestInstanceOver -= ModuleUtils.GetDeleage<RuntimeDelegate.TestInstanceStatusAction>(callBack);
                     break;
                 default:
                     I18N i18N = I18N.GetInstance(Constants.I18nName);
@@ -156,7 +156,7 @@ namespace Testflow.MasterCore.StatusManage
                 case Constants.SessionGenerationEnd:
                     OnSessionGenerationEnd(ModuleUtils.GetParamValue<ISessionGenerationInfo>(eventParam, 0));
                     break;
-                case Constants.TestProjectStart:
+                case Constants.TestInstanceStart:
                     OnTestProjectStart(ModuleUtils.GetParamValue<List<ITestResultCollection>>(eventParam, 0));
                     break;
                 case Constants.SessionStart:
@@ -176,7 +176,7 @@ namespace Testflow.MasterCore.StatusManage
 //                        ModuleUtil.GetParamValue<ISequenceGroup>(eventParams, 1));
                     OnTestOver(ModuleUtils.GetParamValue<ITestResultCollection>(eventParam, 0));
                     break;
-                case Constants.TestProjectOver:
+                case Constants.TestInstanceOver:
                     OnTestProjectOver(ModuleUtils.GetParamValue<List<ITestResultCollection>>(eventParam, 0));
                     break;
                 case Constants.BreakPointHitted:
@@ -221,7 +221,7 @@ namespace Testflow.MasterCore.StatusManage
         /// <summary>
         /// 测试工程开始事件
         /// </summary>
-        public event RuntimeDelegate.TestProjectStatusAction TestProjectStart;
+        public event RuntimeDelegate.TestInstanceStatusAction TestInstanceStart;
 
         /// <summary>
         /// 测试序列组开始执行的事件
@@ -251,7 +251,7 @@ namespace Testflow.MasterCore.StatusManage
         /// <summary>
         /// 测试工程结束事件
         /// </summary>
-        public event RuntimeDelegate.TestProjectStatusAction TestProjectOver;
+        public event RuntimeDelegate.TestInstanceStatusAction TestInstanceOver;
 
         /// <summary>
         /// 断点命中事件，当某个断点被命中时触发
@@ -325,12 +325,12 @@ namespace Testflow.MasterCore.StatusManage
 
         private void OnTestProjectStart(IList<ITestResultCollection> testResults)
         {
-            TestProjectStart?.Invoke(testResults);
+            TestInstanceStart?.Invoke(testResults);
         }
 
         private void OnTestProjectOver(IList<ITestResultCollection> testResults)
         {
-            TestProjectOver?.Invoke(testResults);
+            TestInstanceOver?.Invoke(testResults);
         }
 
         #endregion
