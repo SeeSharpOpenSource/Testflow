@@ -235,8 +235,6 @@ namespace Testflow.MasterCore.StatusManage
             switch (message.Type)
             {
                 case MessageType.Status:
-                    // 等待生成测试处理结束后才能执行Status消息处理
-                    _globalInfo.TestGenBlocker.Wait();
                     handleResult = HandleStatusMessage(message);
                     break;
                 case MessageType.TestGen:
@@ -316,6 +314,7 @@ namespace Testflow.MasterCore.StatusManage
 
         public void Stop()
         {
+            _globalInfo.TestGenBlocker.Set();
             _cancellation.Cancel();
             _globalInfo.EventQueue.StopEnqueue();
             Thread.Sleep(_globalInfo.ConfigData.GetProperty<int>("StopTimeout"));

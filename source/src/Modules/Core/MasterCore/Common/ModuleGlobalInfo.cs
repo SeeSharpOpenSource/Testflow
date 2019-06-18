@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Text;
+using System.Threading;
 using Testflow.CoreCommon.Data.EventInfos;
 using Testflow.MasterCore.Core;
 using Testflow.MasterCore.EventData;
@@ -37,6 +38,11 @@ namespace Testflow.MasterCore.Common
 
         public string RuntimeHash{ get; }
 
+        /// <summary>
+        /// 测试开始阻塞器，在序列生成状态处理结束前阻塞，结束后释放
+        /// </summary>
+        public ManualResetEventSlim TestGenBlocker { get; }
+
         public ModuleGlobalInfo(IModuleConfigData configData)
         {
             TestflowRunner = TestflowRunner.GetInstance();
@@ -45,6 +51,7 @@ namespace Testflow.MasterCore.Common
             this.ConfigData = configData;
             this.ExceptionManager = new ExceptionManager(LogService);
             this.RuntimeHash = ModuleUtils.GetRuntimeHash(configData.GetProperty<Encoding>("PlatformEncoding"));
+            this.TestGenBlocker = new ManualResetEventSlim(false);
         }
 
         public void RuntimeInitialize(MessageTransceiver messageTransceiver, DebugManager debugManager)
@@ -57,6 +64,8 @@ namespace Testflow.MasterCore.Common
         public void Dispose()
         {
             MessageTransceiver?.Dispose();
+            TestGenBlocker?.Dispose();
+            LogService?.Dispose();
         }
     }
 }

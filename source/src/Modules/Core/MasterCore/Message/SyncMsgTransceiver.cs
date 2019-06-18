@@ -119,6 +119,9 @@ namespace Testflow.MasterCore.Message
             {
                 GlobalInfo.EventQueue.Enqueue(new ExceptionEventInfo(ex));
                 GlobalInfo.LogService.Print(LogLevel.Fatal, CommonConst.PlatformLogSession, ex);
+            }
+            finally
+            {
                 this.Stop();
             }
         }
@@ -132,6 +135,10 @@ namespace Testflow.MasterCore.Message
         private void MessageProcessingLoop(object queueObj)
         {
             LocalMessageQueue<MessageBase> queue = queueObj as LocalMessageQueue<MessageBase>;
+            if (_statusMessageQueue.Equals(queue))
+            {
+                GlobalInfo.TestGenBlocker.Wait();
+            }
             try
             {
                 while (!_cancellation.IsCancellationRequested)
