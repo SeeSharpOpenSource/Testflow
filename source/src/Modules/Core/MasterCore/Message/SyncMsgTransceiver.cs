@@ -160,7 +160,7 @@ namespace Testflow.MasterCore.Message
             {
                 GlobalInfo.EventQueue.Enqueue(new ExceptionEventInfo(ex));
                 GlobalInfo.LogService.Print(LogLevel.Fatal, CommonConst.PlatformLogSession, ex);
-                this.Stop();
+                ThreadPool.QueueUserWorkItem((state) => { this.Stop(); });
             }
         }
     }
