@@ -164,7 +164,7 @@ namespace Testflow.MasterCore.StatusManage
                         UpdateSequenceResultData(string.Empty);
                         // 触发SequenceStart事件
                         UpdateSequenceTestResult(null, null);
-                        _stateManageContext.EventDispatcher.RaiseEvent(Constants.SequenceOver, Session,
+                        _stateManageContext.EventDispatcher.RaiseEvent(Constants.SequenceStarted, Session,
                             _sequenceTestResult);
 
                     }
