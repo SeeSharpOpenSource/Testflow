@@ -191,7 +191,7 @@ namespace Testflow.MasterCore.StatusManage
             else
             {
                 _sessionStateHandles[abortEventInfo.Session].AbortEventProcess(abortEventInfo);
-
+                // 如果都已经Abort结束，则执行结束操作
                 if (_sessionStateHandles.Values.All(item => item.State > RuntimeState.AbortRequested))
                 {
                     _globalInfo.StateMachine.State = RuntimeState.Abort;
@@ -240,11 +240,6 @@ namespace Testflow.MasterCore.StatusManage
                 case MessageType.TestGen:
                     handleResult = HandleTestGenMessage(message);
                     break;
-                case MessageType.Ctrl:
-                case MessageType.Debug:
-                case MessageType.RmtGen:
-                case MessageType.Sync:
-                case MessageType.RuntimeError:
                 default:
                     throw new InvalidOperationException();
             }
@@ -272,9 +267,8 @@ namespace Testflow.MasterCore.StatusManage
                         _globalInfo.StateMachine.State = RuntimeState.Running;
                         _stateManageContext.EventDispatcher.RaiseEvent(Constants.TestInstanceStart,
                             CommonConst.TestGroupSession, _stateManageContext.TestResults);
-
-                        stateHandle.HandleStatusMessage(statusMessage);
                     }
+                    stateHandle.HandleStatusMessage(statusMessage);
                     break;
                 case MessageNames.ReportStatusName:
                     stateHandle.HandleStatusMessage(statusMessage);
