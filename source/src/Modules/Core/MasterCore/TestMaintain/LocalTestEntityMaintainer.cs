@@ -79,8 +79,9 @@ namespace Testflow.MasterCore.TestMaintain
             {
                 if (_runtimeContainers.ContainsKey(id))
                 {
-                    _runtimeContainers[id].Dispose();
+                    RuntimeContainer runtimeContainer = _runtimeContainers[id];
                     _runtimeContainers.Remove(id);
+                    runtimeContainer.Dispose();
                 }
             }
             catch (Exception ex)
