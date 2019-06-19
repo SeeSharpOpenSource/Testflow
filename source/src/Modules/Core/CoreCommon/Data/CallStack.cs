@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Runtime.Serialization;
 using System.Text;
 using Testflow.CoreCommon.Common;
@@ -7,6 +8,7 @@ using Testflow.Runtime;
 
 namespace Testflow.CoreCommon.Data
 {
+    [Serializable]
     public class CallStack : ICallStack, ISerializable
     {
         private const string StackDelim = "_";
