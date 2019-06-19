@@ -287,7 +287,7 @@ namespace Testflow.MasterCore.StatusManage
                             CommonConst.TestGroupSession, _stateManageContext.TestResults);
                     }
                     break;
-                case MessageNames.HearBeatStatusName:
+                case MessageNames.HeartBeatStatusName:
                     stateHandle.HandleStatusMessage(statusMessage);
                     break;
                 default:

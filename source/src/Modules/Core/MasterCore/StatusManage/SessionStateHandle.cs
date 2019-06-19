@@ -352,7 +352,7 @@ namespace Testflow.MasterCore.StatusManage
                     _testResults.TestOver = true;
                     _stateManageContext.EventDispatcher.RaiseEvent(Constants.SessionOver, Session, _testResults);
                     break;
-                case MessageNames.HearBeatStatusName:
+                case MessageNames.HeartBeatStatusName:
                     RefreshTime(message);
 
                     for (int i = 0; i < message.Stacks.Count; i++)

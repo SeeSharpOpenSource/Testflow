@@ -199,7 +199,7 @@ namespace Testflow.MasterCore.StatusManage
                         }
                     }
                     break;
-                case MessageNames.HearBeatStatusName:
+                case MessageNames.HeartBeatStatusName:
                     RefreshCommonStatus(message, newState, stepResult);
                     break;
                 case MessageNames.ErrorStatusName:
