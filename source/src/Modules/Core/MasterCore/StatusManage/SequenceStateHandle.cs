@@ -115,7 +115,7 @@ namespace Testflow.MasterCore.StatusManage
 
                 SequenceFailedInfo failedInfo = new SequenceFailedInfo(_stateManageContext.GlobalInfo.I18N.GetStr("UserAbort"), FailedType.Abort);
                 UpdateSequenceTestResult(failedInfo, null);
-                _eventDispatcher.RaiseEvent(CoreConstants.SequenceOver, eventInfo.Session, _sequenceTestResult);
+                _eventDispatcher.RaiseEvent(Constants.SequenceOver, eventInfo.Session, _sequenceTestResult);
 
                 WriteRuntimeStatusData(StepResult.Failed, string.Empty);
             }
@@ -128,7 +128,7 @@ namespace Testflow.MasterCore.StatusManage
                 RefreshCommonStatus(eventInfo, RuntimeState.DebugBlocked, StepResult.NotAvailable);
                 
                 DebugInformation debugInformation = new DebugInformation(eventInfo, parentSequenceData);
-                _stateManageContext.EventDispatcher.RaiseEvent(CoreConstants.BreakPointHitted, Session,
+                _stateManageContext.EventDispatcher.RaiseEvent(Constants.BreakPointHitted, Session,
                     _stateManageContext.GlobalInfo.DebugHandle, debugInformation);
             }
             else

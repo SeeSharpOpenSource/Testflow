@@ -26,21 +26,5 @@
         public const string ErrorVarValue = "InvalidValue";
 
         public const int EmptyStepIndex = 0;
-
-        #region 事件名称
-
-        public const string TestGenerationStart = "TestGenerationStart";
-
-        public const string TestGenerationReport = "TestGenerationReport";
-        public const string TestGenerationEnd = "TestGenerationEnd";
-        public const string SequenceStarted = "SequenceStarted";
-        public const string StatusReceived = "StatusReceived";
-        public const string SequenceOver = "SequenceOver";
-        public const string TestOver = "TestOver";
-        public const string TestProjectOver = "TestProjectOver";
-        public const string BreakPointHitted = "BreakPointHitted";
-
-        #endregion
-
     }
 }
