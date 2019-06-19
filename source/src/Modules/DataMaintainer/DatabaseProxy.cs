@@ -584,8 +584,9 @@ namespace Testflow.DataMaintainer
                     transaction.Dispose();
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                Logger.Print(LogLevel.Fatal, CommonConst.PlatformLogSession, ex, "Create database failed.");
                 transaction?.Rollback();
                 transaction?.Dispose();
                 Connection?.Dispose();
