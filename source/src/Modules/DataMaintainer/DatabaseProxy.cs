@@ -305,7 +305,7 @@ namespace Testflow.DataMaintainer
             {
                 if (reader.Read())
                 {
-                    performance.AverageAllocatedMemory = reader.GetInt64(0);
+                    performance.AverageAllocatedMemory = (long) reader.GetDouble(0);
                 }
             }
             // 平均使用内存
@@ -315,7 +315,7 @@ namespace Testflow.DataMaintainer
             {
                 if (reader.Read())
                 {
-                    performance.AverageUsedMemory = reader.GetInt64(0);
+                    performance.AverageUsedMemory = (long) reader.GetDouble(0);
                 }
             }
         }
