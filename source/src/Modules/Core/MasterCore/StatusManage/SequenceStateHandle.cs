@@ -177,7 +177,7 @@ namespace Testflow.MasterCore.StatusManage
                         // 更新数据库中的测试数据条目
                         UpdateSequenceResultData(GetFailedInfoStr(message));
                         // 写入RuntimeStatusInfo条目
-                        string watchDataStr = ModuleUtils.WatchDataToString(message.WatchData);
+                        string watchDataStr = ModuleUtils.WatchDataToString(message.WatchData, Session, _sequence);
                         WriteRuntimeStatusData(stepResult, watchDataStr);
 
                         // 触发SequenceOver事件
@@ -194,7 +194,7 @@ namespace Testflow.MasterCore.StatusManage
                         if (message.InterestedSequence.Contains(SequenceIndex))
                         {
                             // 写入RuntimeStatusInfo条目
-                            string watchDataStr = ModuleUtils.WatchDataToString(message.WatchData);
+                            string watchDataStr = ModuleUtils.WatchDataToString(message.WatchData, Session, _sequence);
                             WriteRuntimeStatusData(stepResult, watchDataStr);
                         }
                     }
@@ -210,7 +210,7 @@ namespace Testflow.MasterCore.StatusManage
                     // 更新数据库中的测试数据条目
                     UpdateSequenceResultData(message.ExceptionInfo.ToString());
                     // 写入RuntimeStatusInfo条目
-                    WriteRuntimeStatusData(stepResult, ModuleUtils.WatchDataToString(message.WatchData));
+                    WriteRuntimeStatusData(stepResult, ModuleUtils.WatchDataToString(message.WatchData, Session, _sequence));
 
                     // 触发SequenceOver事件
                     UpdateSequenceTestResult(message.ExceptionInfo, message.WatchData);

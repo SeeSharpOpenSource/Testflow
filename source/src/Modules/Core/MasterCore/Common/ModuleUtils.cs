@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.Management;
 using System.Security.Cryptography;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using Newtonsoft.Json;
 using Testflow.Usr;
 using Testflow.CoreCommon;
+using Testflow.CoreCommon.Common;
 using Testflow.Data.Sequence;
 using Testflow.MasterCore.EventData;
 using Testflow.MasterCore.StatusManage.StatePersistance;
@@ -102,17 +104,28 @@ namespace Testflow.MasterCore.Common
             return GetHashValue(runtimeInfo, encoding);
         }
 
-        public static string WatchDataToString(IDictionary<string, string> watchData)
+        public static string WatchDataToString(IDictionary<string, string> watchData, int session, 
+            ISequenceFlowContainer sequence)
         {
             if (null == watchData || watchData.Count == 0)
             {
                 return string.Empty;
             }
+            Dictionary<string, string> sequenceWatchData = new Dictionary<string, string>(watchData.Count);
+            string varNameRegexStr = CoreUtils.GetVariableNameRegex(sequence, session);
+            Regex varNameRegex = new Regex(varNameRegexStr);
+            foreach (KeyValuePair<string, string> keyValuePair in watchData)
+            {
+                if (varNameRegex.IsMatch(keyValuePair.Key))
+                {
+                    sequenceWatchData.Add(keyValuePair.Key, keyValuePair.Value);
+                }
+            }
             JsonSerializerSettings settings = new JsonSerializerSettings()
             {
-                // TODO
+                NullValueHandling = NullValueHandling.Include
             };
-            return JsonConvert.SerializeObject(watchData, settings);
+            return JsonConvert.SerializeObject(sequenceWatchData, settings);
         }
 
         public static Dictionary<string, string> StrToWatchData(string watchDataStr)
