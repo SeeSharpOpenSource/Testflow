@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading;
 using Newtonsoft.Json;
 using Testflow.Usr;
@@ -86,22 +88,47 @@ namespace Testflow.SlaveCore.Data
             return ModuleUtils.GetParamValue(paramValueStr, this._variables[variableName]);
         }
 
-        public Dictionary<string, string> GetWatchDataValues()
+        public Dictionary<string, string> GetWatchDataValues(ISequenceFlowContainer sequence)
         {
-            Dictionary<string, string> watchDataValues = new Dictionary<string, string>(_keyVariables.Count);
 
             if (_keyVariables.Count == 0)
             {
-                return watchDataValues;
+                return null;
             }
-
             // 获取值已经变更的对象列表拷贝，并清空上个报告周期的值变更列表
             bool getlock = false;
+            List<string> keyVarNames = null;
             _keyVarLock.Enter(ref getlock);
-            List<string> keyVarNames = new List<string>(_keyVariables);
-            _keyVariables.Clear();
+            switch (_context.ExecutionModel)
+            {
+                case ExecutionModel.SequentialExecution:
+                    // 如果序列串行执行，则直接清空所有关键变量，直接返回值
+                    keyVarNames = new List<string>(_keyVariables);
+                    _keyVariables.Clear();
+                    break;
+                case ExecutionModel.ParallelExecution:
+                    // 如果序列并行执行，则只获取当前Sequence的值列表
+                    keyVarNames = new List<string>(_keyVariables.Count);
+                    string varNameRegex = CoreUtils.GetVariableNameRegex(sequence, _context.SessionId);
+                    Regex regex = new Regex(varNameRegex);
+                    keyVarNames.AddRange(_keyVariables.Where(keyVariable => regex.IsMatch(keyVariable)));
+                    foreach (string keyVarName in keyVarNames)
+                    {
+                        _keyVariables.Remove(keyVarName);
+                    }
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
             _keyVarLock.Exit();
 
+            Dictionary<string, string> watchData = GetKeyVariableValues(keyVarNames);
+            return watchData;
+        }
+
+        private Dictionary<string, string> GetKeyVariableValues(List<string> keyVarNames)
+        {
+            Dictionary<string, string> watchDataValues = new Dictionary<string, string>(keyVarNames.Count);
             int index = 0;
             string varName = "";
             while (index < keyVarNames.Count)
@@ -122,21 +149,20 @@ namespace Testflow.SlaveCore.Data
                         {
                             watchDataValues.Add(varName, varValue.ToString());
                         }
-                        else if (varType == typeof(string))
+                        else if (varType == typeof (string))
                         {
                             watchDataValues.Add(varName, (string) varValue);
                         }
                         else if (varType.IsClass)
                         {
                             string varValueString = JsonConvert.SerializeObject(varValue);
-                            watchDataValues.Add(varName, (string)varValueString);
+                            watchDataValues.Add(varName, (string) varValueString);
                         }
                     }
                 }
                 catch (Exception ex)
                 {
-                    _context.LogSession.Print(LogLevel.Warn, CommonConst.PlatformSession, ex,
-                        $"Deserialize variable '{varName}' error.");
+                    _context.LogSession.Print(LogLevel.Warn, CommonConst.PlatformSession, ex, $"Deserialize variable '{varName}' error.");
                     watchDataValues.Add(varName, CoreConstants.ErrorVarValue);
                 }
             }
@@ -175,21 +201,20 @@ namespace Testflow.SlaveCore.Data
                         {
                             returnDataValues.Add(varName, varValue.ToString());
                         }
-                        else if (varType == typeof(string))
+                        else if (varType == typeof (string))
                         {
-                            returnDataValues.Add(varName, (string)varValue);
+                            returnDataValues.Add(varName, (string) varValue);
                         }
                         else if (varType.IsClass)
                         {
                             string varValueString = JsonConvert.SerializeObject(varValue);
-                            returnDataValues.Add(varName, (string)varValueString);
+                            returnDataValues.Add(varName, (string) varValueString);
                         }
                     }
                 }
                 catch (Exception ex)
                 {
-                    _context.LogSession.Print(LogLevel.Warn, CommonConst.PlatformSession, ex,
-                        $"Deserialize variable '{varName}' error.");
+                    _context.LogSession.Print(LogLevel.Warn, CommonConst.PlatformSession, ex, $"Deserialize variable '{varName}' error.");
                     returnDataValues.Add(varName, CoreConstants.ErrorVarValue);
                 }
             }

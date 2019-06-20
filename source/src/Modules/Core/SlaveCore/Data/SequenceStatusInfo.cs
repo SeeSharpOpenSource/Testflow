@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Testflow.CoreCommon.Data;
 using Testflow.Data.Sequence;
 using Testflow.Runtime.Data;
@@ -13,6 +14,7 @@ namespace Testflow.SlaveCore.Data
         public StatusReportType ReportType { get; }
         public Exception Exception { get; }
         public DateTime Time { get; }
+        public Dictionary<string, string> WatchDatas { get; set; }
 
         public SequenceStatusInfo(int sequence, CallStack stack, StatusReportType type, StepResult result, Exception exception = null)
         {

@@ -240,6 +240,8 @@ namespace Testflow.SlaveCore.Runner.Model
                 {
                     SequenceStatusInfo statusInfo = new SequenceStatusInfo(StepData.Index, this.GetStack(), 
                         StatusReportType.Record, Result);
+                    // 更新watch变量值
+                    statusInfo.WatchDatas = Context.VariableMapper.GetWatchDataValues(StepData);
                     Context.StatusQueue.Enqueue(statusInfo);
                 }
             }

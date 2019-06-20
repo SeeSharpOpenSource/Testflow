@@ -119,6 +119,7 @@ namespace Testflow.SlaveCore.Common
                     statusMessage.Stacks.Add(statusInfo.Stack);
                     statusMessage.SequenceStates.Add(RuntimeState.Running);
                     statusMessage.Results.Add(statusInfo.Result);
+                    statusMessage.WatchData = statusInfo.WatchDatas;
                     if (statusInfo.Exception != null && statusInfo.ReportType == StatusReportType.Error)
                     {
                         statusMessage.FailedInfo.Add(statusInfo.Sequence, statusInfo.Exception.Message);
@@ -133,6 +134,7 @@ namespace Testflow.SlaveCore.Common
                         Time = statusInfo.Time,
                         Index = _context.MsgIndex
                     };
+                    // TODO add watch datas
                     _transceiver.SendMessage(debugMessage);
                     break;
                 case StatusReportType.Failed:
@@ -144,6 +146,7 @@ namespace Testflow.SlaveCore.Common
                     statusMessage.Stacks.Add(statusInfo.Stack);
                     statusMessage.SequenceStates.Add(RuntimeState.Failed);
                     statusMessage.Results.Add(statusInfo.Result);
+                    statusMessage.WatchData = statusInfo.WatchDatas;
                     if (statusInfo.Exception != null && statusInfo.ReportType == StatusReportType.Error)
                     {
                         statusMessage.FailedInfo.Add(statusInfo.Sequence, statusInfo.Exception.Message);
@@ -160,6 +163,7 @@ namespace Testflow.SlaveCore.Common
                     statusMessage.Stacks.Add(statusInfo.Stack);
                     statusMessage.SequenceStates.Add(RuntimeState.Success);
                     statusMessage.Results.Add(statusInfo.Result);
+                    statusMessage.WatchData = statusInfo.WatchDatas;
                     ModuleUtils.FillPerformance(statusMessage);
                     _transceiver.SendMessage(statusMessage);
                     break;
@@ -172,6 +176,7 @@ namespace Testflow.SlaveCore.Common
                     statusMessage.Stacks.Add(statusInfo.Stack);
                     statusMessage.SequenceStates.Add(RuntimeState.Error);
                     statusMessage.Results.Add(statusInfo.Result);
+                    statusMessage.WatchData = statusInfo.WatchDatas;
                     if (statusInfo.Exception != null)
                     {
                         statusMessage.FailedInfo.Add(statusInfo.Sequence, statusInfo.Exception.Message);
