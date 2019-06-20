@@ -1,12 +1,9 @@
 ﻿using System;
-using System.Threading;
 using Testflow.Usr;
 using Testflow.CoreCommon;
 using Testflow.CoreCommon.Common;
 using Testflow.CoreCommon.Data;
-using Testflow.CoreCommon.Messages;
 using Testflow.Data.Sequence;
-using Testflow.MasterCore.TestMaintain;
 using Testflow.MasterCore.Common;
 using Testflow.MasterCore.Core;
 using Testflow.MasterCore.Message;
@@ -16,7 +13,6 @@ using Testflow.MasterCore.StatusManage;
 using Testflow.MasterCore.SyncManage;
 using Testflow.Modules;
 using Testflow.Runtime;
-using Testflow.Runtime.Data;
 
 namespace Testflow.MasterCore
 {
@@ -53,6 +49,8 @@ namespace Testflow.MasterCore
             _globalInfo.StateMachine = stateMachine;
             
             RegisterMessageHandler();
+
+            _globalInfo.LogService.Print(LogLevel.Info, CommonConst.PlatformLogSession, "RuntimeEngine constructed.");
         }
 
         public RuntimeStatusManager StatusManager => _statusManager;
@@ -99,18 +97,24 @@ namespace Testflow.MasterCore
                 _globalInfo.LogService.Print(LogLevel.Error, CommonConst.PlatformLogSession, ex, "Initialize internal error.");
                 _globalInfo.StateMachine.State = RuntimeState.Error;
                 _globalInfo.ExceptionManager.Append(ex);
+                // for test
+                throw;
             }
             catch (ApplicationException ex)
             {
                 _globalInfo.LogService.Print(LogLevel.Error, CommonConst.PlatformLogSession, ex, "Initialize runtime error.");
                 _globalInfo.StateMachine.State = RuntimeState.Error;
                 _globalInfo.ExceptionManager.Append(ex);
+                // for test
+                throw;
             }
             catch (Exception ex)
             {
                 _globalInfo.LogService.Print(LogLevel.Fatal, CommonConst.PlatformLogSession, ex, "Initialize fatal error.");
                 _globalInfo.StateMachine.State = RuntimeState.Collapsed;
                 _globalInfo.ExceptionManager.Append(ex);
+                // for test
+                throw;
             }
         }
 
@@ -123,24 +127,31 @@ namespace Testflow.MasterCore
                 _syncManager.Start();
                 _controller.StartTestGeneration();
                 _controller.StartTestWork();
+                _controller.WaitForTaskOver();
             }
             catch (TestflowException ex)
             {
                 _globalInfo.LogService.Print(LogLevel.Error, CommonConst.PlatformLogSession, ex, "Start engine internal error.");
                 _globalInfo.StateMachine.State = RuntimeState.Error;
                 _globalInfo.ExceptionManager.Append(ex);
+                // for test
+                throw;
             }
             catch (ApplicationException ex)
             {
                 _globalInfo.LogService.Print(LogLevel.Error, CommonConst.PlatformLogSession, ex, "Start engine runtime error.");
                 _globalInfo.StateMachine.State = RuntimeState.Error;
                 _globalInfo.ExceptionManager.Append(ex);
+                // for test
+                throw;
             }
             catch (Exception ex)
             {
                 _globalInfo.LogService.Print(LogLevel.Fatal, CommonConst.PlatformLogSession, ex, "Start engine fatal error.");
                 _globalInfo.StateMachine.State = RuntimeState.Collapsed;
                 _globalInfo.ExceptionManager.Append(ex);
+                // for test
+                throw;
             }
         }
 
@@ -153,8 +164,8 @@ namespace Testflow.MasterCore
         {
             try
             {
-                _syncManager?.Stop();
                 _controller?.Stop();
+                _syncManager?.Stop();
                 _statusManager?.Stop();
                 _globalInfo.MessageTransceiver.Deactivate();
             }
