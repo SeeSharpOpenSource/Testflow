@@ -60,13 +60,9 @@ namespace Testflow.MasterCore.TestMaintain.Container
 
         public override void Dispose()
         {
-            if (_testThd.IsAlive)
+            if (_testThd.IsAlive && !_testThd.Join(1000))
             {
-                bool over = _testThd.Join(2000);
-                if (!over)
-                {
-                    _testThd.Abort();
-                }
+                _testThd.Abort();
             }
             AppDomain.Unload(_appDomain);
         }
