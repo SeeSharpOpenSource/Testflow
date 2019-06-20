@@ -124,7 +124,7 @@ namespace Testflow.MasterCore.Message
                 {
                     return;
                 }
-                Start();
+//                Start();
                 Stop();
                 UpLinkMessenger.Clear();
                 Activated = false;
