@@ -1,12 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Runtime.InteropServices;
+using Newtonsoft.Json;
 using Testflow.Usr;
 using Testflow.CoreCommon;
 using Testflow.CoreCommon.Common;
-using Testflow.CoreCommon.Messages;
 using Testflow.Data;
 using Testflow.Data.Sequence;
 using Testflow.Runtime.Data;
@@ -263,7 +261,8 @@ namespace Testflow.SlaveCore.Runner.Model
                     ExecuteStepSingleTime();
                     if (CoreUtils.IsValidVaraible(LoopVar))
                     {
-                        Context.VariableMapper.SetParamValue(LoopVar, StepData.LoopCounter.CounterVariable, LoopCount);
+                        Context.VariableMapper.SetParamValue(LoopVar, StepData.LoopCounter.CounterVariable, LoopCount,
+                            StepData.RecordStatus);
                     }
                 } while (++LoopCount < MaxLoopCount);
             }
@@ -286,7 +285,9 @@ namespace Testflow.SlaveCore.Runner.Model
                         instance = Constructor.Invoke(Params);
                         if (CoreUtils.IsValidVaraible(InstanceVar))
                         {
-                            Context.VariableMapper.SetParamValue(InstanceVar, StepData.Function.Instance, instance);
+                            Context.VariableMapper.SetParamValue(InstanceVar, StepData.Function.Instance, instance,
+                                StepData.RecordStatus);
+                            LogTraceVariable(StepData.Function.Instance);
                         }
                         break;
                     case FunctionType.InstanceFunction:
@@ -294,14 +295,18 @@ namespace Testflow.SlaveCore.Runner.Model
                         returnValue = Method.Invoke(instance, Params);
                         if (CoreUtils.IsValidVaraible(ReturnVar))
                         {
-                            Context.VariableMapper.SetParamValue(ReturnVar, StepData.Function.Return, returnValue);
+                            Context.VariableMapper.SetParamValue(ReturnVar, StepData.Function.Return, returnValue,
+                                StepData.RecordStatus);
+                            LogTraceVariable(StepData.Function.Return);
                         }
                         break;
                     case FunctionType.StaticFunction:
                         returnValue = Method.Invoke(null, Params);
                         if (CoreUtils.IsValidVaraible(ReturnVar))
                         {
-                            Context.VariableMapper.SetParamValue(ReturnVar, StepData.Function.Return, returnValue);
+                            Context.VariableMapper.SetParamValue(ReturnVar, StepData.Function.Return, returnValue,
+                                StepData.RecordStatus);
+                            LogTraceVariable(StepData.Function.Return);
                         }
                         break;
                     default:
@@ -330,6 +335,7 @@ namespace Testflow.SlaveCore.Runner.Model
             }
         }
 
+        // 更新所有被ref或out修饰的参数值。如果变量的LogRecordLevel为Trace，则将更新的值写入日志。
         private void UpdateParamVariableValue()
         {
             for (int i = 0; i < Params.Length; i++)
@@ -345,7 +351,31 @@ namespace Testflow.SlaveCore.Runner.Model
                 string variableName = ModuleUtils.GetVariableNameFromParamValue(parameter.Value);
                 IVariable variable = ModuleUtils.GetVaraibleByRawVarName(variableName, StepData);
                 string runtimeVariableName = CoreUtils.GetRuntimeVariableName(Context.SessionId, variable);
-                Context.VariableMapper.SetParamValue(runtimeVariableName, parameter.Value, value);
+                Context.VariableMapper.SetParamValue(runtimeVariableName, parameter.Value, value, 
+                    StepData.RecordStatus);
+                if (variable.LogRecordLevel == RecordLevel.Trace)
+                {
+                    LogTraceVariable(variable);
+                }
+            }
+        }
+
+        private void LogTraceVariable(IVariable variable)
+        {
+            const string variableLogFormat = "[Variable Trace] Name:{0}, Stack:{1}, Value: {2}.";
+            string stackStr = GetStack().ToString();
+            string varValueStr = JsonConvert.SerializeObject(variable);
+            string printStr = string.Format(variableLogFormat, variable.Name, stackStr, varValueStr);
+            Context.LogSession.Print(LogLevel.Info, Context.SessionId, printStr);
+        }
+
+        private void LogTraceVariable(string varString)
+        {
+            string variableName = ModuleUtils.GetVariableNameFromParamValue(varString);
+            IVariable variable = ModuleUtils.GetVaraibleByRawVarName(variableName, StepData);
+            if (variable.LogRecordLevel == RecordLevel.Trace)
+            {
+                LogTraceVariable(variable);
             }
         }
     }

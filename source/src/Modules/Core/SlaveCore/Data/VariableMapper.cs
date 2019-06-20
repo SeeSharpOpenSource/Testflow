@@ -67,12 +67,12 @@ namespace Testflow.SlaveCore.Data
             }
         }
 
-        public void SetParamValue(string variableName, string paramValue, object value)
+        public void SetParamValue(string variableName, string paramValue, object value, bool recordStatus)
         {
             this._variables[variableName] = ModuleUtils.SetParamValue(paramValue, _variables[variableName], value);
 
             // 监视变量值如果被更新，则添加到值更新列表中，在状态上报时上传该值
-            if (_context.WatchDatas.Contains(variableName))
+            if (recordStatus && _context.WatchDatas.Contains(variableName))
             {
                 bool getlock = false;
                 _keyVarLock.Enter(ref getlock);
