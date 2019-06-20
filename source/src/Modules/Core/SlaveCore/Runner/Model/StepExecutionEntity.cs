@@ -307,6 +307,8 @@ namespace Testflow.SlaveCore.Runner.Model
                     default:
                         throw new ArgumentOutOfRangeException();
                 }
+                // 更新所有被ref修饰的变量类型的值
+                UpdateParamVariableValue();
             }
         }
 
@@ -325,6 +327,25 @@ namespace Testflow.SlaveCore.Runner.Model
                     // 根据ParamString和变量对应的值配置参数。
                     Params[i] = ModuleUtils.GetParamValue(parameters[i].Value, variableValue);
                 }
+            }
+        }
+
+        private void UpdateParamVariableValue()
+        {
+            for (int i = 0; i < Params.Length; i++)
+            {
+                IArgument argument = StepData.Function.ParameterType[i];
+                IParameterData parameter = StepData.Function.Parameters[i];
+                // 如果参数值是直接传递值，或者参数没有使用ref或out修饰，则返回
+                if (parameter.ParameterType == ParameterType.Value || argument.Modifier == ArgumentModifier.None)
+                {
+                    return;
+                }
+                object value = Params[i];
+                string variableName = ModuleUtils.GetVariableNameFromParamValue(parameter.Value);
+                IVariable variable = ModuleUtils.GetVaraibleByRawVarName(variableName, StepData);
+                string runtimeVariableName = CoreUtils.GetRuntimeVariableName(Context.SessionId, variable);
+                Context.VariableMapper.SetParamValue(runtimeVariableName, parameter.Value, value);
             }
         }
     }
