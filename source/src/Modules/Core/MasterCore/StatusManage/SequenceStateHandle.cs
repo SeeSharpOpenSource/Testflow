@@ -158,6 +158,7 @@ namespace Testflow.MasterCore.StatusManage
                 case MessageNames.ReportStatusName:
                     if (State == RuntimeState.StartIdle && newState == RuntimeState.Running)
                     {
+                        this.StartTime = message.Time;
                         // 序列刚开始执行
                         RefreshCommonStatus(message, newState, stepResult);
                         // 更新数据库中的测试数据条目
