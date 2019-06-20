@@ -87,7 +87,7 @@ namespace Testflow.SlaveCore.SlaveFlowControl
             sessionTaskEntity.FillSequenceInfo(statusMessage);
 
             ModuleUtils.FillPerformance(statusMessage);
-            statusMessage.WatchData = Context.VariableMapper.GetWatchDataValues();
+//            statusMessage.WatchData = Context.VariableMapper.GetWatchDataValues();
 
             return statusMessage;
         }
