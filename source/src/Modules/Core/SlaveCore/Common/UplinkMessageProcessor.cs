@@ -72,24 +72,7 @@ namespace Testflow.SlaveCore.Common
 
         private void SendStatusMessage(SequenceStatusInfo statusInfo)
         {
-            if (statusInfo.Sequence == CommonConst.PlatformSession)
-            {
-                switch (statusInfo.ReportType)
-                {
-                    case StatusReportType.Start:
-                        break;
-                    case StatusReportType.Over:
-                        break;
-                    case StatusReportType.Error:
-                        break;
-                    default:
-                        throw new InvalidOperationException();
-                }
-            }
-            else
-            {
-                SendSequenceStatusMessage(statusInfo);
-            }
+            SendSequenceStatusMessage(statusInfo);
         }
 
         private void SendSequenceStatusMessage(SequenceStatusInfo statusInfo)
