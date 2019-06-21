@@ -81,6 +81,7 @@ namespace Testflow.SlaveCore.Runner.Model
                 SequenceStatusInfo overStatusInfo = new SequenceStatusInfo(Index,
                     currentStep.GetStack(), StatusReportType.Over, 
                     currentStep.Result);
+                overStatusInfo.WatchDatas = _context.VariableMapper.GetReturnDataValues(_sequence);
 
                 _context.StatusQueue.Enqueue(overStatusInfo);
             }
@@ -90,6 +91,7 @@ namespace Testflow.SlaveCore.Runner.Model
                 StepTaskEntityBase currentStep = StepTaskEntityBase.GetCurrentStep(Index);
                 SequenceStatusInfo errorStatusInfo = new SequenceStatusInfo(Index,
                     currentStep.GetStack(), StatusReportType.Failed, currentStep.Result, ex);
+                errorStatusInfo.WatchDatas = _context.VariableMapper.GetReturnDataValues(_sequence);
                 this._context.StatusQueue.Enqueue(errorStatusInfo);
                 _context.LogSession.Print(LogLevel.Info, Index, "Step force failed.");
             }
@@ -99,6 +101,7 @@ namespace Testflow.SlaveCore.Runner.Model
                 StepTaskEntityBase currentStep = StepTaskEntityBase.GetCurrentStep(Index);
                 SequenceStatusInfo errorStatusInfo = new SequenceStatusInfo(Index,
                     currentStep.GetStack(), StatusReportType.Failed, currentStep.Result, ex);
+                errorStatusInfo.WatchDatas = _context.VariableMapper.GetReturnDataValues(_sequence);
                 this._context.StatusQueue.Enqueue(errorStatusInfo);
                 _context.LogSession.Print(LogLevel.Fatal, Index, "Assert exception catched.");
             }
@@ -117,6 +120,7 @@ namespace Testflow.SlaveCore.Runner.Model
                 StepTaskEntityBase currentStep = StepTaskEntityBase.GetCurrentStep(Index);
                 SequenceStatusInfo errorStatusInfo = new SequenceStatusInfo(Index,
                     currentStep.GetStack(), StatusReportType.Error, currentStep.Result, ex);
+                errorStatusInfo.WatchDatas = _context.VariableMapper.GetReturnDataValues(_sequence);
                 this._context.StatusQueue.Enqueue(errorStatusInfo);
                 _context.LogSession.Print(LogLevel.Error, Index, ex, "Inner exception catched.");
             }
@@ -126,6 +130,7 @@ namespace Testflow.SlaveCore.Runner.Model
                 StepTaskEntityBase currentStep = StepTaskEntityBase.GetCurrentStep(Index);
                 SequenceStatusInfo errorStatusInfo = new SequenceStatusInfo(Index,
                     currentStep.GetStack(), StatusReportType.Failed, currentStep.Result, ex.InnerException);
+                errorStatusInfo.WatchDatas = _context.VariableMapper.GetReturnDataValues(_sequence);
                 this._context.StatusQueue.Enqueue(errorStatusInfo);
                 _context.LogSession.Print(LogLevel.Error, Index, ex, "Invocation exception catched.");
             }
@@ -136,6 +141,7 @@ namespace Testflow.SlaveCore.Runner.Model
                 StepTaskEntityBase currentStep = StepTaskEntityBase.GetCurrentStep(Index);
                 SequenceStatusInfo errorStatusInfo = new SequenceStatusInfo(Index,
                     currentStep.GetStack(), StatusReportType.Error, currentStep.Result, ex);
+                errorStatusInfo.WatchDatas = _context.VariableMapper.GetReturnDataValues(_sequence);
                 this._context.StatusQueue.Enqueue(errorStatusInfo);
             }
 

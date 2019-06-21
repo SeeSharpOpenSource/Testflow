@@ -221,6 +221,65 @@ namespace Testflow.SlaveCore.Data
             return returnDataValues;
         }
 
+        public Dictionary<string, string> GetReturnDataValues(ISequenceFlowContainer sequence)
+        {
+            Dictionary<string, string> returnDataValues = new Dictionary<string, string>(_context.ReturnDatas.Count);
+
+            if (_context.ReturnDatas.Count == 0)
+            {
+                return returnDataValues;
+            }
+
+            string nameRegex = CoreUtils.GetVariableNameRegex(sequence, _context.SessionId);
+            Regex regex = new Regex(nameRegex);
+
+            string varName = "";
+            HashSet<string>.Enumerator returnEnumerator = _context.ReturnDatas.GetEnumerator();
+            bool hasNext = returnEnumerator.MoveNext();
+            while (hasNext)
+            {
+                try
+                {
+                    while (hasNext)
+                    {
+                        varName = returnEnumerator.Current;
+                        hasNext = returnEnumerator.MoveNext();
+                        // 如果不匹配序列，则跳过
+                        if (!regex.IsMatch(varName))
+                        {
+                            continue;
+                        }
+                        object varValue = _variables[varName];
+                        if (null == varValue)
+                        {
+                            returnDataValues.Add(varName, CoreConstants.NullValue);
+                            continue;
+                        }
+                        Type varType = varValue.GetType();
+                        if (varType.IsValueType || varType.IsEnum)
+                        {
+                            returnDataValues.Add(varName, varValue.ToString());
+                        }
+                        else if (varType == typeof(string))
+                        {
+                            returnDataValues.Add(varName, (string)varValue);
+                        }
+                        else if (varType.IsClass)
+                        {
+                            string varValueString = JsonConvert.SerializeObject(varValue);
+                            returnDataValues.Add(varName, (string)varValueString);
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    _context.LogSession.Print(LogLevel.Warn, CommonConst.PlatformSession, ex, $"Deserialize variable '{varName}' error.");
+                    returnDataValues.Add(varName, CoreConstants.ErrorVarValue);
+                }
+            }
+            return returnDataValues;
+        }
+
         public void Dispose()
         {
             foreach (object value in _variables.Values)
