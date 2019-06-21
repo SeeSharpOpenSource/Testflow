@@ -193,11 +193,11 @@ namespace Testflow.EngineCoreTest
                 Variable returnVar = new Variable()
                 {
                     Description = $"Variable {returnName}",
-                    LogRecordLevel = RecordLevel.FinalResult,
+                    LogRecordLevel = RecordLevel.Trace,
                     Name = returnName,
-                    OIRecordLevel = RecordLevel.FinalResult,
+                    OIRecordLevel = RecordLevel.Trace,
                     Parent = parentSequence,
-                    ReportRecordLevel = RecordLevel.FinalResult,
+                    ReportRecordLevel = RecordLevel.Trace,
                     Type = _testClassTypeData,
                     TypeIndex = 1,
                     VariableType = VariableType.Class
