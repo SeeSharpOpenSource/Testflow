@@ -134,7 +134,7 @@ namespace Testflow.SlaveCore.SlaveFlowControl
                 Index = Context.MsgIndex
             };
             Context.SessionTaskEntity.FillSequenceInfo(errorMessage, Context.I18N.GetStr("RuntimeError"));
-            Context.UplinkMsgProcessor.SendMessage(errorMessage);
+            Context.UplinkMsgProcessor.SendMessage(errorMessage, true);
             ModuleUtils.FillPerformance(errorMessage);
             errorMessage.WatchData = Context.VariableMapper.GetReturnDataValues();
         }
@@ -152,8 +152,8 @@ namespace Testflow.SlaveCore.SlaveFlowControl
                         {
                             sequenceThread.Abort();
                         }
-                        _sequenceThreads.Clear();
                     }
+                    _sequenceThreads.Clear();
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
@@ -180,7 +180,7 @@ namespace Testflow.SlaveCore.SlaveFlowControl
 
         public override void Dispose()
         {
-            _blockEvent?.Reset();
+            _blockEvent?.Set();
             _blockEvent?.Dispose();
             if (null != _sequenceThreads)
             {

@@ -21,6 +21,9 @@ namespace Testflow.SlaveCore.Common
         private Thread _statusPackageThd;
         private CancellationTokenSource _cancellation;
 
+        // 是否正在处理消息的标志位。-1为未执行状态，0为阻塞状态，1为处理过程中，2为处理结束，3为过程结束
+        private int _eventProcessFlag;
+
         public Func<MessageBase> HeartbeatMsgGenerator { get; set; }
 
         public UplinkMessageProcessor(SlaveContext context)
@@ -29,6 +32,7 @@ namespace Testflow.SlaveCore.Common
             this._transceiver = _context.MessageTransceiver;
             this._waitTimer = new Timer(SendHeartBeatMessage, null, Timeout.Infinite, Timeout.Infinite);
             this._heartBeatInterval = _context.GetProperty<int>("StatusUploadInterval");
+            this._eventProcessFlag = -1;
         }
 
         public void Start()
@@ -64,15 +68,27 @@ namespace Testflow.SlaveCore.Common
             LocalEventQueue<SequenceStatusInfo> statusQueue = _context.StatusQueue;
             while (!_cancellation.IsCancellationRequested)
             {
-                SequenceStatusInfo statusInfo = statusQueue.WaitUntilMessageCome();
-                _waitTimer.Change(_heartBeatInterval, _heartBeatInterval);
-                SendStatusMessage(statusInfo);
-            }
-        }
+                // 标记事件处理flag为阻塞中
+                Thread.MemoryBarrier();
+                Thread.VolatileWrite(ref _eventProcessFlag, 0);
 
-        private void SendStatusMessage(SequenceStatusInfo statusInfo)
-        {
-            SendSequenceStatusMessage(statusInfo);
+                SequenceStatusInfo statusInfo = statusQueue.WaitUntilMessageCome();
+                
+                // 标记事件处理flag为处理中
+                Thread.MemoryBarrier();
+                Thread.VolatileWrite(ref _eventProcessFlag, 1);
+                
+                _waitTimer.Change(_heartBeatInterval, _heartBeatInterval);
+                SendSequenceStatusMessage(statusInfo);
+
+                // 标记事件处理flag为处理结束
+                Thread.MemoryBarrier();
+                Thread.VolatileWrite(ref _eventProcessFlag, 2);
+            }
+
+            // 标记事件处理flag为结束状态
+            Thread.MemoryBarrier();
+            Thread.VolatileWrite(ref _eventProcessFlag, 3);
         }
 
         private void SendSequenceStatusMessage(SequenceStatusInfo statusInfo)
@@ -187,8 +203,22 @@ namespace Testflow.SlaveCore.Common
             }
         }
 
-        public void SendMessage(MessageBase message)
+        /// <summary>
+        /// 发送消息
+        /// </summary>
+        /// <param name="message">待发送的消息</param>
+        /// <param name="waitEventOver">是否等待事件处理结束，如果为true，则必须等事件队列中所有的被处理完才能发送</param>
+        public void SendMessage(MessageBase message, bool waitEventOver)
         {
+            if (waitEventOver && _statusPackageThd.IsAlive)
+            {
+                // 如果事件队列长度大于0，或者当前处于事件处理的过程，暂停发送。
+                // TODO 这里的多线程处理并不完善，在获取到消息但是状态1还未被配置时调用时仍会出现问题，后续优化
+                while (_context.StatusQueue.Count > 0 || _eventProcessFlag == 1)
+                {
+                    Thread.Yield();
+                }
+            }
             _transceiver.SendMessage(message);
             // 如果过程未结束，并且发送的是StatusMaintainer接收的消息，则重置心跳包发送timer
             if (!_cancellation.IsCancellationRequested &&

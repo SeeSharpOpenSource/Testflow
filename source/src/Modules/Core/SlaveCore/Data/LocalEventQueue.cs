@@ -17,6 +17,18 @@ namespace Testflow.SlaveCore.Data
         private int _blockCount;
         private int _forceFree;
 
+        public new int Count
+        {
+            get
+            {
+                bool getLock = false;
+                _operationLock.Enter(ref getLock);
+                int count = base.Count;
+                _operationLock.Exit();
+                return count;
+            }
+        }
+
         public LocalEventQueue(int capacity) : base(capacity)
         {
             _operationLock = new SpinLock();

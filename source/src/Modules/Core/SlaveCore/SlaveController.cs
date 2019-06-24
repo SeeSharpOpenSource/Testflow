@@ -57,7 +57,7 @@ namespace Testflow.SlaveCore
                 {
                     Index = _context.MsgIndex
                 };
-                _context.UplinkMsgProcessor.SendMessage(runtimeErrorMessage);
+                _context.UplinkMsgProcessor.SendMessage(runtimeErrorMessage, true);
             }
             finally
             {

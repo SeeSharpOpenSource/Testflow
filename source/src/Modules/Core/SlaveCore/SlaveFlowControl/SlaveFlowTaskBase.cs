@@ -62,7 +62,7 @@ namespace Testflow.SlaveCore.SlaveFlowControl
                 {
                     Index = Context.MsgIndex
                 };
-                Context.UplinkMsgProcessor.SendMessage(errorMessage);
+                Context.UplinkMsgProcessor.SendMessage(errorMessage, true);
             }
         }
 
@@ -98,7 +98,7 @@ namespace Testflow.SlaveCore.SlaveFlowControl
                 Index = Context.MsgIndex,
             };
             abortMessage.Params.Add("AbortSuccess", true.ToString());
-            Context.UplinkMsgProcessor.SendMessage(abortMessage);
+            Context.UplinkMsgProcessor.SendMessage(abortMessage, true);
         }
 
         protected void SendStartMessage()
@@ -109,7 +109,7 @@ namespace Testflow.SlaveCore.SlaveFlowControl
                 Index = Context.MsgIndex
             };
             ModuleUtils.FillPerformance(statusMessage);
-            Context.UplinkMsgProcessor.SendMessage(statusMessage);
+            Context.UplinkMsgProcessor.SendMessage(statusMessage, false);
         }
 
         protected void SendOverMessage()
@@ -120,7 +120,7 @@ namespace Testflow.SlaveCore.SlaveFlowControl
                 Index = Context.MsgIndex
             };
             ModuleUtils.FillPerformance(statusMessage);
-            Context.UplinkMsgProcessor.SendMessage(statusMessage);
+            Context.UplinkMsgProcessor.SendMessage(statusMessage, true);
         }
     }
 }
