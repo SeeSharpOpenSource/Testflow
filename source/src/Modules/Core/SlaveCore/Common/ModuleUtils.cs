@@ -115,13 +115,27 @@ namespace Testflow.SlaveCore.Common
             {
                 variable = ((ISequenceGroup) sequenceData).Variables.FirstOrDefault(item => item.Name == rawVarName);
             }
-            else if (sequenceData is ISequenceStep)
+            else if (sequenceData is ISequence)
             {
-                variable = ((ISequence)sequenceData).Variables.FirstOrDefault(item => item.Name == rawVarName);
+                variable = ((ISequence) sequenceData).Variables.FirstOrDefault(item => item.Name == rawVarName);
                 if (null == variable)
                 {
                     variable =
                         ((ISequenceGroup) sequenceData.Parent).Variables.FirstOrDefault(item => item.Name == rawVarName);
+                }
+            }
+            else if (sequenceData is ISequenceStep)
+            {
+                ISequenceFlowContainer sequence = sequenceData;
+                do
+                {
+                    sequence = sequence.Parent;
+                } while (sequence is ISequenceStep);
+                variable = ((ISequence)sequence).Variables.FirstOrDefault(item => item.Name == rawVarName);
+                if (null == variable)
+                {
+                    variable =
+                        ((ISequenceGroup)sequence.Parent).Variables.FirstOrDefault(item => item.Name == rawVarName);
                 }
             }
             return variable;
