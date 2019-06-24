@@ -189,6 +189,20 @@ namespace Testflow.SlaveCore.Runner.Model
                         Params[i] = variable;
                     }
                 }
+                if (null != StepData.Function.ReturnType && CoreUtils.IsValidVaraible(StepData.Function.Return))
+                {
+                    // 如果是变量，则先获取对应的Varaible变量，真正的值在运行时才更新获取
+                    string variableName = ModuleUtils.GetVariableNameFromParamValue(StepData.Function.Return);
+                    IVariable variable = ModuleUtils.GetVaraibleByRawVarName(variableName, StepData);
+                    if (null == variable)
+                    {
+                        Context.LogSession.Print(LogLevel.Error, SequenceIndex,
+                            $"Unexist variable '{variableName}' in sequence data.");
+                        throw new TestflowDataException(ModuleErrorCode.SequenceDataError,
+                            Context.I18N.GetFStr("UnexistVariable", variableName));
+                    }
+                    ReturnVar = CoreUtils.GetRuntimeVariableName(Context.SessionId, variable);
+                }
             }
             NextStep?.InitializeParamsValues();
         }
