@@ -117,9 +117,9 @@ namespace Testflow.SlaveCore.Common
                     statusMessage.SequenceStates.Add(RuntimeState.Running);
                     statusMessage.Results.Add(statusInfo.Result);
                     statusMessage.WatchData = statusInfo.WatchDatas;
-                    if (statusInfo.Exception != null && statusInfo.ReportType == StatusReportType.Error)
+                    if (statusInfo.FailedInfo != null)
                     {
-                        statusMessage.FailedInfo.Add(statusInfo.Sequence, statusInfo.Exception.Message);
+                        statusMessage.FailedInfo.Add(statusInfo.Sequence, statusInfo.FailedInfo.ToString());
                     }
                     _transceiver.SendMessage(statusMessage);
                     break;
@@ -143,9 +143,9 @@ namespace Testflow.SlaveCore.Common
                     statusMessage.SequenceStates.Add(RuntimeState.Failed);
                     statusMessage.Results.Add(statusInfo.Result);
                     statusMessage.WatchData = statusInfo.WatchDatas;
-                    if (statusInfo.Exception != null && statusInfo.ReportType == StatusReportType.Error)
+                    if (statusInfo.FailedInfo != null)
                     {
-                        statusMessage.FailedInfo.Add(statusInfo.Sequence, statusInfo.Exception.Message);
+                        statusMessage.FailedInfo.Add(statusInfo.Sequence, statusInfo.FailedInfo.ToString());
                     }
                     _transceiver.SendMessage(statusMessage);
                     break;
@@ -171,10 +171,10 @@ namespace Testflow.SlaveCore.Common
                     statusMessage.SequenceStates.Add(RuntimeState.Error);
                     statusMessage.Results.Add(statusInfo.Result);
                     statusMessage.WatchData = statusInfo.WatchDatas;
-                    if (statusInfo.Exception != null)
+                    if (statusInfo.FailedInfo != null)
                     {
-                        statusMessage.FailedInfo.Add(statusInfo.Sequence, statusInfo.Exception.Message);
-                        statusMessage.ExceptionInfo = new SequenceFailedInfo(statusInfo.Exception);
+                        statusMessage.FailedInfo.Add(statusInfo.Sequence, statusInfo.FailedInfo.ToString());
+                        statusMessage.ExceptionInfo = null;
                     }
                     _transceiver.SendMessage(statusMessage);
                     break;

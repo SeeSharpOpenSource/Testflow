@@ -12,16 +12,17 @@ namespace Testflow.SlaveCore.Data
         public CallStack Stack { get; }
         public StepResult Result { get; }
         public StatusReportType ReportType { get; }
-        public Exception Exception { get; }
+        public SequenceFailedInfo FailedInfo { get; }
         public DateTime Time { get; }
         public Dictionary<string, string> WatchDatas { get; set; }
 
-        public SequenceStatusInfo(int sequence, CallStack stack, StatusReportType type, StepResult result, Exception exception = null)
+        public SequenceStatusInfo(int sequence, CallStack stack, StatusReportType type, StepResult result, 
+            SequenceFailedInfo failedInfo = null)
         {
             this.Sequence = sequence;
             this.Stack = stack;
             this.ReportType = type;
-            this.Exception = exception;
+            this.FailedInfo = failedInfo;
             this.Time = DateTime.Now;
             this.Result = result;
         }

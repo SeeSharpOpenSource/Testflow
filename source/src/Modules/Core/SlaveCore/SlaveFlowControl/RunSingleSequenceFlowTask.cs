@@ -41,9 +41,9 @@ namespace Testflow.SlaveCore.SlaveFlowControl
                 {
                     sessionTaskEntity.GetSequenceTaskEntity(i).State = RuntimeState.Failed;
 
-                    TaskFailedException failedException = new TaskFailedException(i, Context.I18N.GetStr("SetUpFailed"));
+                    SequenceFailedInfo failedInfo = new SequenceFailedInfo(Context.I18N.GetStr("SetUpFailed"), FailedType.SetUpFailed);
                     SequenceStatusInfo statusInfo = new SequenceStatusInfo(i, ModuleUtils.GetSequenceStack(i), 
-                        StatusReportType.Failed, StepResult.NotAvailable, failedException);
+                        StatusReportType.Failed, StepResult.NotAvailable, failedInfo);
                     Context.StatusQueue.Enqueue(statusInfo);
                 }
                 // 打印状态日志
@@ -68,7 +68,7 @@ namespace Testflow.SlaveCore.SlaveFlowControl
         {
             StatusMessage errorMessage = new StatusMessage(MessageNames.ErrorStatusName, Context.State, Context.SessionId)
             {
-                ExceptionInfo = new SequenceFailedInfo(ex),
+                ExceptionInfo = new SequenceFailedInfo(ex, FailedType.RuntimeError),
                 Index = Context.MsgIndex
             };
             Context.SessionTaskEntity.FillSequenceInfo(errorMessage, Context.I18N.GetStr("RuntimeError"));

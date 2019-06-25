@@ -89,8 +89,9 @@ namespace Testflow.SlaveCore.Runner.Model
             {
                 this.State = RuntimeState.Failed;
                 StepTaskEntityBase currentStep = StepTaskEntityBase.GetCurrentStep(Index);
+                SequenceFailedInfo failedInfo = new SequenceFailedInfo(ex, ex.FailedType);
                 SequenceStatusInfo errorStatusInfo = new SequenceStatusInfo(Index,
-                    currentStep.GetStack(), StatusReportType.Failed, currentStep.Result, ex);
+                    currentStep.GetStack(), StatusReportType.Failed, currentStep.Result, failedInfo);
                 errorStatusInfo.WatchDatas = _context.VariableMapper.GetReturnDataValues(_sequence);
                 this._context.StatusQueue.Enqueue(errorStatusInfo);
                 _context.LogSession.Print(LogLevel.Info, Index, "Step force failed.");
@@ -99,18 +100,20 @@ namespace Testflow.SlaveCore.Runner.Model
             {
                 this.State = RuntimeState.Failed;
                 StepTaskEntityBase currentStep = StepTaskEntityBase.GetCurrentStep(Index);
+                SequenceFailedInfo failedInfo = new SequenceFailedInfo(ex, FailedType.AssertionFailed);
                 SequenceStatusInfo errorStatusInfo = new SequenceStatusInfo(Index,
-                    currentStep.GetStack(), StatusReportType.Failed, currentStep.Result, ex);
+                    currentStep.GetStack(), StatusReportType.Failed, currentStep.Result, failedInfo);
                 errorStatusInfo.WatchDatas = _context.VariableMapper.GetReturnDataValues(_sequence);
                 this._context.StatusQueue.Enqueue(errorStatusInfo);
                 _context.LogSession.Print(LogLevel.Fatal, Index, "Assert exception catched.");
             }
-            catch (ThreadAbortException)
+            catch (ThreadAbortException ex)
             {
                 this.State = RuntimeState.Abort;
                 StepTaskEntityBase currentStep = StepTaskEntityBase.GetCurrentStep(Index);
+                SequenceFailedInfo failedInfo = new SequenceFailedInfo(ex, FailedType.Abort);
                 SequenceStatusInfo statusInfo = new SequenceStatusInfo(Index,
-                    currentStep.GetStack(), StatusReportType.Error, currentStep.Result);
+                    currentStep.GetStack(), StatusReportType.Error, currentStep.Result, failedInfo);
                 this._context.StatusQueue.Enqueue(statusInfo);
                 _context.LogSession.Print(LogLevel.Warn, Index, $"Sequence {Index} execution aborted");
             }
@@ -118,8 +121,9 @@ namespace Testflow.SlaveCore.Runner.Model
             {
                 this.State = RuntimeState.Error;
                 StepTaskEntityBase currentStep = StepTaskEntityBase.GetCurrentStep(Index);
+                SequenceFailedInfo failedInfo = new SequenceFailedInfo(ex, FailedType.RuntimeError);
                 SequenceStatusInfo errorStatusInfo = new SequenceStatusInfo(Index,
-                    currentStep.GetStack(), StatusReportType.Error, currentStep.Result, ex);
+                    currentStep.GetStack(), StatusReportType.Error, currentStep.Result, failedInfo);
                 errorStatusInfo.WatchDatas = _context.VariableMapper.GetReturnDataValues(_sequence);
                 this._context.StatusQueue.Enqueue(errorStatusInfo);
                 _context.LogSession.Print(LogLevel.Error, Index, ex, "Inner exception catched.");
@@ -128,8 +132,9 @@ namespace Testflow.SlaveCore.Runner.Model
             {
                 this.State = RuntimeState.Failed;
                 StepTaskEntityBase currentStep = StepTaskEntityBase.GetCurrentStep(Index);
+                SequenceFailedInfo failedInfo = new SequenceFailedInfo(ex, FailedType.TargetError);
                 SequenceStatusInfo errorStatusInfo = new SequenceStatusInfo(Index,
-                    currentStep.GetStack(), StatusReportType.Failed, currentStep.Result, ex.InnerException);
+                    currentStep.GetStack(), StatusReportType.Failed, currentStep.Result, failedInfo);
                 errorStatusInfo.WatchDatas = _context.VariableMapper.GetReturnDataValues(_sequence);
                 this._context.StatusQueue.Enqueue(errorStatusInfo);
                 _context.LogSession.Print(LogLevel.Error, Index, ex, "Invocation exception catched.");
@@ -137,13 +142,13 @@ namespace Testflow.SlaveCore.Runner.Model
             catch (Exception ex)
             {
                 this.State = RuntimeState.Error;
-                _context.LogSession.Print(LogLevel.Fatal, Index, ex, "Runtime exception catched.");
                 StepTaskEntityBase currentStep = StepTaskEntityBase.GetCurrentStep(Index);
+                SequenceFailedInfo failedInfo = new SequenceFailedInfo(ex, FailedType.RuntimeError);
                 SequenceStatusInfo errorStatusInfo = new SequenceStatusInfo(Index,
-                    currentStep.GetStack(), StatusReportType.Error, currentStep.Result, ex);
+                    currentStep.GetStack(), StatusReportType.Error, currentStep.Result, failedInfo);
                 errorStatusInfo.WatchDatas = _context.VariableMapper.GetReturnDataValues(_sequence);
                 this._context.StatusQueue.Enqueue(errorStatusInfo);
-                _context.LogSession.Print(LogLevel.Error, Index, ex, "Unexpected exception catched.");
+                _context.LogSession.Print(LogLevel.Error, Index, ex, "Runtime exception catched.");
             }
             finally
             {
@@ -179,7 +184,6 @@ namespace Testflow.SlaveCore.Runner.Model
             message.Stacks.Add(StepTaskEntityBase.GetCurrentStep(Index).GetStack());
             message.SequenceStates.Add(this.State);
             message.Results.Add(StepResult.NotAvailable);
-            message.FailedInfo.Add(Index, errorInfo);
         }
     }
 }

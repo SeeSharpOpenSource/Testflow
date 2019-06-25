@@ -7,6 +7,7 @@ using Testflow.CoreCommon;
 using Testflow.CoreCommon.Common;
 using Testflow.Data;
 using Testflow.Data.Sequence;
+using Testflow.Runtime;
 using Testflow.Runtime.Data;
 using Testflow.SlaveCore.Common;
 using Testflow.SlaveCore.Data;
@@ -237,11 +238,8 @@ namespace Testflow.SlaveCore.Runner.Model
                     case RunBehavior.ForceFailed:
                         ExecuteSequenceStep();
                         this.Result = StepResult.Failed;
-                        TestflowAssertException exception = new TestflowAssertException(Context.I18N.GetStr("StepForceFailed"));
-                        SequenceStatusInfo info = new SequenceStatusInfo(SequenceIndex, this.GetStack(),
-                            StatusReportType.Failed, this.Result, exception);
-                        Context.StatusQueue.Enqueue(info);
-                        throw new TaskFailedException(SequenceIndex);
+                        // 抛出强制失败异常
+                        throw new TaskFailedException(SequenceIndex, FailedType.ForceFailed);
                         break;
                     default:
                         throw new ArgumentOutOfRangeException();
