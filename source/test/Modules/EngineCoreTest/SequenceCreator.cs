@@ -61,7 +61,7 @@ namespace Testflow.EngineCoreTest
             sequence1.Description = "Sequence Description";
 
             sequence1.Steps.Add(CreateClassGenStep("instance", sequence1));
-            sequence1.Steps.Add(CreateInstanceWaitStep("instance", "waitTime", sequence1));
+            sequence1.Steps.Add(CreateInstanceWaitStep("instance", "200", sequence1, "totalWaitTime"));
             sequence1.Steps.Add(CreateGetFuncStep("instance", "totalTime", sequence1));
 
             sequenceGroup.Sequences.Add(sequence1);
@@ -71,10 +71,20 @@ namespace Testflow.EngineCoreTest
             sequence2.Description = "Sequence Description";
 
             sequence2.Steps.Add(CreateClassGenStep("instance", sequence2));
-            sequence2.Steps.Add(CreateInstanceWaitStep("instance", "waitTime", sequence2));
+            sequence2.Steps.Add(CreateInstanceVarParamWaitStep("instance", "waitTime", "300", sequence2, "totalWaitTime"));
             sequence2.Steps.Add(CreateErrorStep("instance"));
 
             sequenceGroup.Sequences.Add(sequence2);
+
+            ISequence sequence3 = _sequenceManager.CreateSequence();
+            sequence3.Behavior = RunBehavior.Normal;
+            sequence3.Description = "Sequence Description";
+
+            sequence3.Steps.Add(CreateClassGenStep("instance", sequence3));
+            sequence3.Steps.Add(CreateInstanceWaitStep("instance", "200", sequence3, "totalWaitTime"));
+            sequence3.Steps.Add(CreateErrorStep("instance"));
+
+            sequenceGroup.Sequences.Add(sequence3);
             _sequenceManager.ValidateSequenceData(sequenceGroup, testProject);
 
             testProject.SequenceGroups.Add(sequenceGroup);
@@ -185,22 +195,23 @@ namespace Testflow.EngineCoreTest
             return step;
         }
 
-        private ISequenceStep CreateInstanceWaitStep(string instanceName, string returnName, ISequence parentSequence)
+        private ISequenceStep CreateInstanceWaitStep(string instanceName, string paramValue, ISequence parentSequence, 
+            string returnName)
         {
             if (parentSequence.Variables.All(item => !item.Name.Equals(returnName)))
             {
                 // 添加实例变量
                 Variable returnVar = new Variable()
                 {
-                    Description = $"Variable {returnName}",
+                    Description = returnName,
                     LogRecordLevel = RecordLevel.Trace,
                     Name = returnName,
                     OIRecordLevel = RecordLevel.Trace,
                     Parent = parentSequence,
                     ReportRecordLevel = RecordLevel.Trace,
-                    Type = _testClassTypeData,
-                    TypeIndex = 1,
-                    VariableType = VariableType.Class
+                    Type = _intTypeData,
+                    TypeIndex = 0,
+                    VariableType = VariableType.Value
                 };
                 parentSequence.Variables.Add(returnVar);
             }
@@ -235,7 +246,83 @@ namespace Testflow.EngineCoreTest
             {
                 Index = 0,
                 ParameterType = ParameterType.Value,
-                Value = "100"
+                Value = paramValue
+            };
+            step.Function.Parameters.Add(intParameterData);
+            return step;
+        }
+
+        private ISequenceStep CreateInstanceVarParamWaitStep(string instanceName, string varName, string varValue, ISequence parentSequence, 
+            string returnName)
+        {
+            if (parentSequence.Variables.All(item => !item.Name.Equals(varName)))
+            {
+                // 添加实例变量
+                Variable paramVar = new Variable()
+                {
+                    Description = $"Variable {varName}",
+                    LogRecordLevel = RecordLevel.Trace,
+                    Name = varName,
+                    OIRecordLevel = RecordLevel.Trace,
+                    Parent = parentSequence,
+                    ReportRecordLevel = RecordLevel.Trace,
+                    Type = _intTypeData,
+                    TypeIndex = 0,
+                    VariableType = VariableType.Class,
+                    Value = varValue
+                };
+                parentSequence.Variables.Add(paramVar);
+            }
+
+            if (parentSequence.Variables.All(item => !item.Name.Equals(returnName)))
+            {
+                // 添加实例变量
+                Variable returnVar = new Variable()
+                {
+                    Description = $"Variable {returnName}",
+                    LogRecordLevel = RecordLevel.Trace,
+                    Name = returnName,
+                    OIRecordLevel = RecordLevel.Trace,
+                    Parent = parentSequence,
+                    ReportRecordLevel = RecordLevel.Trace,
+                    Type = _intTypeData,
+                    TypeIndex = 0,
+                    VariableType = VariableType.Value
+                };
+                parentSequence.Variables.Add(returnVar);
+            }
+
+            // 添加实例化类的step
+            ISequenceStep step = _sequenceManager.CreateSequenceStep();
+            step.RecordStatus = true;
+            Argument intArgument = new Argument()
+            {
+                Modifier = ArgumentModifier.None,
+                Name = "waitTime",
+                Type = _intTypeData,
+                TypeIndex = 0,
+                VariableType = VariableType.Value
+            };
+            step.Function = new FunctionData()
+            {
+                ClassType = _testClassTypeData,
+                ClassTypeIndex = 1,
+                Description = null,
+                Instance = instanceName,
+                MethodName = InstanceMethodName,
+                Return = returnName,
+                ReturnType = intArgument,
+                Type = FunctionType.InstanceFunction
+            };
+            step.Function.ParameterType = new ArgumentCollection();
+            step.Function.ParameterType.Add(intArgument);
+
+            step.Function.Parameters = new ParameterDataCollection();
+            ParameterData intParameterData = new ParameterData()
+            {
+                Index = 0,
+                ParameterType = ParameterType.Variable,
+                Value = varName
             };
             step.Function.Parameters.Add(intParameterData);
             return step;
@@ -250,13 +337,13 @@ namespace Testflow.EngineCoreTest
                 {
                     Description = $"Variable {returnName}",
                     LogRecordLevel = RecordLevel.FinalResult,
-                    Name = instanceName,
+                    Name = returnName,
                     OIRecordLevel = RecordLevel.FinalResult,
                     Parent = parentSequence,
                     ReportRecordLevel = RecordLevel.FinalResult,
                     Type = _testClassTypeData,
                     TypeIndex = 1,
-                    VariableType = VariableType.Class
+                    VariableType = VariableType.Class,
                 };
                 parentSequence.Variables.Add(returnVar);
             }

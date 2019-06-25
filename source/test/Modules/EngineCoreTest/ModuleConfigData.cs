@@ -29,13 +29,13 @@ namespace Testflow.EngineCoreTest
             Properties.Add("ModelVersion", "10.12.35");
             Properties.Add("FileEncoding", "utf-8");
 
-            Properties.Add("TestGenReportInterval", 1000);
-            Properties.Add("TestRunReportInterval", 1000);
+            Properties.Add("TestGenReportInterval", 200);
+            Properties.Add("TestRunReportInterval", 200);
             Properties.Add("EngineQueueFormat", FormatterType.Json);
             Properties.Add("EngineSyncMessenger", true);
             Properties.Add("RuntimeType", RuntimeType.Debug);
             Properties.Add("MessageReceiveTimeout", 10000);
-            Properties.Add("StatusUploadInterval", 2000);
+            Properties.Add("StatusUploadInterval", 200);
             Properties.Add("ConnectionTimeout", 10000);
             Properties.Add("SyncTimeout", 30000);
             Properties.Add("TestTimeout", 3600000);
