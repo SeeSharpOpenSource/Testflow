@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Runtime.Serialization;
 using System.Text;
+using Testflow.CoreCommon.Common;
 using Testflow.Runtime;
 using Testflow.Runtime.Data;
 
@@ -8,6 +9,16 @@ namespace Testflow.CoreCommon.Data
 {
     public class SequenceFailedInfo : ISequenceFailedInfo, ISerializable
     {
+        private const string Delim = "$#_#$";
+
+        public static string GetFailedStr(Exception exception, FailedType failedType)
+        {
+            StringBuilder failedStr = new StringBuilder(400);
+            return failedStr.Append(failedType).Append(Delim).Append(exception.Message).Append(Delim)
+                .Append(exception.Source).Append(Delim).Append(exception.StackTrace).Append(Delim)
+                .Append(exception.GetType().Name).ToString();
+        }
+
         public FailedType Type { get; set; }
         public string Message { get; set; }
         public string Source { get; set; }
@@ -23,18 +34,16 @@ namespace Testflow.CoreCommon.Data
             this.ExceptionType = string.Empty;
         }
 
-        public SequenceFailedInfo(Exception exception)
+        public SequenceFailedInfo(Exception exception, FailedType failedType)
         {
             this.Message = exception.Message;
-            Type = exception is ApplicationException ? FailedType.UnHandledException : FailedType.RuntimeError;
+            this.Type = failedType;
             this.Source = exception.Source;
             this.StackTrace = exception.StackTrace;
             Type exceptionType = typeof(Exception);
             this.ExceptionType = $"{exceptionType.Namespace}.{exceptionType.Name}";
         }
-
-        const string Delim = "$#_#$";
-
+        
         public SequenceFailedInfo(string failedStr)
         {
             string[] failedInfoDelim = failedStr.Split(Delim.ToCharArray());
@@ -47,9 +56,9 @@ namespace Testflow.CoreCommon.Data
 
         public override string ToString()
         {
-            StringBuilder failedStr = new StringBuilder(300);
+            StringBuilder failedStr = new StringBuilder(400);
             return failedStr.Append(Type).Append(Delim).Append(Message).Append(Delim).Append(Source)
-                    .Append(Delim).Append(StackTrace).Append(Delim).Append(ExceptionType).ToString();
+                .Append(Delim).Append(StackTrace).Append(Delim).Append(ExceptionType).ToString();
         }
 
         public SequenceFailedInfo(SerializationInfo info, StreamingContext context)
