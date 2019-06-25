@@ -303,7 +303,7 @@ namespace Testflow.SlaveCore.Runner.Model
                         {
                             Context.VariableMapper.SetParamValue(InstanceVar, StepData.Function.Instance, instance,
                                 StepData.RecordStatus);
-                            LogTraceVariable(StepData.Function.Instance);
+                            LogTraceVariable(StepData.Function.Instance, InstanceVar);
                         }
                         break;
                     case FunctionType.InstanceFunction:
@@ -313,7 +313,7 @@ namespace Testflow.SlaveCore.Runner.Model
                         {
                             Context.VariableMapper.SetParamValue(ReturnVar, StepData.Function.Return, returnValue,
                                 StepData.RecordStatus);
-                            LogTraceVariable(StepData.Function.Return);
+                            LogTraceVariable(StepData.Function.Return, returnValue);
                         }
                         break;
                     case FunctionType.StaticFunction:
@@ -322,7 +322,7 @@ namespace Testflow.SlaveCore.Runner.Model
                         {
                             Context.VariableMapper.SetParamValue(ReturnVar, StepData.Function.Return, returnValue,
                                 StepData.RecordStatus);
-                            LogTraceVariable(StepData.Function.Return);
+                            LogTraceVariable(StepData.Function.Return, returnValue);
                         }
                         break;
                     default:
@@ -371,27 +371,37 @@ namespace Testflow.SlaveCore.Runner.Model
                     StepData.RecordStatus);
                 if (variable.LogRecordLevel == RecordLevel.Trace)
                 {
-                    LogTraceVariable(variable);
+                    LogTraceVariable(variable, value);
                 }
             }
         }
 
-        private void LogTraceVariable(IVariable variable)
+        private void LogTraceVariable(IVariable variable, object value)
         {
             const string variableLogFormat = "[Variable Trace] Name:{0}, Stack:{1}, Value: {2}.";
             string stackStr = GetStack().ToString();
-            string varValueStr = JsonConvert.SerializeObject(variable);
+            string varValueStr;
+            if (null != value)
+            {
+                varValueStr = variable.VariableType == VariableType.Class
+                    ? JsonConvert.SerializeObject(value)
+                    : value.ToString();
+            }
+            else
+            {
+                varValueStr = CoreConstants.NullValue;
+            }
             string printStr = string.Format(variableLogFormat, variable.Name, stackStr, varValueStr);
             Context.LogSession.Print(LogLevel.Info, Context.SessionId, printStr);
         }
 
-        private void LogTraceVariable(string varString)
+        private void LogTraceVariable(string varString, object value)
         {
             string variableName = ModuleUtils.GetVariableNameFromParamValue(varString);
             IVariable variable = ModuleUtils.GetVaraibleByRawVarName(variableName, StepData);
             if (variable.LogRecordLevel == RecordLevel.Trace)
             {
-                LogTraceVariable(variable);
+                LogTraceVariable(variable, value);
             }
         }
     }
