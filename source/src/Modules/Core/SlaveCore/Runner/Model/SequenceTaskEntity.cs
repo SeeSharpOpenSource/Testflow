@@ -79,7 +79,7 @@ namespace Testflow.SlaveCore.Runner.Model
 
                 StepTaskEntityBase currentStep = StepTaskEntityBase.GetCurrentStep(Index);
                 SequenceStatusInfo overStatusInfo = new SequenceStatusInfo(Index,
-                    currentStep.GetStack(), StatusReportType.Over, 
+                    currentStep.GetStack(), StatusReportType.Over,
                     currentStep.Result);
                 overStatusInfo.WatchDatas = _context.VariableMapper.GetReturnDataValues(_sequence);
 
@@ -143,6 +143,15 @@ namespace Testflow.SlaveCore.Runner.Model
                     currentStep.GetStack(), StatusReportType.Error, currentStep.Result, ex);
                 errorStatusInfo.WatchDatas = _context.VariableMapper.GetReturnDataValues(_sequence);
                 this._context.StatusQueue.Enqueue(errorStatusInfo);
+                _context.LogSession.Print(LogLevel.Error, Index, ex, "Unexpected exception catched.");
+            }
+            finally
+            {
+                _context.VariableMapper.ClearSequenceVariables(_sequence);
+                this._stepEntityRoot = null;
+                StepTaskEntityBase currentStep = StepTaskEntityBase.GetCurrentStep(Index);
+                // 将失败步骤职责链以后的step标记为null
+                currentStep.NextStep = null;
             }
 
         }

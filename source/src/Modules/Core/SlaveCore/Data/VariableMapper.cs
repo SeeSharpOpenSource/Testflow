@@ -83,6 +83,22 @@ namespace Testflow.SlaveCore.Data
             }
         }
 
+        // 清空序列的变量
+        public void ClearSequenceVariables(ISequenceFlowContainer sequence)
+        {
+            string nameRegex = CoreUtils.GetVariableNameRegex(sequence, _context.SessionId);
+            Regex varRegex = new Regex(nameRegex);
+            List<string> variableNames = new List<string>(_variables.Keys);
+            foreach (string variableName in variableNames)
+            {
+                if (varRegex.IsMatch(variableName))
+                {
+                    // TODO 只将该值配置为null，不会删除变量定义
+                    _variables[variableName] = null;
+                }
+            }
+        }
+
         public object GetParamValue(string variableName, string paramValueStr)
         {
             return ModuleUtils.GetParamValue(paramValueStr, this._variables[variableName]);

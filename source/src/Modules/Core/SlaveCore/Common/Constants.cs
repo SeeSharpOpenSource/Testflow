@@ -24,5 +24,7 @@
         public const string EmptySetupName = "SetUp";
         public const string EmptyTeardownName = "TearDown";
 
+        public const int MaxWatchDataLength = 65536;
+
     }
 }
