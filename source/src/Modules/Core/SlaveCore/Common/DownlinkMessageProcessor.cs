@@ -72,9 +72,9 @@ namespace Testflow.SlaveCore.Common
 
         public void Stop()
         {
+            _cancellation?.Cancel();
             _messageQueue?.StopEnqueue();
             _messageQueue?.FreeLock();
-            _cancellation?.Cancel();
         }
 
         private void ProcessControlMessage(ControlMessage message)

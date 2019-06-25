@@ -40,7 +40,8 @@ namespace Testflow.SlaveCore.SlaveFlowControl
             // 如果SetUp执行失败，则执行TearDown，且配置所有序列为失败状态，并发送所有序列都失败的信息
             if (setUpState > RuntimeState.Success)
             {
-                sessionTaskEntity.InvokeTearDown();
+                // 打印状态日志
+                Context.LogSession.Print(LogLevel.Error, Context.SessionId, "Run testproject setup failed.");
                 for (int i = 0; i < sessionTaskEntity.SequenceCount; i++)
                 {
                     sessionTaskEntity.GetSequenceTaskEntity(i).State = RuntimeState.Failed;
@@ -50,13 +51,16 @@ namespace Testflow.SlaveCore.SlaveFlowControl
                         StatusReportType.Failed, StepResult.NotAvailable, failedInfo);
                     Context.StatusQueue.Enqueue(statusInfo);
                 }
+
+                sessionTaskEntity.InvokeTearDown();
                 // 打印状态日志
-                Context.LogSession.Print(LogLevel.Error, Context.SessionId, "Setup execution failed.");
+                Context.LogSession.Print(LogLevel.Info, Context.SessionId, "Teardown execution over.");
+
                 return;
             }
 
             // 打印状态日志
-            Context.LogSession.Print(LogLevel.Info, Context.SessionId, "Setup execution over.");
+            Context.LogSession.Print(LogLevel.Info, Context.SessionId, "Testproject setup execution over.");
 
             this._wakeTimer = new Timer(WakeThreadWhenCtrlMessageCome, null, Constants.WakeTimerInterval, 
                 Constants.WakeTimerInterval);

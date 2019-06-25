@@ -56,7 +56,7 @@ namespace Testflow.CoreCommon.Data
 
         public override string ToString()
         {
-            StringBuilder failedStr = new StringBuilder(400);
+            StringBuilder failedStr = new StringBuilder(1000);
             return failedStr.Append(Type).Append(Delim).Append(Message).Append(Delim).Append(Source)
                 .Append(Delim).Append(StackTrace).Append(Delim).Append(ExceptionType).ToString();
         }

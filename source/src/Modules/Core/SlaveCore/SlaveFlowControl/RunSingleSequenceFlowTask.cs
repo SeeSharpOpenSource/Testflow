@@ -36,7 +36,8 @@ namespace Testflow.SlaveCore.SlaveFlowControl
             // 如果SetUp执行失败，则执行TearDown，且配置所有序列为失败状态，并发送所有序列都失败的信息
             if (setUpState > RuntimeState.Success)
             {
-                sessionTaskEntity.InvokeTearDown();
+                // 打印状态日志
+                Context.LogSession.Print(LogLevel.Error, Context.SessionId, "Run setup failed.");
                 for (int i = 0; i < sessionTaskEntity.SequenceCount; i++)
                 {
                     sessionTaskEntity.GetSequenceTaskEntity(i).State = RuntimeState.Failed;
@@ -46,12 +47,11 @@ namespace Testflow.SlaveCore.SlaveFlowControl
                         StatusReportType.Failed, StepResult.NotAvailable, failedInfo);
                     Context.StatusQueue.Enqueue(statusInfo);
                 }
-                // 打印状态日志
-                Context.LogSession.Print(LogLevel.Error, Context.SessionId, "Run setup failed.");
-                return;
             }
-
-            sessionTaskEntity.InvokeSequence(_sequenceIndex);
+            else
+            {
+                sessionTaskEntity.InvokeSequence(_sequenceIndex);
+            }
 
             sessionTaskEntity.InvokeTearDown();
 

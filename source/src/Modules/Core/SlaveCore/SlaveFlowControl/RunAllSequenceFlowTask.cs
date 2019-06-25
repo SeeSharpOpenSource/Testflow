@@ -40,19 +40,43 @@ namespace Testflow.SlaveCore.SlaveFlowControl
             // 如果SetUp执行失败，则执行TearDown，且配置所有序列为失败状态，并发送所有序列都失败的信息
             if (setUpState > RuntimeState.Success)
             {
-                sessionTaskEntity.InvokeTearDown();
-                for (int i = 0; i < sessionTaskEntity.SequenceCount; i++)
-                {
-                    sessionTaskEntity.GetSequenceTaskEntity(i).State = RuntimeState.Failed;
-
-                    SequenceFailedInfo failedInfo = new SequenceFailedInfo(Context.I18N.GetStr("SetUpFailed"), FailedType.SetUpFailed);
-                    SequenceStatusInfo statusInfo = new SequenceStatusInfo(i, ModuleUtils.GetSequenceStack(i), StatusReportType.Failed, StepResult.NotAvailable,
-                        failedInfo);
-                    Context.StatusQueue.Enqueue(statusInfo);
-                }
-                return;
+                // 打印状态日志
+                Context.LogSession.Print(LogLevel.Error, Context.SessionId, "Run setup failed.");
+                SendSetupFailedEvents(sessionTaskEntity);
+            }
+            else
+            {
+                RunSequences(sessionTaskEntity);
             }
 
+            sessionTaskEntity.InvokeTearDown();
+
+            Context.State = RuntimeState.Over;
+            this.Next = null;
+
+            SendOverMessage();
+
+            // 打印状态日志
+            Context.LogSession.Print(LogLevel.Info, Context.SessionId, "Test execution over.");
+        }
+
+        private void SendSetupFailedEvents(SessionTaskEntity sessionTaskEntity)
+        {
+            for (int i = 0; i < sessionTaskEntity.SequenceCount; i++)
+            {
+                sessionTaskEntity.GetSequenceTaskEntity(i).State = RuntimeState.Failed;
+
+                SequenceFailedInfo failedInfo = new SequenceFailedInfo(Context.I18N.GetStr("SetUpFailed"),
+                    FailedType.SetUpFailed);
+                SequenceStatusInfo statusInfo = new SequenceStatusInfo(i, ModuleUtils.GetSequenceStack(i),
+                    StatusReportType.Failed, StepResult.NotAvailable,
+                    failedInfo);
+                Context.StatusQueue.Enqueue(statusInfo);
+            }
+        }
+
+        private void RunSequences(SessionTaskEntity sessionTaskEntity)
+        {
             switch (Context.ExecutionModel)
             {
                 case ExecutionModel.SequentialExecution:
@@ -90,16 +114,6 @@ namespace Testflow.SlaveCore.SlaveFlowControl
                 default:
                     throw new InvalidOperationException();
             }
-
-            sessionTaskEntity.InvokeTearDown();
-
-            Context.State = RuntimeState.Over;
-            this.Next = null;
-
-            SendOverMessage();
-
-            // 打印状态日志
-            Context.LogSession.Print(LogLevel.Info, Context.SessionId, "Test execution over.");
         }
 
         private void RunSingleSequence(object state)

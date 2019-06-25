@@ -132,7 +132,7 @@ namespace Testflow.SlaveCore.Runner.Model
             {
                 this.State = RuntimeState.Failed;
                 StepTaskEntityBase currentStep = StepTaskEntityBase.GetCurrentStep(Index);
-                SequenceFailedInfo failedInfo = new SequenceFailedInfo(ex, FailedType.TargetError);
+                SequenceFailedInfo failedInfo = new SequenceFailedInfo(ex.InnerException, FailedType.TargetError);
                 SequenceStatusInfo errorStatusInfo = new SequenceStatusInfo(Index,
                     currentStep.GetStack(), StatusReportType.Failed, currentStep.Result, failedInfo);
                 errorStatusInfo.WatchDatas = _context.VariableMapper.GetReturnDataValues(_sequence);
