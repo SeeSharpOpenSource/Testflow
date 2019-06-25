@@ -78,7 +78,6 @@ namespace Testflow.SlaveCore.Common
                 Thread.MemoryBarrier();
                 Thread.VolatileWrite(ref _eventProcessFlag, 1);
                 
-                _waitTimer.Change(_heartBeatInterval, _heartBeatInterval);
                 SendSequenceStatusMessage(statusInfo);
 
                 // 标记事件处理flag为处理结束

@@ -293,11 +293,7 @@ namespace Testflow.MasterCore.StatusManage
                     SetTestResultStatistics(message.WatchData);
 
                     UpdateSessionResultData(string.Empty);
-                    // 写入性能记录条目
-                    if (null != message.Performance)
-                    {
-                        WritePerformanceStatus(message.Performance);
-                    }
+                    
                     _testResults.Performance = _stateManageContext.DatabaseProxy.GetPerformanceResult(Session);
                     _testResults.TestOver = true;
                     _stateManageContext.EventDispatcher.RaiseEvent(Constants.SessionOver, Session, _testResults);
@@ -329,7 +325,6 @@ namespace Testflow.MasterCore.StatusManage
                     break;
                 case MessageNames.HeartBeatStatusName:
                     RefreshTime(message);
-
                     for (int i = 0; i < message.Stacks.Count; i++)
                     {
                         if (message.SequenceStates[i] == RuntimeState.Running)
@@ -337,7 +332,11 @@ namespace Testflow.MasterCore.StatusManage
                             _sequenceHandles[message.Stacks[i].Sequence].HandleStatusMessage(message, i);
                         }
                     }
-
+                    // 写入性能记录条目
+                    if (null != message.Performance)
+                    {
+                        WritePerformanceStatus(message.Performance);
+                    }
                     runtimeStatusInfo = CreateRuntimeStatusInfo(message);
                     _stateManageContext.EventDispatcher.RaiseEvent(Constants.StatusReceived, Session, runtimeStatusInfo);
                     break;
@@ -468,7 +467,7 @@ namespace Testflow.MasterCore.StatusManage
             {
                 varValues = new Dictionary<IVariable, string>(1);
             }
-            ulong dataStatusIndex = (ulong) _stateManageContext.DataStatusIndex;
+            ulong dataStatusIndex = (ulong) _stateManageContext.EventStatusIndex;
             return new RuntimeStatusInfo(this, dataStatusIndex, null, varValues, message.Performance);
         }
 

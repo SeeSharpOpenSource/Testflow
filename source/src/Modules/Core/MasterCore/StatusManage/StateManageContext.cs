@@ -52,6 +52,7 @@ namespace Testflow.MasterCore.StatusManage
         public long EventStatusIndex {get { return Interlocked.Increment(ref _eventStatusIndex); } }
 
         private long _dataStatusIndex;
+
         /// <summary>
         /// 写入数据库的状态索引号
         /// </summary>
