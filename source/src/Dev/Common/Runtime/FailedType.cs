@@ -6,33 +6,43 @@
     public enum FailedType
     {
         /// <summary>
+        /// 测试生成失败
+        /// </summary>
+        TestGenFailed = -1,
+
+        /// <summary>
         /// 断言失败
         /// </summary>
         AssertionFailed = 0,
 
         /// <summary>
-        /// 未捕获的异常
+        /// 强制失败
         /// </summary>
-        UnHandledException = 1,
+        ForceFailed = 1,
+
+        /// <summary>
+        /// 目标异常
+        /// </summary>
+        TargetError = 2,
 
         /// <summary>
         /// 用户取消
         /// </summary>
-        Abort = 2,
+        Abort = 3,
 
         /// <summary>
         /// SetUp模块失败
         /// </summary>
-        SetUpFailed = 3,
+        SetUpFailed = 4,
 
         /// <summary>
         /// 运行时异常
         /// </summary>
-        RuntimeError = 4,
+        RuntimeError = 5,
 
         /// <summary>
         /// 超时
         /// </summary>
-        TimeOut = 5
+        TimeOut = 6
     }
 }
