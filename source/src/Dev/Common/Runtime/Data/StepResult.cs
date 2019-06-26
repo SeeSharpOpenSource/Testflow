@@ -36,8 +36,13 @@
         Timeout = 5,
 
         /// <summary>
+        /// 序列结束
+        /// </summary>
+        Over = 6,
+
+        /// <summary>
         /// 出现错误
         /// </summary>
-        Error = 6
+        Error = 7
     }
 }
