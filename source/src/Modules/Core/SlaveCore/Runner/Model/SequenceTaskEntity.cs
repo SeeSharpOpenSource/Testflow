@@ -66,6 +66,8 @@ namespace Testflow.SlaveCore.Runner.Model
 
         public void Invoke()
         {
+            SequenceFailedInfo failedInfo = null;
+            StepResult lastStepResult = StepResult.NotAvailable;
             try
             {
                 this.State = RuntimeState.Running;
@@ -76,94 +78,69 @@ namespace Testflow.SlaveCore.Runner.Model
                 _stepEntityRoot.Invoke();
 
                 this.State = RuntimeState.Success;
-
-                StepTaskEntityBase currentStep = StepTaskEntityBase.GetCurrentStep(Index);
-                SequenceStatusInfo overStatusInfo = new SequenceStatusInfo(Index,
-                    currentStep.GetStack(), StatusReportType.Over, StepResult.Over);
-                overStatusInfo.WatchDatas = _context.VariableMapper.GetReturnDataValues(_sequence);
-
-                _context.StatusQueue.Enqueue(overStatusInfo);
+                lastStepResult = StepResult.Pass;
             }
             catch (TaskFailedException ex)
             {
                 this.State = RuntimeState.Failed;
-                StepTaskEntityBase currentStep = StepTaskEntityBase.GetCurrentStep(Index);
-                currentStep.SetStatusAndSendErrorEvent(StepResult.Failed);
-                SequenceFailedInfo failedInfo = new SequenceFailedInfo(ex, ex.FailedType);
-                SequenceStatusInfo errorStatusInfo = new SequenceStatusInfo(Index,
-                    currentStep.GetStack(), StatusReportType.Failed, currentStep.Result, failedInfo);
-                errorStatusInfo.WatchDatas = _context.VariableMapper.GetReturnDataValues(_sequence);
-                this._context.StatusQueue.Enqueue(errorStatusInfo);
+                lastStepResult = StepResult.Failed;
+                failedInfo = new SequenceFailedInfo(ex, ex.FailedType);
                 _context.LogSession.Print(LogLevel.Info, Index, "Step force failed.");
             }
             catch (TestflowAssertException ex)
             {
                 this.State = RuntimeState.Failed;
-                StepTaskEntityBase currentStep = StepTaskEntityBase.GetCurrentStep(Index);
-                currentStep.SetStatusAndSendErrorEvent(StepResult.Failed);
-                SequenceFailedInfo failedInfo = new SequenceFailedInfo(ex, FailedType.AssertionFailed);
-                SequenceStatusInfo errorStatusInfo = new SequenceStatusInfo(Index,
-                    currentStep.GetStack(), StatusReportType.Over, currentStep.Result, failedInfo);
-                errorStatusInfo.WatchDatas = _context.VariableMapper.GetReturnDataValues(_sequence);
-                this._context.StatusQueue.Enqueue(errorStatusInfo);
+                lastStepResult = StepResult.Failed;
+                failedInfo = new SequenceFailedInfo(ex, FailedType.AssertionFailed);
                 _context.LogSession.Print(LogLevel.Fatal, Index, "Assert exception catched.");
             }
             catch (ThreadAbortException ex)
             {
                 this.State = RuntimeState.Abort;
-                StepTaskEntityBase currentStep = StepTaskEntityBase.GetCurrentStep(Index);
-                currentStep.SetStatusAndSendErrorEvent(StepResult.Abort);
-                SequenceFailedInfo failedInfo = new SequenceFailedInfo(ex, FailedType.Abort);
-                SequenceStatusInfo statusInfo = new SequenceStatusInfo(Index,
-                    currentStep.GetStack(), StatusReportType.Over, currentStep.Result, failedInfo);
-                this._context.StatusQueue.Enqueue(statusInfo);
+                lastStepResult = StepResult.Abort;
+                failedInfo = new SequenceFailedInfo(ex, FailedType.Abort);
                 _context.LogSession.Print(LogLevel.Warn, Index, $"Sequence {Index} execution aborted");
             }
             catch (TestflowException ex)
             {
                 this.State = RuntimeState.Error;
-                StepTaskEntityBase currentStep = StepTaskEntityBase.GetCurrentStep(Index);
-                currentStep.SetStatusAndSendErrorEvent(StepResult.Error);
-                SequenceFailedInfo failedInfo = new SequenceFailedInfo(ex, FailedType.RuntimeError);
-                SequenceStatusInfo errorStatusInfo = new SequenceStatusInfo(Index,
-                    currentStep.GetStack(), StatusReportType.Over, currentStep.Result, failedInfo);
-                errorStatusInfo.WatchDatas = _context.VariableMapper.GetReturnDataValues(_sequence);
-                this._context.StatusQueue.Enqueue(errorStatusInfo);
+                lastStepResult = StepResult.Error;
+                failedInfo = new SequenceFailedInfo(ex, FailedType.RuntimeError);
                 _context.LogSession.Print(LogLevel.Error, Index, ex, "Inner exception catched.");
             }
             catch (TargetInvocationException ex)
             {
                 this.State = RuntimeState.Failed;
-                StepTaskEntityBase currentStep = StepTaskEntityBase.GetCurrentStep(Index);
-                currentStep.SetStatusAndSendErrorEvent(StepResult.Failed);
-                SequenceFailedInfo failedInfo = new SequenceFailedInfo(ex.InnerException, FailedType.TargetError);
-                SequenceStatusInfo errorStatusInfo = new SequenceStatusInfo(Index,
-                    currentStep.GetStack(), StatusReportType.Over, currentStep.Result, failedInfo);
-                errorStatusInfo.WatchDatas = _context.VariableMapper.GetReturnDataValues(_sequence);
-                this._context.StatusQueue.Enqueue(errorStatusInfo);
+                lastStepResult = StepResult.Failed;
+                failedInfo = new SequenceFailedInfo(ex.InnerException, FailedType.TargetError);
                 _context.LogSession.Print(LogLevel.Error, Index, ex, "Invocation exception catched.");
             }
             catch (Exception ex)
             {
                 this.State = RuntimeState.Error;
-                StepTaskEntityBase currentStep = StepTaskEntityBase.GetCurrentStep(Index);
-                currentStep.SetStatusAndSendErrorEvent(StepResult.Error);
-                SequenceFailedInfo failedInfo = new SequenceFailedInfo(ex, FailedType.RuntimeError);
-                SequenceStatusInfo errorStatusInfo = new SequenceStatusInfo(Index,
-                    currentStep.GetStack(), StatusReportType.Over, currentStep.Result, failedInfo);
-                errorStatusInfo.WatchDatas = _context.VariableMapper.GetReturnDataValues(_sequence);
-                this._context.StatusQueue.Enqueue(errorStatusInfo);
+                lastStepResult =StepResult.Error;
+                failedInfo = new SequenceFailedInfo(ex, FailedType.RuntimeError);
                 _context.LogSession.Print(LogLevel.Error, Index, ex, "Runtime exception catched.");
             }
             finally
             {
+                StepTaskEntityBase currentStep = StepTaskEntityBase.GetCurrentStep(Index);
+                // 如果序列未成功则发送失败事件
+                if (this.State != RuntimeState.Success)
+                {
+                    currentStep.SetStatusAndSendErrorEvent(lastStepResult);
+                }
+                // 发送结束事件，包括所有的ReturnData信息
+                SequenceStatusInfo overStatusInfo = new SequenceStatusInfo(Index,
+                    currentStep.GetStack(), StatusReportType.Over, StepResult.Over, failedInfo);
+                overStatusInfo.WatchDatas = _context.VariableMapper.GetReturnDataValues(_sequence);
+                this._context.StatusQueue.Enqueue(overStatusInfo);
+
                 _context.VariableMapper.ClearSequenceVariables(_sequence);
                 this._stepEntityRoot = null;
-                StepTaskEntityBase currentStep = StepTaskEntityBase.GetCurrentStep(Index);
                 // 将失败步骤职责链以后的step标记为null
                 currentStep.NextStep = null;
             }
-
         }
 
         public void FillStatusInfo(StatusMessage message)
