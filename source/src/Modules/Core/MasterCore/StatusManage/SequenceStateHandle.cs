@@ -117,7 +117,7 @@ namespace Testflow.MasterCore.StatusManage
                 UpdateSequenceTestResult(failedInfo, null);
                 _eventDispatcher.RaiseEvent(Constants.SequenceOver, eventInfo.Session, _sequenceTestResult);
 
-                WriteRuntimeStatusData(StepResult.Failed, string.Empty);
+                WriteRuntimeStatusData(StepResult.Abort, string.Empty);
             }
         }
 
