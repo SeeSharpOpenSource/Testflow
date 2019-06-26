@@ -43,7 +43,7 @@ namespace Testflow.SlaveCore.Runner.Model
         {
             this.Result = StepResult.Pass;
             Context.LogSession.Print(LogLevel.Debug, Context.SessionId,
-                $"The empty {_sequenceName} of {_sequenceIndex} invoked.");
+                $"The empty step {GetStack()} invoked.");
         }
 
         public override CallStack GetStack()
