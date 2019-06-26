@@ -79,8 +79,7 @@ namespace Testflow.SlaveCore.Runner.Model
 
                 StepTaskEntityBase currentStep = StepTaskEntityBase.GetCurrentStep(Index);
                 SequenceStatusInfo overStatusInfo = new SequenceStatusInfo(Index,
-                    currentStep.GetStack(), StatusReportType.Over,
-                    currentStep.Result);
+                    currentStep.GetStack(), StatusReportType.Over, StepResult.Over);
                 overStatusInfo.WatchDatas = _context.VariableMapper.GetReturnDataValues(_sequence);
 
                 _context.StatusQueue.Enqueue(overStatusInfo);
