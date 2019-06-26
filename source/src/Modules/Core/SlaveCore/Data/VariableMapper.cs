@@ -16,38 +16,44 @@ namespace Testflow.SlaveCore.Data
     {
         private readonly Dictionary<string, object> _variables;
         private readonly SlaveContext _context;
-
+        // 关键变量集合操作锁
         private SpinLock _keyVarLock;
-        private HashSet<string> _keyVariables;
+        // 同步变量读写锁
+        private ReaderWriterLockSlim _syncVarLock;
+        private readonly HashSet<string> _keyVariables;
+        private readonly HashSet<string> _syncVariables;
 
         public VariableMapper(SlaveContext context)
         {
             ISequenceFlowContainer sequenceData = context.Sequence;
             this._variables = new Dictionary<string, object>(512);
             this._keyVariables = new HashSet<string>();
+            this._syncVariables = new HashSet<string>();
             this._context = context;
             if (context.SequenceType == RunnerType.TestProject)
             {
                 ITestProject testProject = (ITestProject)sequenceData;
-                AddVariables(testProject.Variables);
-                AddVariables(testProject.SetUp.Variables);
-                AddVariables(testProject.TearDown.Variables);
+                AddVariables(testProject.Variables, false);
+                AddVariables(testProject.SetUp.Variables, false);
+                AddVariables(testProject.TearDown.Variables, false);
             }
             else
             {
+                bool addSessionVarToSyncSet = ExecutionModel.ParallelExecution == context.ExecutionModel;
                 ISequenceGroup sequenceGroup = (ISequenceGroup)sequenceData;
-                AddVariables(sequenceGroup.Variables);
-                AddVariables(sequenceGroup.SetUp.Variables);
-                AddVariables(sequenceGroup.TearDown.Variables);
+                AddVariables(sequenceGroup.Variables, addSessionVarToSyncSet);
+                AddVariables(sequenceGroup.SetUp.Variables, false);
+                AddVariables(sequenceGroup.TearDown.Variables, false);
                 foreach (ISequence sequence in sequenceGroup.Sequences)
                 {
-                    AddVariables(sequence.Variables);
+                    AddVariables(sequence.Variables, false);
                 }
             }
             this._keyVarLock = new SpinLock();
+            this._syncVarLock = new ReaderWriterLockSlim();
         }
 
-        private void AddVariables(IVariableCollection variables)
+        private void AddVariables(IVariableCollection variables, bool addToSyncSet)
         {
             int sessionId = _context.SessionId;
             foreach (IVariable variable in variables)
@@ -66,12 +72,25 @@ namespace Testflow.SlaveCore.Data
                 {
                     _context.ReturnDatas.Add(variableName);
                 }
+                if (addToSyncSet)
+                {
+                    _syncVariables.Add(variableName);
+                }
             }
         }
 
         public void SetParamValue(string variableName, string paramValue, object value, bool recordStatus)
         {
-            this._variables[variableName] = ModuleUtils.SetParamValue(paramValue, _variables[variableName], value);
+            if (_syncVariables.Contains(variableName))
+            {
+                _syncVarLock.EnterWriteLock();
+                this._variables[variableName] = ModuleUtils.SetParamValue(paramValue, _variables[variableName], value);
+                _syncVarLock.ExitWriteLock();
+            }
+            else
+            {
+                this._variables[variableName] = ModuleUtils.SetParamValue(paramValue, _variables[variableName], value);
+            }
 
             // 监视变量值如果被更新，则添加到值更新列表中，在状态上报时上传该值
             if (recordStatus && _context.WatchDatas.Contains(variableName))
@@ -101,7 +120,18 @@ namespace Testflow.SlaveCore.Data
 
         public object GetParamValue(string variableName, string paramValueStr)
         {
-            return ModuleUtils.GetParamValue(paramValueStr, this._variables[variableName]);
+            object value;
+            if (_syncVariables.Contains(variableName))
+            {
+                _syncVarLock.EnterReadLock();
+                value = ModuleUtils.GetParamValue(paramValueStr, this._variables[variableName]);
+                _syncVarLock.ExitReadLock();
+            }
+            else
+            {
+                value = ModuleUtils.GetParamValue(paramValueStr, this._variables[variableName]);
+            }
+            return value;
         }
 
         public Dictionary<string, string> GetWatchDataValues(ISequenceFlowContainer sequence)
@@ -303,6 +333,7 @@ namespace Testflow.SlaveCore.Data
                 (value as IDisposable)?.Dispose();
             }
             _variables.Clear();
+            _syncVarLock.Dispose();
         }
     }
 }
