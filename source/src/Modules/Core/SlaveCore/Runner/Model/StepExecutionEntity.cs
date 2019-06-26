@@ -250,7 +250,7 @@ namespace Testflow.SlaveCore.Runner.Model
                 // 如果当前step被标记为记录状态，并且不是强制失败，则返回状态信息
                 if (StepData.RecordStatus && RunBehavior.ForceFailed != StepData.Behavior)
                 {
-                    SequenceStatusInfo statusInfo = new SequenceStatusInfo(StepData.Index, this.GetStack(), 
+                    SequenceStatusInfo statusInfo = new SequenceStatusInfo(SequenceIndex, this.GetStack(), 
                         StatusReportType.Record, Result);
                     // 更新watch变量值
                     statusInfo.WatchDatas = Context.VariableMapper.GetWatchDataValues(StepData);
