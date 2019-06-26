@@ -247,8 +247,8 @@ namespace Testflow.SlaveCore.Runner.Model
             }
             finally
             {
-                // 如果当前step被标记为记录状态，并且不是强制失败，则返回状态信息
-                if (StepData.RecordStatus && RunBehavior.ForceFailed != StepData.Behavior)
+                // 如果当前step被标记为记录状态，则返回状态信息
+                if (StepData.RecordStatus)
                 {
                     SequenceStatusInfo statusInfo = new SequenceStatusInfo(SequenceIndex, this.GetStack(), 
                         StatusReportType.Record, Result);
