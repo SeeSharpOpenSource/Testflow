@@ -30,7 +30,7 @@ namespace Testflow.CoreCommon.Common
         public TMessageType WaitUntilMessageCome()
         {
             TMessageType message = null;
-            while (true)
+            while (0 == _stopEnqueueFlag)
             {
                 bool getLock = false;
                 _operationLock.Enter(ref getLock);
@@ -44,6 +44,7 @@ namespace Testflow.CoreCommon.Common
                 _operationLock.Exit();
                 BlockThread();
             }
+            return null;
         }
 
         public new void Enqueue(TMessageType item)
@@ -85,6 +86,7 @@ namespace Testflow.CoreCommon.Common
             _blockLock.Enter(ref getLock);
             if (_blockCount > 0)
             {
+                Thread.VolatileWrite(ref _stopEnqueueFlag, 1);
                 _blockEvent.Set();
                 Interlocked.Exchange(ref _blockCount, 0);
             }
