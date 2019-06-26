@@ -120,6 +120,7 @@ namespace Testflow.SlaveCore.SlaveFlowControl
                 Index = Context.MsgIndex
             };
             ModuleUtils.FillPerformance(statusMessage);
+            statusMessage.WatchData = Context.VariableMapper.GetReturnDataValues(Context.Sequence);
             Context.UplinkMsgProcessor.SendMessage(statusMessage, true);
         }
     }

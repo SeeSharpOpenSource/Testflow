@@ -73,8 +73,8 @@ namespace Testflow.SlaveCore.SlaveFlowControl
             };
             Context.SessionTaskEntity.FillSequenceInfo(errorMessage, Context.I18N.GetStr("RuntimeError"));
             ModuleUtils.FillPerformance(errorMessage);
-            Context.UplinkMsgProcessor.SendMessage(errorMessage, true);
             errorMessage.WatchData = Context.VariableMapper.GetReturnDataValues();
+            Context.UplinkMsgProcessor.SendMessage(errorMessage, true);
         }
 
         public override MessageBase GetHeartBeatMessage()
