@@ -211,53 +211,46 @@ namespace Testflow.SlaveCore.Runner.Model
         protected override void InvokeStep()
         {
             this.Result = StepResult.Error;
-            try
+            switch (StepData.Behavior)
             {
-                switch (StepData.Behavior)
-                {
-                    case RunBehavior.Normal:
+                case RunBehavior.Normal:
+                    ExecuteSequenceStep();
+                    this.Result = StepResult.Pass;
+                    break;
+                case RunBehavior.Skip:
+                    this.Result = StepResult.Skip;
+                    break;
+                case RunBehavior.ForceSuccess:
+                    try
+                    {
                         ExecuteSequenceStep();
                         this.Result = StepResult.Pass;
-                        break;
-                    case RunBehavior.Skip:
-                        this.Result = StepResult.Skip;
-                        break;
-                    case RunBehavior.ForceSuccess:
-                        try
-                        {
-                            ExecuteSequenceStep();
-                            this.Result = StepResult.Pass;
-                        }
-                        catch (TaskFailedException ex)
-                        {
-                            this.Result = StepResult.Failed;
-                            Context.LogSession.Print(LogLevel.Warn, SequenceIndex, ex,
-                                "Execute failed but force success.");
-                        }
-                        break;
-                    case RunBehavior.ForceFailed:
-                        ExecuteSequenceStep();
+                    }
+                    catch (TaskFailedException ex)
+                    {
                         this.Result = StepResult.Failed;
-                        // 抛出强制失败异常
-                        throw new TaskFailedException(SequenceIndex, FailedType.ForceFailed);
-                        break;
-                    default:
-                        throw new ArgumentOutOfRangeException();
-                }
+                        Context.LogSession.Print(LogLevel.Warn, SequenceIndex, ex,
+                            "Execute failed but force success.");
+                    }
+                    break;
+                case RunBehavior.ForceFailed:
+                    ExecuteSequenceStep();
+                    this.Result = StepResult.Failed;
+                    // 抛出强制失败异常
+                    throw new TaskFailedException(SequenceIndex, FailedType.ForceFailed);
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
-            finally
+            // 如果当前step被标记为记录状态，则返回状态信息
+            if (StepData.RecordStatus)
             {
-                // 如果当前step被标记为记录状态，则返回状态信息
-                if (StepData.RecordStatus)
-                {
-                    SequenceStatusInfo statusInfo = new SequenceStatusInfo(SequenceIndex, this.GetStack(), 
-                        StatusReportType.Record, Result);
-                    // 更新watch变量值
-                    statusInfo.WatchDatas = Context.VariableMapper.GetWatchDataValues(StepData);
-                    Context.StatusQueue.Enqueue(statusInfo);
-                }
+                SequenceStatusInfo statusInfo = new SequenceStatusInfo(SequenceIndex, this.GetStack(),
+                    StatusReportType.Record, Result);
+                // 更新watch变量值
+                statusInfo.WatchDatas = Context.VariableMapper.GetWatchDataValues(StepData);
+                Context.StatusQueue.Enqueue(statusInfo);
             }
-
             NextStep?.Invoke();
         }
 

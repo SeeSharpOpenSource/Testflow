@@ -89,6 +89,17 @@ namespace Testflow.SlaveCore.Runner.Model
             statusMessage.Results.Add(this.Result);
         }
 
+        public void SetStatusAndSendErrorEvent(StepResult result)
+        {
+            this.Result = result;
+            // 如果发生错误，无论该步骤是否被配置为recordStatus，都需要发送状态信息
+            SequenceStatusInfo statusInfo = new SequenceStatusInfo(SequenceIndex, this.GetStack(),
+                    StatusReportType.Record, Result);
+            // 更新watch变量值
+            statusInfo.WatchDatas = Context.VariableMapper.GetWatchDataValues(StepData);
+            Context.StatusQueue.Enqueue(statusInfo);
+        }
+
         public void Invoke()
         {
             CurrentModel[SequenceIndex] = this;
