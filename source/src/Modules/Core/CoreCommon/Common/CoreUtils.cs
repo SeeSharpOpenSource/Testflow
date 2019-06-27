@@ -80,8 +80,18 @@ namespace Testflow.CoreCommon.Common
                 const string rootRegexFormat = @"^{0}\{1}[^\{1}]+";
                 regex = string.Format(rootRegexFormat, session, VarNameDelim);
             }
+            else if (sequenceData is ISequence)
+            {
+                ISequence sequence = (ISequence) sequenceData;
+                const string sequenceVarRegexFormat = @"^{0}\{2}{1}\{2}[^\{2}]+";
+                regex = string.Format(sequenceVarRegexFormat, session, sequence.Index, VarNameDelim);
+            }
             else
             {
+                do
+                {
+                    sequenceData = sequenceData.Parent;
+                } while (sequenceData is ISequenceStep);
                 ISequence sequence = (ISequence)sequenceData;
                 const string sequenceVarRegexFormat = @"^{0}\{2}{1}\{2}[^\{2}]+";
                 regex = string.Format(sequenceVarRegexFormat, session, sequence.Index, VarNameDelim);

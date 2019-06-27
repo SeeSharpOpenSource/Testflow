@@ -49,7 +49,7 @@ namespace Testflow.SlaveCore.Data
                     AddVariables(sequence.Variables, false);
                 }
             }
-            this._keyVarLock = new SpinLock();
+            this._keyVarLock = new SpinLock(false);
             this._syncVarLock = new ReaderWriterLockSlim();
         }
 
