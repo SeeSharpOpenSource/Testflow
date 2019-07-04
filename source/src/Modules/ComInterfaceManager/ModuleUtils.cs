@@ -40,26 +40,20 @@ namespace Testflow.ComInterfaceManager
             }
             ((List<IClassInterfaceDescription>)description.Classes).TrimExcess();
 
+            I18N i18N = I18N.GetInstance(Constants.I18nName);
             foreach (IClassInterfaceDescription classDescription in description.Classes)
             {
-                if (null != classDescription.StaticProperties)
-                {
-                    foreach (IArgumentDescription propertyDescription in classDescription.StaticProperties)
-                    {
-                        InitializeArgumentType(sequenceManager, descriptionCollection, propertyDescription);
-                    }
-                    ((List<IArgumentDescription>)classDescription.StaticProperties).TrimExcess();
-                }
-                if (null != classDescription.InstanceProperties)
-                {
-                    foreach (IArgumentDescription propertyDescription in classDescription.InstanceProperties)
-                    {
-                        InitializeArgumentType(sequenceManager, descriptionCollection, propertyDescription);
-                    }
-                    ((List<IArgumentDescription>)classDescription.InstanceProperties).TrimExcess();
-                }
                 foreach (IFuncInterfaceDescription functionDescription in classDescription.Functions)
                 {
+                    // 配置实例属性配置方法和静态属性配置方法的描述信息
+                    if (functionDescription.FuncType == FunctionType.InstancePropertySetter)
+                    {
+                        functionDescription.Description = i18N.GetStr("InstancePropertySetter");
+                    }
+                    else if (functionDescription.FuncType == FunctionType.StaticPropertySetter)
+                    {
+                        functionDescription.Description = i18N.GetStr("StaticPropertySetter");
+                    }
                     foreach (IArgumentDescription argumentDescription in functionDescription.Arguments)
                     {
                         InitializeArgumentType(sequenceManager, descriptionCollection, argumentDescription);

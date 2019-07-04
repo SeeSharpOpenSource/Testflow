@@ -159,8 +159,8 @@ namespace Testflow.ComInterfaceManager
                 Description = typeDescription.Description,
                 Name = classType.Name,
             };
-            AddPropertySetterDescription(classType, classDescription);
             AddConstructorDescription(classType, classDescription);
+            AddPropertySetterDescription(classType, classDescription);
             AddMethodDescription(classType, classDescription);
 
             classDescription.IsStatic = classDescription.Functions.All(
@@ -177,14 +177,12 @@ namespace Testflow.ComInterfaceManager
 
         private void AddPropertySetterDescription(Type classType, ClassInterfaceDescription classDescription)
         {
-            I18N i18N = I18N.GetInstance(Constants.I18nName);
             List<IArgumentDescription> staticProperties = GetPropertyDescriptions(classType, BindingFlags.Static | BindingFlags.Public);
             if (null != staticProperties && staticProperties.Count > 0)
             {
                 FunctionInterfaceDescription staticSetterDesp = new FunctionInterfaceDescription()
                 {
                     Name = CommonConst.SetStaticPropertyFunc,
-                    Description = i18N.GetStr("StaticPropertySetter"),
                     Arguments = staticProperties,
                     ClassType = classDescription.ClassType,
                     ComponentIndex = classDescription.ComponentIndex,
@@ -202,7 +200,6 @@ namespace Testflow.ComInterfaceManager
                 FunctionInterfaceDescription instanceSetterDesp = new FunctionInterfaceDescription()
                 {
                     Name = CommonConst.SetInstancePropertyFunc,
-                    Description = i18N.GetStr("InstancePropertySetter"),
                     Arguments = instanceProperties,
                     ClassType = classDescription.ClassType,
                     ComponentIndex = classDescription.ComponentIndex,
