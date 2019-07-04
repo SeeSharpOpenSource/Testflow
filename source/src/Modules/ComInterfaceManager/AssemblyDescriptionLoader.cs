@@ -287,17 +287,17 @@ namespace Testflow.ComInterfaceManager
                 }
                 VariableType argumentType = VariableType.Undefined;
                 Type propertyType = propertyInfo.PropertyType;
-                if (propertyType.IsValueType || propertyType == typeof (string))
+                if (propertyType.IsEnum)
                 {
-                    argumentType = VariableType.Value;
+                    argumentType = VariableType.Enumeration;
                 }
                 else if (propertyType.IsClass)
                 {
                     argumentType = VariableType.Class;
                 }
-                else if (propertyType.IsEnum)
+                else if (propertyType.IsValueType || propertyType == typeof(string))
                 {
-                    argumentType = VariableType.Enumeration;
+                    argumentType = VariableType.Value;
                 }
 
                 DescriptionAttribute descriptionAttribute = propertyInfo.GetCustomAttribute<DescriptionAttribute>();
@@ -346,17 +346,17 @@ namespace Testflow.ComInterfaceManager
         {
             VariableType argumentType = VariableType.Undefined;
             Type propertyType = parameterInfo.ParameterType;
-            if (propertyType.IsValueType || propertyType == typeof (string))
+            if (propertyType.IsEnum)
             {
-                argumentType = VariableType.Value;
+                argumentType = VariableType.Enumeration;
             }
             else if (propertyType.IsClass)
             {
                 argumentType = VariableType.Class;
             }
-            else if (propertyType.IsEnum)
+            else if (propertyType.IsValueType || propertyType == typeof(string))
             {
-                argumentType = VariableType.Enumeration;
+                argumentType = VariableType.Value;
             }
 
             DescriptionAttribute descriptionAttribute = parameterInfo.GetCustomAttribute<DescriptionAttribute>();
@@ -403,17 +403,17 @@ namespace Testflow.ComInterfaceManager
             {
                 return null;
             }
-            if (propertyType.IsValueType || propertyType == typeof(string))
+            if (propertyType.IsEnum)
             {
-                argumentType = VariableType.Value;
+                argumentType = VariableType.Enumeration;
             }
             else if (propertyType.IsClass)
             {
                 argumentType = VariableType.Class;
             }
-            else if (propertyType.IsEnum)
+            else if (propertyType.IsValueType || propertyType == typeof(string))
             {
-                argumentType = VariableType.Enumeration;
+                argumentType = VariableType.Value;
             }
 
             TypeDescription typeDescription = new TypeDescription()
@@ -444,14 +444,19 @@ namespace Testflow.ComInterfaceManager
             string[] versionElem = writeVersion.Split(delim);
             int major = int.Parse(versionElem[0]);
             int minor = int.Parse(versionElem[1]);
-            int revision = versionElem.Length > 2 ? int.Parse(versionElem[2]) : 0;
+            int majorRevision = versionElem.Length >= 3 ? int.Parse(versionElem[2]) : 0;
+            int minorRevision = versionElem.Length >= 4 ? int.Parse(versionElem[3]) : 0;
 
             Version libVersion = assembly.GetName().Version;
-            if (libVersion.Major == major && libVersion.Minor == minor && libVersion.Revision == revision)
+            if (libVersion.Major == major && libVersion.Minor == minor && libVersion.MajorRevision == majorRevision && 
+                libVersion.Revision == minorRevision)
             {
                 return true;
             }
-            if (libVersion.Major > major || libVersion.Minor > minor && libVersion.Revision > revision)
+            long libVersionNum = libVersion.Major*(long)10E9 + libVersion.Minor* (long)10E6 + libVersion.MajorRevision* (long)10E3 +
+                                 libVersion.MinorRevision;
+            long versionNum = major*(long) 10E9 + minor*(long) 10E6 + majorRevision*(long) 10E3 + minorRevision;
+            if (libVersionNum > versionNum)
             {
                 ErrorCode = ModuleErrorCode.HighVersion;
                 return true;
