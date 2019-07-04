@@ -158,7 +158,7 @@ namespace Testflow.ComInterfaceManager
                 Description = typeDescription.Description,
                 Name = classType.Name,
             };
-
+            AddPropertyDescription(classType, classDescription);
             AddConstructorDescription(classType, classDescription);
             AddMethodDescription(classType, classDescription);
 
@@ -173,6 +173,13 @@ namespace Testflow.ComInterfaceManager
                 comDescription.TypeDescriptions.Add(typeDescription);
             }
         }
+
+        private void AddPropertyDescription(Type classType, ClassInterfaceDescription classDescription)
+        {
+            classDescription.InstanceProperties = GetPropertyDescriptions(classType, BindingFlags.Instance | BindingFlags.Public);
+            classDescription.StaticProperties = GetPropertyDescriptions(classType, BindingFlags.Static | BindingFlags.Public);
+        }
+
 
         private void AddMethodDescription(Type classType, ClassInterfaceDescription classDescription)
         {
@@ -236,7 +243,6 @@ namespace Testflow.ComInterfaceManager
             ConstructorInfo[] constructors = classType.GetConstructors(BindingFlags.Instance | BindingFlags.Public);
             if (constructors.Length > 0)
             {
-                List<IArgumentDescription> properties = GetPropertyDescriptions(classType);
                 int constructorIndex = 1;
                 foreach (ConstructorInfo constructorInfo in constructors)
                 {
@@ -252,7 +258,6 @@ namespace Testflow.ComInterfaceManager
                         IsGeneric = constructorInfo.IsGenericMethod,
                         Name = $"{classType.Name}_Constructor{constructorIndex++}"
                     };
-                    funcDescription.Properties = properties;
                     InitConstructorParamDescription(constructorInfo, funcDescription);
                     funcDescription.Signature = ModuleUtils.GetSignature(classType.Name, funcDescription);
                     classDescription.Functions.Add(funcDescription);
@@ -274,9 +279,9 @@ namespace Testflow.ComInterfaceManager
         }
 
         // 构造属性描述
-        private static List<IArgumentDescription> GetPropertyDescriptions(Type classType)
+        private static List<IArgumentDescription> GetPropertyDescriptions(Type classType, BindingFlags flags)
         {
-            PropertyInfo[] propertyInfos = classType.GetProperties(BindingFlags.Instance | BindingFlags.Public);
+            PropertyInfo[] propertyInfos = classType.GetProperties(flags);
             List<IArgumentDescription> properties = new List<IArgumentDescription>(propertyInfos.Length);
             foreach (PropertyInfo propertyInfo in propertyInfos)
             {
@@ -324,7 +329,7 @@ namespace Testflow.ComInterfaceManager
                 };
                 properties.Add(propertyDescription);
             }
-            return properties;
+            return properties.Count == 0 ? null : properties;
         }
 
         // 构造方法入参描述信息

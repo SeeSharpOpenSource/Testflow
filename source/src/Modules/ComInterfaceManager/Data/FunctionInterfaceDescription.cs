@@ -11,7 +11,6 @@ namespace Testflow.ComInterfaceManager.Data
         public FunctionInterfaceDescription()
         {
             this.Arguments = null;
-            this.Properties = null;
         }
         public string Name { get; set; }
         public string Description { get; set; }
@@ -21,7 +20,6 @@ namespace Testflow.ComInterfaceManager.Data
         public bool IsGeneric { get; set; }
         public IArgumentDescription Return { get; set; }
         public IList<IArgumentDescription> Arguments { get; set; }
-        public IList<IArgumentDescription> Properties { get; set; }
         public string Signature { get; set; }
         public string Category { get; set; }
     }

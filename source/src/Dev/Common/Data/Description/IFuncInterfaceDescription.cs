@@ -36,12 +36,7 @@ namespace Testflow.Data.Description
         /// 入参列表信息
         /// </summary>
         IList<IArgumentDescription> Arguments { get; set; }
-
-        /// <summary>
-        /// 入参列表信息
-        /// </summary>
-        IList<IArgumentDescription> Properties { get; set; }
-
+        
         /// <summary>
         /// 方法被显示的签名字符串
         /// </summary>

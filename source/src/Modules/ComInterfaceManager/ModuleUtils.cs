@@ -42,6 +42,22 @@ namespace Testflow.ComInterfaceManager
 
             foreach (IClassInterfaceDescription classDescription in description.Classes)
             {
+                if (null != classDescription.StaticProperties)
+                {
+                    foreach (IArgumentDescription propertyDescription in classDescription.StaticProperties)
+                    {
+                        InitializeArgumentType(sequenceManager, descriptionCollection, propertyDescription);
+                    }
+                    ((List<IArgumentDescription>)classDescription.StaticProperties).TrimExcess();
+                }
+                if (null != classDescription.InstanceProperties)
+                {
+                    foreach (IArgumentDescription propertyDescription in classDescription.InstanceProperties)
+                    {
+                        InitializeArgumentType(sequenceManager, descriptionCollection, propertyDescription);
+                    }
+                    ((List<IArgumentDescription>)classDescription.InstanceProperties).TrimExcess();
+                }
                 foreach (IFuncInterfaceDescription functionDescription in classDescription.Functions)
                 {
                     foreach (IArgumentDescription argumentDescription in functionDescription.Arguments)
@@ -49,14 +65,6 @@ namespace Testflow.ComInterfaceManager
                         InitializeArgumentType(sequenceManager, descriptionCollection, argumentDescription);
                     }
                     ((List<IArgumentDescription>) functionDescription.Arguments).TrimExcess();
-                    if (null != functionDescription.Properties)
-                    {
-                        foreach (IArgumentDescription propertyDescription in functionDescription.Properties)
-                        {
-                            InitializeArgumentType(sequenceManager, descriptionCollection, propertyDescription);
-                        }
-                        ((List<IArgumentDescription>) functionDescription.Properties).TrimExcess();
-                    }
                     functionDescription.ClassType = classDescription.ClassType;
                     if (null != functionDescription.Return)
                     {

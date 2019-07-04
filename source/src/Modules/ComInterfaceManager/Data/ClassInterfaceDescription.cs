@@ -20,5 +20,7 @@ namespace Testflow.ComInterfaceManager.Data
         public bool IsStatic { get; set; }
         public ITypeDescription ClassTypeDescription { get; set; }
         public IList<IFuncInterfaceDescription> Functions { get; set; }
+        public IList<IArgumentDescription> StaticProperties { get; set; }
+        public IList<IArgumentDescription> InstanceProperties { get; set; }
     }
 }
