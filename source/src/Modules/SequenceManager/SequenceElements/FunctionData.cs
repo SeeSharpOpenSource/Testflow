@@ -90,9 +90,6 @@ namespace Testflow.SequenceManager.SequenceElements
                 parameters.Add(new ParameterData());
             }
 
-            Argument returnType = new Argument();
-            returnType.Initialize(funcInterface.Return);
-
             Type = funcInterface.FuncType;
             MethodName = funcInterface.Name;
             ClassType = funcInterface.ClassType;
@@ -100,7 +97,13 @@ namespace Testflow.SequenceManager.SequenceElements
             Instance = string.Empty;
             Parameters = parameters;
             ParameterType = argumentsTypes;
-            ReturnType = returnType;
+
+            if (null != funcInterface.Return)
+            {
+                Argument returnType = new Argument();
+                returnType.Initialize(funcInterface.Return);
+                ReturnType = returnType;
+            }
         }
 
         #region 序列化声明及反序列化构造
