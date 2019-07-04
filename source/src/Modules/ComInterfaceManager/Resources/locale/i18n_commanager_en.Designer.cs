@@ -61,6 +61,15 @@ namespace Testflow.ComInterfaceManager.Resources.locale {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Instance properties configuration.
+        /// </summary>
+        internal static string InstancePropertySetter {
+            get {
+                return ResourceManager.GetString("InstancePropertySetter", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The type data of argument &apos;{0}&apos; is invalid..
         /// </summary>
         internal static string InvalidArgType {
@@ -102,6 +111,15 @@ namespace Testflow.ComInterfaceManager.Resources.locale {
         internal static string RuntimeError {
             get {
                 return ResourceManager.GetString("RuntimeError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Static properties configuration.
+        /// </summary>
+        internal static string StaticPropertySetter {
+            get {
+                return ResourceManager.GetString("StaticPropertySetter", resourceCulture);
             }
         }
         

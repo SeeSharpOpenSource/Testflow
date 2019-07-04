@@ -31,15 +31,5 @@ namespace Testflow.Data.Description
         /// 该类中包含的所有方法信息
         /// </summary>
         IList<IFuncInterfaceDescription> Functions { get; set; }
-
-        /// <summary>
-        /// 静态属性信息
-        /// </summary>
-        IList<IArgumentDescription> StaticProperties { get; set; }
-
-        /// <summary>
-        /// 实例属性信息
-        /// </summary>
-        IList<IArgumentDescription> InstanceProperties { get; set; }
     }
 }

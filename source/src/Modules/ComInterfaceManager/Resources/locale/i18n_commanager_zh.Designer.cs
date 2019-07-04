@@ -61,6 +61,15 @@ namespace Testflow.ComInterfaceManager.Resources.locale {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to 实例属性配置.
+        /// </summary>
+        internal static string InstancePropertySetter {
+            get {
+                return ResourceManager.GetString("InstancePropertySetter", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to 参数‘{0}’的类型数据无效。.
         /// </summary>
         internal static string InvalidArgType {
@@ -102,6 +111,15 @@ namespace Testflow.ComInterfaceManager.Resources.locale {
         internal static string RuntimeError {
             get {
                 return ResourceManager.GetString("RuntimeError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 静态属性配置.
+        /// </summary>
+        internal static string StaticPropertySetter {
+            get {
+                return ResourceManager.GetString("StaticPropertySetter", resourceCulture);
             }
         }
         

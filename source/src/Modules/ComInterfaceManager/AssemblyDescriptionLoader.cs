@@ -9,6 +9,7 @@ using Testflow.Data.Description;
 using Testflow.SequenceManager.SequenceElements;
 using Testflow.Usr;
 using Testflow.Usr.Common;
+using Testflow.Utility.I18nUtil;
 
 namespace Testflow.ComInterfaceManager
 {
@@ -158,7 +159,7 @@ namespace Testflow.ComInterfaceManager
                 Description = typeDescription.Description,
                 Name = classType.Name,
             };
-            AddPropertyDescription(classType, classDescription);
+            AddPropertySetterDescription(classType, classDescription);
             AddConstructorDescription(classType, classDescription);
             AddMethodDescription(classType, classDescription);
 
@@ -174,12 +175,45 @@ namespace Testflow.ComInterfaceManager
             }
         }
 
-        private void AddPropertyDescription(Type classType, ClassInterfaceDescription classDescription)
+        private void AddPropertySetterDescription(Type classType, ClassInterfaceDescription classDescription)
         {
-            classDescription.InstanceProperties = GetPropertyDescriptions(classType, BindingFlags.Instance | BindingFlags.Public);
-            classDescription.StaticProperties = GetPropertyDescriptions(classType, BindingFlags.Static | BindingFlags.Public);
-        }
+            I18N i18N = I18N.GetInstance(Constants.I18nName);
+            List<IArgumentDescription> staticProperties = GetPropertyDescriptions(classType, BindingFlags.Static | BindingFlags.Public);
+            if (null != staticProperties && staticProperties.Count > 0)
+            {
+                FunctionInterfaceDescription staticSetterDesp = new FunctionInterfaceDescription()
+                {
+                    Name = CommonConst.SetStaticPropertyFunc,
+                    Description = i18N.GetStr("StaticPropertySetter"),
+                    Arguments = staticProperties,
+                    ClassType = classDescription.ClassType,
+                    ComponentIndex = classDescription.ComponentIndex,
+                    FuncType = FunctionType.StaticPropertySetter,
+                    Signature = CommonConst.SetStaticPropertyFunc + "()",
+                    Return = null,
+                    IsGeneric = false
+                };
+                classDescription.Functions.Add(staticSetterDesp);
+            }
 
+            List<IArgumentDescription> instanceProperties = GetPropertyDescriptions(classType, BindingFlags.Instance | BindingFlags.Public);
+            if (null != instanceProperties && instanceProperties.Count > 0)
+            {
+                FunctionInterfaceDescription instanceSetterDesp = new FunctionInterfaceDescription()
+                {
+                    Name = CommonConst.SetInstancePropertyFunc,
+                    Description = i18N.GetStr("InstancePropertySetter"),
+                    Arguments = instanceProperties,
+                    ClassType = classDescription.ClassType,
+                    ComponentIndex = classDescription.ComponentIndex,
+                    FuncType = FunctionType.InstancePropertySetter,
+                    Signature = CommonConst.SetInstancePropertyFunc + "()",
+                    Return = null,
+                    IsGeneric = false
+                };
+                classDescription.Functions.Add(instanceSetterDesp);
+            }
+        }
 
         private void AddMethodDescription(Type classType, ClassInterfaceDescription classDescription)
         {
@@ -329,7 +363,7 @@ namespace Testflow.ComInterfaceManager
                 };
                 properties.Add(propertyDescription);
             }
-            return properties.Count == 0 ? null : properties;
+            return properties;
         }
 
         // 构造方法入参描述信息

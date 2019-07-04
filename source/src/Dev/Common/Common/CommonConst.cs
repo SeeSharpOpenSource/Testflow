@@ -5,7 +5,6 @@
     /// </summary>
     public static class CommonConst
     {
-
         /// <summary>
         /// 外部属性的默认扩展参数个数
         /// </summary>
@@ -85,5 +84,15 @@
         /// Teardown序列的id
         /// </summary>
         public const int TeardownIndex = -2;
+
+        /// <summary>
+        /// 配置实例属性的方法
+        /// </summary>
+        public const string SetInstancePropertyFunc = "SetInstanceProperties";
+
+        /// <summary>
+        /// 配置实例属性的方法
+        /// </summary>
+        public const string SetStaticPropertyFunc = "SetStaticProperties";
     }
 }
