@@ -7,6 +7,11 @@
     {
 
         /// <summary>
+        /// 不可用
+        /// </summary>
+        NotAvailable = -1,
+
+        /// <summary>
         /// 参数是直接传值
         /// </summary>
         Value = 0,

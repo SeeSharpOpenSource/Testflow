@@ -12,7 +12,7 @@ namespace Testflow.SequenceManager.SequenceElements
         {
             this.Index = Constants.UnverifiedIndex;
             this.Value = string.Empty;
-            this.ParameterType = ParameterType.Value;
+            this.ParameterType = ParameterType.NotAvailable;
         }
 
         public int Index { get; set; }
