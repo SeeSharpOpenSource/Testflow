@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Runtime.Remoting.Proxies;
+using System.Runtime.Serialization;
 using Testflow.Usr.I18nUtil;
 
 namespace Testflow.Usr
@@ -28,6 +29,10 @@ namespace Testflow.Usr
             I18N.GetInstance(CommonConst.I18nName).GetFStr("AssertFailedInfo", expected, real))
         {
             
+        }
+
+        public TestflowAssertException(SerializationInfo info, StreamingContext context) : base(info, context)
+        {
         }
     }
 }

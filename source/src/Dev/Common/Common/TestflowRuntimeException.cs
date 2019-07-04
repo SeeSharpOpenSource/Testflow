@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.Serialization;
 
 namespace Testflow.Usr
 {
@@ -24,6 +25,10 @@ namespace Testflow.Usr
         /// <param name="message">错误信息</param>
         /// <param name="innerException">内部异常</param>
         public TestflowRuntimeException(int errorCode, string message, Exception innerException) : base(errorCode, message, innerException)
+        {
+        }
+
+        public TestflowRuntimeException(SerializationInfo info, StreamingContext context) : base(info, context)
         {
         }
     }

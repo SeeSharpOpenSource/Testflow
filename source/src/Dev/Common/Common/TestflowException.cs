@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.Serialization;
 
 namespace Testflow.Usr
 {
@@ -32,6 +33,17 @@ namespace Testflow.Usr
         public TestflowException(int errorCode, string message, Exception innerException) : base(message, innerException)
         {
             this.ErrorCode = errorCode;
+        }
+
+        public TestflowException(SerializationInfo info, StreamingContext context) : base(info, context)
+        {
+            this.ErrorCode = info.GetInt32("ErrorCode");
+        }
+
+        public override void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            base.GetObjectData(info, context);
+            info.AddValue("ErrorCode", ErrorCode);
         }
     }
 }
