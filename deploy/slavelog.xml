@@ -9,7 +9,7 @@
 	<appender name="SlaveAppender" type="log4net.Appender.RollingFileAppender">
         <file value="" />
         <appendToFile value="true" />
-        <maximumFileSize value="512KB" />
+        <maximumFileSize value="1MB" />
 		<param name="StaticLogFileName" value = "false" />
 		<param name="DatePattern" value="yyyyMMdd-HHmmss&quot;.txt&quot;"/>
         <param name="RollingStyle" value="Size"/>
@@ -20,10 +20,10 @@
         </layout>
     </appender>
 	<root>
-	    <level value="INFO" />
+	    <level value="DEBUG" />
         <appender-ref ref="SlaveAppender" />
 	</root>
 	<logger name="SlaveLogger">
-        <level value="INFO" />
+        <level value="DEBUG" />
     </logger>
 </log4net>
