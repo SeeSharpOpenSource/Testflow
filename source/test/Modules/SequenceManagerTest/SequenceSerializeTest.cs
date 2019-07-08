@@ -267,8 +267,11 @@ namespace Testflow.SequenceManagerTest
                 },
                 VariableType = VariableType.Value
             });
-
-            _sequenceManager.Serialize(sequenceGroup1, SerializationTarget.File, @"D:\testflow\SequenceGroupTest\SequenceGroup.tfseq");
+            if (!Directory.Exists(@"\SequenceGroupTest"))
+            {
+                Directory.CreateDirectory(@"\SequenceGroupTest");
+            }
+            _sequenceManager.Serialize(sequenceGroup1, SerializationTarget.File, @"\SequenceGroupTest\SequenceGroup.tfseq");
         }
 
         [TestCleanup]
