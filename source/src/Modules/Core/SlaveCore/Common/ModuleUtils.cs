@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Text.RegularExpressions;
 using Testflow.Usr;
 using Testflow.CoreCommon;
+using Testflow.CoreCommon.Common;
 using Testflow.CoreCommon.Data;
 using Testflow.CoreCommon.Messages;
 using Testflow.Data;
@@ -226,6 +227,24 @@ namespace Testflow.SlaveCore.Common
         public static CallStack GetSequenceStack(int index)
         {
             return StepTaskEntityBase.GetCurrentStep(index).GetStack();
+        }
+
+        public static string GetVariableFullName(string variableName, ISequenceStep step, int session)
+        {
+            while (step.Parent is ISequenceStep)
+            {
+                step = (ISequenceStep)step.Parent;
+            }
+            ISequence sequence = (ISequence)step.Parent;
+            IVariable variable = sequence.Variables.FirstOrDefault(item => item.Name.Equals(variableName));
+
+            if (null != variable)
+            {
+                return CoreUtils.GetRuntimeVariableName(session, variable);
+            }
+            ISequenceGroup sequenceGroup = (ISequenceGroup)sequence.Parent;
+            variable = sequenceGroup.Variables.First(item => item.Name.Equals(variableName));
+            return CoreUtils.GetRuntimeVariableName(session, variable);
         }
     }
 }

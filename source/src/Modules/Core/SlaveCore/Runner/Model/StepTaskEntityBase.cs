@@ -31,6 +31,10 @@ namespace Testflow.SlaveCore.Runner.Model
                 case FunctionType.CallBack:
                     return new StepCallBackEntity(stepData, context, sequenceIndex);
                     break;
+                case FunctionType.StaticPropertySetter:
+                case FunctionType.InstancePropertySetter:
+                    return new StepPropertySetterEntity(stepData, context, sequenceIndex);
+                    break;
                 default:
                     throw new InvalidOperationException();
                     break;

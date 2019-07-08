@@ -81,11 +81,12 @@ namespace Testflow.SlaveCore.Runner.Model
 
             if (CoreUtils.IsValidVaraible(step.Function.Instance))
             {
-                this.InstanceVar = GetVariableFullName(step.Function.Instance, step, session);
+                string variableName = ModuleUtils.GetVariableNameFromParamValue(step.Function.Instance);
+                this.InstanceVar = ModuleUtils.GetVariableFullName(variableName, step, session);
             }
             if (CoreUtils.IsValidVaraible(step.Function.Return))
             {
-                this.RetryVar = GetVariableFullName(step.Function.Return, step, session);
+                this.RetryVar = ModuleUtils.GetVariableFullName(step.Function.Return, step, session);
             }
 //            this.ReturnVar = GetVariableFullName(InstanceVar, step, session);
 
@@ -93,14 +94,14 @@ namespace Testflow.SlaveCore.Runner.Model
             {
                 this.HasLoopCount = true;
                 this.MaxLoopCount = step.LoopCounter.MaxValue;
-                this.LoopVar = GetVariableFullName(step.LoopCounter.CounterVariable, step, session);
+                this.LoopVar = ModuleUtils.GetVariableFullName(step.LoopCounter.CounterVariable, step, session);
             }
 
             if (null != step.RetryCounter && step.RetryCounter.MaxRetryTimes > 1 && step.RetryCounter.RetryEnabled)
             {
                 this.HasRetryCount = true;
                 this.MaxRetryCount = step.RetryCounter.MaxRetryTimes;
-                this.RetryVar = GetVariableFullName(LoopVar, step, session);
+                this.RetryVar = ModuleUtils.GetVariableFullName(LoopVar, step, session);
             }
 
             if (StepData.HasSubSteps)
@@ -114,25 +115,7 @@ namespace Testflow.SlaveCore.Runner.Model
                 this.Constructor = null;
             }
         }
-
-        private string GetVariableFullName(string variableName, ISequenceStep step, int session)
-        {
-            while (step.Parent is ISequenceStep)
-            {
-                step = (ISequenceStep)step.Parent;
-            }
-            ISequence sequence = (ISequence) step.Parent;
-            IVariable variable = sequence.Variables.FirstOrDefault(item => item.Name.Equals(variableName));
-
-            if (null != variable)
-            {
-                return CoreUtils.GetRuntimeVariableName(session, variable);
-            }
-            ISequenceGroup sequenceGroup = (ISequenceGroup)sequence.Parent;
-            variable = sequenceGroup.Variables.First(item => item.Name.Equals(variableName));
-            return CoreUtils.GetRuntimeVariableName(session, variable);
-        }
-
+        
         public override void GenerateInvokeInfo()
         {
             if (StepData.HasSubSteps)
