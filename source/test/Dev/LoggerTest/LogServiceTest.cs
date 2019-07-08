@@ -30,7 +30,7 @@ namespace Testflow.LoggerTest
                 exception = ex;
             }
 
-            Assert.AreEqual(LogLevel.Info, _logService.LogLevel);
+            Assert.AreEqual(LogLevel.Debug, _logService.LogLevel);
 
             // 需要查看${TESTFLOW_HOME}/log/platform目录下的打印信息是否正确
             // 忽略
