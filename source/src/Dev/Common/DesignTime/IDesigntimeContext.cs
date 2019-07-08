@@ -29,7 +29,7 @@ namespace Testflow.DesignTime
         /// <summary>
         /// 设计时内操作的TestGroup
         /// </summary>
-        ITestProject TestGroup { get; set; }
+        ITestProject TestProject { get; set; }
 
 //        /// <summary>
 //        /// 当前序列组的所有断点信息
