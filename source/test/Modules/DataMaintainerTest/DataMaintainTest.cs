@@ -544,16 +544,25 @@ namespace Testflow.DataMaintainerTest
             {
                 object value1 = propertyInfo.GetValue(expect);
                 object value2 = propertyInfo.GetValue(real);
-                if (null != value1 && !value1.Equals(value2))
+                if (propertyInfo.PropertyType != typeof (DateTime))
+                {
+                    if (null != value1 && !value1.Equals(value2))
+                    {
+                        throw new AssertFailedException(
+                            $"Property {propertyInfo.Name} not equal. Expect:<{value1}>; Real:<{value2 ?? nullStr}>");
+                    }
+                    else if (null != value2 && !value2.Equals(value1))
+                    {
+                        throw new AssertFailedException(
+                            $"Property {propertyInfo.Name} not equal. Expect:<{value1 ?? nullStr}>; Real:<{value2}>");
+                    }
+                }
+                else if (null == value1 || null == value2 || !value1.ToString().Equals(value2.ToString()))
                 {
                     throw new AssertFailedException(
-                        $"Property {propertyInfo.Name} not equal. Expect:<{value1}>; Real:<{value2 ?? nullStr}>");
+                            $"Property {propertyInfo.Name} not equal. Expect:<{value1 ?? nullStr}>; Real:<{value2}>");
                 }
-                else if (null != value2 && !value2.Equals(value1))
-                {
-                    throw new AssertFailedException(
-                        $"Property {propertyInfo.Name} not equal. Expect:<{value1 ?? nullStr}>; Real:<{value2}>");
-                }
+                
             }
             return true;
         }
