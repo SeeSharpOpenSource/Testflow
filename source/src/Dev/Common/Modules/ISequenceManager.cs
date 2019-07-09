@@ -39,7 +39,7 @@ namespace Testflow.Modules
         /// 创建空白的序列Step
         /// </summary>
         /// <returns></returns>
-        ISequenceStep CreateSequenceStep();
+        ISequenceStep CreateSequenceStep(bool createSubStepCollection = false);
 
         /// <summary>
         /// 创建空白的Argument
