@@ -199,6 +199,8 @@ namespace Testflow.SequenceManagerTest
             Assert.AreEqual(sequenceGroup.TypeDatas.Count, 3);
             Assert.AreEqual(sequenceGroup.TypeDatas[0].AssemblyName, "TestAssemblyName");
             Assert.AreEqual(sequenceGroup.TypeDatas[1].Name, "Int32");
+            Assert.AreEqual(sequenceGroup.SetUp.Name, "SetUp");
+            Assert.AreEqual(sequenceGroup.TearDown.Name, "TearDown");
             Assert.AreEqual(sequenceGroup.Sequences.Count, 3);
             Assert.AreEqual(sequenceGroup.Sequences[0].Name, "Sequence1");
             Assert.AreEqual(sequenceGroup.Sequences[0].Variables.Count, 4);
@@ -236,6 +238,10 @@ namespace Testflow.SequenceManagerTest
             ITestProject testProject = _sequenceManager.LoadTestProject(SerializationTarget.File, TestProjectPath);
 
             Assert.AreEqual(testProject.Name, "TestProject1");
+            Assert.AreEqual(testProject.SetUp.Name, "SetUp");
+            Assert.AreEqual(testProject.SetUp.Index, CommonConst.SetupIndex);
+            Assert.AreEqual(testProject.TearDown.Name, "TearDown");
+            Assert.AreEqual(testProject.TearDown.Index, CommonConst.TeardownIndex);
         }
 
         [TestMethod]
@@ -243,6 +249,10 @@ namespace Testflow.SequenceManagerTest
         {
             ISequenceGroup sequenceGroup = _sequenceManager.LoadSequenceGroup(SerializationTarget.File, SequenceGroupPath);
 
+            Assert.AreEqual(sequenceGroup.SetUp.Name, "SetUp");
+            Assert.AreEqual(sequenceGroup.SetUp.Index, CommonConst.SetupIndex);
+            Assert.AreEqual(sequenceGroup.TearDown.Name, "TearDown");
+            Assert.AreEqual(sequenceGroup.TearDown.Index, CommonConst.TeardownIndex);
             Assert.AreEqual(sequenceGroup.Sequences[0].Steps[0].Function.ClassType, sequenceGroup.TypeDatas[0]);
             Assert.AreEqual(sequenceGroup.Sequences[0].Steps[0].Function.ReturnType.Type, sequenceGroup.TypeDatas[2]);
             Assert.AreEqual(sequenceGroup.Sequences[0].Steps[0].Function.ParameterType[0].Type, sequenceGroup.TypeDatas[2]);
