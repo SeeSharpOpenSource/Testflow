@@ -480,18 +480,19 @@ namespace Testflow.ComInterfaceManager
             string[] versionElem = writeVersion.Split(delim);
             int major = int.Parse(versionElem[0]);
             int minor = int.Parse(versionElem[1]);
-            int majorRevision = versionElem.Length >= 3 ? int.Parse(versionElem[2]) : 0;
-            int minorRevision = versionElem.Length >= 4 ? int.Parse(versionElem[3]) : 0;
+            int build = versionElem.Length >= 3 ? int.Parse(versionElem[2]) : 0;
+            int revision = versionElem.Length >= 4 ? int.Parse(versionElem[3]) : 0;
 
             Version libVersion = assembly.GetName().Version;
-            if (libVersion.Major == major && libVersion.Minor == minor && libVersion.MajorRevision == majorRevision && 
-                libVersion.Revision == minorRevision)
+
+            if (libVersion.Major == major && libVersion.Minor == minor && libVersion.Build == build && 
+                libVersion.Revision == revision)
             {
                 return true;
             }
-            long libVersionNum = libVersion.Major*(long)10E9 + libVersion.Minor* (long)10E6 + libVersion.MajorRevision* (long)10E3 +
-                                 libVersion.MinorRevision;
-            long versionNum = major*(long) 10E9 + minor*(long) 10E6 + majorRevision*(long) 10E3 + minorRevision;
+            long libVersionNum = libVersion.Major*(long)10E9 + libVersion.Minor* (long)10E6 + libVersion.Build* (long)10E3 +
+                                 libVersion.Revision;
+            long versionNum = major*(long) 10E9 + minor*(long) 10E6 + build*(long) 10E3 + revision;
             if (libVersionNum > versionNum)
             {
                 ErrorCode = ModuleErrorCode.HighVersion;
