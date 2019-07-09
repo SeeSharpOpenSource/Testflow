@@ -97,7 +97,7 @@ namespace Testflow.SlaveCore.Runner
                 for (int i = 0; i < parameterTypes.Length; i++)
                 {
                     parameterTypes[i] = _typeDataMapping[ModuleUtils.GetTypeFullName(function.ParameterType[i].Type)];
-                    if (function.ParameterType[i].Modifier != ArgumentModifier.None)
+                    if (function.ParameterType[i].Modifier != ArgumentModifier.None && !parameterTypes[i].IsByRef)
                     {
                         modifiers[0][i] = true;
                         parameterTypes[i] = parameterTypes[i].MakeByRefType();
@@ -127,7 +127,7 @@ namespace Testflow.SlaveCore.Runner
                         for (int i = 0; i < parameterTypes.Length; i++)
                         {
                             parameterTypes[i] = _typeDataMapping[ModuleUtils.GetTypeFullName(function.ParameterType[i].Type)];
-                            if (function.ParameterType[i].Modifier != ArgumentModifier.None)
+                            if (function.ParameterType[i].Modifier != ArgumentModifier.None && !parameterTypes[i].IsByRef)
                             {
                                 modifiers[0][i] = true;
                                 parameterTypes[i] = parameterTypes[i].MakeByRefType();
@@ -146,7 +146,7 @@ namespace Testflow.SlaveCore.Runner
         {
             object value = null;
             Type dataType = _typeDataMapping[ModuleUtils.GetTypeFullName(type)];
-            if (dataType.IsValueType)
+            if (dataType.IsValueType && !dataType.IsEnum)
             {
                 value = _valueTypeConvertors[dataType.Name].Invoke(valueStr);
             }
