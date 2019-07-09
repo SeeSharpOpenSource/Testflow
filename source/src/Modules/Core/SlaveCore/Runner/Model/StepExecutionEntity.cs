@@ -125,7 +125,7 @@ namespace Testflow.SlaveCore.Runner.Model
         {
             if (StepData.HasSubSteps)
             {
-                this.SubStepRoot.NextStep.GenerateInvokeInfo();
+                this.SubStepRoot.GenerateInvokeInfo();
             }
             else
             {
@@ -134,9 +134,19 @@ namespace Testflow.SlaveCore.Runner.Model
                     case FunctionType.StaticFunction:
                     case FunctionType.InstanceFunction:
                         this.Method = Context.TypeInvoker.GetMethod(StepData.Function);
+                        if (null == Method)
+                        {
+                            throw new TestflowRuntimeException(ModuleErrorCode.RuntimeError,
+                                Context.I18N.GetFStr("LoadFunctionFailed", StepData.Function.MethodName));
+                        }
                         break;
                     case FunctionType.Constructor:
                         this.Constructor = Context.TypeInvoker.GetConstructor(StepData.Function);
+                        if (null == Constructor)
+                        {
+                            throw new TestflowRuntimeException(ModuleErrorCode.RuntimeError,
+                                Context.I18N.GetFStr("LoadFunctionFailed", StepData.Function.MethodName));
+                        }
                         break;
                     default:
                         throw new InvalidOperationException();
@@ -320,6 +330,10 @@ namespace Testflow.SlaveCore.Runner.Model
         private void SetVariableParamValue()
         {
             IParameterDataCollection parameters = StepData.Function.Parameters;
+            if (null == parameters)
+            {
+                return;
+            }
             for (int i = 0; i < parameters.Count; i++)
             {
                 if (parameters[i].ParameterType == ParameterType.Variable)
