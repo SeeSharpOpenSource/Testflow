@@ -111,7 +111,7 @@ namespace Testflow.SlaveCore.Runner.Model
             else
             {
                 this.Method = null;
-                this.Params = new object[step.Function.Parameters.Count];
+                this.Params = new object[step.Function.Parameters?.Count ?? 0];
                 this.Constructor = null;
             }
         }
