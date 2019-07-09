@@ -105,7 +105,10 @@ namespace Testflow.SequenceManager.Common
                 foreach (ManagementObject mo in queryCollection)
                 {
                     if (mo["IPEnabled"].ToString() == "True")
+                    {
                         mac = mo["MacAddress"].ToString();
+                        break;
+                    }
                 }
             }
             return $"{hostName}/{systemVersion}/{mac}";
