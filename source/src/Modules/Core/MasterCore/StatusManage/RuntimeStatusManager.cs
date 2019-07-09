@@ -165,14 +165,11 @@ namespace Testflow.MasterCore.StatusManage
                     break;
                 case TestGenState.Error:
                     _sessionStateHandles[eventInfo.Session].TestGenEventProcess(testGenEventInfo);
-
-                    _globalInfo.StateMachine.State = RuntimeState.Error;
-
                     SetTestInstanceEndTime(testGenEventInfo.TimeStamp);
                     _stateManageContext.DatabaseProxy.UpdateData(_stateManageContext.TestInstance);
-
                     _stateManageContext.EventDispatcher.RaiseEvent(Constants.TestGenerationEnd, testGenEventInfo.Session, 
                         _stateManageContext.TestGenerationInfo);
+                    _globalInfo.StateMachine.State = RuntimeState.Error;
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();

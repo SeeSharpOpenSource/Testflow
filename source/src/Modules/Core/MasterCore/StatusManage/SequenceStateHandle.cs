@@ -355,6 +355,7 @@ namespace Testflow.MasterCore.StatusManage
             _sequenceTestResult.ResultState = State;
             _sequenceTestResult.EndTime = EndTime;
             _sequenceTestResult.FailedInfo = new SequenceFailedInfo(failedInfo);
+            _stateManageContext.DatabaseProxy.UpdateData(_sequenceResultData);
         }
 
         private ISequenceFailedInfo GetFailedInfo(StatusMessage message)

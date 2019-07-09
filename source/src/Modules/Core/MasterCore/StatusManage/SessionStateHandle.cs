@@ -400,6 +400,10 @@ namespace Testflow.MasterCore.StatusManage
 
         private void UpdateSessionResultData(string failedInfo)
         {
+            if (StartTime == DateTime.MaxValue)
+            {
+                StartTime = EndTime;
+            }
             _sessionResults.StartTime = StartTime;
             _sessionResults.EndTime = EndTime;
             _sessionResults.ElapsedTime = ElapsedTime.TotalMilliseconds;
