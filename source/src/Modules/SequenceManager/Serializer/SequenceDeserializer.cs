@@ -129,7 +129,7 @@ namespace Testflow.SequenceManager.Serializer
             for (int i = 0; i < sequenecGroup.Variables.Count; i++)
             {
                 IVariable variable = sequenecGroup.Variables[i];
-                if (!variable.Name.Equals(parameter.VariableValues[i].Value))
+                if (!variable.Name.Equals(parameter.VariableValues[i].Name))
                 {
                     ILogService logService = TestflowRunner.GetInstance().LogService;
                     logService.Print(LogLevel.Warn, CommonConst.PlatformLogSession, 0, 
