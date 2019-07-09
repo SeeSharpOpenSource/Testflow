@@ -91,7 +91,7 @@ namespace Testflow.MasterCore.Core
             }
         }
 
-        public void StartTestGeneration()
+        public bool StartTestGeneration()
         {
             _testsMaintainer.StartHost(_sequenceData);
             ISequenceManager sequenceManager = _globalInfo.TestflowRunner.SequenceManager;
@@ -118,6 +118,8 @@ namespace Testflow.MasterCore.Core
             }
             // 等待远程生成结束
             _blockHandle.Wait(Constants.RmtGenState);
+            // 如果是异常状态则返回false
+            return _globalInfo.StateMachine.State < RuntimeState.Abort;
         }
 
         // 如果是TestProject运行，则先开始TestProject的SetUp，在触发SequenceOver事件后检查是否是TestProject的SetUp，如果是则开始其他Session。
@@ -291,8 +293,10 @@ namespace Testflow.MasterCore.Core
 
         public void Stop()
         {
+            _abortBlocker?.Free(Constants.AbortState);
+            _blockHandle?.Free(Constants.WaitOverState);
+            _blockHandle?.Free(Constants.RmtGenState);
             _testsMaintainer.FreeHosts();
-            _blockHandle.Free(Constants.WaitOverState);
         }
 
         public void Dispose()
