@@ -108,6 +108,7 @@ namespace Testflow.SlaveCore.Runner.Model
         {
             CurrentModel[SequenceIndex] = this;
             InvokeStep();
+            NextStep?.Invoke();
         }
 
         protected abstract void InvokeStep();
