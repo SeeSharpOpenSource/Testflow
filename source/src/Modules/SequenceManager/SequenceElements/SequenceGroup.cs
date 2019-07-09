@@ -74,6 +74,8 @@ namespace Testflow.SequenceManager.SequenceElements
         [RuntimeType(typeof(VariableCollection))]
         public IVariableCollection Variables { get; set; }
 
+        [XmlIgnore]
+        [SerializationIgnore]
         [RuntimeSerializeIgnore]
         public ISequenceGroupParameter Parameters { get; set; }
 
