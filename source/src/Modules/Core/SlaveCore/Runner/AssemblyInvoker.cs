@@ -259,17 +259,24 @@ namespace Testflow.SlaveCore.Runner
             string[] versionElem = writeVersion.Split(delim);
             int major = int.Parse(versionElem[0]);
             int minor = int.Parse(versionElem[1]);
-            int revision = versionElem.Length > 2 ? int.Parse(versionElem[2]) : 0;
+            int build = versionElem.Length >= 3 ? int.Parse(versionElem[2]) : 0;
+            int revision = versionElem.Length >= 4 ? int.Parse(versionElem[3]) : 0;
 
             Version libVersion = assembly.GetName().Version;
-            if (libVersion.Major == major && libVersion.Minor == minor && libVersion.Revision == revision)
+
+            if (libVersion.Major == major && libVersion.Minor == minor && libVersion.Build == build &&
+                libVersion.Revision == revision)
             {
                 return;
             }
-            if (libVersion.Major > major || libVersion.Minor > minor && libVersion.Revision > revision)
+            long libVersionNum = libVersion.Major * (long)10E9 + libVersion.Minor * (long)10E6 + libVersion.Build * (long)10E3 +
+                                 libVersion.Revision;
+            long versionNum = major * (long)10E9 + minor * (long)10E6 + build * (long)10E3 + revision;
+            if (libVersionNum > versionNum)
             {
                 string assmblyName = assembly.GetName().Name;
-                _context.LogSession.Print(LogLevel.Warn, CommonConst.PlatformLogSession, $"The version of library {assmblyName} is higher than the version defined in sequence.");
+                _context.LogSession.Print(LogLevel.Warn, CommonConst.PlatformLogSession, 
+                    $"The version of library {assmblyName} is higher than the version defined in sequence.");
             }
             else
             {
