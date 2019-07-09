@@ -67,6 +67,7 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="SeeSharpDayDemoTest.cs" />
     <Compile Include="RuntimeEngineTest.cs" />
     <Compile Include="FakeTestflowRunner.cs" />
     <Compile Include="ModuleConfigData.cs" />
