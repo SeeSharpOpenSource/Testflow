@@ -151,6 +151,15 @@ namespace Testflow.SlaveCore.Resources.locale {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to load function &apos;{0}&apos; failed..
+        /// </summary>
+        internal static string LoadFunctionFailed {
+            get {
+                return ResourceManager.GetString("LoadFunctionFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Load type data failed..
         /// </summary>
         internal static string LoadTypeFailed {

@@ -147,6 +147,9 @@
   <data name="LoadAssemblyFailed" xml:space="preserve">
     <value>加载程序集失败。</value>
   </data>
+  <data name="LoadFunctionFailed" xml:space="preserve">
+    <value>加载方法“{0}”失败。</value>
+  </data>
   <data name="LoadTypeFailed" xml:space="preserve">
     <value>加载类型数据失败。</value>
   </data>

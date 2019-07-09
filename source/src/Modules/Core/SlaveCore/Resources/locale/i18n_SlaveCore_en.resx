@@ -147,6 +147,9 @@
   <data name="LoadAssemblyFailed" xml:space="preserve">
     <value>Load assembly failed.</value>
   </data>
+  <data name="LoadFunctionFailed" xml:space="preserve">
+    <value>load function '{0}' failed.</value>
+  </data>
   <data name="LoadTypeFailed" xml:space="preserve">
     <value>Load type data failed.</value>
   </data>
