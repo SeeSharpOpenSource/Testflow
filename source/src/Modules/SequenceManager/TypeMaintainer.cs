@@ -392,7 +392,7 @@ namespace Testflow.SequenceManager
                 IAssemblyInfo assemblyInfo = assemblies.FirstOrDefault(item => item.AssemblyName.Equals(assemblyName));
                 if (null != assemblyInfo)
                 {
-                    return;
+                    continue;
                 }
                 assemblyInfo = _comInterfaceManager.GetComInterfaceByName(assemblyName)?.Assembly;
                 if (null == assemblyInfo)
