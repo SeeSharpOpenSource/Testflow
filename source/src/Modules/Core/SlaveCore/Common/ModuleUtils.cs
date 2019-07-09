@@ -224,6 +224,17 @@ namespace Testflow.SlaveCore.Common
             }
         }
 
+        public static string GetFullParameterVariableName(string fullVariableName, string paramValue)
+        {
+            if (!paramValue.Contains(Constants.PropertyDelim))
+            {
+                return fullVariableName;
+            }
+            string[] elems = paramValue.Split(Constants.PropertyDelim.ToCharArray());
+            elems[0] = fullVariableName;
+            return string.Join(Constants.PropertyDelim, elems);
+        }
+
         public static CallStack GetSequenceStack(int index)
         {
             return StepTaskEntityBase.GetCurrentStep(index).GetStack();

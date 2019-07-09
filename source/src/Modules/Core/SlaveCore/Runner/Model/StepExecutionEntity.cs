@@ -185,7 +185,10 @@ namespace Testflow.SlaveCore.Runner.Model
                                 Context.I18N.GetFStr("UnexistVariable", variableName));
 
                         }
-                        Params[i] = variable;
+                        // 将变量的值保存到Parameter中
+                        string varFullName = CoreUtils.GetRuntimeVariableName(Context.SessionId, variable);
+                        parameters[i].Value = ModuleUtils.GetFullParameterVariableName(varFullName, parameters[i].Value);
+                        Params[i] = null;
                     }
                 }
                 if (null != StepData.Function.ReturnType && CoreUtils.IsValidVaraible(StepData.Function.Return))
@@ -338,8 +341,8 @@ namespace Testflow.SlaveCore.Runner.Model
             {
                 if (parameters[i].ParameterType == ParameterType.Variable)
                 {
-                    // 获取变量值的名称
-                    string variableName = CoreUtils.GetRuntimeVariableName(Context.SessionId, (IVariable) Params[i]);
+                    // 获取变量值的名称，该名称为变量的运行时名称，其值在InitializeParamValue方法里配置
+                    string variableName = ModuleUtils.GetVariableNameFromParamValue(parameters[i].Value);
                     // 使用变量名称获取变量当前对象的值
                     object variableValue = Context.VariableMapper.GetParamValue(variableName, parameters[i].Value);
                     // 根据ParamString和变量对应的值配置参数。
@@ -358,14 +361,14 @@ namespace Testflow.SlaveCore.Runner.Model
                 // 如果参数值是直接传递值，或者参数没有使用ref或out修饰，则返回
                 if (parameter.ParameterType == ParameterType.Value || argument.Modifier == ArgumentModifier.None)
                 {
-                    return;
+                    continue;
                 }
                 object value = Params[i];
-                string variableName = ModuleUtils.GetVariableNameFromParamValue(parameter.Value);
-                IVariable variable = ModuleUtils.GetVaraibleByRawVarName(variableName, StepData);
-                string runtimeVariableName = CoreUtils.GetRuntimeVariableName(Context.SessionId, variable);
+                // variableName已经是运行时名称
+                string runtimeVariableName = ModuleUtils.GetVariableNameFromParamValue(parameter.Value);
                 Context.VariableMapper.SetParamValue(runtimeVariableName, parameter.Value, value, 
                     StepData.RecordStatus);
+                IVariable variable = CoreUtils.GetVariable(Context.Sequence, runtimeVariableName);
                 if (variable.LogRecordLevel == RecordLevel.Trace)
                 {
                     LogTraceVariable(variable, value);
