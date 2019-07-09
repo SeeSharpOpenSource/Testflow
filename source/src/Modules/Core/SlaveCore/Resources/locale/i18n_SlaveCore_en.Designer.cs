@@ -160,6 +160,15 @@ namespace Testflow.SlaveCore.Resources.locale {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The operation is aborted..
+        /// </summary>
+        internal static string OperationAborted {
+            get {
+                return ResourceManager.GetString("OperationAborted", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Operation timeout..
         /// </summary>
         internal static string OperatoinTimeout {

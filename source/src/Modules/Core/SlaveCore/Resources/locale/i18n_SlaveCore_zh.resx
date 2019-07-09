@@ -150,6 +150,9 @@
   <data name="LoadTypeFailed" xml:space="preserve">
     <value>加载类型数据失败。</value>
   </data>
+  <data name="OperationAborted" xml:space="preserve">
+    <value>操作被终止。</value>
+  </data>
   <data name="OperatoinTimeout" xml:space="preserve">
     <value>操作超时。</value>
   </data>

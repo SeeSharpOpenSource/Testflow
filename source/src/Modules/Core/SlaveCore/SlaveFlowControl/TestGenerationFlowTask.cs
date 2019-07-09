@@ -1,6 +1,7 @@
 ﻿using System;
 using Testflow.Usr;
 using Testflow.CoreCommon.Common;
+using Testflow.CoreCommon.Data;
 using Testflow.CoreCommon.Messages;
 using Testflow.Data.Sequence;
 using Testflow.Runtime;
@@ -109,6 +110,8 @@ namespace Testflow.SlaveCore.SlaveFlowControl
             RmtGenMessage rmtGenMessage = new RmtGenMessage(MessageNames.UpRmtGenMsgName, Context.SessionId,
                 RunnerType.SequenceGroup);
             rmtGenMessage.Params.Add("MsgType", "Failed");
+            SequenceFailedInfo failedInfo = new SequenceFailedInfo(Context.I18N.GetStr("OperationAborted"), FailedType.Abort);
+            rmtGenMessage.Params.Add("FailedInfo", failedInfo.ToString());
             Context.UplinkMsgProcessor.SendMessage(rmtGenMessage, true);
 
             base.TaskAbortAction();
@@ -128,6 +131,8 @@ namespace Testflow.SlaveCore.SlaveFlowControl
             RmtGenMessage rmtGenMessage = new RmtGenMessage(MessageNames.UpRmtGenMsgName, Context.SessionId,
                 RunnerType.SequenceGroup);
             rmtGenMessage.Params.Add("MsgType", "Failed");
+            SequenceFailedInfo failedInfo = new SequenceFailedInfo(ex, FailedType.TestGenFailed);
+            rmtGenMessage.Params.Add("FailedInfo", failedInfo.ToString());
             Context.UplinkMsgProcessor.SendMessage(rmtGenMessage, true);
         }
         
