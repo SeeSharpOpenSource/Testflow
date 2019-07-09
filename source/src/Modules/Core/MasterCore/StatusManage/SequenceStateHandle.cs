@@ -354,7 +354,7 @@ namespace Testflow.MasterCore.StatusManage
             _sequenceTestResult.ElapsedTime = ElapsedTime.TotalMilliseconds;
             _sequenceTestResult.ResultState = State;
             _sequenceTestResult.EndTime = EndTime;
-            _sequenceTestResult.FailedInfo.Message = failedInfo;
+            _sequenceTestResult.FailedInfo = new SequenceFailedInfo(failedInfo);
         }
 
         private ISequenceFailedInfo GetFailedInfo(StatusMessage message)

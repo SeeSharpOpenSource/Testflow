@@ -125,7 +125,11 @@ namespace Testflow.MasterCore
                 _globalInfo.MessageTransceiver.Activate();
                 _statusManager.Start();
                 _syncManager.Start();
-                _controller.StartTestGeneration();
+                bool executionSuccess = _controller.StartTestGeneration();
+                if (!executionSuccess)
+                {
+                    return;
+                }
                 _controller.StartTestWork();
                 _controller.WaitForTaskOver();
             }
