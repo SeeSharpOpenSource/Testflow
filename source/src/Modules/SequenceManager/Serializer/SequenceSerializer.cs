@@ -91,7 +91,8 @@ namespace Testflow.SequenceManager.Serializer
             parameter.Initialize(sequenceGroup);
             // 将SequeneGroup配置的参数写入ParameterData中，用以序列化
             FillParameterDataToSequenceData(sequenceGroup, parameter);
-
+            sequenceGroup.RefreshSignature();
+            parameter.RefreshSignature(sequenceGroup);
             List<string> serialziedFileList = new List<string>(20);
             try
             {
@@ -218,10 +219,13 @@ namespace Testflow.SequenceManager.Serializer
                 parameter.Instance = sequenceStep.Function.Instance;
                 parameter.Return = sequenceStep.Function.Return;
                 IParameterDataCollection parameterValues = sequenceStep.Function.Parameters;
-                for (int i = 0; i < parameterValues.Count; i++)
+                if (null != parameterValues)
                 {
-                    parameter.Parameters[i].ParameterType = parameterValues[i].ParameterType;
-                    parameter.Parameters[i].Value = parameterValues[i].Value;
+                    for (int i = 0; i < parameterValues.Count; i++)
+                    {
+                        parameter.Parameters[i].ParameterType = parameterValues[i].ParameterType;
+                        parameter.Parameters[i].Value = parameterValues[i].Value;
+                    }
                 }
             }
         }
