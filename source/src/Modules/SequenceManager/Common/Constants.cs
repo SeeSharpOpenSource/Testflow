@@ -12,7 +12,7 @@
 
         public const int UnverifiedTypeIndex = -1;
 
-        public const int UnverifiedIndex = -1;
+        public const int UnverifiedIndex = -3;
 
         public const int UnverifiedSequenceIndex = -1;
 

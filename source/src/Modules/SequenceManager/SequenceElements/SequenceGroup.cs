@@ -105,8 +105,16 @@ namespace Testflow.SequenceManager.SequenceElements
             // 该参数只在序列化时生成
             this.Parameters = null;
             this.ExecutionModel = ExecutionModel.SequentialExecution;
-            this.SetUp = new Sequence();
-            this.TearDown = new Sequence();
+            this.SetUp = new Sequence()
+            {
+                Name = "SetUp",
+                Index = CommonConst.SetupIndex
+            };
+            this.TearDown = new Sequence()
+            {
+                Name = "TearDown",
+                Index = CommonConst.TeardownIndex
+            };
             RefreshSignature();
         }
 
@@ -207,6 +215,8 @@ namespace Testflow.SequenceManager.SequenceElements
                 Sequences = sequenceCollection,
                 TearDown = this.TearDown.Clone() as ISequence
             };
+            sequenceGroup.SetUp.Index = CommonConst.SetupIndex;
+            sequenceGroup.TearDown.Index = CommonConst.TeardownIndex;
             sequenceGroup.RefreshSignature();
             return sequenceGroup;
         }

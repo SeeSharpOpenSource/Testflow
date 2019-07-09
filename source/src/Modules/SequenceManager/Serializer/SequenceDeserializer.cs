@@ -25,6 +25,11 @@ namespace Testflow.SequenceManager.Serializer
             }
             TestProject testProject = null;
             testProject = XmlReaderHelper.ReadTestProject(filePath);
+            
+            // 需要单独配置Setup和TearDown的索引号
+            testProject.SetUp.Index = CommonConst.SetupIndex;
+            testProject.TearDown.Index = CommonConst.TeardownIndex;
+
             CheckModelVersion(testProject.ModelVersion, envInfo);
             foreach (ISequenceGroup sequenceGroup in testProject.SequenceGroups)
             {
@@ -66,6 +71,11 @@ namespace Testflow.SequenceManager.Serializer
                 throw new TestflowDataException(ModuleErrorCode.InvalidFileType, i18N.GetStr("InvalidFileType"));
             }
             SequenceGroup sequenceGroup = XmlReaderHelper.ReadSequenceGroup(filePath);
+
+            // 需要单独配置Setup和TearDown的索引号
+            sequenceGroup.SetUp.Index = CommonConst.SetupIndex;
+            sequenceGroup.TearDown.Index = CommonConst.TeardownIndex;
+
             string sequenceParamFile = ModuleUtils.GetAbsolutePath(sequenceGroup.Info.SequenceParamFile, filePath);
             SequenceGroupParameter parameter =
                 XmlReaderHelper.ReadSequenceGroupParameter(sequenceParamFile);
