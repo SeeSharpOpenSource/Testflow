@@ -2,6 +2,8 @@
 using System.Reflection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Testflow.Data.Sequence;
+using Testflow.Modules;
+using Testflow.Usr;
 
 namespace Testflow.EngineCoreTest
 {
@@ -38,6 +40,17 @@ namespace Testflow.EngineCoreTest
             ITestProject testProjectData = _sequenceCreator.GetSequencialTestProjectData();
             TestflowRunner runnerInstance = TestflowRunner.GetInstance();
             runnerInstance.EngineController.SetSequenceData(testProjectData.SequenceGroups[0]);
+            runnerInstance.EngineController.Start();
+        }
+
+        [TestMethod]
+        public void SequenceTest()
+        {
+            TestflowRunner runnerInstance = TestflowRunner.GetInstance();
+            ISequenceManager sequenceManager = runnerInstance.SequenceManager;
+            ISequenceGroup sequenceGroup = sequenceManager.LoadSequenceGroup(SerializationTarget.File,
+                @"C:\Users\jingtao\Desktop\sequence.tfseq");
+            runnerInstance.EngineController.SetSequenceData(sequenceGroup);
             runnerInstance.EngineController.Start();
         }
     }
