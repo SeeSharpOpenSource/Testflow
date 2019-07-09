@@ -240,6 +240,8 @@ namespace Testflow.SequenceManager.Serializer
             {
                 VerifyTypeIndexes(testProject.TypeDatas, variable as Variable);
             }
+            VerifySequenceData(testProject.TypeDatas, testProject.SetUp);
+            VerifySequenceData(testProject.TypeDatas, testProject.TearDown);
             foreach (ISequenceGroup sequenceGroup in testProject.SequenceGroups)
             {
                 foreach (IArgument argument in sequenceGroup.Arguments)
@@ -264,16 +266,23 @@ namespace Testflow.SequenceManager.Serializer
             {
                 VerifyTypeIndexes(sequenceGroup.TypeDatas, argument as Argument);
             }
+            VerifySequenceData(sequenceGroup.TypeDatas, sequenceGroup.SetUp);
+            VerifySequenceData(sequenceGroup.TypeDatas, sequenceGroup.TearDown);
             foreach (ISequence sequence in sequenceGroup.Sequences)
             {
-                foreach (IVariable variable in sequence.Variables)
-                {
-                    VerifyTypeIndexes(sequenceGroup.TypeDatas, variable as Variable);
-                }
-                foreach (ISequenceStep sequenceStep in sequence.Steps)
-                {
-                    VerifyTypeIndexes(sequenceGroup.TypeDatas, sequenceStep);
-                }
+                VerifySequenceData(sequenceGroup.TypeDatas, sequence);
+            }
+        }
+
+        private static void VerifySequenceData(ITypeDataCollection parentTypeDatas, ISequence sequence)
+        {
+            foreach (IVariable variable in sequence.Variables)
+            {
+                VerifyTypeIndexes(parentTypeDatas, variable as Variable);
+            }
+            foreach (ISequenceStep sequenceStep in sequence.Steps)
+            {
+                VerifyTypeIndexes(parentTypeDatas, sequenceStep);
             }
         }
 
