@@ -70,39 +70,10 @@ namespace Testflow.SlaveCore.Runner.Model
         {
             this.HasLoopCount = false;
             this.HasRetryCount = false;
-//            this.RecordStatus = step.RecordStatus;
-//            this.Behavior = step.Behavior;
-//            this.BreakIfFailed = step.BreakIfFailed;
-            this.FunctionType = step.Function.Type;
 
             int session = context.SessionId;
             this.LoopCount = 0;
             this.RetryCount = 0;
-
-            if (CoreUtils.IsValidVaraible(step.Function.Instance))
-            {
-                string variableName = ModuleUtils.GetVariableNameFromParamValue(step.Function.Instance);
-                this.InstanceVar = ModuleUtils.GetVariableFullName(variableName, step, session);
-            }
-            if (CoreUtils.IsValidVaraible(step.Function.Return))
-            {
-                this.RetryVar = ModuleUtils.GetVariableFullName(step.Function.Return, step, session);
-            }
-//            this.ReturnVar = GetVariableFullName(InstanceVar, step, session);
-
-            if (null != step.LoopCounter && step.LoopCounter.MaxValue > 1 && step.LoopCounter.CounterEnabled)
-            {
-                this.HasLoopCount = true;
-                this.MaxLoopCount = step.LoopCounter.MaxValue;
-                this.LoopVar = ModuleUtils.GetVariableFullName(step.LoopCounter.CounterVariable, step, session);
-            }
-
-            if (null != step.RetryCounter && step.RetryCounter.MaxRetryTimes > 1 && step.RetryCounter.RetryEnabled)
-            {
-                this.HasRetryCount = true;
-                this.MaxRetryCount = step.RetryCounter.MaxRetryTimes;
-                this.RetryVar = ModuleUtils.GetVariableFullName(LoopVar, step, session);
-            }
 
             if (StepData.HasSubSteps)
             {
@@ -113,6 +84,40 @@ namespace Testflow.SlaveCore.Runner.Model
                 this.Method = null;
                 this.Params = new object[step.Function.Parameters?.Count ?? 0];
                 this.Constructor = null;
+                this.FunctionType = step.Function.Type;
+
+                if (CoreUtils.IsValidVaraible(step.Function.Instance))
+                {
+                    string variableName = ModuleUtils.GetVariableNameFromParamValue(step.Function.Instance);
+                    this.InstanceVar = ModuleUtils.GetVariableFullName(variableName, step, session);
+                }
+                if (CoreUtils.IsValidVaraible(step.Function.Return))
+                {
+                    string variableName = ModuleUtils.GetVariableNameFromParamValue(step.Function.Return);
+                    this.ReturnVar = ModuleUtils.GetVariableFullName(variableName, step, session);
+                }
+            }
+
+            if (null != step.LoopCounter && step.LoopCounter.MaxValue > 1 && step.LoopCounter.CounterEnabled)
+            {
+                this.HasLoopCount = true;
+                this.MaxLoopCount = step.LoopCounter.MaxValue;
+                if (CoreUtils.IsValidVaraible(step.LoopCounter.CounterVariable))
+                {
+                    string variable = ModuleUtils.GetVariableNameFromParamValue(step.LoopCounter.CounterVariable);
+                    this.LoopVar = ModuleUtils.GetVariableFullName(variable, step, session);
+                }
+            }
+
+            if (null != step.RetryCounter && step.RetryCounter.MaxRetryTimes > 1 && step.RetryCounter.RetryEnabled)
+            {
+                this.HasRetryCount = true;
+                this.MaxRetryCount = step.RetryCounter.MaxRetryTimes;
+                if (CoreUtils.IsValidVaraible(step.RetryCounter.CounterVariable))
+                {
+                    string variable = ModuleUtils.GetVariableNameFromParamValue(step.RetryCounter.CounterVariable);
+                    this.RetryVar = ModuleUtils.GetVariableFullName(variable, step, session);
+                }
             }
         }
         
@@ -234,7 +239,6 @@ namespace Testflow.SlaveCore.Runner.Model
                 statusInfo.WatchDatas = Context.VariableMapper.GetWatchDataValues(StepData);
                 Context.StatusQueue.Enqueue(statusInfo);
             }
-            NextStep?.Invoke();
         }
 
         private void ExecuteSequenceStep()
@@ -248,6 +252,11 @@ namespace Testflow.SlaveCore.Runner.Model
                 LoopCount = 0;
                 do
                 {
+                    if (CoreUtils.IsValidVaraible(StepData.LoopCounter.CounterVariable))
+                    {
+                        Context.VariableMapper.SetParamValue(LoopVar, StepData.LoopCounter.CounterVariable, LoopCount,
+                            false);
+                    }
                     ExecuteStepSingleTime();
                     if (CoreUtils.IsValidVaraible(LoopVar))
                     {
