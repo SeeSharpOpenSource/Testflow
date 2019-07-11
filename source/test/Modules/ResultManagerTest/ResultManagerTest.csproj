@@ -16,6 +16,7 @@
     <ReferencePath>$(ProgramFiles)\Common Files\microsoft shared\VSTT\$(VisualStudioVersion)\UITestExtensionPackages</ReferencePath>
     <IsCodedUITest>False</IsCodedUITest>
     <TestProjectType>UnitTest</TestProjectType>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -50,7 +51,27 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="FakeTestflowRunner.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ResultManagerTest.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\src\Dev\Common\Common.csproj">
+      <Project>{1681cdd7-0cc2-49d2-9e82-7b03b52db283}</Project>
+      <Name>Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\src\Modules\DataMaintainer\DataMaintainer.csproj">
+      <Project>{cf05b3ce-b2b5-4309-93f7-fa5e07327a25}</Project>
+      <Name>DataMaintainer</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\src\Modules\ResultManager\ResultManager.csproj">
+      <Project>{464a2f2c-4d55-4396-88bf-9fba3dffdd50}</Project>
+      <Name>ResultManager</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DataMaintainerTest\DataMaintainerTest.csproj">
+      <Project>{82929d65-c29a-4678-a71e-7f263b3ae74e}</Project>
+      <Name>DataMaintainerTest</Name>
+    </ProjectReference>
   </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">
