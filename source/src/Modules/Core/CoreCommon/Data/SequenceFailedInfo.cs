@@ -46,12 +46,18 @@ namespace Testflow.CoreCommon.Data
         
         public SequenceFailedInfo(string failedStr)
         {
-            string[] failedInfoDelim = failedStr.Split(Delim.ToCharArray());
-            Type = (FailedType)Enum.Parse(typeof(FailedType), failedInfoDelim[0]);
-            this.Message = failedInfoDelim[1];
-            this.Source = failedInfoDelim[2];
-            this.StackTrace = failedInfoDelim[3];
-            this.ExceptionType = failedInfoDelim[4];
+            string[] failedInfoElems = failedStr.Split(Delim.ToCharArray());
+            int index = 0;
+            int step = Delim.Length;
+            Type = (FailedType)Enum.Parse(typeof(FailedType), failedInfoElems[index]);
+            index += step;
+            this.Message = failedInfoElems[index];
+            index += step;
+            this.Source = failedInfoElems[index];
+            index += step;
+            this.StackTrace = failedInfoElems[index];
+            index += step;
+            this.ExceptionType = failedInfoElems[index];
         }
 
         public override string ToString()
