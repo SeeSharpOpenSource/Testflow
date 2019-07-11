@@ -62,7 +62,7 @@ namespace Testflow.SlaveCore.Data
                 this._variables.Add(variableName, null);
                 // 如果变量的OI报告级别配置为trace则添加变量到监控数据中
                 // 如果变量OI报告级别为最终结果或者报告级别不为None，则添加变量到返回数据
-                if (variable.OIRecordLevel == RecordLevel.Trace)
+                if (variable.OIRecordLevel == RecordLevel.Trace || variable.ReportRecordLevel == RecordLevel.Trace)
                 {
                     _context.WatchDatas.Add(variableName);
                     _context.ReturnDatas.Add(variableName);
@@ -79,7 +79,7 @@ namespace Testflow.SlaveCore.Data
             }
         }
 
-        public void SetParamValue(string variableName, string paramValue, object value, bool recordStatus)
+        public void SetParamValue(string variableName, string paramValue, object value)
         {
             if (_syncVariables.Contains(variableName))
             {
@@ -93,7 +93,7 @@ namespace Testflow.SlaveCore.Data
             }
 
             // 监视变量值如果被更新，则添加到值更新列表中，在状态上报时上传该值
-            if (recordStatus && _context.WatchDatas.Contains(variableName))
+            if (_context.WatchDatas.Contains(variableName))
             {
                 bool getlock = false;
                 _keyVarLock.Enter(ref getlock);
@@ -315,6 +315,7 @@ namespace Testflow.SlaveCore.Data
                             string varValueString = JsonConvert.SerializeObject(varValue);
                             returnDataValues.Add(varName, (string)varValueString);
                         }
+                        
                     }
                 }
                 catch (Exception ex)
@@ -323,6 +324,15 @@ namespace Testflow.SlaveCore.Data
                     returnDataValues.Add(varName, CoreConstants.ErrorVarValue);
                 }
             }
+
+            bool getLock = false;
+            _keyVarLock.Enter(ref getLock);
+            foreach (string returnVar in returnDataValues.Keys)
+            {
+                _context.ReturnDatas.Remove(returnVar);
+            }
+            _keyVarLock.Exit();
+
             return returnDataValues;
         }
 

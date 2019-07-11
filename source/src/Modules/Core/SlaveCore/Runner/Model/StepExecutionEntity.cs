@@ -267,14 +267,12 @@ namespace Testflow.SlaveCore.Runner.Model
                 {
                     if (CoreUtils.IsValidVaraible(StepData.LoopCounter.CounterVariable))
                     {
-                        Context.VariableMapper.SetParamValue(LoopVar, StepData.LoopCounter.CounterVariable, LoopCount,
-                            false);
+                        Context.VariableMapper.SetParamValue(LoopVar, StepData.LoopCounter.CounterVariable, LoopCount);
                     }
                     ExecuteStepSingleTime();
                     if (CoreUtils.IsValidVaraible(LoopVar))
                     {
-                        Context.VariableMapper.SetParamValue(LoopVar, StepData.LoopCounter.CounterVariable, LoopCount,
-                            StepData.RecordStatus);
+                        Context.VariableMapper.SetParamValue(LoopVar, StepData.LoopCounter.CounterVariable, LoopCount);
                     }
                 } while (++LoopCount < MaxLoopCount);
             }
@@ -297,8 +295,7 @@ namespace Testflow.SlaveCore.Runner.Model
                         instance = Constructor.Invoke(Params);
                         if (CoreUtils.IsValidVaraible(InstanceVar))
                         {
-                            Context.VariableMapper.SetParamValue(InstanceVar, StepData.Function.Instance, instance,
-                                StepData.RecordStatus);
+                            Context.VariableMapper.SetParamValue(InstanceVar, StepData.Function.Instance, instance);
                             LogTraceVariable(StepData.Function.Instance, InstanceVar);
                         }
                         break;
@@ -307,8 +304,7 @@ namespace Testflow.SlaveCore.Runner.Model
                         returnValue = Method.Invoke(instance, Params);
                         if (CoreUtils.IsValidVaraible(ReturnVar))
                         {
-                            Context.VariableMapper.SetParamValue(ReturnVar, StepData.Function.Return, returnValue,
-                                StepData.RecordStatus);
+                            Context.VariableMapper.SetParamValue(ReturnVar, StepData.Function.Return, returnValue);
                             LogTraceVariable(StepData.Function.Return, returnValue);
                         }
                         break;
@@ -316,8 +312,7 @@ namespace Testflow.SlaveCore.Runner.Model
                         returnValue = Method.Invoke(null, Params);
                         if (CoreUtils.IsValidVaraible(ReturnVar))
                         {
-                            Context.VariableMapper.SetParamValue(ReturnVar, StepData.Function.Return, returnValue,
-                                StepData.RecordStatus);
+                            Context.VariableMapper.SetParamValue(ReturnVar, StepData.Function.Return, returnValue);
                             LogTraceVariable(StepData.Function.Return, returnValue);
                         }
                         break;
@@ -366,8 +361,7 @@ namespace Testflow.SlaveCore.Runner.Model
                 object value = Params[i];
                 // variableName已经是运行时名称
                 string runtimeVariableName = ModuleUtils.GetVariableNameFromParamValue(parameter.Value);
-                Context.VariableMapper.SetParamValue(runtimeVariableName, parameter.Value, value, 
-                    StepData.RecordStatus);
+                Context.VariableMapper.SetParamValue(runtimeVariableName, parameter.Value, value);
                 IVariable variable = CoreUtils.GetVariable(Context.Sequence, runtimeVariableName);
                 if (variable.LogRecordLevel == RecordLevel.Trace)
                 {
