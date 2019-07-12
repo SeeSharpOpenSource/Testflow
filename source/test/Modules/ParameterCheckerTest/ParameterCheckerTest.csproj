@@ -50,7 +50,31 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="FakeTestflowRunner.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ParameterCheckTest.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\src\Dev\Common\Common.csproj">
+      <Project>{1681cdd7-0cc2-49d2-9e82-7b03b52db283}</Project>
+      <Name>Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\src\Dev\Logger\Logger.csproj">
+      <Project>{dc3cd3de-1b8e-4847-b752-63352f35f1e2}</Project>
+      <Name>Logger</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\src\Modules\ComInterfaceManager\ComInterfaceManager.csproj">
+      <Project>{5b1a7351-8d30-49aa-8fab-c8920a0cfdf4}</Project>
+      <Name>ComInterfaceManager</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\src\Modules\ParameterChecker\ParameterChecker.csproj">
+      <Project>{9e2e741a-ab7b-4cd5-8458-4cf1178e3d4c}</Project>
+      <Name>ParameterChecker</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\src\Modules\SequenceManager\SequenceManager.csproj">
+      <Project>{6c461d7e-7ea4-4bf2-9168-82180132a0c9}</Project>
+      <Name>SequenceManager</Name>
+    </ProjectReference>
   </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">
