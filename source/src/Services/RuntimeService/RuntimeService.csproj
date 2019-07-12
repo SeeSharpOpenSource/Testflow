@@ -40,7 +40,23 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Common\ModuleUtils.cs" />
+    <Compile Include="ModuleErrorCode.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RuntimeConfiguration.cs" />
+    <Compile Include="RuntimeContext.cs" />
+    <Compile Include="RuntimeSession.cs" />
+    <Compile Include="RuntimeService.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Dev\Common\Common.csproj">
+      <Project>{1681cdd7-0cc2-49d2-9e82-7b03b52db283}</Project>
+      <Name>Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Modules\Core\CoreCommon\CoreCommon.csproj">
+      <Project>{97802083-7497-483f-9e2b-7f05cdaa4124}</Project>
+      <Name>CoreCommon</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
