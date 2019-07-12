@@ -267,9 +267,31 @@ namespace Testflow.ParameterChecker
         public IList<IWarningInfo> CheckParameters(ISequenceGroup sequenceGroup)
         {
             IList<IWarningInfo> warnList = new List<IWarningInfo>();
+
+            #region 检查setUp
+            IList<IWarningInfo> setUpWarnList = CheckSteps(sequenceGroup.SetUp.Steps, new ISequenceFlowContainer[] { sequenceGroup.SetUp, sequenceGroup });
+            foreach (IWarningInfo warnInfo in setUpWarnList)
+            {
+                warnInfo.Sequence = sequenceGroup.SetUp;
+                warnInfo.SequenceGroup = sequenceGroup;
+            }
+            warnList = warnList.Concat(setUpWarnList).ToList();
+            #endregion
+
+            #region 检查teardown
+            IList<IWarningInfo> tearDownWarnList = CheckSteps(sequenceGroup.TearDown.Steps, new ISequenceFlowContainer[] { sequenceGroup.TearDown, sequenceGroup });
+            foreach (IWarningInfo warnInfo in tearDownWarnList)
+            {
+                warnInfo.Sequence = sequenceGroup.TearDown;
+                warnInfo.SequenceGroup = sequenceGroup;
+            }
+            warnList = warnList.Concat(tearDownWarnList).ToList();
+            #endregion
+
+            #region 检查sequence
             foreach (ISequence sequence in sequenceGroup.Sequences)
             {
-                IList<IWarningInfo> sequenceWarnList = CheckSteps(sequence.Steps, new ISequenceFlowContainer[] { sequence, sequenceGroup }).ToList();
+                IList<IWarningInfo> sequenceWarnList = CheckSteps(sequence.Steps, new ISequenceFlowContainer[] { sequence, sequenceGroup });
                 foreach (IWarningInfo warnInfo in sequenceWarnList)
                 {
                     warnInfo.Sequence = sequence;
@@ -277,7 +299,8 @@ namespace Testflow.ParameterChecker
                 }
                 warnList = warnList.Concat(sequenceWarnList).ToList();
             }
-            
+            #endregion
+
             return warnList;
         }
 

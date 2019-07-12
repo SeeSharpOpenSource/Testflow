@@ -43,9 +43,10 @@ namespace Testflow.ParameterCheckerTest
         }
 
         [TestMethod]
-        public void CheckTestProject()
+        public void CheckSequence()
         {
             ISequenceGroup sequenceGroup = _sequenceManager.LoadSequenceGroup(Usr.SerializationTarget.File, testProjectPath);
+
 
         }
     }
