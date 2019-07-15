@@ -138,7 +138,7 @@ namespace Testflow.SequenceManagerTest
         public void SequenceGroupToJson()
         {
             string runtimeSerialize = _sequenceManager.RuntimeSerialize(_testProject.SequenceGroups[0]);
-            Assert.AreEqual(runtimeSerialize, JsonStrResource.sequenceGroup1Json);
+            Assert.AreEqual(JsonStrResource.sequenceGroup1Json, runtimeSerialize);
         }
 
         [TestCleanup]

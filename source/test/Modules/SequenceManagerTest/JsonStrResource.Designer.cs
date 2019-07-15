@@ -70,7 +70,7 @@ namespace Testflow.SequenceManagerTest {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to {&quot;TypeDatas&quot;:[],&quot;Assemblies&quot;:[],&quot;ExecutionModel&quot;:0,&quot;Variables&quot;:[],&quot;VariableValues&quot;:[],&quot;SetUp&quot;:{&quot;Index&quot;:-1,&quot;Variables&quot;:[],&quot;Steps&quot;:[],&quot;Behavior&quot;:0},&quot;SetUpParameters&quot;:{&quot;Index&quot;:-1},&quot;SequenceGroupParameters&quot;:[],&quot;TearDown&quot;:{&quot;Index&quot;:-2,&quot;Variables&quot;:[],&quot;Steps&quot;:[],&quot;Behavior&quot;:0},&quot;TearDownParameters&quot;:{&quot;Index&quot;:-1}}.
+        ///   Looks up a localized string similar to {&quot;TypeDatas&quot;:[],&quot;Assemblies&quot;:[],&quot;ExecutionModel&quot;:0,&quot;Variables&quot;:[],&quot;VariableValues&quot;:[],&quot;SetUp&quot;:{&quot;Index&quot;:-1,&quot;Variables&quot;:[],&quot;Steps&quot;:[],&quot;Behavior&quot;:0},&quot;SetUpParameters&quot;:{&quot;Index&quot;:-1,&quot;StepParameters&quot;:[],&quot;VariableValues&quot;:[]},&quot;SequenceGroupParameters&quot;:[],&quot;TearDown&quot;:{&quot;Index&quot;:-2,&quot;Variables&quot;:[],&quot;Steps&quot;:[],&quot;Behavior&quot;:0},&quot;TearDownParameters&quot;:{&quot;Index&quot;:-2,&quot;StepParameters&quot;:[],&quot;VariableValues&quot;:[]}}.
         /// </summary>
         internal static string testProject1Json {
             get {
