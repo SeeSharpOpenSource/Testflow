@@ -61,6 +61,15 @@ namespace Testflow.ComInterfaceManager.Resources.locale {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to 程序集&lt;{0}&gt;未被加载。.
+        /// </summary>
+        internal static string AssemblyNotLoad {
+            get {
+                return ResourceManager.GetString("AssemblyNotLoad", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to 实例属性配置.
         /// </summary>
         internal static string InstancePropertySetter {

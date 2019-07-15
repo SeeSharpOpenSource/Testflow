@@ -61,6 +61,15 @@ namespace Testflow.ComInterfaceManager.Resources.locale {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Assembly &lt;{0}&gt; has not been loaded..
+        /// </summary>
+        internal static string AssemblyNotLoad {
+            get {
+                return ResourceManager.GetString("AssemblyNotLoad", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Instance properties configuration.
         /// </summary>
         internal static string InstancePropertySetter {

@@ -17,6 +17,7 @@ namespace Testflow.ComInterfaceManager
     {
         private readonly HashSet<string> _ignoreMethod;
         private readonly HashSet<string> _ignoreClass;
+        private readonly Dictionary<string, Assembly> _assemblies;
         public AssemblyDescriptionLoader()
         {
             _ignoreMethod = new HashSet<string>()
@@ -32,6 +33,7 @@ namespace Testflow.ComInterfaceManager
                 "Exception",
                 "Log"
             };
+            _assemblies = new Dictionary<string, Assembly>(100);
         }
 
         public Exception Exception { get; private set; }
@@ -71,6 +73,7 @@ namespace Testflow.ComInterfaceManager
                     return null;
                 }
             }
+            _assemblies.Add(assemblyName, assembly);
             try
             {
                 ComInterfaceDescription descriptionData = new ComInterfaceDescription()
@@ -505,15 +508,23 @@ namespace Testflow.ComInterfaceManager
             }
         }
 
-        public ITypeDescription GetPropertyType(ITypeData typeData, string propertyStr)
+        public ITypeDescription GetPropertyType(string assemblyName, string typeName, string propertyStr)
         {
             const char delim = '.';
             string[] propertyElems = propertyStr.Split(delim);
             Exception = null;
             ErrorCode = 0;
+            if (!_assemblies.ContainsKey(assemblyName))
+            {
+                I18N i18N = I18N.GetInstance(Constants.I18nName);
+                this.Exception = new TestflowRuntimeException(ModuleErrorCode.TypeCannotLoad,
+                    i18N.GetFStr("AssemblyNotLoad", assemblyName));
+                this.ErrorCode = ModuleErrorCode.TypeCannotLoad;
+                return null;
+            }
             try
             {
-                Type dataType = Type.GetType(ModuleUtils.GetFullName(typeData));
+                Type dataType = _assemblies[assemblyName].GetType(typeName);
                 if (null == dataType)
                 {
                     ErrorCode = ModuleErrorCode.TypeCannotLoad;
@@ -562,6 +573,7 @@ namespace Testflow.ComInterfaceManager
         public ComInterfaceDescription LoadMscorlibDescription()
         {
             Assembly mscorAssembly = typeof(int).Assembly;
+            _assemblies.Add(mscorAssembly.GetName().Name, mscorAssembly);
             ComInterfaceDescription description = new ComInterfaceDescription()
             {
                 Category = LibraryCategory.Platform.ToString(),

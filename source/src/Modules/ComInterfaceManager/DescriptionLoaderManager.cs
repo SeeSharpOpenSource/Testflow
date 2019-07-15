@@ -111,7 +111,9 @@ namespace Testflow.ComInterfaceManager
 
         public ITypeData GetPropertyType(ITypeData typeData, string property, DescriptionDataTable descriptionCollection)
         {
-            ITypeDescription propertyTypeDescription = _loader.GetPropertyType(typeData, property);
+            ITypeDescription propertyTypeDescription = _loader.GetPropertyType( typeData.AssemblyName, 
+                ModuleUtils.GetFullName(typeData),
+                property);
             if (null == propertyTypeDescription)
             {
                 CheckPropertyDescription(typeData, property);
