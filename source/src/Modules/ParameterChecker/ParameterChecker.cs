@@ -142,6 +142,12 @@ namespace Testflow.ParameterChecker
         private IList<IWarningInfo> CheckParameterData(IFunctionData function, ISequenceFlowContainer[] arr)
         {
             IList<IWarningInfo> warningList = new List<IWarningInfo>();
+
+            if(function.Parameters == null)
+            {
+                return warningList;
+            }
+
             //检查一个个参数
             for (int n = 0; n < function.Parameters.Count; n++)
             {
@@ -452,7 +458,8 @@ namespace Testflow.ParameterChecker
             //如果入参为varname.property1.property2，则从varname中用模块取得属性type
             if (str.Length > 1)
             {
-                type = _comInterfaceManager.GetPropertyType(type, variableString.Substring(variableString.IndexOf('.') + 1));
+                Console.Write("haha");
+                //type = _comInterfaceManager.GetPropertyType(type, variableString.Substring(variableString.IndexOf('.') + 1));
             }
 
             //比较type
