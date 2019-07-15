@@ -156,6 +156,10 @@ namespace Testflow.ComInterfaceManager
                         throw new TestflowRuntimeException(ModuleErrorCode.TypeCannotLoad,
                             i18N.GetFStr("TypeNotFound", typeData.Name));
                         break;
+                    case ModuleErrorCode.AssemblyNotLoad:
+                        throw new TestflowRuntimeException(ModuleErrorCode.AssemblyNotLoad, 
+                            i18N.GetFStr("AssemblyNotLoad", typeData.AssemblyName));
+                        break;
                     default:
                         break;
                 }

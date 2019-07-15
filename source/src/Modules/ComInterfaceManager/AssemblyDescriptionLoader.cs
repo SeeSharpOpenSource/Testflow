@@ -516,10 +516,7 @@ namespace Testflow.ComInterfaceManager
             ErrorCode = 0;
             if (!_assemblies.ContainsKey(assemblyName))
             {
-                I18N i18N = I18N.GetInstance(Constants.I18nName);
-                this.Exception = new TestflowRuntimeException(ModuleErrorCode.TypeCannotLoad,
-                    i18N.GetFStr("AssemblyNotLoad", assemblyName));
-                this.ErrorCode = ModuleErrorCode.TypeCannotLoad;
+                this.ErrorCode = ModuleErrorCode.AssemblyNotLoad;
                 return null;
             }
             try
