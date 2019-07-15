@@ -23,6 +23,7 @@ namespace Testflow.ParameterChecker.Convertor
                 {typeof (long).Name, (valueStr) => {long n; return long.TryParse(valueStr, out n); } },
                 {typeof (ulong).Name, (valueStr) => {ulong n; return ulong.TryParse(valueStr, out n); } },
                 {typeof (byte).Name, (valueStr) => {byte n; return byte.TryParse(valueStr, out n); } },
+                {typeof (double).Name, (valueStr) => {double n; return double.TryParse(valueStr, out n); } },
                 {typeof (char).Name, (valueStr) => {char n; return char.TryParse(valueStr, out n); } },
                 {typeof (bool).Name, (valueStr) => {bool n; return bool.TryParse(valueStr, out n); } },
                 {typeof (DateTime).Name, (valueStr) => {DateTime n; return DateTime.TryParse(valueStr, out n); } },
