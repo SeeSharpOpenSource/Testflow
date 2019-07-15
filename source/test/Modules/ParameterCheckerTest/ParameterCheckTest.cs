@@ -5,6 +5,8 @@ using System.Reflection;
 using Testflow.Data.Description;
 using Testflow.SequenceManager.SequenceElements;
 using Testflow.Data.Sequence;
+using System.Collections;
+using System.Collections.Generic;
 
 namespace Testflow.ParameterCheckerTest
 {
@@ -15,7 +17,7 @@ namespace Testflow.ParameterCheckerTest
         private IParameterChecker _parameterChecker;
         private IComInterfaceManager _interfaceManager;
         private const string path = @"C:\SeeSharp\JYTEK\Hardware\DAQ\JYUSB61902\Bin\";
-        private const string testProjectPath = path + "ParameterCheckerTest.tfseq";
+        private const string sequenceGroupPath = path + "ParameterCheckerTest.tfseq";
 
         public ParameterCheckerTest()
         {
@@ -36,17 +38,15 @@ namespace Testflow.ParameterCheckerTest
             _sequenceManager = fakeTestflowRunner.SequenceManager;
             _interfaceManager = fakeTestflowRunner.ComInterfaceManager;
 
-            //IComInterfaceDescription description = _interfaceManager.GetComponentInterface(path + "JYUSB61902.dll");
-
-
-
         }
 
         [TestMethod]
-        public void CheckTestProject()
+        public void CheckSequence()
         {
-            ISequenceGroup sequenceGroup = _sequenceManager.LoadSequenceGroup(Usr.SerializationTarget.File, testProjectPath);
-
+            _parameterChecker.RuntimeInitialize();
+            ISequenceGroup sequenceGroup = _sequenceManager.LoadSequenceGroup(Usr.SerializationTarget.File, sequenceGroupPath);
+            IList<IWarningInfo> warnList = _parameterChecker.CheckParameters(sequenceGroup);
         }
+
     }
 }

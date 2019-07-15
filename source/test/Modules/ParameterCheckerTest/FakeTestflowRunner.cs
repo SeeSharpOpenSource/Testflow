@@ -6,13 +6,16 @@ using System.Threading.Tasks;
 using Testflow.Data;
 using Testflow.Data.Description;
 using Testflow.Modules;
+using Testflow.SequenceManager.SequenceElements;
 
 namespace Testflow.ParameterCheckerTest
 {
     class FakeTestflowRunner:TestflowRunner
     {
+       
         public FakeTestflowRunner(TestflowRunnerOptions options) : base(options)
         {
+           
         }
 
         #region 模块属性
@@ -29,13 +32,12 @@ namespace Testflow.ParameterCheckerTest
         public override void Initialize()
         {
             this.SequenceManager = new SequenceManager.SequenceManager();
-
             this.ComInterfaceManager = new ComInterfaceManager.InterfaceManager();
-
             this.ParameterChecker = new ParameterChecker.ParameterChecker();
-
+           
             this.LogService = new Logger.LogService();
 
+            ComInterfaceManager.DesigntimeInitialize();
             SequenceManager.DesigntimeInitialize();
             LogService.RuntimeInitialize();
         }
