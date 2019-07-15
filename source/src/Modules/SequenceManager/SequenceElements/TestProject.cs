@@ -30,6 +30,8 @@ namespace Testflow.SequenceManager.SequenceElements
                 Index = CommonConst.SetupIndex
             };
             this.SetUpParameters = new SequenceParameter();
+            this.SetUpParameters.Initialize(this.SetUp);
+
             this.SequenceGroups = new SequenceGroupCollection();
             this.SequenceGroupParameters = new ParameterDataCollections();
             this.SequenceGroupLocations = null;
@@ -39,6 +41,7 @@ namespace Testflow.SequenceManager.SequenceElements
                 Index = CommonConst.TeardownIndex
             };
             this.TearDownParameters = new SequenceParameter();
+            this.TearDownParameters.Initialize(this.TearDown);
             this.ModelVersion = string.Empty;
         }
 

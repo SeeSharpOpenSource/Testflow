@@ -70,6 +70,25 @@ namespace Testflow.SequenceManager.Common
             return Directory.Exists(filePath.Substring(0, pathIndex)) && IsFile(filePath);
         }
 
+        const char PropertyDelim = '.';
+        /// <summary>
+        /// 检查某个参数的值是否为变量的属性
+        /// </summary>
+        public static bool IsPropertyParam(string paramValue)
+        {
+            return paramValue.Contains(PropertyDelim);
+        }
+
+        public static string GetVarNameByParamValue(string paramValue)
+        {
+            if (!paramValue.Contains(PropertyDelim))
+            {
+                return paramValue;
+            }
+            string[] paramElems = paramValue.Split(PropertyDelim);
+            return paramElems[0];
+        }
+
         #region Hash Calculation
 
         public static string GetHashValue(string hashSource, Encoding encoding)

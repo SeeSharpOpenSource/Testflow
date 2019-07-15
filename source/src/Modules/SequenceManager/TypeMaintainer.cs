@@ -70,33 +70,34 @@ namespace Testflow.SequenceManager
         {
             if (!string.IsNullOrWhiteSpace(sequenceStep.LoopCounter?.CounterVariable))
             {
-                Type varType = typeof(int);
-                ITypeData typeData = _comInterfaceManager.GetTypeByName(varType.Name, varType.Namespace);
-                IVariable variable = variableTree.GetVariable(sequenceStep.LoopCounter.CounterVariable);
+                string variableName = ModuleUtils.GetVarNameByParamValue(sequenceStep.LoopCounter.CounterVariable);
+                IVariable variable = variableTree.GetVariable(variableName);
                 // Argument不能作为遍历变量
-                if (null != variable)
+                if (null == variable)
                 {
-                    variable.Type = typeData;
+                    ThrowIfVariableNotFound(variableName, sequenceStep);
                 }
-                else
+                else if (!ModuleUtils.IsPropertyParam(sequenceStep.LoopCounter.CounterVariable))
                 {
-                    ThrowIfVariableNotFound(sequenceStep.LoopCounter.CounterVariable, sequenceStep);
+                    Type varType = typeof(int);
+                    variable.Type = _comInterfaceManager.GetTypeByName(varType.Name, varType.Namespace);
                 }
             }
 
             if (!string.IsNullOrWhiteSpace(sequenceStep.RetryCounter?.CounterVariable))
             {
-                Type varType = typeof(int);
-                ITypeData typeData = _comInterfaceManager.GetTypeByName(varType.Name, varType.Namespace);
-                IVariable variable = variableTree.GetVariable(sequenceStep.RetryCounter.CounterVariable);
+                string variableName = ModuleUtils.GetVarNameByParamValue(sequenceStep.RetryCounter.CounterVariable);
+                IVariable variable = variableTree.GetVariable(variableName);
                 // Argument不能作为遍历变量
-                if (null != variable)
+                if (null == variable)
                 {
-                    variable.Type = typeData;
+                    ThrowIfVariableNotFound(variableName, sequenceStep);
                 }
-                else
+                else if (!ModuleUtils.IsPropertyParam(sequenceStep.RetryCounter.CounterVariable))
                 {
-                    ThrowIfVariableNotFound(sequenceStep.RetryCounter.CounterVariable, sequenceStep);
+                    Type varType = typeof(int);
+                    ITypeData typeData = _comInterfaceManager.GetTypeByName(varType.Name, varType.Namespace);
+                    variable.Type = typeData;
                 }
             }
 
@@ -131,18 +132,25 @@ namespace Testflow.SequenceManager
             }
         }
 
-        private void SetVariableAndArgumentType(string variableName, ITypeData type, VariableTreeTable variableTree, 
+        private void SetVariableAndArgumentType(string paramValue, ITypeData type, VariableTreeTable variableTree, 
             ISequenceFlowContainer parent)
         {
             IVariable variable;
             IArgument argument;
+            string variableName = ModuleUtils.GetVarNameByParamValue(paramValue);
             if (null != (variable = variableTree.GetVariable(variableName)))
             {
-                variable.Type = type;
+                if (!ModuleUtils.IsPropertyParam(paramValue))
+                {
+                    variable.Type = type;
+                }
             }
             else if (null != (argument = variableTree.GetArgument(variableName)))
             {
-                argument.Type = type;
+                if (!ModuleUtils.IsPropertyParam(paramValue))
+                {
+                    argument.Type = type;
+                }
             }
             else
             {
