@@ -185,9 +185,7 @@ namespace Testflow.ParameterChecker
                             });
                             break;
                         }
-                        //todo 判断是否为enumeration
-                        //如果是enumeration 则要调动enumeration的定义
-                        //这么调，我估计是跟gettype一个道理，sequencemanager？
+
                         if(parameterType.VariableType == VariableType.Enumeration)
                         {
                             //获取assembly信息里的enumeration字典
@@ -240,9 +238,8 @@ namespace Testflow.ParameterChecker
                         break;
 
                     case ParameterType.Variable:
-                        //todo 如果说paremeter类型是value， 可能要Convertor.ValueConvertor.CheckValue（parameterType.Type.Name,Variable.Value）
+                        //todo 如果说paremeter类型是value， 可能要Convertor.ValueConvertor.CheckValue（parameterType.Type.Name, Variable.Value）
                         //那要再写个GetValue去找相同名字的variable的value
-                        //麻烦
 
                         IWarningInfo warnInfo = null;
                         foreach (ISequenceFlowContainer cont in arr)
@@ -320,7 +317,7 @@ namespace Testflow.ParameterChecker
         /// <returns>检查过程中出现的告警信息</returns>
         public IList<IWarningInfo> CheckParameters(ITestProject testProject)
         {
-            //check setup
+            #region 检查setup
             IList<IWarningInfo> setUpWarnList = new List<IWarningInfo>();
 
             setUpWarnList = CheckSteps(testProject.SetUp.Steps, new ISequenceFlowContainer[] { testProject.SetUp, testProject });
@@ -328,14 +325,16 @@ namespace Testflow.ParameterChecker
             {
                 warnInfo.Sequence = testProject.SetUp;
             }
+            #endregion
 
-            //check teardown
+            #region 检查teardown
             IList<IWarningInfo> tearDownWarnList = new List<IWarningInfo>();
             tearDownWarnList = CheckSteps(testProject.TearDown.Steps, new ISequenceFlowContainer[] { testProject.TearDown, testProject });
             foreach (IWarningInfo warnInfo in tearDownWarnList)
             {
                 warnInfo.Sequence = testProject.TearDown;
             }
+            #endregion
 
             return setUpWarnList.Concat(tearDownWarnList).ToList();
         }
@@ -458,8 +457,7 @@ namespace Testflow.ParameterChecker
             //如果入参为varname.property1.property2，则从varname中用模块取得属性type
             if (str.Length > 1)
             {
-                Console.Write("haha");
-                //type = _comInterfaceManager.GetPropertyType(type, variableString.Substring(variableString.IndexOf('.') + 1));
+                type = _comInterfaceManager.GetPropertyType(type, variableString.Substring(variableString.IndexOf('.') + 1));
             }
 
             //比较type
@@ -504,7 +502,6 @@ namespace Testflow.ParameterChecker
 
             return null;
         }
-
     }
     #endregion
 }
