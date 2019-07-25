@@ -59,7 +59,13 @@ namespace Testflow.SlaveCore.Data
             foreach (IVariable variable in variables)
             {
                 string variableName = CoreUtils.GetRuntimeVariableName(sessionId, variable);
-                this._variables.Add(variableName, null);
+                object value = null;
+                // 如果是值类型并且配置的值有效，则初始化变量值
+                if (variable.VariableType == VariableType.Value && CoreUtils.IsValidVaraibleValue(variable))
+                {
+                    value = _context.TypeInvoker.CastValue(variable.Type, variable.Value);
+                }
+                this._variables.Add(variableName, value);
                 // 如果变量的OI报告级别配置为trace则添加变量到监控数据中
                 // 如果变量OI报告级别为最终结果或者报告级别不为None，则添加变量到返回数据
                 if (variable.OIRecordLevel == RecordLevel.Trace || variable.ReportRecordLevel == RecordLevel.Trace)

@@ -41,9 +41,6 @@ namespace Testflow.SlaveCore.SlaveFlowControl
             // 打印状态日志
             Context.LogSession.Print(LogLevel.Debug, Context.SessionId, "Construct variable mapper start.");
 
-            // 构造变量映射器
-            Context.VariableMapper = new VariableMapper(Context);
-
             // 打印状态日志
             Context.LogSession.Print(LogLevel.Debug, Context.SessionId, "Construct AssemblyInvoker start.");
 
@@ -62,7 +59,10 @@ namespace Testflow.SlaveCore.SlaveFlowControl
                 default:
                     throw new InvalidOperationException();
             }
-            
+
+            // 构造变量映射器
+            Context.VariableMapper = new VariableMapper(Context);
+
             // 打印状态日志
             Context.LogSession.Print(LogLevel.Debug, Context.SessionId, "Load assemblies.");
 
