@@ -105,6 +105,11 @@ namespace Testflow.MasterCore.StatusManage
 
         public void AbortEventProcess(AbortEventInfo eventInfo)
         {
+            // 如果序列已经结束或者当前序列为teardown序列，则不接收abort状态更新
+            if (ModuleUtils.IsOver(this.State) || this.SequenceIndex == CommonConst.TeardownIndex)
+            {
+                return;
+            }
             if (eventInfo.IsRequest)
             {
                 RefreshCommonStatus(eventInfo, RuntimeState.AbortRequested, StepResult.NotAvailable);

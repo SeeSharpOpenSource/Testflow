@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Testflow.Usr;
 using Testflow.CoreCommon.Common;
@@ -8,6 +9,7 @@ using Testflow.Data.Sequence;
 using Testflow.MasterCore.Common;
 using Testflow.MasterCore.Message;
 using Testflow.MasterCore.TestMaintain;
+using Testflow.MasterCore.TestMaintain.Container;
 using Testflow.Modules;
 using Testflow.Runtime;
 using Testflow.Runtime.Data;
@@ -259,7 +261,8 @@ namespace Testflow.MasterCore.Core
             this._globalInfo.StateMachine.State = RuntimeState.AbortRequested;
             if (sessionId == CommonConst.TestGroupSession || sessionId == CommonConst.BroadcastSession)
             {
-                foreach (int session in _testsMaintainer.TestContainers.Keys)
+                List<int> sessionIds = new List<int>(_testsMaintainer.TestContainers.Keys);
+                foreach (int session in sessionIds)
                 {
                     Abort(session);
                 }

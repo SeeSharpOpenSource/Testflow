@@ -206,5 +206,10 @@ namespace Testflow.MasterCore.Common
                 throw new TestflowRuntimeException(errorCode, exMessage, innerException);
             }
         }
+
+        public static bool IsOver(RuntimeState state)
+        {
+            return state > RuntimeState.AbortRequested;
+        }
     }
 }
