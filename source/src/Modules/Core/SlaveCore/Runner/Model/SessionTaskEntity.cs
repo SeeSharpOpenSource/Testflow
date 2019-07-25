@@ -66,7 +66,7 @@ namespace Testflow.SlaveCore.Runner.Model
 
         public void InvokeTearDown()
         {
-            _tearDown.Invoke();
+            _tearDown.Invoke(true);
         }
 
         public void InvokeSequence(int index)

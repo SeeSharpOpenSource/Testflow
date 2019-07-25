@@ -53,6 +53,7 @@ namespace Testflow.SlaveCore.Common
             this.ReturnDatas = new HashSet<string>();
             this.BreakPoints = new HashSet<string>();
             this.RuntimeType = GetProperty<RuntimeType>("RuntimeType");
+            this.Cancellation = new CancellationTokenSource();
 
             LogSession.Print(LogLevel.Debug, SessionId, "Slave context constructed.");
         }
@@ -82,6 +83,11 @@ namespace Testflow.SlaveCore.Common
         public UplinkMessageProcessor UplinkMsgProcessor { get; }
 
         public Thread FlowControlThread { get; set; }
+
+        /// <summary>
+        /// 执行取消标志
+        /// </summary>
+        public CancellationTokenSource Cancellation { get; }
         
         /// <summary>
         /// 测试生成消息实例，全局唯一

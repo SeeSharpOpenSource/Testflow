@@ -97,7 +97,7 @@ namespace Testflow.SlaveCore.SlaveFlowControl
             this.Next = new CtrlStartProcessFlowTask(Context);
         }
 
-        protected override void TaskAbortAction()
+        public override void TaskAbortAction()
         {
             TestGenMessage testGenMessage = new TestGenMessage(MessageNames.TestGenName, Context.SessionId,
                 CommonConst.PlatformLogSession, GenerationStatus.Failed)

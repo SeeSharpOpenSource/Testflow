@@ -27,9 +27,14 @@ namespace Testflow.SlaveCore.SlaveFlowControl
 
             RmtGenMessage rmtGenMessage;
             // 等待接收到RmtGenMessage为止
-            while (null == (rmtGenMessage = Context.RmtGenMessage))
+            while (null == (rmtGenMessage = Context.RmtGenMessage) && !Context.Cancellation.IsCancellationRequested)
             {
                 Thread.Sleep(10);
+            }
+            // 如果被取消则直接返回
+            if (Context.Cancellation.IsCancellationRequested)
+            {
+                return;
             }
             // 打印状态日志
             Context.LogSession.Print(LogLevel.Debug, Context.SessionId, "RmtGenMessage received.");
@@ -55,7 +60,7 @@ namespace Testflow.SlaveCore.SlaveFlowControl
             this.Next = new TestGenerationFlowTask(Context);
         }
 
-        protected override void TaskAbortAction()
+        public override void TaskAbortAction()
         {
             TestGenMessage testGenMessage = new TestGenMessage(MessageNames.TestGenName, Context.SessionId,
                 CommonConst.PlatformLogSession, GenerationStatus.Failed)

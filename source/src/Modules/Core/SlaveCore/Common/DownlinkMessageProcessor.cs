@@ -5,13 +5,13 @@ using Testflow.CoreCommon;
 using Testflow.CoreCommon.Common;
 using Testflow.CoreCommon.Data;
 using Testflow.CoreCommon.Messages;
+using Testflow.SlaveCore.SlaveFlowControl;
 
 namespace Testflow.SlaveCore.Common
 {
     internal class DownlinkMessageProcessor
     {
         private readonly SlaveContext _context;
-        private CancellationTokenSource _cancellation;
         private LocalMessageQueue<MessageBase> _messageQueue;
 
         public DownlinkMessageProcessor(SlaveContext context)
@@ -25,8 +25,6 @@ namespace Testflow.SlaveCore.Common
             _context.LogSession.Print(LogLevel.Debug, _context.SessionId, 
                 $"Downlink message processer started, thread:{Thread.CurrentThread.ManagedThreadId}.");
 
-            _cancellation = new CancellationTokenSource();
-
             // 首先接收RmtGenMessage
             _messageQueue = _context.MessageTransceiver.MessageQueue;
             MessageBase message = _messageQueue.WaitUntilMessageCome();
@@ -38,7 +36,7 @@ namespace Testflow.SlaveCore.Common
             }
             _context.RmtGenMessage = rmtGenMessage;
 
-            while (!_cancellation.IsCancellationRequested)
+            while (!_context.Cancellation.IsCancellationRequested)
             {
                 message = _messageQueue.WaitUntilMessageCome();
                 if (null == message)
@@ -72,7 +70,7 @@ namespace Testflow.SlaveCore.Common
 
         public void Stop()
         {
-            _cancellation?.Cancel();
+            _context.Cancellation.Cancel();
             _messageQueue?.StopEnqueue();
             _messageQueue?.FreeLock();
         }
@@ -85,13 +83,19 @@ namespace Testflow.SlaveCore.Common
                     _context.CtrlStartMessage = message;
                     break;
                 case MessageNames.CtrlAbort:
-                    _context.FlowControlThread.Abort();
+                    _context.Cancellation.Cancel();
                     // 如果线程还未结束，则等待
                     if (_context.FlowControlThread.IsAlive)
                     {
-                        _context.FlowControlThread.Join(Constants.ThreadAbortJoinTime);
+                        if (_context.FlowControlThread.Join(Constants.ThreadAbortJoinTime))
+                        {
+                            SlaveFlowTaskBase.CurrentFlowTask?.TaskAbortAction();
+                        }
+                        else
+                        {
+                            _context.FlowControlThread.Abort();
+                        }
                     }
-                    _cancellation.Cancel();
                     break;
             }
         }

@@ -88,13 +88,10 @@ namespace Testflow.SlaveCore.SlaveFlowControl
 
         private void WakeThreadWhenCtrlMessageCome(object state)
         {
-            if (null != Context.CtrlStartMessage)
+            if ((null != Context.CtrlStartMessage && Context.CtrlStartMessage.Params.ContainsKey("RunTearDown") &&
+                Context.CtrlStartMessage.Params["RunTearDown"].Equals(true.ToString())) || 
+                Context.Cancellation.IsCancellationRequested)
             {
-                if (!Context.CtrlStartMessage.Params.ContainsKey("RunTearDown") || 
-                    Context.CtrlStartMessage.Params["RunTearDown"].Equals(false.ToString()))
-                {
-                    Context.CtrlStartMessage = null;
-                }
                 _blockEvent.Set();
                 _wakeTimer.Dispose();
             }

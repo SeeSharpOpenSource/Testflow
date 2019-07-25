@@ -118,30 +118,27 @@ namespace Testflow.SlaveCore.SlaveFlowControl
 
         private void RunSingleSequence(object state)
         {
-            int sequenceIndex = (int) state;
-            Context.SessionTaskEntity.InvokeSequence(sequenceIndex);
-            lock (_blockEvent)
+            try
             {
-                Interlocked.Increment(ref _overTaskCount);
-                Thread.VolatileRead(ref _overTaskCount);
-                if (_overTaskCount == Context.SessionTaskEntity.SequenceCount)
+                int sequenceIndex = (int)state;
+                Context.SessionTaskEntity.InvokeSequence(sequenceIndex);
+            }
+            finally
+            {
+                lock (_blockEvent)
                 {
-                    _blockEvent.Set();
+                    Interlocked.Increment(ref _overTaskCount);
+                    Thread.VolatileRead(ref _overTaskCount);
+                    if (_overTaskCount == Context.SessionTaskEntity.SequenceCount)
+                    {
+                        _blockEvent.Set();
+                    }
                 }
             }
         }
 
         protected override void TaskErrorAction(Exception ex)
         {
-//            // 更新未执行结束的序列状态为Error.
-//            for (int i = 0; i < Context.SessionTaskEntity.SequenceCount; i++)
-//            {
-//                SequenceTaskEntity sequenceTaskEntity = Context.SessionTaskEntity.GetSequenceTaskEntity(i);
-//                if (sequenceTaskEntity.State <= RuntimeState.AbortRequested)
-//                {
-//                    sequenceTaskEntity.State = RuntimeState.Error;
-//                }
-//            }
             StatusMessage errorMessage = new StatusMessage(MessageNames.ErrorStatusName, Context.State, Context.SessionId)
             {
                 ExceptionInfo = new SequenceFailedInfo(ex, FailedType.RuntimeError),
@@ -153,7 +150,7 @@ namespace Testflow.SlaveCore.SlaveFlowControl
             Context.UplinkMsgProcessor.SendMessage(errorMessage, true);
         }
 
-        protected override void TaskAbortAction()
+        public override void TaskAbortAction()
         {
             switch (Context.ExecutionModel)
             {
@@ -193,7 +190,7 @@ namespace Testflow.SlaveCore.SlaveFlowControl
         {
             _blockEvent?.Set();
             _blockEvent?.Dispose();
-            if (null != _sequenceThreads)
+            if (null != _sequenceThreads && _sequenceThreads.Count > 0)
             {
                 TaskAbortAction();
             }

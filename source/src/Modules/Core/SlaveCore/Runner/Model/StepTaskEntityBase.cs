@@ -104,13 +104,19 @@ namespace Testflow.SlaveCore.Runner.Model
             Context.StatusQueue.Enqueue(statusInfo);
         }
 
-        public void Invoke()
+        public void Invoke(bool forceInvoke)
         {
             CurrentModel[SequenceIndex] = this;
-            InvokeStep();
-            NextStep?.Invoke();
+            // 如果是取消状态并且不是强制执行则返回
+            if (!forceInvoke && Context.Cancellation.IsCancellationRequested)
+            {
+                this.Result = StepResult.Abort;
+                return;
+            }
+            InvokeStep(forceInvoke);
+            NextStep?.Invoke(forceInvoke);
         }
 
-        protected abstract void InvokeStep();
+        protected abstract void InvokeStep(bool forceInvoke);
     }
 }

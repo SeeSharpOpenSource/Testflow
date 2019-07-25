@@ -20,6 +20,8 @@ namespace Testflow.SlaveCore.SlaveFlowControl
             return new RmtGenProcessFlowTask(context);
         }
 
+        public static SlaveFlowTaskBase CurrentFlowTask { get; protected set; }
+
         protected readonly SlaveContext Context;
 
         protected SlaveFlowTaskBase(SlaveContext context)
@@ -36,6 +38,17 @@ namespace Testflow.SlaveCore.SlaveFlowControl
 
                 // 打印状态日志
                 Context.LogSession.Print(LogLevel.Debug, Context.SessionId, $"{this.GetType().Name} task action started.");
+
+                // 如果被取消则直接返回
+                if (Context.Cancellation.IsCancellationRequested)
+                {
+                    // 打印状态日志
+                    Context.LogSession.Print(LogLevel.Debug, Context.SessionId, $"{this.GetType().Name} task action aborted.");
+                    return;
+                }
+
+                // 更新当前FlowTask
+                SlaveFlowTaskBase.CurrentFlowTask = this;
 
                 FlowTaskAction();
 
@@ -91,7 +104,7 @@ namespace Testflow.SlaveCore.SlaveFlowControl
         /// <summary>
         /// 任务被Abort时处理的代码
         /// </summary>
-        protected virtual void TaskAbortAction()
+        public virtual void TaskAbortAction()
         {
             ControlMessage abortMessage = new ControlMessage(MessageNames.CtrlAbort, Context.SessionId)
             {

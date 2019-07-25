@@ -39,6 +39,9 @@ namespace Testflow.SlaveCore
             };
             // 开始流程处理线程
             _flowTaskThread.Start();
+
+            _context.FlowControlThread = _flowTaskThread;
+
             // 打印状态日志
             _context.LogSession.Print(LogLevel.Debug, _context.SessionId, 
                 $"Flow task thread started, thread:{_flowTaskThread.ManagedThreadId}");

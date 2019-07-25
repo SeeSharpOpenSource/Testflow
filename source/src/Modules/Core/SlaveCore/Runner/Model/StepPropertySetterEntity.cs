@@ -80,7 +80,7 @@ namespace Testflow.SlaveCore.Runner.Model
 
         private string _instanceVar;
 
-        protected override void InvokeStep()
+        protected override void InvokeStep(bool forceInvoke)
         {
             object instance = null;
             if (StepData.Function.Type == FunctionType.InstancePropertySetter)

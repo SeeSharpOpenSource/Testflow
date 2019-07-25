@@ -25,9 +25,14 @@ namespace Testflow.SlaveCore.SlaveFlowControl
             Context.LogSession.Print(LogLevel.Debug, Context.SessionId, "Wait for start message.");
 
             ControlMessage message;
-            while (null == (message = Context.CtrlStartMessage))
+            while (null == (message = Context.CtrlStartMessage) && !Context.Cancellation.IsCancellationRequested)
             {
                 Thread.Sleep(10);
+            }
+            // 如果被取消则直接返回
+            if (Context.Cancellation.IsCancellationRequested)
+            {
+                return;
             }
             
             if (!MessageNames.CtrlStart.Equals(message.Name))

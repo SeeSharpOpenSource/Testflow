@@ -64,7 +64,7 @@ namespace Testflow.SlaveCore.Runner.Model
             StepTaskEntityBase.AddSequenceEntrance(_stepEntityRoot);
         }
 
-        public void Invoke()
+        public void Invoke(bool forceInvoke = false)
         {
             SequenceFailedInfo failedInfo = null;
             StepResult lastStepResult = StepResult.NotAvailable;
@@ -76,11 +76,9 @@ namespace Testflow.SlaveCore.Runner.Model
                     StatusReportType.Start, StepResult.NotAvailable);
                 _context.StatusQueue.Enqueue(startStatusInfo);
 
-                _stepEntityRoot.Invoke();
+                _stepEntityRoot.Invoke(forceInvoke);
 
-                this.State = RuntimeState.Success;
-                finalReportType = StatusReportType.Over;
-                lastStepResult = StepResult.Pass;
+                SetResultState(out lastStepResult, out finalReportType, out failedInfo);
             }
             catch (TaskFailedException ex)
             {
@@ -139,8 +137,7 @@ namespace Testflow.SlaveCore.Runner.Model
                     currentStep.SetStatusAndSendErrorEvent(lastStepResult);
                 }
                 // 发送结束事件，包括所有的ReturnData信息
-                SequenceStatusInfo overStatusInfo = new SequenceStatusInfo(Index,
-                    currentStep.GetStack(), finalReportType, StepResult.Over, failedInfo);
+                SequenceStatusInfo overStatusInfo = new SequenceStatusInfo(Index, currentStep.GetStack(), finalReportType, StepResult.Over, failedInfo);
                 overStatusInfo.WatchDatas = _context.VariableMapper.GetReturnDataValues(_sequence);
                 this._context.StatusQueue.Enqueue(overStatusInfo);
 
@@ -151,11 +148,46 @@ namespace Testflow.SlaveCore.Runner.Model
             }
         }
 
+        private void SetResultState(out StepResult lastStepResult, out StatusReportType finalReportType, 
+            out SequenceFailedInfo failedInfo)
+        {
+            StepTaskEntityBase lastStep = StepTaskEntityBase.GetCurrentStep(this.Index);
+            lastStepResult = lastStep.Result;
+            failedInfo = null;
+            switch (lastStepResult)
+            {
+                case StepResult.Skip:
+                case StepResult.Pass:
+                    this.State = RuntimeState.Success;
+                    finalReportType = StatusReportType.Over;
+                    break;
+                case StepResult.Failed:
+                    this.State = RuntimeState.Failed;
+                    finalReportType = StatusReportType.Failed;
+                    break;
+                case StepResult.Abort:
+                    this.State = RuntimeState.Abort;
+                    finalReportType = StatusReportType.Error;
+                    failedInfo = new SequenceFailedInfo("Sequence aborted", FailedType.Abort);
+                    _context.LogSession.Print(LogLevel.Warn, Index, $"Sequence {Index} execution aborted");
+                    break;
+                case StepResult.Timeout:
+                    this.State = RuntimeState.Timeout;
+                    finalReportType = StatusReportType.Error;
+                    break;
+                case StepResult.Error:
+                    this.State = RuntimeState.Error;
+                    finalReportType = StatusReportType.Error;
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+        }
+
         public void FillStatusInfo(StatusMessage message)
         {
             // 如果是外部调用且该序列已经执行结束或者未开始或者message中已经有了当前序列的信息，则说明该序列在前面的消息中已经标记结束，直接返回。
-            if (message.InterestedSequence.Contains(this.Index) || this.State > RuntimeState.AbortRequested ||
-                this.State == RuntimeState.StartIdle)
+            if (message.InterestedSequence.Contains(this.Index) || this.State > RuntimeState.AbortRequested || this.State == RuntimeState.StartIdle)
             {
                 return;
             }

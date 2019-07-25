@@ -39,7 +39,7 @@ namespace Testflow.SlaveCore.Runner.Model
             // ignore
         }
 
-        protected override void InvokeStep()
+        protected override void InvokeStep(bool forceInvoke)
         {
             this.Result = StepResult.Pass;
             Context.LogSession.Print(LogLevel.Debug, Context.SessionId,

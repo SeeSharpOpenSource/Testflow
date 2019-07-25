@@ -209,13 +209,13 @@ namespace Testflow.SlaveCore.Runner.Model
             NextStep?.InitializeParamsValues();
         }
 
-        protected override void InvokeStep()
+        protected override void InvokeStep(bool forceInvoke)
         {
             this.Result = StepResult.Error;
             switch (StepData.Behavior)
             {
                 case RunBehavior.Normal:
-                    ExecuteSequenceStep();
+                    ExecuteSequenceStep(forceInvoke);
                     this.Result = StepResult.Pass;
                     break;
                 case RunBehavior.Skip:
@@ -224,7 +224,7 @@ namespace Testflow.SlaveCore.Runner.Model
                 case RunBehavior.ForceSuccess:
                     try
                     {
-                        ExecuteSequenceStep();
+                        ExecuteSequenceStep(forceInvoke);
                         this.Result = StepResult.Pass;
                     }
                     catch (TaskFailedException ex)
@@ -235,7 +235,7 @@ namespace Testflow.SlaveCore.Runner.Model
                     }
                     break;
                 case RunBehavior.ForceFailed:
-                    ExecuteSequenceStep();
+                    ExecuteSequenceStep(forceInvoke);
                     this.Result = StepResult.Failed;
                     // 抛出强制失败异常
                     throw new TaskFailedException(SequenceIndex, FailedType.ForceFailed);
@@ -254,35 +254,37 @@ namespace Testflow.SlaveCore.Runner.Model
             }
         }
 
-        private void ExecuteSequenceStep()
+        private void ExecuteSequenceStep(bool forceInvoke)
         {
             if (!HasLoopCount)
             {
-                ExecuteStepSingleTime();
+                ExecuteStepSingleTime(forceInvoke);
             }
             else
             {
                 LoopCount = 0;
+                bool notCancelled;
                 do
                 {
                     if (CoreUtils.IsValidVaraible(StepData.LoopCounter.CounterVariable))
                     {
                         Context.VariableMapper.SetParamValue(LoopVar, StepData.LoopCounter.CounterVariable, LoopCount);
                     }
-                    ExecuteStepSingleTime();
+                    ExecuteStepSingleTime(forceInvoke);
                     if (CoreUtils.IsValidVaraible(LoopVar))
                     {
                         Context.VariableMapper.SetParamValue(LoopVar, StepData.LoopCounter.CounterVariable, LoopCount);
                     }
-                } while (++LoopCount < MaxLoopCount);
+                    notCancelled = forceInvoke || !Context.Cancellation.IsCancellationRequested;
+                } while (++LoopCount < MaxLoopCount && notCancelled);
             }
         }
 
-        private void ExecuteStepSingleTime()
+        private void ExecuteStepSingleTime(bool forceInvoke)
         {
             if (StepData.HasSubSteps)
             {
-                SubStepRoot.Invoke();
+                SubStepRoot.Invoke(forceInvoke);
             }
             else
             {
