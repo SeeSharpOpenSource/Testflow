@@ -46,6 +46,7 @@ namespace Testflow.SlaveCore.Common
             this.I18N = I18N.GetInstance(Constants.I18nName);
             this.MessageTransceiver = new MessageTransceiver(this, SessionId);
             this.UplinkMsgProcessor = new UplinkMessageProcessor(this);
+            this.CallBackEventManager = new CallBackEventManager();
             this.FlowControlThread = null;
             this.RmtGenMessage = null;
             this.CtrlStartMessage = null;
