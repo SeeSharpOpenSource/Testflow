@@ -45,6 +45,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AppDomainTestLauncher.cs" />
+    <Compile Include="Common\CallBackEventManager.cs" />
     <Compile Include="Common\Constants.cs" />
     <Compile Include="Common\DownlinkMessageProcessor.cs" />
     <Compile Include="Common\UplinkMessageProcessor.cs" />
