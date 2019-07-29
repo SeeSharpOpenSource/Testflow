@@ -23,10 +23,14 @@ namespace Testflow.MasterCore.Message
         private Thread _statusMessageListener;
         private readonly LocalMessageQueue<MessageBase> _statusMessageQueue;
 
+        private Thread _callBackMessageListener;
+        private readonly LocalMessageQueue<MessageBase> _callBackMessageQueue;
+
         public SyncMsgTransceiver(ModuleGlobalInfo globalInfo) : base(globalInfo, ReceiveType.Synchronous)
         {
             _engineMessageQueue = new LocalMessageQueue<MessageBase>(Constants.DefaultEventsQueueSize);
             _statusMessageQueue = new LocalMessageQueue<MessageBase>(Constants.DefaultEventsQueueSize);
+            _callBackMessageQueue = new LocalMessageQueue<MessageBase>(Constants.DefaultEventsQueueSize);
         }
 
         protected override void Start()
@@ -51,8 +55,15 @@ namespace Testflow.MasterCore.Message
                 Name = "StatusMessageListener",
                 IsBackground = true
             };
+
+            _callBackMessageListener = new Thread(MessageProcessingLoop)
+            {
+                Name = "CallBackMessageListener",
+                IsBackground = true
+            };
             _engineMessageListener.Start(_engineMessageQueue);
             _statusMessageListener.Start(_statusMessageQueue);
+            _callBackMessageListener.Start(_callBackMessageQueue);
             GlobalInfo.LogService.Print(LogLevel.Info, CommonConst.PlatformLogSession,
                 "Message transceiver started.");
         }
@@ -63,13 +74,15 @@ namespace Testflow.MasterCore.Message
             ModuleUtils.StopThreadWork(_receiveThread);
             //如果两个队列在被锁的状态则释放锁
             _engineMessageQueue.StopEnqueue();
-            _statusMessageQueue.StopEnqueue();
+            _callBackMessageQueue.StopEnqueue();
 
             _engineMessageQueue.FreeLock();
             _statusMessageQueue.FreeLock();
+            _callBackMessageQueue.FreeLock();
 
             ModuleUtils.StopThreadWork(_engineMessageListener);
             ModuleUtils.StopThreadWork(_statusMessageListener);
+            ModuleUtils.StopThreadWork(_callBackMessageListener);
             ZombieCleaner.Stop();
 
             GlobalInfo.LogService.Print(LogLevel.Info, CommonConst.PlatformLogSession,
@@ -94,6 +107,10 @@ namespace Testflow.MasterCore.Message
                         if (message.Type == MessageType.Status)
                         {
                             _statusMessageQueue.Enqueue(message);
+                        }
+                        else if (message.Type == MessageType.CallBack)
+                        {
+                            _callBackMessageQueue.Enqueue(message);
                         }
                         else
                         {
