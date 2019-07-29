@@ -45,11 +45,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CallBack\AssemblyInfo.cs" />
     <Compile Include="Common\Constants.cs" />
     <Compile Include="Common\LocalEventQueue.cs" />
     <Compile Include="Common\ModuleGlobalInfo.cs" />
     <Compile Include="Common\ModuleUtils.cs" />
-    <Compile Include="Core\CallBackProcessor.cs" />
+    <Compile Include="CallBack\CallBackProcessor.cs" />
     <Compile Include="ObjectManage\IRuntimeObjectCustomer.cs" />
     <Compile Include="ObjectManage\Objects\BreakPointObject.cs" />
     <Compile Include="ObjectManage\RuntimeObject.cs" />

@@ -11,6 +11,7 @@ using Testflow.MasterCore.ObjectManage;
 using Testflow.MasterCore.ObjectManage.Objects;
 using Testflow.MasterCore.StatusManage;
 using Testflow.MasterCore.SyncManage;
+using Testflow.MasterCore.CallBack;
 using Testflow.Modules;
 using Testflow.Runtime;
 
@@ -28,6 +29,7 @@ namespace Testflow.MasterCore
         private readonly SynchronousManager _syncManager;
         private readonly EngineFlowController _controller;
         private readonly RuntimeObjectManager _runtimeObjectManager;
+        private readonly CallBackProcessor _callBackProcessor;
 
         public RuntimeEngine(IModuleConfigData configData)
         {
@@ -40,6 +42,7 @@ namespace Testflow.MasterCore
             _controller = new EngineFlowController(_globalInfo);
             _statusManager = new RuntimeStatusManager(_globalInfo);
             _syncManager = new SynchronousManager(_globalInfo);
+            _callBackProcessor = new CallBackProcessor(_globalInfo);
 
             _globalInfo.RuntimeInitialize(messageTransceiver, _controller.Debugger);
 
@@ -56,6 +59,7 @@ namespace Testflow.MasterCore
         public RuntimeStatusManager StatusManager => _statusManager;
         public SynchronousManager SyncManager => _syncManager;
         public EngineFlowController Controller => _controller;
+        public CallBackProcessor CallBackProcessor => _callBackProcessor;
 
         public ModuleGlobalInfo GlobalInfo => _globalInfo;
 
@@ -68,6 +72,7 @@ namespace Testflow.MasterCore
             _globalInfo.MessageTransceiver.AddConsumer(MessageType.Status.ToString(), _statusManager);
             _globalInfo.MessageTransceiver.AddConsumer(MessageType.TestGen.ToString(), _statusManager);
             _globalInfo.MessageTransceiver.AddConsumer(MessageType.Sync.ToString(), _syncManager);
+            _globalInfo.MessageTransceiver.AddConsumer(MessageType.CallBack.ToString(), _callBackProcessor);
         }
 
         public void Initialize(ISequenceFlowContainer sequenceContainer)
@@ -77,6 +82,7 @@ namespace Testflow.MasterCore
                 _globalInfo.StateMachine.State = RuntimeState.Idle;
                 _controller.Initialize(sequenceContainer);
                 _statusManager.Initialize(sequenceContainer);
+                _callBackProcessor.Initialize(sequenceContainer);
                 // 注册状态更新事件
                 _globalInfo.StateMachine.StateAbort += Stop;
                 _globalInfo.StateMachine.StateError += Stop;
