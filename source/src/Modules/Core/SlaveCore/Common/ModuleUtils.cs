@@ -58,7 +58,7 @@ namespace Testflow.SlaveCore.Common
             return $"{typeData.Namespace}.{typeData.Name}";
         }
 
-        public static StepTaskEntityBase CreateStepModelChain(IList<ISequenceStep> steps, SlaveContext context, 
+        public static StepTaskEntityBase CreateStepModelChain(IList<ISequenceStep> steps, SlaveContext context,
             int sequenceIndex)
         {
             StepTaskEntityBase root = null;
@@ -110,19 +110,19 @@ namespace Testflow.SlaveCore.Common
             IVariable variable = null;
             if (sequenceData is ITestProject)
             {
-                variable = ((ITestProject) sequenceData).Variables.FirstOrDefault(item => item.Name == rawVarName);
+                variable = ((ITestProject)sequenceData).Variables.FirstOrDefault(item => item.Name == rawVarName);
             }
             else if (sequenceData is ISequenceGroup)
             {
-                variable = ((ISequenceGroup) sequenceData).Variables.FirstOrDefault(item => item.Name == rawVarName);
+                variable = ((ISequenceGroup)sequenceData).Variables.FirstOrDefault(item => item.Name == rawVarName);
             }
             else if (sequenceData is ISequence)
             {
-                variable = ((ISequence) sequenceData).Variables.FirstOrDefault(item => item.Name == rawVarName);
+                variable = ((ISequence)sequenceData).Variables.FirstOrDefault(item => item.Name == rawVarName);
                 if (null == variable)
                 {
                     variable =
-                        ((ISequenceGroup) sequenceData.Parent).Variables.FirstOrDefault(item => item.Name == rawVarName);
+                        ((ISequenceGroup)sequenceData.Parent).Variables.FirstOrDefault(item => item.Name == rawVarName);
                 }
             }
             else if (sequenceData is ISequenceStep)

@@ -54,6 +54,9 @@ namespace Testflow.SlaveCore.Common
                     case MessageType.Sync:
                         ProcessSyncMessage((ResourceSyncMessage) message);
                         break;
+                    case MessageType.CallBack:
+                        ProcessCallBackMessage((CallBackMessage)message);
+                        break;
                     // 暂未在Master端实现发送RuntimeError消息的错误
                     case MessageType.RmtGen:
                     case MessageType.RuntimeError:
@@ -73,6 +76,11 @@ namespace Testflow.SlaveCore.Common
             _context.Cancellation.Cancel();
             _messageQueue?.StopEnqueue();
             _messageQueue?.FreeLock();
+        }
+
+        private void ProcessCallBackMessage(CallBackMessage message)
+        {
+            _context.CallBackEventManager.ReleaseBlock(message);
         }
 
         private void ProcessControlMessage(ControlMessage message)

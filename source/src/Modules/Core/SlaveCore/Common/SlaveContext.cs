@@ -49,6 +49,7 @@ namespace Testflow.SlaveCore.Common
             this.FlowControlThread = null;
             this.RmtGenMessage = null;
             this.CtrlStartMessage = null;
+            this.CtrlStartMessage = null;
             this.WatchDatas = new HashSet<string>();
             this.ReturnDatas = new HashSet<string>();
             this.BreakPoints = new HashSet<string>();
@@ -83,6 +84,8 @@ namespace Testflow.SlaveCore.Common
         public UplinkMessageProcessor UplinkMsgProcessor { get; }
 
         public Thread FlowControlThread { get; set; }
+
+        public CallBackEventManager CallBackEventManager { get; set; }
 
         /// <summary>
         /// 执行取消标志
