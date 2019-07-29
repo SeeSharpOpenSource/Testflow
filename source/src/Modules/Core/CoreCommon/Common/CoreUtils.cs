@@ -163,7 +163,7 @@ namespace Testflow.CoreCommon.Common
         public static bool IsValidVaraibleValue(IVariable variable)
         {
             const string stringTypeName = "String";
-            return !string.IsNullOrWhiteSpace(variable.Value) || stringTypeName.Equals(variable.Type.Name);
+            return !string.IsNullOrWhiteSpace(variable.Value) || (null != variable.Type && stringTypeName.Equals(variable.Type.Name));
         }
     }
 }
