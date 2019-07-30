@@ -19,10 +19,12 @@ namespace Testflow.EngineCoreTest
         private AssemblyInfo _testClassAssemblyInfo;
         private ITypeData _intTypeData;
         private ITypeData _testClassTypeData;
+        private ITypeData _testCallBackTypeData;
         private const string StaticMethodName = "StaticWait";
         private const string InstanceMethodName = "WaitTime";
         private const string ErrorMethodName = "RaiseError";
         private const string GetValueMethodName = "GetWaitTime";
+        private const string CallBackMethodName = "StartForm";
 
         public SequenceCreator()
         {
@@ -34,10 +36,16 @@ namespace Testflow.EngineCoreTest
             string location = testClassType.Assembly.Location;
             IComInterfaceDescription interfaceDescription = interfaceManager.GetComponentInterface(location);
 
-
             Type intType = typeof(int);
             _intTypeData = interfaceManager.GetTypeByName(intType.Name, intType.Namespace);
+
+            Type testCallBackType = typeof(CallBackClass);
+            //同一个程序集，不需要再一次加载component
+            //location = testClassType.Assembly.Location;
+            //interfaceDescription = interfaceManager.GetComponentInterface(location);
+
             _testClassTypeData = interfaceManager.GetTypeByName(testClassType.Name, testClassType.Namespace);
+            _testCallBackTypeData = interfaceManager.GetTypeByName(testCallBackType.Name, testCallBackType.Namespace);
         }
 
         public ITestProject GetParallelTestProjectData()
@@ -92,7 +100,53 @@ namespace Testflow.EngineCoreTest
             return testProject;
         }
 
+        #region CallBackTestProjects
+        public ITestProject GetCallBackTestProjectData1()
+        {
+            ITestProject testProject = _sequenceManager.CreateTestProject();
+            //testProject.SetUp.Steps.Add(CreateStaticWaitStep());
+            //testProject.TearDown.Steps.Add(CreateStaticWaitStep());
+            _sequenceManager.ValidateSequenceData(testProject);
+
+            ISequenceGroup sequenceGroup = _sequenceManager.CreateSequenceGroup();
+            sequenceGroup.ExecutionModel = ExecutionModel.SequentialExecution;
+            sequenceGroup.Description = "SequenceGroup Description";
+
+            ISequence sequence1 = _sequenceManager.CreateSequence();
+            sequence1.Behavior = RunBehavior.Normal;
+            sequence1.Description = "Sequence Description";
+
+            sequence1.Steps.Add(CreateCallBackStep());
+            sequenceGroup.Sequences.Add(sequence1);
+            _sequenceManager.ValidateSequenceData(sequenceGroup, testProject);
+
+            testProject.SequenceGroups.Add(sequenceGroup);
+            return testProject;
+        }
         
+        public ITestProject GetCallBackTestProjectData2()
+        {
+            ITestProject testProject = _sequenceManager.CreateTestProject();
+            //testProject.SetUp.Steps.Add(CreateStaticWaitStep());
+            //testProject.TearDown.Steps.Add(CreateStaticWaitStep());
+            _sequenceManager.ValidateSequenceData(testProject);
+
+            ISequenceGroup sequenceGroup = _sequenceManager.CreateSequenceGroup();
+            sequenceGroup.ExecutionModel = ExecutionModel.SequentialExecution;
+            sequenceGroup.Description = "SequenceGroup Description";
+
+            ISequence sequence1 = _sequenceManager.CreateSequence();
+            sequence1.Behavior = RunBehavior.Normal;
+            sequence1.Description = "Sequence Description";
+
+            sequence1.Steps.Add(CreateCallBackStep(100, 200));
+            sequenceGroup.Sequences.Add(sequence1);
+            _sequenceManager.ValidateSequenceData(sequenceGroup, testProject);
+
+            testProject.SequenceGroups.Add(sequenceGroup);
+            return testProject;
+        }
+        #endregion
 
         public ISequenceGroup GetParallelSequenceGroupData()
         {
@@ -102,6 +156,83 @@ namespace Testflow.EngineCoreTest
         public ISequenceGroup GetSequencetialSequenceGroupData()
         {
             throw new NotImplementedException();
+        }
+
+        private ISequenceStep CreateCallBackStep()
+        {
+            ISequenceStep step = _sequenceManager.CreateSequenceStep();
+            step.RecordStatus = true;
+            step.Function = new FunctionData()
+            {
+                ClassType = _testCallBackTypeData,
+                ClassTypeIndex = 6,
+                Description = null,
+                Instance = string.Empty,
+                MethodName = CallBackMethodName,
+                Return = string.Empty,
+                Type = FunctionType.CallBack
+            };
+            //无参
+            //step.Function.ParameterType = null;
+            //step.Function.Parameters = null;
+            return step;
+        }
+        
+        private ISequenceStep CreateCallBackStep(int x, int y)
+        {
+            ISequenceStep step = _sequenceManager.CreateSequenceStep();
+            step.RecordStatus = true;
+            step.Function = new FunctionData()
+            {
+                ClassType = _testCallBackTypeData,
+                ClassTypeIndex = 6,
+                Description = null,
+                Instance = string.Empty,
+                MethodName = CallBackMethodName,
+                Return = string.Empty,
+                Type = FunctionType.CallBack
+            };
+
+            #region 添加参数类型
+            step.Function.ParameterType = new ArgumentCollection();
+            Argument intArgument = new Argument()
+            {
+                Modifier = ArgumentModifier.None,
+                Name = "x",
+                Type = _intTypeData,
+                TypeIndex = 0
+            };
+            step.Function.ParameterType.Add(intArgument);
+            intArgument = new Argument()
+            {
+                Modifier = ArgumentModifier.None,
+                Name = "y",
+                Type = _intTypeData,
+                TypeIndex = 0
+            };
+            step.Function.ParameterType.Add(intArgument);
+            #endregion
+
+            #region 添加参数值
+            step.Function.Parameters = new ParameterDataCollection();
+            ParameterData intParameterData = new ParameterData()
+            {
+                Index = 0,
+                ParameterType = ParameterType.Value,
+                Value = x.ToString()
+            };
+            step.Function.Parameters.Add(intParameterData);
+
+            intParameterData = new ParameterData()
+            {
+                Index = 0,
+                ParameterType = ParameterType.Value,
+                Value = y.ToString()
+            };
+            step.Function.Parameters.Add(intParameterData);
+            #endregion
+
+            return step;
         }
 
         private ISequenceStep CreateStaticWaitStep()
