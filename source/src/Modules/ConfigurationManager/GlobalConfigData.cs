@@ -18,6 +18,11 @@ namespace Testflow.ConfigurationManager
             _configData[rootName].Add(property, value);
         }
 
+        public void SetConfigItem(string rootName, string property, object value)
+        {
+            _configData[rootName][property] = value;
+        }
+
         public void AddConfigRoot(string rootName)
         {
             _configData.Add(rootName, new Dictionary<string, object>(20));
@@ -29,6 +34,11 @@ namespace Testflow.ConfigurationManager
                 ? _configData[moduleName]
                 : null;
             return new ModuleConfigData(_configData[Constants.GlobalConfig], moduleConfigData);
+        }
+
+        public TDataType GetConfigValue<TDataType>(string blockName, string propertyName)
+        {
+            return (TDataType) _configData[blockName][propertyName];
         }
 
         public void Dispose()

@@ -24,6 +24,11 @@ namespace Testflow.ConfigurationManager
             }
         }
 
+        internal ModuleConfigData()
+        {
+            this.Properties = new SerializableMap<string, object>(10);
+        }
+
         public void InitExtendProperties()
         {
             // ignore
