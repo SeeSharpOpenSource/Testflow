@@ -76,7 +76,7 @@ namespace Testflow.SlaveCore.Runner.Model
             CallBackMessage callBackMessage;
 
             //无参数
-            if (function.Parameters.Count == 0)
+            if (function.Parameters == null || function.Parameters.Count == 0)
             {
                 callBackMessage = new CallBackMessage(FullName, Context.SessionId, CallBackId)
                 {
