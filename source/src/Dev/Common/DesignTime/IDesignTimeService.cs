@@ -79,7 +79,6 @@ namespace Testflow.DesignTime
 
         #endregion
 
-
         #region Sequence Edit
 
         /// <summary>

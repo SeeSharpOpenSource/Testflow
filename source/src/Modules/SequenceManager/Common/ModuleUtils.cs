@@ -155,7 +155,7 @@ namespace Testflow.SequenceManager.Common
 
         public static bool InsertAndRefreshIndex<TDataType>(IList<TDataType> collection, TDataType item, int index)
         {
-            if (collection.Count <= index)
+            if (collection.Count < index)
             {
                 return false;
             }

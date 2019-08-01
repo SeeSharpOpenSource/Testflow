@@ -1,29 +1,32 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using System.IO;
 using Testflow.Usr;
 using Testflow.Modules;
 using Testflow.Runtime.Data;
 using Testflow.ResultManager.Common;
-
-
+using Testflow.Data;
 
 namespace Testflow.ResultManager
 {
     //此类继承IResultPrinter用于打印到.txt文件
-    internal class TxtWriter:IResultPrinter
+    internal class TxtWriter : IResultPrinter
     {
+        internal IDataMaintainer _dataMaintainer;
+
+        internal TxtWriter()
+        {
+            _dataMaintainer = TestflowRunner.GetInstance().DataMaintainer;
+        }
+
         //父类继承
-        public void PrintReport(string filePath, IDataMaintainer dataMaintainer, string runtimeHash)
+        public void PrintReport(string filePath, string runtimeHash)
         {
             StreamWriter sw = null;
             try
             {
                 sw = new StreamWriter(filePath, append: true);
-                PrintTestInstance(sw, dataMaintainer, runtimeHash);
+                //PrintSessionResults()
+                PrintTestInstance(sw, runtimeHash);
             }
             catch (IOException ex)
             {
@@ -35,14 +38,21 @@ namespace Testflow.ResultManager
             }
         }
 
+        //父类继承
+        //public void PrintReport(string filePath, string runtimeHash, int sessionId)
+        //{
+
+        //}
+
         /*
          * 已下输出方法结构类似，采用嵌套循环：
          * 在PrintTestInstance里调用PrintSessionResults；
          * 在PrintSessionResults里调用PrintSequenceResults和PrintPerformance；
          */
-        private void PrintTestInstance(StreamWriter sw, IDataMaintainer dataMaintainer, string runtimeHash)
+        private void PrintTestInstance(StreamWriter sw, string runtimeHash)
         {
-            TestInstanceData testInstance = dataMaintainer.GetTestInstance(runtimeHash);
+            TestInstanceData testInstance = _dataMaintainer.GetTestInstance(runtimeHash);
+
             try
             {
                 sw.WriteLine(testInstance.Name);
@@ -57,7 +67,7 @@ namespace Testflow.ResultManager
                 sw.WriteLine();
 
                 //输出报告每个session
-                PrintSessionResults(sw, dataMaintainer, runtimeHash);
+                PrintSessionResults(sw, runtimeHash);
             }
             catch (IOException ex)
             {
@@ -66,9 +76,9 @@ namespace Testflow.ResultManager
             }
         }
 
-        private void PrintSessionResults(StreamWriter sw, IDataMaintainer dataMaintainer, string runtimeHash)
+        private void PrintSessionResults(StreamWriter sw, string runtimeHash)
         {
-            IList<SessionResultData> sessionResultList = dataMaintainer.GetSessionResults(runtimeHash);
+            IList<SessionResultData> sessionResultList = _dataMaintainer.GetSessionResults(runtimeHash);
             try
             {
                 //List中循环每个session
@@ -82,16 +92,16 @@ namespace Testflow.ResultManager
                     sw.WriteLine($"EndTime: {sessionResult.EndTime}");
                     sw.WriteLine($"Elapsed Time: {sessionResult.ElapsedTime}");
                     sw.WriteLine($"State: {sessionResult.State}");
-                    if (sessionResult.State == Runtime.RuntimeState.Failed)
+                    if (sessionResult.State == Runtime.RuntimeState.Failed || sessionResult.State == Runtime.RuntimeState.Error)
                     {
                         sw.WriteLine($"FailedInfo: {sessionResult.FailedInfo}");
                     }
                     sw.WriteLine();
 
                     //输出报告每个Sequence
-                    PrintSequenceResults(sw, dataMaintainer, runtimeHash, sessionId);
+                    PrintSequenceResults(sw, runtimeHash, sessionId);
                     //输出报告此session的Performance
-                    PrintPerformance(sw, dataMaintainer, runtimeHash, sessionId);
+                    PrintPerformance(sw, runtimeHash, sessionId);
                 }
             }
             catch (IOException ex)
@@ -101,9 +111,9 @@ namespace Testflow.ResultManager
             }
         }
 
-        private void PrintSequenceResults(StreamWriter sw, IDataMaintainer dataMaintainer, string runtimeHash, int sessionId)
+        private void PrintSequenceResults(StreamWriter sw, string runtimeHash, int sessionId)
         {
-            IList<SequenceResultData> sequenceResultList = dataMaintainer.GetSequenceResults(runtimeHash, sessionId);
+            IList<SequenceResultData> sequenceResultList = _dataMaintainer.GetSequenceResults(runtimeHash, sessionId);
             try
             {
                 //List中循环每个sequence
@@ -142,9 +152,13 @@ namespace Testflow.ResultManager
         /// <param name="dataMaintainer"></param>
         /// <param name="runtimeHash"></param>
         /// <param name="sessionId"> 会话id </param>
-        private void PrintPerformance(StreamWriter sw, IDataMaintainer dataMaintainer, string runtimeHash, int sessionId)
+        private void PrintPerformance(StreamWriter sw, string runtimeHash, int sessionId)
         {
-            IList<PerformanceStatus> performanceList = dataMaintainer.GetPerformanceStatus(runtimeHash, sessionId);
+            IList<PerformanceStatus> performanceList = _dataMaintainer.GetPerformanceStatus(runtimeHash, sessionId);
+            if (performanceList.Count == 0)
+            {
+                return;
+            }
             try
             {
                 //大小为2的数组记录极值
@@ -164,6 +178,6 @@ namespace Testflow.ResultManager
                 throw new TestflowRuntimeException(ModuleErrorCode.IOError, "PrintPerformance IO Exception", ex);
             }
         }
-            
+
     }
 }

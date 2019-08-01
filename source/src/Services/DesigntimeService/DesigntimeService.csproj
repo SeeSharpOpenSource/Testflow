@@ -41,6 +41,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Common\Constants.cs" />
     <Compile Include="Common\ModuleUtils.cs" />
     <Compile Include="DesignTimeContext.cs" />
     <Compile Include="DesignTimeSession.cs" />
