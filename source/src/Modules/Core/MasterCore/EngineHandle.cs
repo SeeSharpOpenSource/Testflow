@@ -110,6 +110,12 @@ namespace Testflow.MasterCore
             _runtimeEngine.AbortRuntime(sessionId);
         }
 
+
+        public string GetEngineRunTimeHash()
+        {
+            return _runtimeEngine.GlobalInfo.RuntimeHash;
+        }
+
         public void Start()
         {
             _runtimeEngine.Start();
