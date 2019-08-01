@@ -63,6 +63,13 @@ namespace Testflow.DesignTime
         ISequence AddSequence(string sequenceName, string description, int index);
 
         /// <summary>
+        /// 通过sequenceId取得Context.SequenceGroup.Sequences里的某个sequence
+        /// </summary>
+        /// <param name="id">sequence在SequenceGroup里的id</param>
+        /// <returns></returns>
+        ISequence GetSequence(int id);
+
+        /// <summary>
         /// 添加测试步骤到上级节点
         /// </summary>
         /// <param name="parent">上级节点</param>
