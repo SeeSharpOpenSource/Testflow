@@ -35,6 +35,7 @@ namespace Testflow.SlaveCore.Common
             _valueConvertor.Add(typeof(ushort).Name, strValue => ushort.Parse(strValue));
             _valueConvertor.Add(typeof(char).Name, strValue => char.Parse(strValue));
             _valueConvertor.Add(typeof(byte).Name, strValue => byte.Parse(strValue));
+            _valueConvertor.Add(typeof(bool).Name, strValue => bool.Parse(strValue));
 
             this._msgIndex = -1;
             SessionId = this.GetProperty<int>("Session");
