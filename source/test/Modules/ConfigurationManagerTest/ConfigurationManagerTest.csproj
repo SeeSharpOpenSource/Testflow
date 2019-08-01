@@ -36,6 +36,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.XML" />
   </ItemGroup>
   <Choose>
     <When Condition="('$(VisualStudioVersion)' == '10.0' or '$(VisualStudioVersion)' == '') and '$(TargetFrameworkVersion)' == 'v3.5'">
@@ -50,7 +51,22 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="ConfigFileCreator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\src\Dev\Common\Common.csproj">
+      <Project>{1681cdd7-0cc2-49d2-9e82-7b03b52db283}</Project>
+      <Name>Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\src\Dev\Utility\Utility.csproj">
+      <Project>{35105702-e8d2-4465-a118-687b6c85c466}</Project>
+      <Name>Utility</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\src\Modules\ConfigurationManager\ConfigurationManager.csproj">
+      <Project>{14d2a5cd-47db-4bd8-b26a-712b6416119d}</Project>
+      <Name>ConfigurationManager</Name>
+    </ProjectReference>
   </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">
