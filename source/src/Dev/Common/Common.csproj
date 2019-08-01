@@ -45,6 +45,7 @@
     <Compile Include="Common\ICloneableClass.cs" />
     <Compile Include="Common\IEntityComponent.cs" />
     <Compile Include="Common\IPropertyExtendable.cs" />
+    <Compile Include="Data\IResultPrinter.cs" />
     <Compile Include="Data\LibraryCategory.cs" />
     <Compile Include="Common\LogLevel.cs" />
     <Compile Include="Common\ProgressIndicator.cs" />
@@ -59,6 +60,7 @@
     <Compile Include="Data\Description\IArgumentDescription.cs" />
     <Compile Include="Data\IAssemblyInfoCollection.cs" />
     <Compile Include="Data\ITypeData.cs" />
+    <Compile Include="Data\ReportType.cs" />
     <Compile Include="Data\Sequence\IArgumentCollection.cs" />
     <Compile Include="Data\Sequence\IArgument.cs" />
     <Compile Include="Data\Sequence\IFunctionData.cs" />
