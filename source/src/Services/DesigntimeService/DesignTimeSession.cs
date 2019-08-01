@@ -10,7 +10,7 @@ using Testflow.SequenceManager.SequenceElements;
 
 namespace Testflow.DesigntimeService
 {
-    class DesignTimeSession : IDesignTimeSession
+    public class DesignTimeSession : IDesignTimeSession
     {
         private Modules.ISequenceManager _sequenceManager;
 
@@ -28,12 +28,18 @@ namespace Testflow.DesigntimeService
             Context.SequenceGroup.Info.ModifiedTime = DateTime.Now;
         }
        
+        public DesignTimeSession(long sessionId, ISequenceGroup sequenceGroup)
+        {
+            this.SessionId = sessionId;
+            this._contextInst = new DesignTimeContext(sequenceGroup);
+            _sequenceManager = TestflowRunner.GetInstance().SequenceManager;
+        }
+
         #region 初始化
         public void Initialize()
         {
             _sequenceManager = TestflowRunner.GetInstance().SequenceManager;
         }
-
 
         public void Dispose()
         {
@@ -105,7 +111,7 @@ namespace Testflow.DesigntimeService
         }
         #endregion
 
-        #region 加Sequence todo判定index正确性
+        #region 加/找Sequence todo判定index正确性
         //todo
         public ISequence AddSequence(ISequence sequence, int index)
         {
@@ -121,6 +127,12 @@ namespace Testflow.DesigntimeService
             sequence.Name = sequenceName;
             sequence.Description = description;
             return AddSequence(sequence, index);
+        }
+
+        //todo 万一没有sequence需要报错
+        public ISequence GetSequence(int sequenceId)
+        {
+            return Context.SequenceGroup.Sequences[sequenceId];
         }
         #endregion
 
@@ -189,7 +201,7 @@ namespace Testflow.DesigntimeService
         }
         #endregion
 
-        #region 加减变量, 设置变量, parent是Isequence或Isequencegroup?或testProject todo判定index正确性
+        #region 加减变量, 设置变量, parent是Isequence或Isequencegroup或testProject todo判定index正确性
         //todo
         public IVariable AddVariable(ISequenceFlowContainer parent, string variableName, string value, int index)
         {
@@ -274,6 +286,7 @@ namespace Testflow.DesigntimeService
         }
         #endregion
 
+        #region 设置Instance, Return, Parameters
         //todo sequenceindex, substep index报错; 还有createFunctionData(null)
         public void SetInstance(string variableName, int sequenceIndex, params int[] indexes)
         {
@@ -299,7 +312,6 @@ namespace Testflow.DesigntimeService
             sequence.Function = function;
         }
 
-        #region 设置参数值与返回
         public void SetParameterValue(string parameterName, string value, int sequenceIndex, params int[] indexes)
         {
             ISequence sequence = Context.SequenceGroup.Sequences[sequenceIndex];

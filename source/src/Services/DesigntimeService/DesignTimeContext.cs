@@ -20,12 +20,14 @@ namespace Testflow.DesigntimeService
 
         public ITestProject TestProject { get; set; }
 
-        public DesignTimeContext()
+        public DesignTimeContext(ISequenceGroup sequenceGroup)
         {
-            this.Name = string.Empty;
-            this.Components = new Dictionary<string, IComInterfaceDescription>();
-            this.SequenceGroup = new SequenceGroup();
-            this.TestProject = null;
+            //被DesignTimeService加减component
+            Components = new Dictionary<string, IComInterfaceDescription>(Constants.DefaultCompCollectionSize);
+
+            this.SequenceGroup = sequenceGroup;
+            this.TestProject = (ITestProject)sequenceGroup.Parent;
+            this.Name = sequenceGroup.Name + " Context";
         }
 
 

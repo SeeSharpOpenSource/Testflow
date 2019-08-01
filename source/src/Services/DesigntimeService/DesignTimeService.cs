@@ -46,19 +46,16 @@ namespace Testflow.DesigntimeService
         public IDesignTimeSession TearDownSession { get; set; }
         #endregion
 
+        //todo SetUp/TearDown = null
         public DesignTimeService()
         {
             this.TestProject = null; // need to load
-            SetUpSession = new DesignTimeSession()
-            {
-                SessionId = CommonConst.SetupIndex
-            };
+            
             SequenceSessions = new Dictionary<int, IDesignTimeSession>();
             Components = new Dictionary<string, IComInterfaceDescription>();
-            TearDownSession = new DesignTimeSession()
-            {
-                SessionId = CommonConst.TeardownIndex
-            };
+
+            SetUpSession = null;
+            TearDownSession = null;
         }
 
 
@@ -85,6 +82,8 @@ namespace Testflow.DesigntimeService
         #region load; unload
         public ITestProject Load(string name, string description)
         {
+            //这里不去检查TestProject旧值
+            //万一用户想创建新的TestProject呢？直接覆盖
             TestProject = _sequenceManager.CreateTestProject();
             TestProject.Name = name;
             TestProject.Description = description;
@@ -125,16 +124,7 @@ namespace Testflow.DesigntimeService
         }
         #endregion
 
-        #region Sequence Edit
-        //to ask
-        public IComInterfaceDescription AddComponent(IComInterfaceDescription comInterface)
-        {
-            //to ask: 是否要加到TestProject.Assemblies的assemblyinfo？; 估计不要
-            //TestProject.Assemblies.Add(comInterface.Assembly);
-            Components.Add(comInterface.Assembly.AssemblyName, comInterface);
-            return comInterface;
-        }
-
+        #region 加减SequenceGroup
         public IDesignTimeSession AddSequenceGroup(string name, string description)
         {
             //添加到TestProject
@@ -150,11 +140,84 @@ namespace Testflow.DesigntimeService
             TestProject.SequenceGroups.Add(sequenceGroup);
 
             //添加到SequenceSessions
-            IDesignTimeSession designtimeSession = new DesignTimeSession();
+            
             int index = ModuleUtils.GetSessionId(TestProject, sequenceGroup);
-            designtimeSession.SessionId = index;
+            IDesignTimeSession designtimeSession = new DesignTimeSession(index, sequenceGroup);
             SequenceSessions.Add(index, designtimeSession);
             return designtimeSession;
+        }
+
+        public IDesignTimeSession RemoveSequenceGroup(string name, string description)
+        {
+            //判断是否存在
+            ISequenceGroup sequenceGroup = TestProject.SequenceGroups.FirstOrDefault(item => item.Name.Equals(name) && item.Description.Equals(description));
+            if (sequenceGroup == null)
+            {
+                //I18N
+                throw new TestflowDataException(ModuleErrorCode.SequenceGroupDNE, "没有该序列组");
+            }
+
+            return InternalRemoveSequenceGroup(sequenceGroup);
+        }
+
+        public IDesignTimeSession RemoveSequenceGroup(ISequenceGroup sequenceGroup)
+        {
+            //判断是否存在
+            if (!TestProject.SequenceGroups.Contains(sequenceGroup))
+            {
+                //I18N
+                throw new TestflowDataException(ModuleErrorCode.SequenceGroupDNE, "没有该序列组");
+            }
+            TestProject.SequenceGroups.Remove(sequenceGroup);
+            return InternalRemoveSequenceGroup(sequenceGroup);
+        }
+
+        public IDesignTimeSession RemoveSequenceGroup(IDesignTimeSession designTimeSession)
+        {
+            //判断是否存在
+            KeyValuePair<int, IDesignTimeSession> kv = SequenceSessions.FirstOrDefault(item => item.Value.Equals(designTimeSession));
+            if (kv.Equals(default(KeyValuePair<int, IDesignTimeSession>)))
+            {
+                throw new TestflowDataException(ModuleErrorCode.SequenceGroupDNE, "没有该序列组");
+            }
+
+            //从TestProject去除
+            TestProject.SequenceGroups.Remove(ModuleUtils.GetSequenceGroup(kv.Key, TestProject));
+
+            //从SequenceSession去除
+            SequenceSessions.Remove(kv.Key);
+
+            FixSessionID(kv.Key);
+
+            return kv.Value;
+        }
+
+        private IDesignTimeSession InternalRemoveSequenceGroup(ISequenceGroup sequenceGroup)
+        {
+            //从SequenceSessions去除
+            IDesignTimeSession designTimeSession = null;
+            int sessionId = ModuleUtils.GetSessionId(TestProject, sequenceGroup);
+            SequenceSessions.TryGetValue(sessionId, out designTimeSession);
+            SequenceSessions.Remove(sessionId);
+
+
+            //从TestProject去除
+            TestProject.SequenceGroups.Remove(sequenceGroup);
+
+            FixSessionID(sessionId);
+
+            return designTimeSession;
+        }
+        #endregion
+
+        #region 加减程序集
+        //to ask
+        public IComInterfaceDescription AddComponent(IComInterfaceDescription comInterface)
+        {
+            //to ask: 是否要加到TestProject.Assemblies的assemblyinfo？; 估计不要
+            //TestProject.Assemblies.Add(comInterface.Assembly);
+            Components.Add(comInterface.Assembly.AssemblyName, comInterface);
+            return comInterface;
         }
 
         //to do
@@ -187,69 +250,8 @@ namespace Testflow.DesigntimeService
             }
             return comInterfaceDescription;
         }
+        #endregion
 
-        public IDesignTimeSession RemoveSequenceGroup(string name, string description)
-        {
-            //判断是否存在
-            ISequenceGroup sequenceGroup = TestProject.SequenceGroups.FirstOrDefault(item => item.Name.Equals(name) && item.Description.Equals(description));
-            if(sequenceGroup == null)
-            {
-                //I18N
-                throw new TestflowDataException(ModuleErrorCode.SequenceGroupDNE, "没有该序列组");
-            }
-
-            return InternalRemoveSequenceGroup(sequenceGroup);
-        }
-
-        public IDesignTimeSession RemoveSequenceGroup(ISequenceGroup sequenceGroup)
-        {
-            //判断是否存在
-            if (!TestProject.SequenceGroups.Contains(sequenceGroup))
-            {
-                //I18N
-                throw new TestflowDataException(ModuleErrorCode.SequenceGroupDNE, "没有该序列组");
-            }
-            TestProject.SequenceGroups.Remove(sequenceGroup);
-            return InternalRemoveSequenceGroup(sequenceGroup);
-        }
-
-        private IDesignTimeSession InternalRemoveSequenceGroup(ISequenceGroup sequenceGroup)
-        {
-            //从SequenceSessions去除
-            IDesignTimeSession designTimeSession = null;
-            int sessionId = ModuleUtils.GetSessionId(TestProject, sequenceGroup);
-            SequenceSessions.TryGetValue(sessionId, out designTimeSession);
-            SequenceSessions.Remove(sessionId);
-
-
-            //从TestProject去除
-            TestProject.SequenceGroups.Remove(sequenceGroup);
-
-            FixSessionID(sessionId);
-
-            return designTimeSession;
-        }
-
-        public IDesignTimeSession RemoveSequenceGroup(IDesignTimeSession designTimeSession)
-        {
-            //判断是否存在
-            KeyValuePair<int, IDesignTimeSession> kv = SequenceSessions.FirstOrDefault(item => item.Value.Equals(designTimeSession));
-            if (kv.Equals(default(KeyValuePair<int, IDesignTimeSession>)))
-            {
-                throw new TestflowDataException(ModuleErrorCode.SequenceGroupDNE, "没有该序列组");
-            }
-
-            //从TestProject去除
-            TestProject.SequenceGroups.Remove(ModuleUtils.GetSequenceGroup(kv.Key, TestProject));
-
-            //从SequenceSession去除
-            SequenceSessions.Remove(kv.Key);
-
-            FixSessionID(kv.Key);
-
-            return kv.Value;
-        }
-        
         /// <summary>
         /// 修正SequenceSessions里后续IDesigntimeSession里的sessionId
         /// 更新SequenceSessions里的键值对
@@ -268,17 +270,28 @@ namespace Testflow.DesigntimeService
             }
         }
 
-        #endregion
 
         public void Initialize()
         {
+            TestflowRunner runner = TestflowRunner.GetInstance();
+            runner.LogService.DesigntimeInitialize();
+            runner.ComInterfaceManager.DesigntimeInitialize();
+            runner.SequenceManager.DesigntimeInitialize();
+            runner.DataMaintainer.DesigntimeInitialize();
+            runner.EngineController.DesigntimeInitialize();
             _sequenceManager = TestflowRunner.GetInstance().SequenceManager;
         }
 
+        //强制结束与否，由外部管理
         public void Dispose()
         {
             Unload();
-            _sequenceManager?.Dispose();
+            TestflowRunner runner = TestflowRunner.GetInstance();
+            runner.LogService.Dispose();
+            runner.ComInterfaceManager.Dispose();
+            runner.SequenceManager.Dispose();
+            runner.DataMaintainer.Dispose();
+            runner.EngineController.Dispose();
         }
     }
 }

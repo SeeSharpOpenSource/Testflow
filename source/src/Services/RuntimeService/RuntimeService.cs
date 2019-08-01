@@ -15,7 +15,6 @@ namespace Testflow.RuntimeService
         private Modules.ISequenceManager _sequenceManager;
         private Modules.IEngineController _engineController;
        
-
         public ITestProject TestProject { get; set; }
 
         //todo State跟随EngineController State: State = _engineController.GetRuntimeState()
@@ -49,7 +48,7 @@ namespace Testflow.RuntimeService
         }
         #endregion
 
-        #region GetSession
+        #region GetSession返回IRuntimeSession
         public IRuntimeSession GetSession(string sequenceGroupName)
         {
             int sessionId = ModuleUtils.GetSessionId(TestProject, sequenceGroupName);
@@ -97,6 +96,13 @@ namespace Testflow.RuntimeService
         #region 初始化
         public void Initialize()
         {
+            TestflowRunner runner = TestflowRunner.GetInstance();
+            runner.LogService.RuntimeInitialize();
+            //动态启用ComInterfaceManager再说吧
+            //runner.ComInterfaceManager.RuntimeInitialize();
+            runner.SequenceManager.RuntimeInitialize();
+            runner.DataMaintainer.RuntimeInitialize();
+            runner.EngineController.RuntimeInitialize();
             _sequenceManager = TestflowRunner.GetInstance().SequenceManager;
             _engineController = TestflowRunner.GetInstance().EngineController;
         }
