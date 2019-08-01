@@ -95,5 +95,10 @@ namespace Testflow.Modules
         /// 引擎停止执行所有运行时会话
         /// </summary>
         void Stop();
+
+        /// <summary>
+        /// 取得runtimehash
+        /// </summary>
+        string GetEngineRunTimeHash();
     }
 }
