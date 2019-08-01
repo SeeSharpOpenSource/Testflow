@@ -4,6 +4,7 @@ using System.Reflection;
 using Testflow.CoreCommon.Common;
 using Testflow.Data;
 using Testflow.Data.Sequence;
+using Testflow.Runtime.Data;
 using Testflow.SlaveCore.Common;
 
 namespace Testflow.SlaveCore.Runner.Model
@@ -82,6 +83,7 @@ namespace Testflow.SlaveCore.Runner.Model
 
         protected override void InvokeStep(bool forceInvoke)
         {
+            this.Result = StepResult.Error;
             object instance = null;
             if (StepData.Function.Type == FunctionType.InstancePropertySetter)
             {
@@ -101,6 +103,7 @@ namespace Testflow.SlaveCore.Runner.Model
                 }
                 _properties[i].SetValue(instance, _params[i]);
             }
+            this.Result = StepResult.Pass;
         }
     }
 }
