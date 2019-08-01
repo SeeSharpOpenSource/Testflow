@@ -1,13 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Testflow.Modules;
 using System.Reflection;
 using Testflow.Runtime.Data;
 using Testflow.Runtime;
+using Testflow.Data;
 
 namespace Testflow.ResultManagerTest
 {
@@ -239,14 +235,14 @@ namespace Testflow.ResultManagerTest
         public void FilePrintResult()
         {
             _resultManager.DesigntimeInitialize();
-            _resultManager.PrintReport(TestProjectFile, _testInstanceData1.RuntimeHash, ResultManager.ReportType.txt);
+            _resultManager.PrintReport(TestProjectFile, _testInstanceData1.RuntimeHash, ReportType.txt);
         }
 
         [TestMethod]
         public void DirectoryPrintResult()
         {
             _resultManager.DesigntimeInitialize();
-            _resultManager.PrintReport(TestProjectDirectory, _testInstanceData2.RuntimeHash, ResultManager.ReportType.txt);
+            _resultManager.PrintReport(TestProjectDirectory, _testInstanceData2.RuntimeHash, ReportType.txt);
         }
 
 
