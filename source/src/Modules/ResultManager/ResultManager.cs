@@ -1,12 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Testflow.Modules;
+﻿using Testflow.Modules;
 using Testflow.Usr;
-using System.IO;
 using Testflow.ResultManager.Common;
+using Testflow.Data;
 
 namespace Testflow.ResultManager
 {
@@ -16,7 +11,7 @@ namespace Testflow.ResultManager
         #region 初始化
 
         public IModuleConfigData ConfigData { get; set; }
-        
+
         public void ApplyConfig(IModuleConfigData configData)
         {
             // TODO
@@ -24,10 +19,10 @@ namespace Testflow.ResultManager
 
         public void DesigntimeInitialize()
         {
-            if(_dataMaintainer == null)
+            if (_dataMaintainer == null)
             {
                 _dataMaintainer = TestflowRunner.GetInstance().DataMaintainer;
-            }       
+            }
         }
 
         public void RuntimeInitialize()
@@ -39,7 +34,7 @@ namespace Testflow.ResultManager
         }
 
         #endregion
-        
+
         /// <summary>
         /// 根据用户所指定文件类型输出报告
         /// </summary>
@@ -74,7 +69,7 @@ namespace Testflow.ResultManager
 
             _dataMaintainer.DesigntimeInitialize();
             //输出报告
-            _resultPrinter.PrintReport(newFilePath, _dataMaintainer, runtimeHash);
+            _resultPrinter.PrintReport(newFilePath, runtimeHash);
         }
 
         public void Dispose()
