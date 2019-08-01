@@ -50,11 +50,11 @@ namespace Testflow.ConfigurationManager
         private GlobalConfigData GetGlobalConfigData(ConfigData configData)
         {
             GlobalConfigData globalConfigData = new GlobalConfigData();
-            foreach (ConfigBlock configBlock in configData)
+            foreach (ConfigBlock configBlock in configData.ModuleConfigData)
             {
                 string blockName = configBlock.Name;
                 globalConfigData.AddConfigRoot(blockName);
-                foreach (ConfigItem configItem in configBlock)
+                foreach (ConfigItem configItem in configBlock.ConfigItems)
                 {
                     Type valueType = Type.GetType(configItem.Type);
                     if (null == valueType)

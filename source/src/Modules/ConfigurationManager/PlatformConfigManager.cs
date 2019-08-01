@@ -2,6 +2,7 @@
 using System.IO;
 using System.Xml;
 using Testflow.Modules;
+using Testflow.Runtime;
 using Testflow.Usr;
 using Testflow.Utility.I18nUtil;
 
@@ -60,6 +61,8 @@ namespace Testflow.ConfigurationManager
             this.ConfigData.Properties.Add("TestName", "");
             this.ConfigData.Properties.Add("TestDescription", "");
             this.ConfigData.Properties.Add("RuntimeHash", "");
+            this.ConfigData.Properties.Add("RuntimeType", RuntimeType.Run);
+
 
             globalConfigData.Dispose();
         }

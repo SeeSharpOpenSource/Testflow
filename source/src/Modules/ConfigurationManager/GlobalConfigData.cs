@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using Testflow.ConfigurationManager.Data;
 using Testflow.Modules;
 
 namespace Testflow.ConfigurationManager
 {
-    internal class GlobalConfigData : IDisposable
+    public class GlobalConfigData : IDisposable
     {
         public GlobalConfigData()
         {
@@ -39,6 +40,28 @@ namespace Testflow.ConfigurationManager
         public TDataType GetConfigValue<TDataType>(string blockName, string propertyName)
         {
             return (TDataType) _configData[blockName][propertyName];
+        }
+
+        public ConfigData GetConfigData()
+        {
+            ConfigData configData = new ConfigData();
+            configData.Name = Constants.ConfigName;
+            foreach (KeyValuePair<string, Dictionary<string, object>> keyValuePair in _configData)
+            {
+                ConfigBlock configBlock = new ConfigBlock();
+                configBlock.Name = keyValuePair.Key;
+                configData.ModuleConfigData.Add(configBlock);
+                foreach (KeyValuePair<string, object> itemPair in keyValuePair.Value)
+                {
+                    ConfigItem configItem = new ConfigItem();
+                    configItem.Name = itemPair.Key;
+                    configItem.Value = itemPair.Value.ToString();
+                    Type type = itemPair.Value.GetType();
+                    configItem.Type = $"{type.Namespace}.{type.Name}";
+                    configBlock.ConfigItems.Add(configItem);
+                }
+            }
+            return configData;
         }
 
         public void Dispose()
