@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Testflow.Data.Sequence;
 using Testflow.Runtime;
 using Testflow.Runtime.Data;
-using Testflow.RuntimeService.Common;
+using Testflow.Usr;
 
 namespace Testflow.RuntimeService
 {
@@ -14,15 +14,23 @@ namespace Testflow.RuntimeService
     {
         private Modules.ISequenceManager _sequenceManager;
         private Modules.IEngineController _engineController;
+        private IList<IRuntimeSession> _sessions;
        
         public ITestProject TestProject { get; set; }
 
-        //todo State跟随EngineController State: State = _engineController.GetRuntimeState()
-        public RuntimeState State { get; }
+        //State紧跟着_engineController的state
+        public RuntimeState State { get { return _engineController.State; } }
 
-        public IList<IRuntimeSession> Sessions { get; }
+        public IList<IRuntimeSession> Sessions { get { return _sessions; } }
 
+        //todo 目前做不了。。等加入debug的时候再去做
         public IRuntimeConfiguration Configuration { get; set; }
+
+        public RuntimeService()
+        {
+            _sessions = new List<IRuntimeSession>(5);
+            //其他的调用load
+        }
 
         #region activate, deactivate先不实现
         public void Activate()
@@ -38,13 +46,31 @@ namespace Testflow.RuntimeService
         #region Load TestProject
         public void Load(ITestProject testProject)
         {
+            //todo 目前拿不到Configuration.Type, 因为_engineController._runtimeEngine为private.并且_engineController里没有接口
+            //Configuration.Type
+
             TestProject = testProject;
+            //todo, constants里定义一个defaultListSize
+            for (int n=0; n < testProject.SequenceGroups.Count; n++)
+            {
+                IRuntimeContext context = new RuntimeContext($"RuntimeContext {n}", n, testProject, testProject.SequenceGroups[n]);
+                IRuntimeSession session = new RuntimeSession(n, context);
+                session.Initialize();
+                _sessions.Add(session);
+            }
         }
 
         public void Load(ISequenceGroup sequenceGroup)
         {
-            TestProject = _sequenceManager.CreateTestProject();
-            TestProject.SequenceGroups.Add(sequenceGroup);
+            //确保没有TestProject
+            //为什么不CreateTestProject()然后把SequenceGroup放进去呢？
+            //因为engineController里要判断是sequencegroup还是testproject
+            TestProject = null;
+
+            IRuntimeContext context = new RuntimeContext($"RuntimeContext 0", 0, null, sequenceGroup);
+            IRuntimeSession session = new RuntimeSession(0, context);
+            session.Initialize();
+            _sessions.Add(session);
         }
         #endregion
 
@@ -67,30 +93,6 @@ namespace Testflow.RuntimeService
         public event RuntimeDelegate.TestGenerationAction TestGenOver;
         public event RuntimeDelegate.TestInstanceStatusAction TestStart;
         public event RuntimeDelegate.TestInstanceStatusAction TestOver;
-
-        public void RuntimeServiceRegister(Delegate callBack, string eventName)
-        {
-            _engineController.RegisterRuntimeEvent(callBack,eventName, CoreCommon.Common.CoreConstants.TestProjectIndex);
-        }
-
-        private void OnTestGenStart(ITestGenerationInfo generationinfo)
-        {
-            TestGenStart?.Invoke(generationinfo);
-        }
-
-        private void OnTestGenOver(ITestGenerationInfo generationinfo)
-        {
-            TestGenOver?.Invoke(generationinfo);
-        }
-
-        private void OnTestStart(IList<ITestResultCollection> statistics)
-        {
-            TestStart?.Invoke(statistics);
-        }
-        private void OnTestOver(IList<ITestResultCollection> statistics)
-        {
-            TestOver?.Invoke(statistics);
-        }
         #endregion
 
         #region 初始化
@@ -106,6 +108,14 @@ namespace Testflow.RuntimeService
             runner.ResultManager?.RuntimeInitialize();
             _sequenceManager = TestflowRunner.GetInstance().SequenceManager;
             _engineController = TestflowRunner.GetInstance().EngineController;
+
+            #region 注册事件,空事件在方法里面判断
+            _engineController.RegisterRuntimeEvent(TestGenStart, Constants.TestGenerationStart, CoreCommon.Common.CoreConstants.TestProjectIndex);
+            _engineController.RegisterRuntimeEvent(TestGenOver, Constants.TestGenerationEnd, CoreCommon.Common.CoreConstants.TestProjectIndex);
+            _engineController.RegisterRuntimeEvent(TestStart, Constants.TestInstanceStart, CoreCommon.Common.CoreConstants.TestProjectIndex);
+            _engineController.RegisterRuntimeEvent(TestOver, Constants.TestInstanceOver, CoreCommon.Common.CoreConstants.TestProjectIndex);
+            #endregion
+
         }
 
         public void Dispose()
@@ -122,9 +132,26 @@ namespace Testflow.RuntimeService
         #endregion
 
         #region 开始、停止运行
+        //todo I18n
         public void Run()
         {
-            _engineController.Start();
+            if(TestProject == null && Sessions.Count == 0)
+            {
+                throw new TestflowException(ModuleErrorCode.SercviceNotLoaded, "RuntimeService not loaded. Load TestProject or SequenceGroup into RuntimeService first");
+            }
+
+            //todo ModuleUtils.EngineStartThread会返回错误信息，看怎么处理
+            //好像也不需要返回Exception，因为应该外部来catch？？？？
+            //加载进TestProject
+            if (TestProject != null)
+            {
+                ModuleUtils.EngineStartThread(TestProject);
+            }
+            //加载进SequenceGroup
+            else
+            {
+                ModuleUtils.EngineStartThread(Sessions[0].Context.SequenceGroup);
+            }
         }
 
         public void Stop()

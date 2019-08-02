@@ -6,41 +6,71 @@ using System.Threading.Tasks;
 using Testflow.Data.Sequence;
 using Testflow.Runtime;
 using Testflow.Runtime.Data;
+using Testflow.Usr;
+using Testflow.Modules;
 
 namespace Testflow.RuntimeService
 {
     public class RuntimeSession : IRuntimeSession
     {
-        private Modules.IEngineController _engineController;
+        private IEngineController _engineController;
 
         public IRuntimeContext Context { get; }
 
-        public RuntimeState State { get; }
+        public RuntimeState State { get { return _engineController.GetRuntimeState(ID); } }
 
         public int ID { get; }
+
+        public RuntimeSession(int id, IRuntimeContext context)
+        {
+            this.ID = id;
+            this.Context = context;
+        }
+
 
         #region 初始化
         public void Initialize()
         {
-            throw new NotImplementedException();
+            _engineController = TestflowRunner.GetInstance().EngineController;
+            #region 注册事件,空事件在方法里面判断
+            _engineController.RegisterRuntimeEvent(SessionGenerationStart, Constants.SessionGenerationStart, Context.SessionId);
+            _engineController.RegisterRuntimeEvent(SessionGenerationReport, Constants.SessionGenerationReport, Context.SessionId);
+            _engineController.RegisterRuntimeEvent(SessionGenerationEnd, Constants.SessionGenerationEnd, Context.SessionId);
+            _engineController.RegisterRuntimeEvent(SessionStart, Constants.SessionStart, Context.SessionId);
+            _engineController.RegisterRuntimeEvent(SequenceStarted, Constants.SequenceStarted, Context.SessionId);
+            _engineController.RegisterRuntimeEvent(StatusReceived, Constants.StatusReceived, Context.SessionId);
+            _engineController.RegisterRuntimeEvent(SequenceOver, Constants.SequenceOver, Context.SessionId);
+            _engineController.RegisterRuntimeEvent(SessionOver, Constants.SessionOver, Context.SessionId);
+            _engineController.RegisterRuntimeEvent(BreakPointHitted, Constants.BreakPointHitted, Context.SessionId);
+            #endregion
         }
 
         public void Dispose()
         {
-            throw new NotImplementedException();
+
         }
         #endregion
 
-        #region 开始、结束运行 //toask 这个start and stop该做什么
+        #region 开始引擎
+        //todo I18n
         public void Start()
         {
-            _engineController.Start();
-            throw new NotImplementedException();
+            if (Context.SequenceGroup == null)
+            {
+                if(Context.TestGroup == null)
+                {
+                    throw new TestflowException(ModuleErrorCode.TestProjectDNE, "Neither Test Project nor Sequence Group exists");
+                }
+                throw new TestflowException(ModuleErrorCode.SequenceGroupDNE, "Sequence Group does not exist; please load using RuntimeService");
+            }
+
+            //todo 接收错误信息
+            ModuleUtils.EngineStartThread(Context.SequenceGroup);
         }
 
         public void Stop()
         {
-            throw new NotImplementedException();
+            _engineController.Stop();
         }
         #endregion
 
@@ -54,57 +84,6 @@ namespace Testflow.RuntimeService
         public event RuntimeDelegate.SequenceStatusAction SequenceOver;
         public event RuntimeDelegate.SessionStatusAction SessionOver;
         public event RuntimeDelegate.BreakPointHittedAction BreakPointHitted;
-
-        public void RuntimeSessionRegister(Delegate callBack, string eventName)
-        {
-            _engineController.RegisterRuntimeEvent(callBack, eventName, CoreCommon.Common.CoreConstants.TestProjectSessionId);
-        }
-
-        private void OnSessionGenerationStart(ISessionGenerationInfo generationinfo)
-        {
-            SessionGenerationStart?.Invoke(generationinfo);
-        }
-
-        private void OnSessionGenerationReport(ISessionGenerationInfo generationinfo)
-        {
-            SessionGenerationReport?.Invoke(generationinfo);
-        }
-
-        private void OnSessionGenerationEnd(ISessionGenerationInfo generationinfo)
-        {
-            SessionGenerationEnd?.Invoke(generationinfo);
-        }
-
-        private void OnTestStart(ITestResultCollection statistics)
-        {
-            SessionStart?.Invoke(statistics);
-        }
-
-        private void OnSequenceStarted(ISequenceTestResult result)
-        {
-            SequenceStarted?.Invoke(result);
-        }
-
-        private void OnStatusReceived(IRuntimeStatusInfo statusinfo)
-        {
-            StatusReceived?.Invoke(statusinfo);
-        }
-
-        private void OnSequenceOver(ISequenceTestResult result)
-        {
-            SequenceOver?.Invoke(result);
-        }
-
-        private void OnTestOver(ITestResultCollection statistics)
-        {
-            SessionOver?.Invoke(statistics);
-        }
-
-        private void OnBreakPointHitted(IDebuggerHandle debuggerHandle, IDebugInformation information)
-        {
-            BreakPointHitted?.Invoke(debuggerHandle, information);
-        }
-
         #endregion
 
         #region Get Sequence, SequenceStep
