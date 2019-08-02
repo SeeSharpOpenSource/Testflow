@@ -274,13 +274,13 @@ namespace Testflow.DesigntimeService
         public void Initialize()
         {
             TestflowRunner runner = TestflowRunner.GetInstance();
-            runner.LogService?.Dispose();
-            runner.ComInterfaceManager?.Dispose();
-            runner.SequenceManager?.Dispose();
-            runner.DataMaintainer?.Dispose();
-            runner.EngineController?.Dispose();
-            runner.ParameterChecker?.Dispose();
-            runner.ResultManager?.Dispose();
+            runner.LogService.DesigntimeInitialize();
+            runner.ComInterfaceManager.DesigntimeInitialize();
+            runner.SequenceManager.DesigntimeInitialize();
+            runner.DataMaintainer.DesigntimeInitialize();
+            runner.EngineController.DesigntimeInitialize();
+            runner.ResultManager?.DesigntimeInitialize();
+            _sequenceManager = TestflowRunner.GetInstance().SequenceManager;
         }
 
         //强制结束与否，由外部管理
@@ -288,11 +288,13 @@ namespace Testflow.DesigntimeService
         {
             Unload();
             TestflowRunner runner = TestflowRunner.GetInstance();
-            runner.LogService.Dispose();
-            runner.ComInterfaceManager.Dispose();
-            runner.SequenceManager.Dispose();
-            runner.DataMaintainer.Dispose();
-            runner.EngineController.Dispose();
+            runner.LogService?.Dispose();
+            runner.ComInterfaceManager?.Dispose();
+            runner.SequenceManager?.Dispose();
+            runner.DataMaintainer?.Dispose();
+            runner.EngineController?.Dispose();
+            runner.ParameterChecker?.Dispose();
+            runner.ResultManager?.Dispose();
         }
     }
 }
