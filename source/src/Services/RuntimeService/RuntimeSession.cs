@@ -32,17 +32,7 @@ namespace Testflow.RuntimeService
         public void Initialize()
         {
             _engineController = TestflowRunner.GetInstance().EngineController;
-            #region 注册事件,空事件在方法里面判断
-            _engineController.RegisterRuntimeEvent(SessionGenerationStart, Constants.SessionGenerationStart, Context.SessionId);
-            _engineController.RegisterRuntimeEvent(SessionGenerationReport, Constants.SessionGenerationReport, Context.SessionId);
-            _engineController.RegisterRuntimeEvent(SessionGenerationEnd, Constants.SessionGenerationEnd, Context.SessionId);
-            _engineController.RegisterRuntimeEvent(SessionStart, Constants.SessionStart, Context.SessionId);
-            _engineController.RegisterRuntimeEvent(SequenceStarted, Constants.SequenceStarted, Context.SessionId);
-            _engineController.RegisterRuntimeEvent(StatusReceived, Constants.StatusReceived, Context.SessionId);
-            _engineController.RegisterRuntimeEvent(SequenceOver, Constants.SequenceOver, Context.SessionId);
-            _engineController.RegisterRuntimeEvent(SessionOver, Constants.SessionOver, Context.SessionId);
-            _engineController.RegisterRuntimeEvent(BreakPointHitted, Constants.BreakPointHitted, Context.SessionId);
-            #endregion
+            
         }
 
         public void Dispose()
@@ -55,6 +45,8 @@ namespace Testflow.RuntimeService
         //todo I18n
         public void Start()
         {
+            RegisterEvents();
+
             if (Context.SequenceGroup == null)
             {
                 if(Context.TestGroup == null)
@@ -64,9 +56,10 @@ namespace Testflow.RuntimeService
                 throw new TestflowException(ModuleErrorCode.SequenceGroupDNE, "Sequence Group does not exist; please load using RuntimeService");
             }
 
-            //todo 接收错误信息
             ModuleUtils.EngineStartThread(Context.SequenceGroup);
         }
+
+       
 
         public void Stop()
         {
@@ -84,6 +77,21 @@ namespace Testflow.RuntimeService
         public event RuntimeDelegate.SequenceStatusAction SequenceOver;
         public event RuntimeDelegate.SessionStatusAction SessionOver;
         public event RuntimeDelegate.BreakPointHittedAction BreakPointHitted;
+
+        //想engineController.runtimeEngine注册添加好的事件
+        private void RegisterEvents()
+        {
+            //注册事件,空事件在runtimeEngine方法里面判断
+            _engineController.RegisterRuntimeEvent(SessionGenerationStart, Constants.SessionGenerationStart, Context.SessionId);
+            _engineController.RegisterRuntimeEvent(SessionGenerationReport, Constants.SessionGenerationReport, Context.SessionId);
+            _engineController.RegisterRuntimeEvent(SessionGenerationEnd, Constants.SessionGenerationEnd, Context.SessionId);
+            _engineController.RegisterRuntimeEvent(SessionStart, Constants.SessionStart, Context.SessionId);
+            _engineController.RegisterRuntimeEvent(SequenceStarted, Constants.SequenceStarted, Context.SessionId);
+            _engineController.RegisterRuntimeEvent(StatusReceived, Constants.StatusReceived, Context.SessionId);
+            _engineController.RegisterRuntimeEvent(SequenceOver, Constants.SequenceOver, Context.SessionId);
+            _engineController.RegisterRuntimeEvent(SessionOver, Constants.SessionOver, Context.SessionId);
+            _engineController.RegisterRuntimeEvent(BreakPointHitted, Constants.BreakPointHitted, Context.SessionId);
+        }
         #endregion
 
         #region Get Sequence, SequenceStep
@@ -132,6 +140,5 @@ namespace Testflow.RuntimeService
         {
             throw new NotImplementedException();
         }
-
     }
 }

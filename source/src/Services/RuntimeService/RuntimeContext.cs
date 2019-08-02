@@ -35,16 +35,16 @@ namespace Testflow.RuntimeService
         public IRuntimeStatusCollection RunTimeStatus { get; }
 
         //todo 构造函数可能的参数： 
-        //IHostInfo hostInfo, Process process, AppDomain RunDomain, int threadId, ISequenceDebuggerCollection debuggers, IDebuggerHandle debuggerHandle, IRuntimeStatusCollection statusCollection)
+        //IHostInfo hostInfo, Process process, AppDomain runDomain, int threadId, ISequenceDebuggerCollection debuggers, IDebuggerHandle debuggerHandle, IRuntimeStatusCollection statusCollection)
         public RuntimeContext(string name, long sessionID, ITestProject testProject, ISequenceGroup sequenceGroup)
         {
             this.Name = name;
-            this.SessionId = SessionId;
+            this.SessionId = sessionID;
             this.TestGroup = testProject;
-            this.SequenceGroup = SequenceGroup;
+            this.SequenceGroup = sequenceGroup;
             //this.HostInfo = hostInfo;
             //this.Process = process;
-            //this.RunDomain = RunDomain;
+            //this.RunDomain = runDomain;
             //this.ThreadID = threadId;
             //this.Debuggers = debuggers;
             //this.DebuggerHandle = debuggerHandle;

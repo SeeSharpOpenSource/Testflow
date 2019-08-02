@@ -58,6 +58,7 @@ namespace Testflow.RuntimeService
                 session.Initialize();
                 _sessions.Add(session);
             }
+            _engineController.SetSequenceData(testProject);
         }
 
         public void Load(ISequenceGroup sequenceGroup)
@@ -71,6 +72,7 @@ namespace Testflow.RuntimeService
             IRuntimeSession session = new RuntimeSession(0, context);
             session.Initialize();
             _sessions.Add(session);
+            _engineController.SetSequenceData(sequenceGroup);
         }
         #endregion
 
@@ -93,6 +95,16 @@ namespace Testflow.RuntimeService
         public event RuntimeDelegate.TestGenerationAction TestGenOver;
         public event RuntimeDelegate.TestInstanceStatusAction TestStart;
         public event RuntimeDelegate.TestInstanceStatusAction TestOver;
+
+        //向engineController.runtimeEngine注册用户添加好的事件
+        private void RegisterEvents()
+        {
+            //注册事件,空事件在runtimeEngine方法里面判断
+            _engineController.RegisterRuntimeEvent(TestGenStart, Constants.TestGenerationStart, CoreCommon.Common.CoreConstants.TestProjectIndex);
+            _engineController.RegisterRuntimeEvent(TestGenOver, Constants.TestGenerationEnd, CoreCommon.Common.CoreConstants.TestProjectIndex);
+            _engineController.RegisterRuntimeEvent(TestStart, Constants.TestInstanceStart, CoreCommon.Common.CoreConstants.TestProjectIndex);
+            _engineController.RegisterRuntimeEvent(TestOver, Constants.TestInstanceOver, CoreCommon.Common.CoreConstants.TestProjectIndex);
+        }
         #endregion
 
         #region 初始化
@@ -108,14 +120,6 @@ namespace Testflow.RuntimeService
             runner.ResultManager?.RuntimeInitialize();
             _sequenceManager = TestflowRunner.GetInstance().SequenceManager;
             _engineController = TestflowRunner.GetInstance().EngineController;
-
-            #region 注册事件,空事件在方法里面判断
-            _engineController.RegisterRuntimeEvent(TestGenStart, Constants.TestGenerationStart, CoreCommon.Common.CoreConstants.TestProjectIndex);
-            _engineController.RegisterRuntimeEvent(TestGenOver, Constants.TestGenerationEnd, CoreCommon.Common.CoreConstants.TestProjectIndex);
-            _engineController.RegisterRuntimeEvent(TestStart, Constants.TestInstanceStart, CoreCommon.Common.CoreConstants.TestProjectIndex);
-            _engineController.RegisterRuntimeEvent(TestOver, Constants.TestInstanceOver, CoreCommon.Common.CoreConstants.TestProjectIndex);
-            #endregion
-
         }
 
         public void Dispose()
@@ -135,7 +139,9 @@ namespace Testflow.RuntimeService
         //todo I18n
         public void Run()
         {
-            if(TestProject == null && Sessions.Count == 0)
+            RegisterEvents();
+
+            if (TestProject == null && Sessions.Count == 0)
             {
                 throw new TestflowException(ModuleErrorCode.SercviceNotLoaded, "RuntimeService not loaded. Load TestProject or SequenceGroup into RuntimeService first");
             }
