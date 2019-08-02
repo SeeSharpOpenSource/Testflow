@@ -65,7 +65,6 @@ namespace Testflow.Runtime
         /// 所有测试执行结束后触发
         /// </summary>
         event RuntimeDelegate.TestInstanceStatusAction TestOver;
-
         #endregion
 
         #region 运行时控制

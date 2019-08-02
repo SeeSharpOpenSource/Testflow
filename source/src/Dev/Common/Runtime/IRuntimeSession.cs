@@ -1,4 +1,5 @@
-﻿using System;
+﻿
+using System;
 using Testflow.Usr;
 using Testflow.Data;
 using Testflow.Data.Sequence;
@@ -26,7 +27,6 @@ namespace Testflow.Runtime
         int ID { get; }
 
         #region Status相关事件
-
         /// <summary>
         /// 测试生成开始事件
         /// </summary>
@@ -76,7 +76,6 @@ namespace Testflow.Runtime
         /// 断点命中事件，当某个断点被命中时触发
         /// </summary>
         event RuntimeDelegate.BreakPointHittedAction BreakPointHitted;
-
         #endregion
 
         #region 运行时控制
