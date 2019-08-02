@@ -293,8 +293,15 @@ namespace Testflow.MasterCore
 
         public void RegisterRuntimeEvent(Delegate callBack, string eventName, params object[] extraParams)
         {
+            //判断委托是否为空。用户可能并没有在外部注册事件，详见runtimeservice里的事件
+            if(callBack == null)
+            {
+                return;
+            }
+
             int session = CommonConst.BroadcastSession;
-            if (0 == extraParams.Length)
+            //extraParams里只有一个int sessionid，表示发给这个session
+            if (0 != extraParams.Length)
             {
                 session = (int) extraParams[0];
             }
