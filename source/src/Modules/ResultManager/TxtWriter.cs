@@ -52,7 +52,6 @@ namespace Testflow.ResultManager
         private void PrintTestInstance(StreamWriter sw, string runtimeHash)
         {
             TestInstanceData testInstance = _dataMaintainer.GetTestInstance(runtimeHash);
-
             try
             {
                 sw.WriteLine(testInstance.Name);
@@ -65,15 +64,14 @@ namespace Testflow.ResultManager
                 sw.WriteLine($"End Time: {testInstance.EndTime}");
                 sw.WriteLine($"Elapsed Time: {testInstance.ElapsedTime}");
                 sw.WriteLine();
-
-                //输出报告每个session
-                PrintSessionResults(sw, runtimeHash);
-            }
+				//输出报告每个session
+            	PrintSessionResults(sw, runtimeHash);            }
             catch (IOException ex)
             {
                 sw.Close();
                 throw new TestflowRuntimeException(ModuleErrorCode.IOError, "PrintTestInstance IO Exception", ex);
             }
+            
         }
 
         private void PrintSessionResults(StreamWriter sw, string runtimeHash)
