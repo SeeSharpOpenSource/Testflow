@@ -103,14 +103,21 @@ namespace Testflow.RuntimeService
             runner.SequenceManager.RuntimeInitialize();
             runner.DataMaintainer.RuntimeInitialize();
             runner.EngineController.RuntimeInitialize();
+            runner.ResultManager?.RuntimeInitialize();
             _sequenceManager = TestflowRunner.GetInstance().SequenceManager;
             _engineController = TestflowRunner.GetInstance().EngineController;
         }
 
         public void Dispose()
         {
-            _sequenceManager?.Dispose();
-            _engineController?.Dispose();
+            TestflowRunner runner = TestflowRunner.GetInstance();
+            runner.LogService?.Dispose();
+            runner.ComInterfaceManager?.Dispose();
+            runner.SequenceManager?.Dispose();
+            runner.DataMaintainer?.Dispose();
+            runner.EngineController?.Dispose();
+            runner.ParameterChecker?.Dispose();
+            runner.ResultManager?.Dispose();
         }
         #endregion
 
