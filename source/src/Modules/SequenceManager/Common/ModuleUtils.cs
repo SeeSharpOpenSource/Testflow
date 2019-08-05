@@ -141,10 +141,6 @@ namespace Testflow.SequenceManager.Common
 
         public static bool AddAndRefreshIndex<TDataType>(IList<TDataType> collection, TDataType item)
         {
-            if (collection.Contains(item))
-            {
-                return false;
-            }
             int index = collection.Count;
             collection.Add(item);
             PropertyInfo propertyInfo = item.GetType()
@@ -155,10 +151,6 @@ namespace Testflow.SequenceManager.Common
 
         public static bool InsertAndRefreshIndex<TDataType>(IList<TDataType> collection, TDataType item, int index)
         {
-            if (collection.Count < index)
-            {
-                return false;
-            }
             collection.Insert(index, item);
             PropertyInfo propertyInfo = item.GetType()
                 .GetProperty(IndexPropertName, BindingFlags.Instance | BindingFlags.Public);
@@ -171,10 +163,6 @@ namespace Testflow.SequenceManager.Common
 
         public static bool RemoveAndRefreshIndex<TDataType>(IList<TDataType> collection, TDataType item)
         {
-            if (!collection.Contains(item))
-            {
-                return false;
-            }
             int index = collection.IndexOf(item);
             collection.Remove(item);
             PropertyInfo propertyInfo = item.GetType()
@@ -189,10 +177,6 @@ namespace Testflow.SequenceManager.Common
 
         public static bool RemoveAtAndRefreshIndex<TDataType>(IList<TDataType> collection, int index)
         {
-            if (collection.Count <= index)
-            {
-                return false;
-            }
             TDataType item = collection[index];
             collection.RemoveAt(index);
             PropertyInfo propertyInfo = item.GetType()
