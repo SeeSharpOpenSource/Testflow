@@ -70,6 +70,15 @@ namespace Testflow.ConfigurationManager.Resources.locale {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Invalid .net framework directory..
+        /// </summary>
+        internal static string InvalidDotNetDir {
+            get {
+                return ResourceManager.GetString("InvalidDotNetDir", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The environment variable &quot;TESTFLOW_HOME&quot; is invalid or inexistent..
         /// </summary>
         internal static string InvalidHomeVariable {

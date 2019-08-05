@@ -21,6 +21,7 @@ namespace Testflow.ConfigurationManagerTest
             globalConfigData.AddConfigItem("GlobalConfig", "PlatformEncoding", Encoding.UTF8);
             globalConfigData.AddConfigItem("GlobalConfig", "PlatformLibDir", @"\lib");
             globalConfigData.AddConfigItem("GlobalConfig", "WorkspaceDir", @"C:\Users\jingtao\Documents\TestflowWorkspace");
+            globalConfigData.AddConfigItem("GlobalConfig", "DotNetVersion", @"v4.0.30319");
 
             globalConfigData.AddConfigRoot("EngineCore");
             globalConfigData.AddConfigItem("EngineCore", "TestGenReportInterval", 500);

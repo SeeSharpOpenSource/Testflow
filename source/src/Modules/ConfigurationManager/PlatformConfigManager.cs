@@ -24,7 +24,7 @@ namespace Testflow.ConfigurationManager
             {
                 TestflowRunner.GetInstance().LogService.Print(LogLevel.Fatal, CommonConst.PlatformLogSession, 
                     $"Invalid environment variable:{CommonConst.EnvironmentVariable}");
-                throw new TestflowRuntimeException(ModuleErrorCode.InvalidTestHome, i18N.GetStr("InvalidHomeVariable"));
+                throw new TestflowRuntimeException(ModuleErrorCode.InvalidEnvDir, i18N.GetStr("InvalidHomeVariable"));
             }
             this.ConfigData = new ModuleConfigData();
             string configFilePath = $"{platformDir}{Path.DirectorySeparatorChar}{Constants.ConfigFileDir}{Path.DirectorySeparatorChar}{Constants.ConfigFileName}";
