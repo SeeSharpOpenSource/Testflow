@@ -50,7 +50,7 @@ namespace Testflow.DesigntimeService
         public DesignTimeService()
         {
             this.TestProject = null; // need to load
-            
+
             SequenceSessions = new Dictionary<int, IDesignTimeSession>();
             Components = new Dictionary<string, IComInterfaceDescription>();
 
@@ -64,7 +64,6 @@ namespace Testflow.DesigntimeService
         #region activate, deactivate先不实现
         public void Activate()
         {
-
             //todo
             //反序列化已存在的TestProject
             //或
@@ -82,8 +81,7 @@ namespace Testflow.DesigntimeService
         #region load; unload
         public ITestProject Load(string name, string description)
         {
-            //这里不去检查TestProject旧值
-            //万一用户想创建新的TestProject呢？直接覆盖
+            //这里不去检查TestProject旧值, 如果值混乱，怪用户没有unload
             TestProject = _sequenceManager.CreateTestProject();
             TestProject.Name = name;
             TestProject.Description = description;
@@ -93,6 +91,10 @@ namespace Testflow.DesigntimeService
         public ITestProject Load(ITestProject testProject)
         {
             TestProject = testProject;
+            foreach (ISequenceGroup sequenceGroup in testProject.SequenceGroups)
+            {
+                AddSequenceGroup(sequenceGroup);
+            }
             return TestProject;
         }
 
@@ -101,16 +103,19 @@ namespace Testflow.DesigntimeService
             TestProject = _sequenceManager.CreateTestProject();
             TestProject.Name = name;
             TestProject.Description = description;
-            TestProject.SequenceGroups.Add(sequenceGroup);
+            AddSequenceGroup(sequenceGroup);
             return TestProject;
         }
 
+        //todo SetUp/TearDown = null
         public void Unload()
         {
-            TestProject = null;
+            this.TestProject = null; // need to load
+
+            SequenceSessions = new Dictionary<int, IDesignTimeSession>();
+            Components = new Dictionary<string, IComInterfaceDescription>();
+
             SetUpSession = null;
-            SequenceSessions = null;
-            Components = null;
             TearDownSession = null;
         }
         #endregion
@@ -136,12 +141,10 @@ namespace Testflow.DesigntimeService
 
         public IDesignTimeSession AddSequenceGroup(ISequenceGroup sequenceGroup)
         {
+            int index = TestProject.SequenceGroups.Count;
             //添加到TestProject
             TestProject.SequenceGroups.Add(sequenceGroup);
-
             //添加到SequenceSessions
-            
-            int index = ModuleUtils.GetSessionId(TestProject, sequenceGroup);
             IDesignTimeSession designtimeSession = new DesignTimeSession(index, sequenceGroup);
             SequenceSessions.Add(index, designtimeSession);
             return designtimeSession;
@@ -149,64 +152,33 @@ namespace Testflow.DesigntimeService
 
         public IDesignTimeSession RemoveSequenceGroup(string name, string description)
         {
-            //判断是否存在
             ISequenceGroup sequenceGroup = TestProject.SequenceGroups.FirstOrDefault(item => item.Name.Equals(name) && item.Description.Equals(description));
-            if (sequenceGroup == null)
-            {
-                //I18N
-                throw new TestflowDataException(ModuleErrorCode.SequenceGroupDNE, "没有该序列组");
-            }
-
-            return InternalRemoveSequenceGroup(sequenceGroup);
+            //可能传入null，没关系，同样报错
+            return RemoveSequenceGroup(sequenceGroup);
         }
-
+        
+        //todo I18n
         public IDesignTimeSession RemoveSequenceGroup(ISequenceGroup sequenceGroup)
         {
-            //判断是否存在
-            if (!TestProject.SequenceGroups.Contains(sequenceGroup))
+            //在TestProject里找寻sequenceGroup的sessionId
+            int sessionId = TestProject.SequenceGroups.IndexOf(sequenceGroup);
+            if (sessionId == -1)
             {
-                //I18N
-                throw new TestflowDataException(ModuleErrorCode.SequenceGroupDNE, "没有该序列组");
+                throw new TestflowDataException(ModuleErrorCode.SequenceGroupDNE, "SequenceGroup does not exist in current service");
             }
-            TestProject.SequenceGroups.Remove(sequenceGroup);
-            return InternalRemoveSequenceGroup(sequenceGroup);
+            IDesignTimeSession designTimeSession = SequenceSessions[sessionId];
+            //从SequenceSessions去除
+            SequenceSessions.Remove(sessionId);
+
+            //从TestProject去除
+            TestProject.SequenceGroups.RemoveAt(sessionId);
+            FixSessionID(sessionId);
+            return designTimeSession;
         }
 
         public IDesignTimeSession RemoveSequenceGroup(IDesignTimeSession designTimeSession)
         {
-            //判断是否存在
-            KeyValuePair<int, IDesignTimeSession> kv = SequenceSessions.FirstOrDefault(item => item.Value.Equals(designTimeSession));
-            if (kv.Equals(default(KeyValuePair<int, IDesignTimeSession>)))
-            {
-                throw new TestflowDataException(ModuleErrorCode.SequenceGroupDNE, "没有该序列组");
-            }
-
-            //从TestProject去除
-            TestProject.SequenceGroups.Remove(ModuleUtils.GetSequenceGroup(kv.Key, TestProject));
-
-            //从SequenceSession去除
-            SequenceSessions.Remove(kv.Key);
-
-            FixSessionID(kv.Key);
-
-            return kv.Value;
-        }
-
-        private IDesignTimeSession InternalRemoveSequenceGroup(ISequenceGroup sequenceGroup)
-        {
-            //从SequenceSessions去除
-            IDesignTimeSession designTimeSession = null;
-            int sessionId = ModuleUtils.GetSessionId(TestProject, sequenceGroup);
-            SequenceSessions.TryGetValue(sessionId, out designTimeSession);
-            SequenceSessions.Remove(sessionId);
-
-
-            //从TestProject去除
-            TestProject.SequenceGroups.Remove(sequenceGroup);
-
-            FixSessionID(sessionId);
-
-            return designTimeSession;
+            return RemoveSequenceGroup(designTimeSession.Context.SequenceGroup);
         }
         #endregion
 
@@ -260,7 +232,6 @@ namespace Testflow.DesigntimeService
         /// <param name="index"></param>
         private void FixSessionID(int index)
         {
-            
             for(;index < TestProject.SequenceGroups.Count; index++)
             {
                 IDesignTimeSession session = SequenceSessions[index + 1];
