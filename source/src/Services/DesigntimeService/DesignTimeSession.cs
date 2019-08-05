@@ -7,6 +7,7 @@ using Testflow.Data;
 using Testflow.Data.Sequence;
 using Testflow.DesignTime;
 using Testflow.SequenceManager.SequenceElements;
+using Testflow.Usr;
 
 namespace Testflow.DesigntimeService
 {
@@ -47,7 +48,7 @@ namespace Testflow.DesigntimeService
         }
         #endregion
 
-        #region 加减argument；没有实现
+        #region SequenceGroup Argument 没有实现
         public IArgument AddArgument(string name, ITypeData type)
         {
             throw new NotImplementedException();
@@ -65,13 +66,13 @@ namespace Testflow.DesigntimeService
         }
         #endregion
 
-        #region 加减LoopCounter， RetryCounter
+        #region 指数counter
         public ILoopCounter AddLoopCounter(ISequenceStep sequenceStep, int maxCount)
         {
             ILoopCounter loopCounter = _sequenceManager.CreateLoopCounter();
             loopCounter.MaxValue = maxCount;
             sequenceStep.LoopCounter = loopCounter;
-            //ContextSequenceGroupModify();
+            ContextSequenceGroupModify();
             return loopCounter;
         }
 
@@ -80,7 +81,7 @@ namespace Testflow.DesigntimeService
             IRetryCounter retryCounter = _sequenceManager.CreateRetryCounter();
             retryCounter.MaxRetryTimes = maxCount;
             sequenceStep.RetryCounter = retryCounter;
-            //ContextSequenceGroupModify();
+            ContextSequenceGroupModify();
             return retryCounter;
         }
  
@@ -88,6 +89,7 @@ namespace Testflow.DesigntimeService
         {
             ILoopCounter loopCounter = sequenceStep.LoopCounter;
             sequenceStep.LoopCounter = null;
+            ContextSequenceGroupModify();
             return loopCounter;
         }
 
@@ -95,6 +97,7 @@ namespace Testflow.DesigntimeService
         {
             IRetryCounter retryCounter = sequenceStep.RetryCounter;
             sequenceStep.RetryCounter = null;
+            ContextSequenceGroupModify();
             return retryCounter;
         }
 
@@ -102,17 +105,18 @@ namespace Testflow.DesigntimeService
         {
             counter.MaxValue = maxCount;
             counter.CounterEnabled = enabled;
+            ContextSequenceGroupModify();
         }
 
         public void ModifyCounter(IRetryCounter counter, int maxCount, bool enabled)
         {
             counter.MaxRetryTimes = maxCount;
             counter.RetryEnabled = enabled;
+            ContextSequenceGroupModify();
         }
         #endregion
 
-        #region 加/找Sequence todo判定index正确性
-        //todo
+        #region Sequence
         public ISequence AddSequence(ISequence sequence, int index)
         {
             Context.SequenceGroup.Sequences.Insert(index, sequence);
@@ -120,7 +124,6 @@ namespace Testflow.DesigntimeService
             ContextSequenceGroupModify();
             return sequence;
         }
-        //todo
         public ISequence AddSequence(string sequenceName, string description, int index)
         {
             ISequence sequence = _sequenceManager.CreateSequence();
@@ -129,14 +132,36 @@ namespace Testflow.DesigntimeService
             return AddSequence(sequence, index);
         }
 
-        //todo 万一没有sequence需要报错
+        public bool RemoveSequence(string sequenceName, string description)
+        {
+            //找sequence
+            ISequence sequence = Context.SequenceGroup.Sequences.FirstOrDefault(item => item.Name.Equals(sequenceName) && item.Description.Equals(description));
+            return RemoveSequence(sequence);
+        }
+
+        public void RemoveSequence(int index)
+        {
+            Context.SequenceGroup.Sequences.RemoveAt(index);
+            ContextSequenceGroupModify();
+        }
+
+        public bool RemoveSequence(ISequence sequence)
+        {
+            bool removed = Context.SequenceGroup.Sequences.Remove(sequence);
+            if (removed)
+            {
+                ContextSequenceGroupModify();
+            }
+            return removed;
+        }
+
         public ISequence GetSequence(int sequenceId)
         {
             return Context.SequenceGroup.Sequences[sequenceId];
         }
         #endregion
 
-        #region SequenceStep添加与获取 todo判定index, stepIndex正确性
+        #region Step
         public ISequenceStep AddSequenceStep(ISequenceFlowContainer parent, ISequenceStep stepData, int index)
         {
             if (parent is ISequence)
@@ -147,10 +172,14 @@ namespace Testflow.DesigntimeService
             {
                 ((ISequenceStep)parent).SubSteps.Insert(index, stepData);
             }
+            else
+            {
+                throw new TestflowDataException(ModuleErrorCode.InvalidParent, "Parent needs to be Sequence or SequenceStep");
+            }
+            ContextSequenceGroupModify();
             return stepData;
         }
 
-        //todo index
         public ISequenceStep AddSequenceStep(ISequenceFlowContainer parent, IList<ISequenceStep> stepDatas, int index)
         {
             if (parent is ISequence)
@@ -167,6 +196,11 @@ namespace Testflow.DesigntimeService
                     ((ISequenceStep)parent).SubSteps.Insert(n + index, stepDatas[n]);
                 }
             }
+            else
+            {
+                throw new TestflowDataException(ModuleErrorCode.InvalidParent, "Parent needs to be Sequence or SequenceStep");
+            }
+            ContextSequenceGroupModify();
             return stepDatas[0];
         }
 
@@ -174,8 +208,7 @@ namespace Testflow.DesigntimeService
         {
             ISequenceStep sequenceStep = _sequenceManager.CreateSequenceStep();
             sequenceStep.Description = description;
-            AddSequenceStep(parent, sequenceStep, index);
-            return sequenceStep;  
+            return AddSequenceStep(parent, sequenceStep, index);  
         }
 
         public ISequenceStep AddSequenceStep(ISequenceFlowContainer parent, IFunctionData functionData, string description, int index)
@@ -183,8 +216,47 @@ namespace Testflow.DesigntimeService
             ISequenceStep sequenceStep = _sequenceManager.CreateSequenceStep();
             sequenceStep.Function = functionData;
             sequenceStep.Description = description;
-            AddSequenceStep(parent, sequenceStep, index);
-            return sequenceStep;
+            return AddSequenceStep(parent, sequenceStep, index);
+        }
+
+        public void RemoveSequenceStep(ISequenceFlowContainer parent, int index)
+        {
+            if (parent is ISequence)
+            {
+                ((ISequence)parent).Steps.RemoveAt(index);
+            }
+            else if (parent is ISequenceStep)
+            {
+
+                ((ISequenceStep)parent).SubSteps.RemoveAt(index);
+            }
+            else
+            {
+                throw new TestflowDataException(ModuleErrorCode.InvalidParent, "Parent needs to be Sequence or SequenceStep");
+            }
+            ContextSequenceGroupModify();
+        }
+
+        public bool RemoveSequenceStep(ISequenceFlowContainer parent, ISequenceStep step)
+        {
+            bool removed = false;
+            if (parent is ISequence)
+            {
+                removed = ((ISequence)parent).Steps.Remove(step);
+            }
+            else if (parent is ISequenceStep)
+            {
+                removed = ((ISequenceStep)parent).SubSteps.Remove(step);
+            }
+            else
+            {
+                throw new TestflowDataException(ModuleErrorCode.InvalidParent, "Parent needs to be Sequence or SequenceStep");
+            }
+            if (removed)
+            {
+                ContextSequenceGroupModify();
+            }
+            return removed;
         }
 
         public ISequenceStep GetSequenceStep(int sequenceIndex, params int[] stepIndex)
@@ -363,6 +435,5 @@ namespace Testflow.DesigntimeService
             sequence.Function = function;
         }
         #endregion
-
     }
 }

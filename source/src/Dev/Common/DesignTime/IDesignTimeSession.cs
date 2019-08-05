@@ -28,8 +28,9 @@ namespace Testflow.DesignTime
         /// <returns></returns>
         IVariableCollection GetFittedVariables(ITypeData type);
 
-        #region Sequence　Edit
-        
+        #region 编辑Edit
+
+        #region SequenceGroup Argument
         /// <summary>
         /// 为测试序列组添加参数
         /// </summary>
@@ -44,7 +45,9 @@ namespace Testflow.DesignTime
         /// <param name="name">参数名称</param>
         /// <returns>被删除的参数</returns>
         IArgument RemoveArgument(string name);
+        #endregion
 
+        #region Sequence
         /// <summary>
         /// 添加某个序列到测试序列组
         /// </summary>
@@ -63,12 +66,36 @@ namespace Testflow.DesignTime
         ISequence AddSequence(string sequenceName, string description, int index);
 
         /// <summary>
+        /// 移除序列组中的某个序列
+        /// </summary>
+        /// <param name="sequenceName">测试序列名称</param>
+        /// <param name="description">测试序列描述</param>
+        /// <returns></returns>
+        bool RemoveSequence(string sequenceName, string description);
+
+        /// <summary>
+        /// 移除序列组中的某个序列
+        /// </summary>
+        /// <param name="index">测试序列在sequenceGroup中的位置</param>
+        /// <returns></returns>
+        void RemoveSequence(int index);
+
+        /// <summary>
+        /// 移除序列组中的某个序列
+        /// </summary>
+        /// <param name="sequence">某个序列</param>
+        /// <returns></returns>
+        bool RemoveSequence(ISequence sequence);
+
+        /// <summary>
         /// 通过sequenceId取得Context.SequenceGroup.Sequences里的某个sequence
         /// </summary>
         /// <param name="id">sequence在SequenceGroup里的id</param>
         /// <returns></returns>
         ISequence GetSequence(int id);
+        #endregion
 
+        #region Step
         /// <summary>
         /// 添加测试步骤到上级节点
         /// </summary>
@@ -106,6 +133,32 @@ namespace Testflow.DesignTime
         /// <returns>添加完成后的ISequenceStep</returns>
         ISequenceStep AddSequenceStep(ISequenceFlowContainer parent, IFunctionData functionData, string description, int index);
 
+        /// <summary>
+        /// 移除上级节点里的某个测试步骤
+        /// </summary>
+        /// <param name="parent">上级节点</param>
+        /// <param name="index">测试步骤的位置</param>
+        /// <returns></returns>
+        void RemoveSequenceStep(ISequenceFlowContainer parent, int index);
+
+        /// <summary>
+        /// 移除上级节点里的某个测试步骤
+        /// </summary>
+        /// <param name="parent">上级节点</param>
+        /// <param name="step">某个测试步骤</param>
+        /// <returns></returns>
+        bool RemoveSequenceStep(ISequenceFlowContainer parent, ISequenceStep step);
+
+        /// <summary>
+        /// 根据索引号
+        /// </summary>
+        /// <param name="sequenceIndex">Sequence的索引号</param>
+        /// <param name="stepIndex">Step的索引号</param>
+        /// <returns></returns>
+        ISequenceStep GetSequenceStep(int sequenceIndex, params int[] stepIndex);
+        #endregion
+
+        #region 变量
         /// <summary>
         /// 添加变量声明
         /// </summary>
@@ -154,7 +207,9 @@ namespace Testflow.DesignTime
         /// <param name="variableName">变量名称</param>
         /// <param name="value">配置的变量值</param>
         void SetVariableValue(string variableName, string value);
+        #endregion
 
+        #region Step参数值
         /// <summary>
         /// 配置参数值
         /// </summary>
@@ -171,7 +226,9 @@ namespace Testflow.DesignTime
         /// <param name="value">参数值</param>
         /// <param name="sequence">该参数所在序列的Step</param>
         void SetParameterValue(string parameterName, string value, ISequenceStep sequence);
+        #endregion
 
+        #region 实例
         /// <summary>
         /// 配置Step的实例变量
         /// </summary>
@@ -186,7 +243,9 @@ namespace Testflow.DesignTime
         /// <param name="variableName">变量名</param>
         /// <param name="sequence">该参数所在序列的Step</param>
         void SetInstance(string variableName, ISequenceStep sequence);
+        #endregion
 
+        #region 返回值
         /// <summary>
         /// 配置Step的返回变量
         /// </summary>
@@ -201,7 +260,9 @@ namespace Testflow.DesignTime
         /// <param name="variableName">变量名</param>
         /// <param name="sequence">该参数所在序列的Step</param>
         void SetReturn(string variableName, ISequenceStep sequence);
+        #endregion
 
+        #region 指数counter
         /// <summary>
         /// 为指定序列步骤添加循环计数器
         /// </summary>
@@ -247,16 +308,9 @@ namespace Testflow.DesignTime
         /// <param name="sequenceStep">待删除重试计数器的序列步骤</param>
         /// <returns>被删除的重试计数器</returns>
         IRetryCounter RemoveRetryCounter(ISequenceStep sequenceStep);
-        
-        /// <summary>
-        /// 根据索引号
-        /// </summary>
-        /// <param name="sequenceIndex">Sequence的索引号</param>
-        /// <param name="stepIndex">Step的索引号</param>
-        /// <returns></returns>
-        ISequenceStep GetSequenceStep(int sequenceIndex, params int[] stepIndex);
-        
         #endregion
-        
+
+        #endregion
+
     }
 }
