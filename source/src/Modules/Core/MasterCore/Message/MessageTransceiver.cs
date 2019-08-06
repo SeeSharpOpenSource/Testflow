@@ -217,5 +217,11 @@ namespace Testflow.MasterCore.Message
                     break;
             }
         }
+
+        public void Clear()
+        {
+            UpLinkMessenger?.Clear();
+            DownLinkMessenger?.Clear();
+        }
     }
 }

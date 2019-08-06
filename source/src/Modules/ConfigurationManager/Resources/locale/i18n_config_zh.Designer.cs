@@ -70,6 +70,15 @@ namespace Testflow.ConfigurationManager.Resources.locale {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to 无效的.NET根目录。.
+        /// </summary>
+        internal static string InvalidDotNetDir {
+            get {
+                return ResourceManager.GetString("InvalidDotNetDir", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to 无效的或非法的环境变量“TESTFLOW_HOME”。.
         /// </summary>
         internal static string InvalidHomeVariable {

@@ -38,7 +38,7 @@ namespace Testflow.MasterCore
             // TODO 暂时写死使用LocalTestMaintainer
             // 初始化消息收发器
             MessageTransceiver messageTransceiver = MessageTransceiver.GetTransceiver(_globalInfo, isSyncMessenger);
-            
+            messageTransceiver.Clear();
             _controller = new EngineFlowController(_globalInfo);
             _statusManager = new RuntimeStatusManager(_globalInfo);
             _syncManager = new SynchronousManager(_globalInfo);

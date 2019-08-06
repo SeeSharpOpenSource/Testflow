@@ -4,6 +4,7 @@ using System.IO;
 using System.Text;
 using System.Xml;
 using System.Xml.Serialization;
+using Microsoft.Win32;
 using Testflow.ConfigurationManager.Data;
 using Testflow.Usr;
 using Testflow.Utility.I18nUtil;
@@ -90,14 +91,64 @@ namespace Testflow.ConfigurationManager
 
         private void AddExtraGlobalConfigData(GlobalConfigData configData)
         {
+            // 更新TestflowHome字段
             string homeDir = Environment.GetEnvironmentVariable(CommonConst.EnvironmentVariable);
+            if (null != homeDir && !homeDir.EndsWith(Path.DirectorySeparatorChar.ToString()))
+            {
+                homeDir += Path.DirectorySeparatorChar;
+            }
             configData.AddConfigItem(Constants.GlobalConfig, "TestflowHome", homeDir);
 
-            string runtimeDirectory = System.Runtime.InteropServices.RuntimeEnvironment.GetRuntimeDirectory();
+            // 更新.NET运行时目录
+            string dotNetVersion = configData.GetConfigValue<string>(Constants.GlobalConfig, "DotNetVersion");
+            string runtimeDirectory = GetDotNetDir(dotNetVersion);
             configData.AddConfigItem(Constants.GlobalConfig, "DotNetLibDir", runtimeDirectory);
-
+            
+            // 更新Testflow平台默认库目录
             string platformDir = configData.GetConfigValue<string>(Constants.GlobalConfig, "PlatformLibDir");
             configData.SetConfigItem(Constants.GlobalConfig, "PlatformLibDir", $"{homeDir}{Path.DirectorySeparatorChar}{platformDir}");
+            
+            // 更新Testflow工作空间目录
+            string workspaceDirs = configData.GetConfigValue<string>(Constants.GlobalConfig, "WorkspaceDir");
+            if (string.IsNullOrWhiteSpace(workspaceDirs))
+            {
+                return;
+            }
+            string[] workSpaceDirElems = workspaceDirs.Split(';');
+            List<string> workspaceDirList = new List<string>(workSpaceDirElems.Length);
+            foreach (string workSpaceDir in workSpaceDirElems)
+            {
+                if (string.IsNullOrWhiteSpace(workSpaceDir))
+                {
+                    continue;
+                }
+                string dirPath = workSpaceDir;
+                if (!workSpaceDir.EndsWith(Path.DirectorySeparatorChar.ToString()))
+                {
+                    dirPath += Path.DirectorySeparatorChar;
+                }
+                workspaceDirList.Add(dirPath);
+            }
+            configData.SetConfigItem(Constants.GlobalConfig, "WorkspaceDir", workspaceDirList.ToArray());
+        }
+
+        private static string GetDotNetDir(string dotNetVersion)
+        {
+            const string netInstallationFldr = "HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\.NETFramework";
+            const string netDxInstallationRoot = "InstallRoot";
+            string frameworkRoot = (string)Registry.GetValue(netInstallationFldr, netDxInstallationRoot, null);
+            if (string.IsNullOrWhiteSpace(frameworkRoot))
+            {
+                I18N i18N = I18N.GetInstance(Constants.I18nName);
+                throw new TestflowRuntimeException(ModuleErrorCode.InvalidEnvDir, i18N.GetStr("InvalidDotNetDir"));
+            }
+            string frameworkDir = $"{frameworkRoot}{dotNetVersion}{Path.DirectorySeparatorChar}";
+            if (!Directory.Exists(frameworkDir))
+            {
+                I18N i18N = I18N.GetInstance(Constants.I18nName);
+                throw new TestflowRuntimeException(ModuleErrorCode.InvalidEnvDir, i18N.GetStr("InvalidDotNetDir"));
+            }
+            return frameworkDir;
         }
 
         private static string GetFullName(Type type)

@@ -120,6 +120,9 @@
   <data name="CannotLoadType" xml:space="preserve">
     <value>Cannot load type '{0}'.</value>
   </data>
+  <data name="InvalidDotNetDir" xml:space="preserve">
+    <value>Invalid .net framework directory.</value>
+  </data>
   <data name="InvalidHomeVariable" xml:space="preserve">
     <value>The environment variable "TESTFLOW_HOME" is invalid or inexistent.</value>
   </data>
