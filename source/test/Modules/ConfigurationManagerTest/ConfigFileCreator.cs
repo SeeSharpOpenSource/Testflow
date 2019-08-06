@@ -6,6 +6,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Testflow.ConfigurationManager;
 using Testflow.ConfigurationManager.Data;
 using Testflow.Runtime;
+using Testflow.Usr;
 using Testflow.Utility.MessageUtil;
 
 namespace Testflow.ConfigurationManagerTest
@@ -18,10 +19,11 @@ namespace Testflow.ConfigurationManagerTest
         {
             GlobalConfigData globalConfigData = new GlobalConfigData();
             globalConfigData.AddConfigRoot("GlobalConfig");
-            globalConfigData.AddConfigItem("GlobalConfig", "PlatformEncoding", Encoding.UTF8.EncodingName);
-            globalConfigData.AddConfigItem("GlobalConfig", "PlatformLibDir", @"\lib");
+            globalConfigData.AddConfigItem("GlobalConfig", "PlatformEncoding", Encoding.UTF8.BodyName);
+            globalConfigData.AddConfigItem("GlobalConfig", "PlatformLibDir", @"lib\");
 //            globalConfigData.AddConfigItem("GlobalConfig", "WorkspaceDir", @"C:\Users\jingtao\Documents\TestflowWorkspace");
             globalConfigData.AddConfigItem("GlobalConfig", "DotNetVersion", @"v4.0.30319");
+            globalConfigData.AddConfigItem("GlobalConfig", "LogLevel", LogLevel.Info);
 
             globalConfigData.AddConfigRoot("EngineCore");
             globalConfigData.AddConfigItem("EngineCore", "TestGenReportInterval", 500);
@@ -34,6 +36,7 @@ namespace Testflow.ConfigurationManagerTest
             globalConfigData.AddConfigItem("EngineCore", "SyncTimeout", 10000);
             globalConfigData.AddConfigItem("EngineCore", "TestTimeout", 1000000000);
             globalConfigData.AddConfigItem("EngineCore", "StopTimeout", 10000);
+            globalConfigData.AddConfigItem("EngineCore", "TestGenTimeout", 5000);
             globalConfigData.AddConfigItem("EngineCore", "AbortTimeout", 10000);
             globalConfigData.AddConfigItem("EngineCore", "MessengerType", MessengerType.MSMQ);
 
