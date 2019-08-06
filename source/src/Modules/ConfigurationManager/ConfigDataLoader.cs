@@ -110,6 +110,21 @@ namespace Testflow.ConfigurationManager
             }
             configData.AddConfigItem(Constants.GlobalConfig, "TestflowHome", homeDir);
 
+            // 更新WorkspaceDir字段
+            string workspaceDir = Environment.GetEnvironmentVariable(CommonConst.WorkspaceVariable);
+            if (string.IsNullOrWhiteSpace(workspaceDir) || !Directory.Exists(workspaceDir))
+            {
+                TestflowRunner.GetInstance().LogService.Print(LogLevel.Fatal, CommonConst.PlatformLogSession,
+                    $"Invalid environment variable:{CommonConst.WorkspaceVariable}");
+                I18N i18N = I18N.GetInstance(Constants.I18nName);
+                throw new TestflowRuntimeException(ModuleErrorCode.InvalidEnvDir, i18N.GetStr("InvalidHomeVariable"));
+            }
+            if (null != workspaceDir && !workspaceDir.EndsWith(Path.DirectorySeparatorChar.ToString()))
+            {
+                workspaceDir += Path.DirectorySeparatorChar;
+            }
+            configData.AddConfigItem(Constants.GlobalConfig, "WorkspaceDir", workspaceDir);
+
             // 更新.NET运行时目录
             string dotNetVersion = configData.GetConfigValue<string>(Constants.GlobalConfig, "DotNetVersion");
             string runtimeDirectory = GetDotNetDir(dotNetVersion);

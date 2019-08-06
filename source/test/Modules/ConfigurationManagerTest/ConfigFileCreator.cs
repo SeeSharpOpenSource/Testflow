@@ -20,7 +20,7 @@ namespace Testflow.ConfigurationManagerTest
             globalConfigData.AddConfigRoot("GlobalConfig");
             globalConfigData.AddConfigItem("GlobalConfig", "PlatformEncoding", Encoding.UTF8.EncodingName);
             globalConfigData.AddConfigItem("GlobalConfig", "PlatformLibDir", @"\lib");
-            globalConfigData.AddConfigItem("GlobalConfig", "WorkspaceDir", @"C:\Users\jingtao\Documents\TestflowWorkspace");
+//            globalConfigData.AddConfigItem("GlobalConfig", "WorkspaceDir", @"C:\Users\jingtao\Documents\TestflowWorkspace");
             globalConfigData.AddConfigItem("GlobalConfig", "DotNetVersion", @"v4.0.30319");
 
             globalConfigData.AddConfigRoot("EngineCore");
