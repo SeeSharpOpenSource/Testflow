@@ -18,6 +18,8 @@
 
         public const string I18nName = "SequenceMananger";
 
+        public const string BakFileExtension = ".bak";
+
         public const string TestProjectNameFormat = "TestProject{0}";
         public const string SequenceGroupNameFormat = "SequenceGroup{0}";
         public const string SequenceNameFormat = "Sequence{0}";

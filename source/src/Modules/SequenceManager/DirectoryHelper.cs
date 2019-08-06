@@ -3,6 +3,7 @@ using System.IO;
 using System.Text;
 using Testflow.Data;
 using Testflow.Data.Description;
+using Testflow.Data.Sequence;
 using Testflow.Modules;
 using Testflow.SequenceManager.Common;
 using Testflow.Usr;
@@ -29,25 +30,63 @@ namespace Testflow.SequenceManager
             _pathCache = new StringBuilder(200);
         }
 
-        public void SetToRelativePath(IAssemblyInfoCollection assemblies)
+        #region 配置所有路径为相对路径
+
+        public void SetToRelativePath(ITestProject testProject)
+        {
+            SetToRelativePath(testProject.Assemblies);
+            foreach (ISequenceGroup sequenceGroup in testProject.SequenceGroups)
+            {
+                SetToRelativePath(sequenceGroup);
+            }
+        }
+
+        public void SetToRelativePath(ISequenceGroup sequenceGroup)
+        {
+            SetToRelativePath(sequenceGroup.Assemblies);
+        }
+
+        private void SetToRelativePath(IAssemblyInfoCollection assemblies)
         {
             foreach (IAssemblyInfo assemblyInfo in assemblies)
             {
-                // 如果包含在可用路径内则不处理，否则替换为相对路径
+                if (IsRelativePath(assemblyInfo.Path))
+                {
+                    continue;
+                }
+                // 如果包含在可用路径内则替换为相对路径
                 foreach (string availableDir in availableDirs)
                 {
-                    if (!assemblyInfo.Path.StartsWith(availableDir))
+                    if (assemblyInfo.Path.StartsWith(availableDir))
                     {
-                        continue;
+                        // 将绝对路径截取为相对路径
+                        assemblyInfo.Path = assemblyInfo.Path.Substring(availableDir.Length - 1,
+                            assemblyInfo.Path.Length - availableDir.Length + 1);
+                        break;
                     }
-                    // 将绝对路径截取为相对路径
-                    assemblyInfo.Path = availableDir.Substring(availableDir.Length - 1,
-                        assemblyInfo.Path.Length - availableDir.Length + 1);
                 }
             }
         }
 
-        public void SetToAbsolutePath(IAssemblyInfoCollection assemblies)
+        #endregion
+
+        #region 配置所有路径为绝对路径
+
+        public void SetToAbsolutePath(ITestProject testProject)
+        {
+            SetToAbsolutePath(testProject.Assemblies);
+            foreach (ISequenceGroup sequenceGroup in testProject.SequenceGroups)
+            {
+                SetToAbsolutePath(sequenceGroup);
+            }
+        }
+
+        public void SetToAbsolutePath(ISequenceGroup sequenceGroup)
+        {
+            SetToAbsolutePath(sequenceGroup.Assemblies);
+        }
+
+        private void SetToAbsolutePath(IAssemblyInfoCollection assemblies)
         {
             foreach (IAssemblyInfo assemblyInfo in assemblies)
             {
@@ -62,7 +101,7 @@ namespace Testflow.SequenceManager
                 if (null == abosolutePath)
                 {
                     ILogService logService = TestflowRunner.GetInstance().LogService;
-                    logService.Print(LogLevel.Error, CommonConst.PlatformLogSession, 
+                    logService.Print(LogLevel.Error, CommonConst.PlatformLogSession,
                         $"Assembly '{assemblyInfo.AssemblyName}' cannot be found in '{assemblyInfo.Path}'.");
                     I18N i18N = I18N.GetInstance(Constants.I18nName);
                     throw new TestflowDataException(ModuleErrorCode.DeSerializeFailed,
@@ -76,7 +115,7 @@ namespace Testflow.SequenceManager
         {
             string abosolutePath = null;
             // 转换为绝对路径时反向寻找，先.net库再平台库再用户库
-            for (int i = availableDirs.Count - 1; i >= 0; i++)
+            for (int i = availableDirs.Count - 1; i >= 0; i--)
             {
                 _pathCache.Clear();
                 string availableDir = availableDirs[i];
@@ -92,6 +131,9 @@ namespace Testflow.SequenceManager
             }
             return abosolutePath;
         }
+
+        #endregion
+
 
         public string GetRelativePath(string path)
         {

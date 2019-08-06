@@ -61,24 +61,25 @@ namespace Testflow.SequenceManager.Serializer
             return testProject;
         }
 
-        public static SequenceGroup LoadSequenceGroup(string filePath, bool forceLoad, IModuleConfigData envInfo)
+        public static SequenceGroup LoadSequenceGroup(string seqFilePath, bool forceLoad, IModuleConfigData envInfo)
         {
-            filePath = ModuleUtils.GetAbsolutePath(filePath, Directory.GetCurrentDirectory());
+            seqFilePath = ModuleUtils.GetAbsolutePath(seqFilePath, Directory.GetCurrentDirectory());
 
-            if (!filePath.EndsWith($".{CommonConst.SequenceFileExtension}"))
+            if (!seqFilePath.EndsWith($".{CommonConst.SequenceFileExtension}"))
             {
                 I18N i18N = I18N.GetInstance(Constants.I18nName);
                 throw new TestflowDataException(ModuleErrorCode.InvalidFileType, i18N.GetStr("InvalidFileType"));
             }
-            SequenceGroup sequenceGroup = XmlReaderHelper.ReadSequenceGroup(filePath);
+            SequenceGroup sequenceGroup = XmlReaderHelper.ReadSequenceGroup(seqFilePath);
+            
 
             // 需要单独配置Setup和TearDown的索引号
             sequenceGroup.SetUp.Index = CommonConst.SetupIndex;
             sequenceGroup.TearDown.Index = CommonConst.TeardownIndex;
 
-            string sequenceParamFile = ModuleUtils.GetAbsolutePath(sequenceGroup.Info.SequenceParamFile, filePath);
+            string paramFilePath = ModuleUtils.GetAbsolutePath(sequenceGroup.Info.SequenceParamFile, seqFilePath);
             SequenceGroupParameter parameter =
-                XmlReaderHelper.ReadSequenceGroupParameter(sequenceParamFile);
+                XmlReaderHelper.ReadSequenceGroupParameter(paramFilePath);
             if (!forceLoad && !sequenceGroup.Info.Hash.Equals(parameter.Info.Hash))
             {
                 I18N i18N = I18N.GetInstance(Constants.I18nName);
@@ -87,6 +88,9 @@ namespace Testflow.SequenceManager.Serializer
             sequenceGroup.Parameters = parameter;
             SetParameterToSequenceData(sequenceGroup, parameter);
             ValidateTypeDatas(sequenceGroup);
+
+            sequenceGroup.Info.SequenceGroupFile = seqFilePath;
+            sequenceGroup.Info.SequenceParamFile = paramFilePath;
             return sequenceGroup;
         }
 
