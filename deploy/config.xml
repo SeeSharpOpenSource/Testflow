@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<ConfigurationData xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" Name="TestflowConfiguration" ConfigVersion="1.0.0.0">
+  <ModuleConfigData Name="GlobalConfig">
+    <ConfigItems Name="PlatformEncoding" Value="Unicode (UTF-8)" Type="System.String" />
+    <ConfigItems Name="PlatformLibDir" Value="\lib" Type="System.String" />
+    <ConfigItems Name="WorkspaceDir" Value="C:\Users\jingtao\Documents\TestflowWorkspace" Type="System.String" />
+    <ConfigItems Name="DotNetVersion" Value="v4.0.30319" Type="System.String" />
+  </ModuleConfigData>
+  <ModuleConfigData Name="EngineCore">
+    <ConfigItems Name="TestGenReportInterval" Value="500" Type="System.Int32" />
+    <ConfigItems Name="TestRunReportInterval" Value="500" Type="System.Int32" />
+    <ConfigItems Name="EngineQueueFormat" Value="Json" Type="Testflow.Utility.MessageUtil.FormatterType" />
+    <ConfigItems Name="EngineSyncMessenger" Value="True" Type="System.Boolean" />
+    <ConfigItems Name="MessageReceiveTimeout" Value="10000" Type="System.Int32" />
+    <ConfigItems Name="StatusUploadInterval" Value="500" Type="System.Int32" />
+    <ConfigItems Name="ConnectionTimeout" Value="10000" Type="System.Int32" />
+    <ConfigItems Name="SyncTimeout" Value="10000" Type="System.Int32" />
+    <ConfigItems Name="TestTimeout" Value="1000000000" Type="System.Int32" />
+    <ConfigItems Name="StopTimeout" Value="10000" Type="System.Int32" />
+    <ConfigItems Name="AbortTimeout" Value="10000" Type="System.Int32" />
+    <ConfigItems Name="MessengerType" Value="MSMQ" Type="Testflow.Utility.MessageUtil.MessengerType" />
+  </ModuleConfigData>
+  <ModuleConfigData Name="DataMaintain">
+    <ConfigItems Name="DatabaseName" Value="testflowData.db3" Type="System.String" />
+  </ModuleConfigData>
+  <ModuleConfigData Name="ResultManager" />
+  <ModuleConfigData Name="SequenceInfo">
+    <ConfigItems Name="ModelVersion" Value="1.0.0.0" Type="System.String" />
+    <ConfigItems Name="FileEncoding" Value="System.Text.UTF8Encoding" Type="System.String" />
+  </ModuleConfigData>
+  <ModuleConfigData Name="ParameterCheck" />
+  <ModuleConfigData Name="InterfaceLoad" />
+</ConfigurationData>
