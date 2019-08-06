@@ -53,6 +53,7 @@
     <Compile Include="Common\SerializationIgnoreAttribute.cs" />
     <Compile Include="Common\ModuleUtils.cs" />
     <Compile Include="Common\Constants.cs" />
+    <Compile Include="DirectoryHelper.cs" />
     <Compile Include="Resources\locale\i18n_sequence_zh.Designer.cs">
       <DependentUpon>i18n_sequence_zh.resx</DependentUpon>
       <AutoGen>True</AutoGen>

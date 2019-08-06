@@ -117,6 +117,12 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="AssemblyCannotFound" xml:space="preserve">
+    <value>无法定位到程序集“{0}”所在的库。</value>
+  </data>
+  <data name="FileCannotFound" xml:space="preserve">
+    <value>无法找到文件“{0}”。</value>
+  </data>
   <data name="IllegalFileData" xml:space="preserve">
     <value>序列/数据文件中出现非法数据。</value>
   </data>

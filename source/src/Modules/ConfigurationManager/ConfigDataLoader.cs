@@ -1,13 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Reflection;
 using System.Text;
 using System.Xml;
 using System.Xml.Serialization;
 using Microsoft.Win32;
 using Testflow.ConfigurationManager.Data;
+using Testflow.Modules;
 using Testflow.Usr;
 using Testflow.Utility.I18nUtil;
+using Testflow.Utility.MessageUtil;
 
 namespace Testflow.ConfigurationManager
 {
@@ -60,9 +63,17 @@ namespace Testflow.ConfigurationManager
                     Type valueType = Type.GetType(configItem.Type);
                     if (null == valueType)
                     {
-                        I18N i18N = I18N.GetInstance(Constants.I18nName);
-                        throw new TestflowRuntimeException(ModuleErrorCode.ConfigDataError,
-                            i18N.GetFStr("CannotLoadType", configItem.Type));
+                        valueType = Assembly.GetAssembly(typeof (IConfigurationManager)).GetType(configItem.Type);
+                        if (null == valueType)
+                        {
+                            valueType = Assembly.GetAssembly(typeof (Messenger)).GetType(configItem.Type);
+                            if (null == valueType)
+                            {
+                                I18N i18N = I18N.GetInstance(Constants.I18nName);
+                                throw new TestflowRuntimeException(ModuleErrorCode.ConfigDataError,
+                                    i18N.GetFStr("CannotLoadType", configItem.Type));
+                            }
+                        }
                     }
                     object value;
                     if (valueType.IsEnum)
@@ -73,9 +84,9 @@ namespace Testflow.ConfigurationManager
                     {
                         value = _valueConvertor[GetFullName(valueType)].Invoke(configItem.Value);
                     }
-                    else if (valueType == typeof (Encoding))
+                    else if (valueType.IsSubclassOf(typeof (Encoding)))
                     {
-                        value = Encoding.GetEncoding(configItem.Name);
+                        value = Encoding.GetEncoding(configItem.Value);
                     }
                     else
                     {

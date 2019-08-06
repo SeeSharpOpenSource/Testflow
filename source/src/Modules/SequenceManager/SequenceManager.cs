@@ -17,6 +17,7 @@ namespace Testflow.SequenceManager
         private static SequenceManager _instance = null;
         private static object _instLock = new object();
         private TypeMaintainer _typeMaintainer;
+        private DirectoryHelper _directoryHelper;
 
         public SequenceManager()
         {
@@ -68,6 +69,7 @@ namespace Testflow.SequenceManager
         {
             this.ConfigData = configData;
             this.Version = configData.GetProperty<string>(Constants.VersionName);
+            this._directoryHelper = new DirectoryHelper(configData);
         }
 
         public ITestProject CreateTestProject()
@@ -170,7 +172,20 @@ namespace Testflow.SequenceManager
                 case SerializationTarget.File:
                     _typeMaintainer.VerifyVariableTypes(testProject);
                     _typeMaintainer.RefreshUsedAssemblyAndType(testProject);
+
+                    _directoryHelper.SetToRelativePath(testProject.Assemblies);
+                    foreach (ISequenceGroup sequenceGroup in testProject.SequenceGroups)
+                    {
+                        _directoryHelper.SetToRelativePath(sequenceGroup.Assemblies);
+                    }
+
                     SequenceSerializer.Serialize(param[0], testProject as TestProject);
+
+                    _directoryHelper.SetToAbsolutePath(testProject.Assemblies);
+                    foreach (ISequenceGroup sequenceGroup in testProject.SequenceGroups)
+                    {
+                        _directoryHelper.SetToAbsolutePath(sequenceGroup.Assemblies);
+                    }
                     break;
                 case SerializationTarget.DataBase:
                     throw new NotImplementedException();
@@ -187,7 +202,9 @@ namespace Testflow.SequenceManager
                 case SerializationTarget.File:
                     _typeMaintainer.VerifyVariableTypes(sequenceGroup);
                     _typeMaintainer.RefreshUsedAssemblyAndType(sequenceGroup);
+                    _directoryHelper.SetToRelativePath(sequenceGroup.Assemblies);
                     SequenceSerializer.Serialize(param[0], sequenceGroup as SequenceGroup);
+                    _directoryHelper.SetToAbsolutePath(sequenceGroup.Assemblies);
                     break;
                 case SerializationTarget.DataBase:
                     throw new NotImplementedException();
