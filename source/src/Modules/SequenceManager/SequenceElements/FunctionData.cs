@@ -36,12 +36,20 @@ namespace Testflow.SequenceManager.SequenceElements
         public int ClassTypeIndex { get; set; }
         [RuntimeType(typeof(ArgumentCollection))]
         public IArgumentCollection ParameterType { get; set; }
+
         [XmlIgnore]
         [SerializationIgnore]
         [RuntimeType(typeof(ParameterDataCollection))]
         public IParameterDataCollection Parameters { get; set; }
+
+        [XmlIgnore]
+        [SerializationIgnore]
         public string Instance { get; set; }
+
+        [XmlIgnore]
+        [SerializationIgnore]
         public string Return { get; set; }
+
         [RuntimeType(typeof(Argument))]
         public IArgument ReturnType { get; set; }
 
