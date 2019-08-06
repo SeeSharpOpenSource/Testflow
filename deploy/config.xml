@@ -3,7 +3,6 @@
   <ModuleConfigData Name="GlobalConfig">
     <ConfigItems Name="PlatformEncoding" Value="Unicode (UTF-8)" Type="System.String" />
     <ConfigItems Name="PlatformLibDir" Value="\lib" Type="System.String" />
-    <ConfigItems Name="WorkspaceDir" Value="C:\Users\jingtao\Documents\TestflowWorkspace" Type="System.String" />
     <ConfigItems Name="DotNetVersion" Value="v4.0.30319" Type="System.String" />
   </ModuleConfigData>
   <ModuleConfigData Name="EngineCore">
