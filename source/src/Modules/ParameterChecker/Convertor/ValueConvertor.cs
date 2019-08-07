@@ -12,7 +12,6 @@ namespace Testflow.ParameterChecker.Convertor
 
         static ValueConvertor()
         {
-
             _convertorHandler = new Dictionary<string, Func<string, bool>>(10)
             {
                 {typeof (string).Name, (valueStr) => true},
