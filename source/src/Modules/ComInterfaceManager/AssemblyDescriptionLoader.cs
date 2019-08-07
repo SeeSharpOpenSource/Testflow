@@ -384,16 +384,16 @@ namespace Testflow.ComInterfaceManager
         private static ArgumentDescription GetParameterInfo(ParameterInfo parameterInfo)
         {
             VariableType argumentType = VariableType.Undefined;
-            Type propertyType = parameterInfo.ParameterType;
-            if (propertyType.IsEnum)
+            Type parameterType = parameterInfo.ParameterType;
+            if (parameterType.IsEnum)
             {
                 argumentType = VariableType.Enumeration;
             }
-            else if (propertyType.IsClass && propertyType != typeof(string))
+            else if (parameterType.IsClass && parameterType != typeof(string))
             {
                 argumentType = VariableType.Class;
             }
-            else if (propertyType.IsValueType || propertyType == typeof(string))
+            else if (parameterType.IsValueType || parameterType == typeof(string))
             {
                 argumentType = VariableType.Value;
             }
@@ -403,11 +403,11 @@ namespace Testflow.ComInterfaceManager
 
             TypeDescription typeDescription = new TypeDescription()
             {
-                AssemblyName = propertyType.Assembly.GetName().Name,
+                AssemblyName = parameterType.Assembly.GetName().Name,
                 Category = string.Empty,
                 Description = descriptionStr,
-                Name = propertyType.Name,
-                Namespace = propertyType.Namespace
+                Name = GetTypeName(parameterType),
+                Namespace = parameterType.Namespace
             };
 
             ArgumentModifier modifier = ArgumentModifier.None;
@@ -627,6 +627,17 @@ namespace Testflow.ComInterfaceManager
 
             comDescription.Classes.Add(classDescription);
             comDescription.TypeDescriptions.Add(typeDescription);
+        }
+
+        // 部分类型支持原生的ref类型type，这在slave端会导致识别的困难，需要将其替换为非ref类型。例如所有基础类型和数组都有原生的ref类型
+        private static string GetTypeName(Type type)
+        {
+            const string refTypeSymbol = "&";
+            if (!type.Name.Contains(refTypeSymbol))
+            {
+                return type.Name;
+            }
+            return type.Name.Replace(refTypeSymbol, "");
         }
     }
 }
