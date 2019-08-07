@@ -188,7 +188,10 @@ namespace Testflow.DesigntimeService
         {
             //to ask: 是否要加到TestProject.Assemblies的assemblyinfo？; 估计不要
             //TestProject.Assemblies.Add(comInterface.Assembly);
-            Components.Add(comInterface.Assembly.AssemblyName, comInterface);
+            if (!Components.ContainsKey(comInterface.Assembly.AssemblyName))
+            {   
+                Components.Add(comInterface.Assembly.AssemblyName, comInterface);
+            }
             return comInterface;
         }
 
