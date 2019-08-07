@@ -330,7 +330,7 @@ namespace Testflow.ComInterfaceManager
                 {
                     argumentType = VariableType.Enumeration;
                 }
-                else if (propertyType.IsClass)
+                else if (propertyType.IsClass && propertyType != typeof(string))
                 {
                     argumentType = VariableType.Class;
                 }
@@ -389,7 +389,7 @@ namespace Testflow.ComInterfaceManager
             {
                 argumentType = VariableType.Enumeration;
             }
-            else if (propertyType.IsClass)
+            else if (propertyType.IsClass && propertyType != typeof(string))
             {
                 argumentType = VariableType.Class;
             }
@@ -446,7 +446,7 @@ namespace Testflow.ComInterfaceManager
             {
                 argumentType = VariableType.Enumeration;
             }
-            else if (propertyType.IsClass)
+            else if (propertyType.IsClass && propertyType != typeof(string))
             {
                 argumentType = VariableType.Class;
             }
