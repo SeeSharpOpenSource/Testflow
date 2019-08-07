@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Testflow.Data.Sequence;
 using Testflow.SequenceManager.Common;
+using static Testflow.SequenceManager.Common.ModuleUtils;
 
 namespace Testflow.SequenceManager.SequenceElements
 {
@@ -30,12 +31,8 @@ namespace Testflow.SequenceManager.SequenceElements
 
         public void Add(IVariable item)
         {
-            if (_innerCollection.Any(existItem => existItem.Name.Equals(item)))
-            {
-                return;
-            }
-            ModuleUtils.SetElementName(item, this);
-            _innerCollection.Add(item);
+            SetElementName(item, this);
+            AddAndRefreshIndex(_innerCollection, item);
         }
 
         public void Clear()
@@ -55,7 +52,7 @@ namespace Testflow.SequenceManager.SequenceElements
 
         public bool Remove(IVariable item)
         {
-            return this._innerCollection.Remove(item);
+            return RemoveAndRefreshIndex(_innerCollection, item);
         }
 
         public int Count => _innerCollection.Count;
@@ -67,18 +64,19 @@ namespace Testflow.SequenceManager.SequenceElements
 
         public void Insert(int index, IVariable item)
         {
-            throw new System.NotImplementedException();
+            SetElementName(item, this);
+            InsertAndRefreshIndex(_innerCollection, item, index);
         }
 
         public void RemoveAt(int index)
         {
-            throw new System.NotImplementedException();
+            RemoveAtAndRefreshIndex(_innerCollection, index);
         }
 
         public IVariable this[int index]
         {
             get { return _innerCollection[index]; }
-            set { throw new System.NotImplementedException(); }
+            set { _innerCollection[index] = value; }
         }
     }
 }
