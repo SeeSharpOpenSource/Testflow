@@ -61,6 +61,24 @@ namespace Testflow.SequenceManager.Resources.locale {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The library of assembly &quot;{0}&quot; cannot be located..
+        /// </summary>
+        internal static string AssemblyCannotFound {
+            get {
+                return ResourceManager.GetString("AssemblyCannotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The file in directory &apos;{0}&apos; cannot be found..
+        /// </summary>
+        internal static string FileCannotFound {
+            get {
+                return ResourceManager.GetString("FileCannotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Illegal data exist in sequence/parameter file..
         /// </summary>
         internal static string IllegalFileData {

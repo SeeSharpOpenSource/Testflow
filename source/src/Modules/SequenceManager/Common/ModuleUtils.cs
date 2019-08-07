@@ -476,7 +476,7 @@ namespace Testflow.SequenceManager.Common
                 absolutePath.Append(pathElems[i]).Append(dirDelim);
             }
             // 如果PathElemes不是文件夹，删除最后一个分隔符
-//            if (pathElems.Length > 0 && !path.EndsWith(dirDelim.ToString()))
+            //            if (pathElems.Length > 0 && !path.EndsWith(dirDelim.ToString()))
             if (pathElems.Length > 0 && absolutePath.Length > 0)
             {
                 absolutePath.Remove(absolutePath.Length - 1, 1);
@@ -554,7 +554,7 @@ namespace Testflow.SequenceManager.Common
                 relativePath.Append(pathElems[pathIndex]).Append(dirDelim);
             }
             // 删除最后一个分隔符
-//            if (pathElems.Length > 0 && !path.EndsWith(dirDelim.ToString()))
+            //            if (pathElems.Length > 0 && !path.EndsWith(dirDelim.ToString()))
             if (pathElems.Length > 0 && relativePath.Length > 0)
             {
                 relativePath.Remove(relativePath.Length - 1, 1);
@@ -568,6 +568,16 @@ namespace Testflow.SequenceManager.Common
                 relativePath.Append(fileName);
             }
             return relativePath.ToString();
+        }
+
+        public static string GetFileName(string path)
+        {
+            int seperatorIndex = path.LastIndexOf(Path.DirectorySeparatorChar);
+            if (seperatorIndex < 0 || seperatorIndex == path.Length - 1)
+            {
+                return path;
+            }
+            return path.Substring(seperatorIndex + 1, path.Length - seperatorIndex - 1);
         }
 
         public static bool IsFile(string path)

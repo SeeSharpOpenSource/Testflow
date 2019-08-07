@@ -20,7 +20,7 @@ namespace Testflow.ConfigurationManager
             I18N i18N = I18N.GetInstance(Constants.I18nName);
 
             string platformDir = Environment.GetEnvironmentVariable(CommonConst.EnvironmentVariable);
-            if (string.IsNullOrWhiteSpace(platformDir) || Directory.Exists(platformDir))
+            if (string.IsNullOrWhiteSpace(platformDir) || !Directory.Exists(platformDir))
             {
                 TestflowRunner.GetInstance().LogService.Print(LogLevel.Fatal, CommonConst.PlatformLogSession, 
                     $"Invalid environment variable:{CommonConst.EnvironmentVariable}");

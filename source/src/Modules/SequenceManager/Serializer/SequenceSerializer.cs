@@ -16,29 +16,29 @@ namespace Testflow.SequenceManager.Serializer
     {
         #region 序列化
 
-        public static void Serialize(string filePath, TestProject testProject)
+        public static void Serialize(string seqFilePath, TestProject testProject)
         {
-            filePath = ModuleUtils.GetAbsolutePath(filePath, Directory.GetCurrentDirectory());
+            seqFilePath = ModuleUtils.GetAbsolutePath(seqFilePath, Directory.GetCurrentDirectory());
 
             VerifySequenceData(testProject);
             List<string> serialziedFileList = new List<string>(10);
             try
             {
                 // 初始化各个SequenceGroup的文件位置信息
-                InitSequenceGroupLocations(testProject, filePath);
-                serialziedFileList.Add(filePath);
-                XmlWriterHelper.Write(testProject, filePath);
+                InitSequenceGroupLocations(testProject, seqFilePath);
+                serialziedFileList.Add(seqFilePath);
+                XmlWriterHelper.Write(testProject, seqFilePath);
                 // 将testProject当前配置的数据信息写入ParameterData中
                 FillParameterDataToSequenceData(testProject);
                 for (int i = 0; i < testProject.SequenceGroups.Count; i++)
                 {
                     SequenceGroup sequenceGroup = testProject.SequenceGroups[i] as SequenceGroup;
-                    string sequenceGroupPath = ModuleUtils.GetAbsolutePath(sequenceGroup.Info.SequenceGroupFile, filePath);
+                    string sequenceGroupPath = ModuleUtils.GetAbsolutePath(sequenceGroup.Info.SequenceGroupFile, seqFilePath);
                     string parameterFilePath = ModuleUtils.GetAbsolutePath(sequenceGroup.Info.SequenceParamFile, sequenceGroupPath); ;
                     if (!ModuleUtils.IsValidFilePath(sequenceGroupPath))
                     {
-                        sequenceGroupPath = ModuleUtils.GetSequenceGroupPath(filePath, i);
-                        sequenceGroup.Info.SequenceGroupFile = ModuleUtils.GetRelativePath(sequenceGroupPath, filePath);
+                        sequenceGroupPath = ModuleUtils.GetSequenceGroupPath(seqFilePath, i);
+                        sequenceGroup.Info.SequenceGroupFile = ModuleUtils.GetRelativePath(sequenceGroupPath, seqFilePath);
                         parameterFilePath = ModuleUtils.GetParameterFilePath(sequenceGroupPath);
                         sequenceGroup.Info.SequenceParamFile = ModuleUtils.GetRelativePath(parameterFilePath, sequenceGroupPath);
                     }
@@ -79,13 +79,15 @@ namespace Testflow.SequenceManager.Serializer
             }
         }
 
-        public static void Serialize(string filePath, SequenceGroup sequenceGroup)
+        public static void Serialize(string seqFilePath, SequenceGroup sequenceGroup)
         {
-            filePath = ModuleUtils.GetAbsolutePath(filePath, Directory.GetCurrentDirectory());
-
             VerifySequenceData(sequenceGroup);
-            sequenceGroup.Info.SequenceGroupFile = filePath;
-            sequenceGroup.Info.SequenceParamFile = ModuleUtils.GetParameterFilePath(filePath);
+            
+            string paramFilePath = sequenceGroup.Info.SequenceParamFile;
+            if (string.IsNullOrWhiteSpace(paramFilePath))
+            {
+                paramFilePath = ModuleUtils.GetParameterFilePath(seqFilePath);
+            }
 
             SequenceGroupParameter parameter = new SequenceGroupParameter();
             parameter.Initialize(sequenceGroup);
@@ -93,24 +95,64 @@ namespace Testflow.SequenceManager.Serializer
             FillParameterDataToSequenceData(sequenceGroup, parameter);
             sequenceGroup.RefreshSignature();
             parameter.RefreshSignature(sequenceGroup);
-            List<string> serialziedFileList = new List<string>(20);
+            List<string> serializedFileList = new List<string>(20);
             try
             {
-                serialziedFileList.Add(filePath);
-                XmlWriterHelper.Write(sequenceGroup, sequenceGroup.Info.SequenceGroupFile);
+                // 暂时修改序列组文件路径为相对路径
+                sequenceGroup.Info.SequenceGroupFile = ModuleUtils.GetFileName(seqFilePath);
+                sequenceGroup.Info.SequenceParamFile = ModuleUtils.GetRelativePath(paramFilePath, seqFilePath);
 
-                serialziedFileList.Add(sequenceGroup.Info.SequenceParamFile);
-                XmlWriterHelper.Write(parameter, sequenceGroup.Info.SequenceParamFile);
+                BackupExistFile(seqFilePath, paramFilePath);
+
+                serializedFileList.Add(seqFilePath);
+                XmlWriterHelper.Write(sequenceGroup, seqFilePath);
+
+                serializedFileList.Add(paramFilePath);
+                XmlWriterHelper.Write(parameter, paramFilePath);
+
+                DeleteBackupFile(seqFilePath, paramFilePath);
             }
             catch (IOException ex)
             {
-                RollBackFilesIfFailed(serialziedFileList);
+                RollBackFilesIfFailed(serializedFileList);
                 throw new TestflowRuntimeException(ModuleErrorCode.SerializeFailed, ex.Message, ex);
             }
             catch (ApplicationException)
             {
-                RollBackFilesIfFailed(serialziedFileList);
+                RollBackFilesIfFailed(serializedFileList);
                 throw;
+            }
+            finally
+            {
+                // 恢复序列文件的绝对路径
+                sequenceGroup.Info.SequenceGroupFile = seqFilePath;
+                sequenceGroup.Info.SequenceParamFile = paramFilePath;
+            }
+        }
+
+        private static void BackupExistFile(string seqFilePath, string paramFilePath)
+        {
+            if (File.Exists(seqFilePath))
+            {
+                File.Copy(seqFilePath, seqFilePath + Constants.BakFileExtension);
+            }
+            if (File.Exists(paramFilePath))
+            {
+                File.Copy(paramFilePath, paramFilePath + Constants.BakFileExtension);
+            }
+        }
+
+        private static void DeleteBackupFile(string seqFilePath, string paramFilePath)
+        {
+            string backFile1 = seqFilePath + Constants.BakFileExtension;
+            if (File.Exists(backFile1))
+            {
+                File.Delete(backFile1);
+            }
+            string backFile2 = paramFilePath + Constants.BakFileExtension;
+            if (File.Exists(backFile2))
+            {
+                File.Delete(backFile2);
             }
         }
 

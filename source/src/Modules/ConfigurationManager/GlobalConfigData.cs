@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text;
 using Testflow.ConfigurationManager.Data;
 using Testflow.Modules;
 
@@ -57,8 +58,13 @@ namespace Testflow.ConfigurationManager
                     configItem.Name = itemPair.Key;
                     configItem.Value = itemPair.Value.ToString();
                     Type type = itemPair.Value.GetType();
+                    if (itemPair.Key.Equals("PlatformEncoding"))
+                    {
+                        type = typeof (Encoding);
+                    }
                     configItem.Type = $"{type.Namespace}.{type.Name}";
                     configBlock.ConfigItems.Add(configItem);
+                    
                 }
             }
             return configData;

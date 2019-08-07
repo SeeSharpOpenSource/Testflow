@@ -1,13 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Reflection;
 using System.Text;
 using System.Xml;
 using System.Xml.Serialization;
 using Microsoft.Win32;
 using Testflow.ConfigurationManager.Data;
+using Testflow.Modules;
+using Testflow.Runtime;
 using Testflow.Usr;
 using Testflow.Utility.I18nUtil;
+using Testflow.Utility.MessageUtil;
 
 namespace Testflow.ConfigurationManager
 {
@@ -18,6 +22,8 @@ namespace Testflow.ConfigurationManager
         {
             this._valueConvertor = new Dictionary<string, Func<string, object>>(10);
             _valueConvertor.Add(GetFullName(typeof(string)), strValue => strValue);
+            _valueConvertor.Add(GetFullName(typeof(double)), strValue => double.Parse(strValue));
+            _valueConvertor.Add(GetFullName(typeof(float)), strValue => float.Parse(strValue));
             _valueConvertor.Add(GetFullName(typeof(long)), strValue => long.Parse(strValue));
             _valueConvertor.Add(GetFullName(typeof(int)), strValue => int.Parse(strValue));
             _valueConvertor.Add(GetFullName(typeof(uint)), strValue => uint.Parse(strValue));
@@ -33,6 +39,7 @@ namespace Testflow.ConfigurationManager
             ConfigData configData = GetConfigData(configFile);
             GlobalConfigData globalConfigData = GetGlobalConfigData(configData);
             AddExtraGlobalConfigData(globalConfigData);
+            AddExtraRuntimeConfigData(globalConfigData);
             return globalConfigData;
         }
 
@@ -60,9 +67,17 @@ namespace Testflow.ConfigurationManager
                     Type valueType = Type.GetType(configItem.Type);
                     if (null == valueType)
                     {
-                        I18N i18N = I18N.GetInstance(Constants.I18nName);
-                        throw new TestflowRuntimeException(ModuleErrorCode.ConfigDataError,
-                            i18N.GetFStr("CannotLoadType", configItem.Type));
+                        valueType = Assembly.GetAssembly(typeof (IConfigurationManager)).GetType(configItem.Type);
+                        if (null == valueType)
+                        {
+                            valueType = Assembly.GetAssembly(typeof (Messenger)).GetType(configItem.Type);
+                            if (null == valueType)
+                            {
+                                I18N i18N = I18N.GetInstance(Constants.I18nName);
+                                throw new TestflowRuntimeException(ModuleErrorCode.ConfigDataError,
+                                    i18N.GetFStr("CannotLoadType", configItem.Type));
+                            }
+                        }
                     }
                     object value;
                     if (valueType.IsEnum)
@@ -75,7 +90,7 @@ namespace Testflow.ConfigurationManager
                     }
                     else if (valueType == typeof (Encoding))
                     {
-                        value = Encoding.GetEncoding(configItem.Name);
+                        value = Encoding.GetEncoding(configItem.Value);
                     }
                     else
                     {
@@ -89,6 +104,14 @@ namespace Testflow.ConfigurationManager
             return globalConfigData;
         }
 
+        private void AddExtraRuntimeConfigData(GlobalConfigData globalConfigData)
+        {
+            globalConfigData.AddConfigItem(Constants.EngineConfig, "TestName", "TestInstance");
+            globalConfigData.AddConfigItem(Constants.EngineConfig, "TestDescription", "");
+            globalConfigData.AddConfigItem(Constants.EngineConfig, "RuntimeHash", "");
+            globalConfigData.AddConfigItem(Constants.EngineConfig, "RuntimeType", RuntimeType.Run);
+        }
+
         private void AddExtraGlobalConfigData(GlobalConfigData configData)
         {
             // 更新TestflowHome字段
@@ -99,6 +122,8 @@ namespace Testflow.ConfigurationManager
             }
             configData.AddConfigItem(Constants.GlobalConfig, "TestflowHome", homeDir);
 
+            // 更新WorkspaceDir字段
+            
             // 更新.NET运行时目录
             string dotNetVersion = configData.GetConfigValue<string>(Constants.GlobalConfig, "DotNetVersion");
             string runtimeDirectory = GetDotNetDir(dotNetVersion);
@@ -106,13 +131,16 @@ namespace Testflow.ConfigurationManager
             
             // 更新Testflow平台默认库目录
             string platformDir = configData.GetConfigValue<string>(Constants.GlobalConfig, "PlatformLibDir");
-            configData.SetConfigItem(Constants.GlobalConfig, "PlatformLibDir", $"{homeDir}{Path.DirectorySeparatorChar}{platformDir}");
-            
+            configData.SetConfigItem(Constants.GlobalConfig, "PlatformLibDir", $"{homeDir}{platformDir}");
+
             // 更新Testflow工作空间目录
-            string workspaceDirs = configData.GetConfigValue<string>(Constants.GlobalConfig, "WorkspaceDir");
-            if (string.IsNullOrWhiteSpace(workspaceDirs))
+            string workspaceDirs = Environment.GetEnvironmentVariable(CommonConst.WorkspaceVariable);
+            if (string.IsNullOrWhiteSpace(workspaceDirs) || !Directory.Exists(workspaceDirs))
             {
-                return;
+                TestflowRunner.GetInstance().LogService.Print(LogLevel.Fatal, CommonConst.PlatformLogSession,
+                    $"Invalid environment variable:{CommonConst.WorkspaceVariable}");
+                I18N i18N = I18N.GetInstance(Constants.I18nName);
+                throw new TestflowRuntimeException(ModuleErrorCode.InvalidEnvDir, i18N.GetStr("InvalidHomeVariable"));
             }
             string[] workSpaceDirElems = workspaceDirs.Split(';');
             List<string> workspaceDirList = new List<string>(workSpaceDirElems.Length);

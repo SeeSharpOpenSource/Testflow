@@ -61,6 +61,24 @@ namespace Testflow.SequenceManager.Resources.locale {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to 无法定位到程序集“{0}”所在的库。.
+        /// </summary>
+        internal static string AssemblyCannotFound {
+            get {
+                return ResourceManager.GetString("AssemblyCannotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 无法找到文件“{0}”。.
+        /// </summary>
+        internal static string FileCannotFound {
+            get {
+                return ResourceManager.GetString("FileCannotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to 序列/数据文件中出现非法数据。.
         /// </summary>
         internal static string IllegalFileData {

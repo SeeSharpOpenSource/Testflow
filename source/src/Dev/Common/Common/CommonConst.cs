@@ -46,6 +46,11 @@
         public const string EnvironmentVariable = "TESTFLOW_HOME";
 
         /// <summary>
+        /// 标记Testflow根目录的环境变量
+        /// </summary>
+        public const string WorkspaceVariable = "TESTFLOW_WORKSPACE";
+
+        /// <summary>
         /// 数据文件目录
         /// </summary>
         public const string DataDir = "data";
