@@ -47,6 +47,11 @@
     <Compile Include="Common\TestflowCategoryAttribute.cs" />
     <Compile Include="Constants.cs" />
     <Compile Include="LibTypeNames.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
     <Compile Include="Resources\locale\i18n_userlib_en.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -67,6 +72,10 @@
     <Compile Include="Synchronous\SynchronousType.cs" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
     <EmbeddedResource Include="Resources\locale\i18n_userlib_en.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>i18n_userlib_en.Designer.cs</LastGenOutput>

@@ -1,24 +1,25 @@
 ﻿using System;
+using Testflow.Data;
 
 namespace Testflow.Usr.Common
 {
     /// <summary>
-    /// 回调方法注解
+    /// 回调类型注解
     /// </summary>
     [AttributeUsage(AttributeTargets.Method)]
     public class CallBackAttribute : Attribute
     {
         /// <summary>
-        /// 回调方法名
+        /// 回调类型
         /// </summary>
-        public CallBackAttribute(string command)
+        public CallBackAttribute(CallBackType callBackType)
         {
-            this.Command = command;
+            this.CallBackType = callBackType;
         }
 
         /// <summary>
-        /// 回调命令
+        /// 回调类型，同步还是异步
         /// </summary>
-        public string Command { get; }
+        public CallBackType CallBackType { get; }
     }
 }

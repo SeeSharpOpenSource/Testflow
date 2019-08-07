@@ -9,7 +9,6 @@ using Testflow.Data.Sequence;
 using Testflow.Runtime;
 using Testflow.Runtime.Data;
 using Testflow.SlaveCore.Common;
-using Testflow.SlaveCore.Data;
 using Testflow.Usr;
 
 namespace Testflow.SlaveCore.Runner.Model
@@ -19,10 +18,19 @@ namespace Testflow.SlaveCore.Runner.Model
         private object[] Params;
         private string FullName;
         private int CallBackId;
+        private CallBackType callBackType;
 
         public StepCallBackEntity(ISequenceStep step, SlaveContext context, int sequenceIndex) : base(step, context, sequenceIndex)
         {
             this.Params = new object[step.Function.Parameters?.Count ?? 0];
+            if (step.Function.Description.Equals("Sychronous CallBack"))
+            {
+                this.callBackType = CallBackType.Synchronous;
+            }
+            else if (step.Function.Description.Equals("Asychronous CallBack"))
+            {
+                this.callBackType = CallBackType.Asynchronous;
+            }
         }
 
         //method/Constructor Info
@@ -81,6 +89,7 @@ namespace Testflow.SlaveCore.Runner.Model
                 callBackMessage = new CallBackMessage(FullName, Context.SessionId, CallBackId)
                 {
                     Type = MessageType.CallBack,
+                    CallBackType = this.callBackType
                 };
             }
             else
@@ -90,6 +99,7 @@ namespace Testflow.SlaveCore.Runner.Model
                 callBackMessage = new CallBackMessage(FullName, Context.SessionId, CallBackId, getStringParams(function))
                 {
                     Type = MessageType.CallBack,
+                    CallBackType = this.callBackType
                 };
             }
             Context.UplinkMsgProcessor.SendMessage(callBackMessage, false);
@@ -111,30 +121,41 @@ namespace Testflow.SlaveCore.Runner.Model
         private void ExecuteCallBack(bool forceInvoke)
         {
             SendCallBackMessage();
-            //取得阻塞event
-            AutoResetEvent block = Context.CallBackEventManager.AcquireBlockEvent(CallBackId);
-            //阻塞10秒
-            //超时就抛出异常
-            if (block.WaitOne(Constants.ThreadAbortJoinTime) == false)
+            #region 同步：等待master发回消息
+            if (callBackType == CallBackType.Synchronous)
             {
-                this.Result = StepResult.Failed;
-                throw new TaskFailedException(SequenceIndex, "CallBack has exceeded waiting Time", FailedType.RuntimeError);
-            }
+                //取得阻塞event
+                AutoResetEvent block = Context.CallBackEventManager.AcquireBlockEvent(CallBackId);
+                //阻塞100秒
+                //超时就抛出异常
+                if (block.WaitOne(Constants.ThreadAbortJoinTime) == false)
+                {
+                    this.Result = StepResult.Failed;
+                    throw new TaskFailedException(SequenceIndex, "CallBack has exceeded waiting Time", FailedType.RuntimeError);
+                }
 
-            //没超时，就获得消息
-            CallBackMessage callBackMsg = Context.CallBackEventManager.GetMessageDisposeBlock(CallBackId);
-            //回调成功
-            if (callBackMsg.SuccessFlag)
+                //没超时，就获得消息
+                CallBackMessage callBackMsg = Context.CallBackEventManager.GetMessageDisposeBlock(CallBackId);
+                //回调成功
+                if (callBackMsg.SuccessFlag)
+                {
+                    this.Result = StepResult.Pass;
+                }
+                //回调不成功
+                else
+                {
+                    this.Result = StepResult.Failed;
+                    // 抛出强制失败异常
+                    throw new TaskFailedException(SequenceIndex, "CallBack failed", FailedType.RuntimeError);
+                }
+            }
+            #endregion
+            #region 异步：不管master直接通过步骤
+            else
             {
                 this.Result = StepResult.Pass;
             }
-            //回调不成功
-            else
-            {
-                this.Result = StepResult.Failed;
-                // 抛出强制失败异常
-                throw new TaskFailedException(SequenceIndex, "CallBack failed", FailedType.RuntimeError);
-            }
+            #endregion
         }
 
         //todo 未考虑循环的事，如果循环，注意forceInvoke

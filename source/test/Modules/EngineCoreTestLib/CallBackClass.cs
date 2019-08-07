@@ -5,18 +5,19 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Testflow.Usr.Common;
+using Testflow.Data;
 
 namespace EngineCoreTestLib
 {
     public static class CallBackClass
     {
-        [CallBack("I'm a CallBack")]
+        [CallBack(CallBackType.Asynchronous)]
         public static void StartForm()
         {
             Application.Run(new CallBackForm());
         }
 
-        [CallBack("I'm a CallBack")]
+        [CallBack(CallBackType.Synchronous)]
         public static void StartForm(int x, int y)
         {
             Application.Run(new CallBackForm(x, y));

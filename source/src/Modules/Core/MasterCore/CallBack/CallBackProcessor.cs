@@ -51,9 +51,10 @@ namespace Testflow.MasterCore.CallBack
 
                 SequenceGroupFindCallBack(sequenceGroup);
             }
-
         }
+        #endregion
 
+        #region 寻找所有拥有CallBackAttribute的Step
         private void SequenceGroupFindCallBack(ISequenceGroup sequenceGroup)
         {
             StepCollectionFindCallBack(sequenceGroup.SetUp.Steps);
@@ -106,7 +107,7 @@ namespace Testflow.MasterCore.CallBack
         {
             string methodName = message.Name;
             List<string> arg = message.Args;
-            bool success = false;
+            bool result = false;
             try
             {
                 if (!_callBackFunctions.ContainsKey(methodName) || !_callBackMethods.ContainsKey(methodName))
@@ -140,26 +141,25 @@ namespace Testflow.MasterCore.CallBack
 
                 }
                 _callBackMethods[methodName].Invoke(null, obj);
-                success = true;
-                SendMessage(message, success);
+                result = true;
             }
             catch (TestflowException ex)
             {
-                _globalInfo.LogService.Print(LogLevel.Error, 0, ex, $"CallBack has a TestflowException when trying to execute {methodName}");
-                SendMessage(message, success);
-                throw;
+                _globalInfo.LogService.Print(LogLevel.Error, 0, ex, $"CallBack has a TestflowException when trying to execute {methodName}: {ex.Message}");
             }
             catch (ThreadAbortException ex)
             {
-                _globalInfo.LogService.Print(LogLevel.Error, 0, ex, $"thread {Thread.CurrentThread.Name} stopped abnormally when executing {methodName}");
-                SendMessage(message, success);
+                _globalInfo.LogService.Print(LogLevel.Error, 0, ex, $"thread {Thread.CurrentThread.Name} stopped abnormally when executing {methodName}: {ex.Message}");
             }
             catch (Exception ex)
             {
-                _globalInfo.LogService.Print(LogLevel.Error, 0, ex, $"CallBack has an Exception when executing {methodName}");
-                SendMessage(message, success);
+                _globalInfo.LogService.Print(LogLevel.Error, 0, ex, $"CallBack has an Exception when executing {methodName}: {ex.Message}");
             }
 
+            if (message.CallBackType == CallBackType.Synchronous)
+            {
+                SendMessage(message, result);
+            }
         }
 
         //收到消息，处理

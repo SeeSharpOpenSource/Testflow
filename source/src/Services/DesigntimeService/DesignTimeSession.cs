@@ -119,7 +119,18 @@ namespace Testflow.DesigntimeService
         #region Sequence
         public ISequence AddSequence(ISequence sequence, int index)
         {
-            Context.SequenceGroup.Sequences.Insert(index, sequence);
+            if(index == -1)
+            {
+                Context.SequenceGroup.SetUp = sequence;
+            }
+            else if(index == -2)
+            {
+                Context.SequenceGroup.TearDown = sequence;
+            }
+            else
+            {
+                Context.SequenceGroup.Sequences.Insert(index, sequence);
+            }
             //sequenceGroup有变动
             ContextSequenceGroupModify();
             return sequence;
@@ -132,32 +143,81 @@ namespace Testflow.DesigntimeService
             return AddSequence(sequence, index);
         }
 
+        //Remove Sequence先判断是否为Setup, Teardown（是，则创建空白sequences填入）
+        //如果不是再循环sequences移除
+        //两个remove返回布尔，一个不返回，对应封装里的Remove跟RemoveAt方法所返回的值
         public bool RemoveSequence(string sequenceName, string description)
         {
             //找sequence
-            ISequence sequence = Context.SequenceGroup.Sequences.FirstOrDefault(item => item.Name.Equals(sequenceName) && item.Description.Equals(description));
-            return RemoveSequence(sequence);
+            if (sequenceName.Equals(Context.SequenceGroup.SetUp.Name))
+            {
+                return RemoveSequence(Context.SequenceGroup.SetUp);
+            }
+            else if (sequenceName.Equals(Context.SequenceGroup.TearDown.Name))
+            {
+                return RemoveSequence(Context.SequenceGroup.TearDown);
+            }
+            else
+            {
+                ISequence sequence = Context.SequenceGroup.Sequences.FirstOrDefault(item => item.Name.Equals(sequenceName) && item.Description.Equals(description));
+                return RemoveSequence(sequence);
+            }
         }
 
         public void RemoveSequence(int index)
         {
-            Context.SequenceGroup.Sequences.RemoveAt(index);
+            if(index == -1)
+            {
+                Context.SequenceGroup.SetUp = _sequenceManager.CreateSequence();
+            }
+            else if(index == -2)
+            {
+                Context.SequenceGroup.TearDown = _sequenceManager.CreateSequence();
+            }
+            else
+            {
+                Context.SequenceGroup.Sequences.RemoveAt(index);
+            }
             ContextSequenceGroupModify();
         }
 
         public bool RemoveSequence(ISequence sequence)
         {
-            bool removed = Context.SequenceGroup.Sequences.Remove(sequence);
-            if (removed)
+            if (Context.SequenceGroup.SetUp.Equals(sequence))
             {
-                ContextSequenceGroupModify();
+                Context.SequenceGroup.SetUp = _sequenceManager.CreateSequence();
+                return true;
             }
-            return removed;
+            else if (Context.SequenceGroup.TearDown.Equals(sequence))
+            {
+                Context.SequenceGroup.TearDown = _sequenceManager.CreateSequence();
+                return true;
+            }
+            else
+            {
+                bool removed = Context.SequenceGroup.Sequences.Remove(sequence);
+                if (removed)
+                {
+                    ContextSequenceGroupModify();
+                }
+                return removed;
+            }
         }
 
         public ISequence GetSequence(int sequenceId)
         {
-            return Context.SequenceGroup.Sequences[sequenceId];
+            if (sequenceId == -1)
+            {
+                return Context.SequenceGroup.SetUp;
+            }
+            else if (sequenceId == -2)
+            {
+                return Context.SequenceGroup.TearDown;
+            }
+            else
+            {
+                return Context.SequenceGroup.Sequences[sequenceId];
+            }
         }
         #endregion
 
@@ -168,7 +228,7 @@ namespace Testflow.DesigntimeService
             {
                 ((ISequence)parent).Steps.Insert(index, stepData);
             }
-            if (parent is ISequenceStep)
+            else if (parent is ISequenceStep)
             {
                 ((ISequenceStep)parent).SubSteps.Insert(index, stepData);
             }
@@ -189,7 +249,7 @@ namespace Testflow.DesigntimeService
                     ((ISequence)parent).Steps.Insert(n + index, stepDatas[n]);
                 }
             }
-            if (parent is ISequenceStep)
+            else if (parent is ISequenceStep)
             {
                 for (int n = 0; n < stepDatas.Count; n++)
                 {
@@ -206,7 +266,7 @@ namespace Testflow.DesigntimeService
 
         public ISequenceStep AddSequenceStep(ISequenceFlowContainer parent, string description, int index)
         {
-            ISequenceStep sequenceStep = _sequenceManager.CreateSequenceStep();
+            ISequenceStep sequenceStep = _sequenceManager.CreateSequenceStep(true);
             sequenceStep.Description = description;
             return AddSequenceStep(parent, sequenceStep, index);  
         }
