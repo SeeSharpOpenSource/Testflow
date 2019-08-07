@@ -156,7 +156,7 @@ namespace Testflow.SequenceManager.Common
                 .GetProperty(IndexPropertName, BindingFlags.Instance | BindingFlags.Public);
             for (int i = index; i < collection.Count; i++)
             {
-                propertyInfo?.SetValue(collection[index], index);
+                propertyInfo?.SetValue(collection[i], i);
             }
             return true;
         }
@@ -169,8 +169,7 @@ namespace Testflow.SequenceManager.Common
                 .GetProperty(IndexPropertName, BindingFlags.Instance | BindingFlags.Public);
             for (int i = index; i < collection.Count; i++)
             {
-                propertyInfo?.SetValue(collection[index], index);
-                index++;
+                propertyInfo?.SetValue(collection[i], i);
             }
             return true;
         }
@@ -183,8 +182,7 @@ namespace Testflow.SequenceManager.Common
                 .GetProperty(IndexPropertName, BindingFlags.Instance | BindingFlags.Public);
             for (int i = index; i < collection.Count; i++)
             {
-                propertyInfo?.SetValue(collection[index], index);
-                index++;
+                propertyInfo?.SetValue(collection[i], i);
             }
             return true;
         }
