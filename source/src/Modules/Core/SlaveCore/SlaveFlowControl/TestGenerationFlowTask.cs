@@ -59,15 +59,15 @@ namespace Testflow.SlaveCore.SlaveFlowControl
                 default:
                     throw new InvalidOperationException();
             }
-
-            // 构造变量映射器
-            Context.VariableMapper = new VariableMapper(Context);
-
+            
             // 打印状态日志
             Context.LogSession.Print(LogLevel.Debug, Context.SessionId, "Load assemblies.");
 
             // 加载用到的程序集
             Context.TypeInvoker.LoadAssemblyAndType();
+
+            // 构造变量映射器
+            Context.VariableMapper = new VariableMapper(Context);
 
             // 打印状态日志
             Context.LogSession.Print(LogLevel.Debug, Context.SessionId, "Create session task entity start.");
