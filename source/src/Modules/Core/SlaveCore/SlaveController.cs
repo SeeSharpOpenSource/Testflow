@@ -85,10 +85,11 @@ namespace Testflow.SlaveCore
 
         private void StopSlaveTask()
         {
-            _flowTaskThread.Abort();
-            if (_flowTaskThread.IsAlive)
+            
+            if (_flowTaskThread.IsAlive && !_flowTaskThread.Join(Constants.ThreadAbortJoinTime))
             {
-                _flowTaskThread.Join(Constants.ThreadAbortJoinTime);
+                _flowTaskThread.Abort();
+                Thread.Sleep(Constants.AbortWaitTime);
             }
             _context.UplinkMsgProcessor?.Stop();
             _downlinkMsgProcessor?.Stop();

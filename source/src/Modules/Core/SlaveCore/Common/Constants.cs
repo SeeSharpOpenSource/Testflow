@@ -11,6 +11,8 @@
 
         public const int ThreadAbortJoinTime = 10000;
 
+        public const int AbortWaitTime = 200;
+
         public const string TaskThreadNameFormt = "TaskThread:Session'{0}'Sequence'{1}'";
 
         public const string TaskRootThreadNameFormat = "TaskThread:Session'{0}'Root";
