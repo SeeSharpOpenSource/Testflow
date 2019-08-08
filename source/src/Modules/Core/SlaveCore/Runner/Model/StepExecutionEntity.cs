@@ -340,10 +340,8 @@ namespace Testflow.SlaveCore.Runner.Model
                 {
                     // 获取变量值的名称，该名称为变量的运行时名称，其值在InitializeParamValue方法里配置
                     string variableName = ModuleUtils.GetVariableNameFromParamValue(parameters[i].Value);
-                    // 使用变量名称获取变量当前对象的值
-                    object variableValue = Context.VariableMapper.GetParamValue(variableName, parameters[i].Value);
                     // 根据ParamString和变量对应的值配置参数。
-                    Params[i] = ModuleUtils.GetParamValue(parameters[i].Value, variableValue);
+                    Params[i] = Context.VariableMapper.GetParamValue(variableName, parameters[i].Value);
                 }
             }
         }
