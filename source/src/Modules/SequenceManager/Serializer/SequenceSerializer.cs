@@ -83,11 +83,7 @@ namespace Testflow.SequenceManager.Serializer
         {
             VerifySequenceData(sequenceGroup);
             
-            string paramFilePath = sequenceGroup.Info.SequenceParamFile;
-            if (string.IsNullOrWhiteSpace(paramFilePath))
-            {
-                paramFilePath = ModuleUtils.GetParameterFilePath(seqFilePath);
-            }
+            string paramFilePath = ModuleUtils.GetParameterFilePath(seqFilePath);
 
             SequenceGroupParameter parameter = new SequenceGroupParameter();
             parameter.Initialize(sequenceGroup);
