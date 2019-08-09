@@ -174,35 +174,39 @@ namespace Testflow.ComInterfaceManager
             }
             I18N i18N = I18N.GetInstance(Constants.I18nName);
             ILogService logService = TestflowRunner.GetInstance().LogService;
+            string assembly = assemblyName;
+            if (string.IsNullOrWhiteSpace(assembly))
+            {
+                assembly = path;
+            }
             switch (_loader.ErrorCode)
             {
                 case ModuleErrorCode.HighVersion:
                     logService.Print(LogLevel.Warn, CommonConst.PlatformLogSession,
-                        $"The version of assembly '{assemblyName}' is higher than version defined in data.");
+                        $"The version of assembly '{assembly}' is higher than version defined in data.");
                     break;
                 case ModuleErrorCode.LowVersion:
                     logService.Print(LogLevel.Error, CommonConst.PlatformLogSession,
-                        $"The version of assembly '{assemblyName}' is lower than version defined in data.");
+                        $"The version of assembly '{assembly}' is lower than version defined in data.");
                     throw new TestflowRuntimeException(ModuleErrorCode.LowVersion,
-                        i18N.GetFStr("LowAssemblyVersion", assemblyName));
+                        i18N.GetFStr("LowAssemblyVersion", assembly));
                     break;
                 case ModuleErrorCode.LibraryLoadError:
                     if (null != _loader.Exception)
                     {
+                        logService.Print(LogLevel.Error, CommonConst.PlatformLogSession, _loader.Exception,
+                            $"Assembly '{assembly}' load error.");
                         throw new TestflowRuntimeException(ModuleErrorCode.LibraryLoadError,
                             i18N.GetFStr(_loader.Exception.Message), _loader.Exception);
                     }
                     else
                     {
+                        logService.Print(LogLevel.Error, CommonConst.PlatformLogSession, 
+                            $"Assembly '{assembly}' load error.");
                         throw new TestflowRuntimeException(ModuleErrorCode.LibraryLoadError, 
                             i18N.GetStr("RuntimeError"));
                     }
                 case ModuleErrorCode.LibraryNotFound:
-                    string assembly = assemblyName;
-                    if (string.IsNullOrWhiteSpace(assembly))
-                    {
-                        assembly = path;
-                    }
                     throw new TestflowRuntimeException(ModuleErrorCode.LibraryNotFound, i18N.GetFStr("LibNotFound", assembly));
                 default:
                     if (null != _loader.Exception)
