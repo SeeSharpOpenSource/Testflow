@@ -125,7 +125,11 @@ namespace Testflow.SlaveCore.Runner.Model
         {
             if (StepData.HasSubSteps)
             {
-                this.SubStepRoot.GenerateInvokeInfo();
+                StepTaskEntityBase subStepEntity = SubStepRoot;
+                do
+                {
+                    subStepEntity.GenerateInvokeInfo();
+                } while (null != (subStepEntity = subStepEntity.NextStep));
             }
             else
             {
@@ -152,14 +156,17 @@ namespace Testflow.SlaveCore.Runner.Model
                         throw new InvalidOperationException();
                 }
             }
-            NextStep?.GenerateInvokeInfo();
         }
 
         public override void InitializeParamsValues()
         {
             if (StepData.HasSubSteps)
             {
-                SubStepRoot.InitializeParamsValues();
+                StepTaskEntityBase subStepEntity = SubStepRoot;
+                do
+                {
+                    subStepEntity.InitializeParamsValues();
+                } while (null != (subStepEntity = subStepEntity.NextStep));
             }
             else
             {
@@ -206,7 +213,6 @@ namespace Testflow.SlaveCore.Runner.Model
                     ReturnVar = CoreUtils.GetRuntimeVariableName(Context.SessionId, variable);
                 }
             }
-            NextStep?.InitializeParamsValues();
         }
 
         protected override void InvokeStep(bool forceInvoke)
@@ -284,7 +290,11 @@ namespace Testflow.SlaveCore.Runner.Model
         {
             if (StepData.HasSubSteps)
             {
-                SubStepRoot.Invoke(forceInvoke);
+                StepTaskEntityBase subStepEntity = SubStepRoot;
+                do
+                {
+                    subStepEntity.Invoke(forceInvoke);
+                } while (null != (subStepEntity = subStepEntity.NextStep));
             }
             else
             {

@@ -114,7 +114,6 @@ namespace Testflow.SlaveCore.Runner.Model
                 return;
             }
             InvokeStep(forceInvoke);
-            NextStep?.Invoke(forceInvoke);
         }
 
         protected abstract void InvokeStep(bool forceInvoke);

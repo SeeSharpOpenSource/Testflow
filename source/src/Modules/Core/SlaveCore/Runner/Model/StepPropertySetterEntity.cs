@@ -35,7 +35,6 @@ namespace Testflow.SlaveCore.Runner.Model
                 _properties.Add(classType.GetProperty(propertyName, bindingFlags));
             }
 
-            NextStep?.GenerateInvokeInfo();
         }
 
         public override void InitializeParamsValues()
@@ -71,8 +70,6 @@ namespace Testflow.SlaveCore.Runner.Model
                         throw new ArgumentOutOfRangeException();
                 }
             }
-
-            NextStep?.InitializeParamsValues();
         }
 
         private readonly List<PropertyInfo> _properties;

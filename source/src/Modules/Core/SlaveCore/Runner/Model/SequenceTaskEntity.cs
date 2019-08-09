@@ -56,8 +56,13 @@ namespace Testflow.SlaveCore.Runner.Model
             {
                 return;
             }
-            _stepEntityRoot.GenerateInvokeInfo();
-            _stepEntityRoot.InitializeParamsValues();
+
+            StepTaskEntityBase stepEntity = _stepEntityRoot;
+            do
+            {
+                stepEntity.GenerateInvokeInfo();
+                stepEntity.InitializeParamsValues();
+            } while (null != (stepEntity = stepEntity.NextStep));
 
             this.State = RuntimeState.StartIdle;
             // 添加当前根节点到stepModel管理中
@@ -77,6 +82,11 @@ namespace Testflow.SlaveCore.Runner.Model
                 _context.StatusQueue.Enqueue(startStatusInfo);
 
                 _stepEntityRoot.Invoke(forceInvoke);
+                StepTaskEntityBase stepEntity = _stepEntityRoot;
+                do
+                {
+                    stepEntity.Invoke(forceInvoke);
+                } while (null != (stepEntity = stepEntity.NextStep));
 
                 SetResultState(out lastStepResult, out finalReportType, out failedInfo);
             }
