@@ -32,5 +32,41 @@ namespace Testflow.DesigntimeService.Common
             }
             return testProject.SequenceGroups[sessionID]; 
         }
+
+        public static IVariable FindVariableByName(string varName, ISequenceGroup sequenceGroup)
+        {
+            foreach (IVariable variable in sequenceGroup.Variables)
+            {
+                if (variable.Name.Equals(varName))
+                {
+                    return variable;
+                }
+            }
+            foreach (IVariable variable in sequenceGroup.SetUp.Variables)
+            {
+                if (variable.Name.Equals(varName))
+                {
+                    return variable;
+                }
+            }
+            foreach (IVariable variable in sequenceGroup.TearDown.Variables)
+            {
+                if (variable.Name.Equals(varName))
+                {
+                    return variable;
+                }
+            }
+            foreach (ISequence sequence in sequenceGroup.Sequences)
+            {
+                foreach (IVariable variable in sequence.Variables)
+                {
+                    if (variable.Name.Equals(varName))
+                    {
+                        return variable;
+                    }
+                }
+            }
+            return null;
+        }
     }
 }
