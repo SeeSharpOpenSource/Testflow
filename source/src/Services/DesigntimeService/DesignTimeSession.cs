@@ -24,7 +24,11 @@ namespace Testflow.DesigntimeService
             get { return _contextInst;}
         }
 
-        public ISequenceManager SequenceManager { get => _sequenceManager; set => _sequenceManager = value; }
+        public ISequenceManager SequenceManager
+        {
+            get { return _sequenceManager; }
+            set { _sequenceManager = value; }
+        }
 
         private void ContextSequenceGroupModify()
         {
