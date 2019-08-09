@@ -6,7 +6,8 @@ using System.Threading.Tasks;
 using Testflow.Data;
 using Testflow.Data.Sequence;
 using Testflow.DesignTime;
-using Testflow.SequenceManager.SequenceElements;
+using Testflow.Modules;
+using Testflow.DesigntimeService.Common;
 using Testflow.Usr;
 
 namespace Testflow.DesigntimeService
@@ -23,6 +24,8 @@ namespace Testflow.DesigntimeService
             get { return _contextInst;}
         }
 
+        public ISequenceManager SequenceManager { get => _sequenceManager; set => _sequenceManager = value; }
+
         private void ContextSequenceGroupModify()
         {
             Context.SequenceGroup.Info.Modified = true;
@@ -33,18 +36,18 @@ namespace Testflow.DesigntimeService
         {
             this.SessionId = sessionId;
             this._contextInst = new DesignTimeContext(sequenceGroup);
-            _sequenceManager = TestflowRunner.GetInstance().SequenceManager;
+            SequenceManager = TestflowRunner.GetInstance().SequenceManager;
         }
 
         #region 初始化
         public void Initialize()
         {
-            _sequenceManager = TestflowRunner.GetInstance().SequenceManager;
+            SequenceManager = TestflowRunner.GetInstance().SequenceManager;
         }
 
         public void Dispose()
         {
-            _sequenceManager?.Dispose();
+            SequenceManager?.Dispose();
         }
         #endregion
 
@@ -69,7 +72,7 @@ namespace Testflow.DesigntimeService
         #region 指数counter
         public ILoopCounter AddLoopCounter(ISequenceStep sequenceStep, int maxCount)
         {
-            ILoopCounter loopCounter = _sequenceManager.CreateLoopCounter();
+            ILoopCounter loopCounter = SequenceManager.CreateLoopCounter();
             loopCounter.MaxValue = maxCount;
             sequenceStep.LoopCounter = loopCounter;
             ContextSequenceGroupModify();
@@ -78,7 +81,7 @@ namespace Testflow.DesigntimeService
 
         public IRetryCounter AddRetryCounter(ISequenceStep sequenceStep, int maxCount)
         {
-            IRetryCounter retryCounter = _sequenceManager.CreateRetryCounter();
+            IRetryCounter retryCounter = SequenceManager.CreateRetryCounter();
             retryCounter.MaxRetryTimes = maxCount;
             sequenceStep.RetryCounter = retryCounter;
             ContextSequenceGroupModify();
@@ -137,7 +140,7 @@ namespace Testflow.DesigntimeService
         }
         public ISequence AddSequence(string sequenceName, string description, int index)
         {
-            ISequence sequence = _sequenceManager.CreateSequence();
+            ISequence sequence = SequenceManager.CreateSequence();
             sequence.Name = sequenceName;
             sequence.Description = description;
             return AddSequence(sequence, index);
@@ -168,11 +171,11 @@ namespace Testflow.DesigntimeService
         {
             if(index == -1)
             {
-                Context.SequenceGroup.SetUp = _sequenceManager.CreateSequence();
+                Context.SequenceGroup.SetUp = SequenceManager.CreateSequence();
             }
             else if(index == -2)
             {
-                Context.SequenceGroup.TearDown = _sequenceManager.CreateSequence();
+                Context.SequenceGroup.TearDown = SequenceManager.CreateSequence();
             }
             else
             {
@@ -185,12 +188,12 @@ namespace Testflow.DesigntimeService
         {
             if (Context.SequenceGroup.SetUp.Equals(sequence))
             {
-                Context.SequenceGroup.SetUp = _sequenceManager.CreateSequence();
+                Context.SequenceGroup.SetUp = SequenceManager.CreateSequence();
                 return true;
             }
             else if (Context.SequenceGroup.TearDown.Equals(sequence))
             {
-                Context.SequenceGroup.TearDown = _sequenceManager.CreateSequence();
+                Context.SequenceGroup.TearDown = SequenceManager.CreateSequence();
                 return true;
             }
             else
@@ -266,14 +269,14 @@ namespace Testflow.DesigntimeService
 
         public ISequenceStep AddSequenceStep(ISequenceFlowContainer parent, string description, int index)
         {
-            ISequenceStep sequenceStep = _sequenceManager.CreateSequenceStep(true);
+            ISequenceStep sequenceStep = SequenceManager.CreateSequenceStep(true);
             sequenceStep.Description = description;
             return AddSequenceStep(parent, sequenceStep, index);  
         }
 
         public ISequenceStep AddSequenceStep(ISequenceFlowContainer parent, IFunctionData functionData, string description, int index)
         {
-            ISequenceStep sequenceStep = _sequenceManager.CreateSequenceStep();
+            ISequenceStep sequenceStep = SequenceManager.CreateSequenceStep();
             sequenceStep.Function = functionData;
             sequenceStep.Description = description;
             return AddSequenceStep(parent, sequenceStep, index);
@@ -337,52 +340,70 @@ namespace Testflow.DesigntimeService
         //todo
         public IVariable AddVariable(ISequenceFlowContainer parent, string variableName, string value, int index)
         {
-            IVariable variable = _sequenceManager.CreateVarialbe();
+            IVariable variable = SequenceManager.CreateVarialbe();
             variable.Name = variableName;
             variable.Value = value;
             return AddVariable(parent, variable, index);
         }
 
-        //todo
+        //todo I18n
         public IVariable AddVariable(ISequenceFlowContainer parent, IVariable variable, int index)
         {
+            if(ModuleUtils.FindVariableByName(variable.Name, Context.SequenceGroup) != null)
+            {
+                throw new TestflowDataException(ModuleErrorCode.VariableExists, $"Variable with name {variable.Name} exists in session.");
+            }
+
             if (parent is ISequenceGroup)
             {
                 ((ISequenceGroup)parent).Variables.Insert(index, variable);
             }
             if (parent is ISequence)
             {
-                ((ISequenceGroup)parent).Variables.Insert(index, variable);
+                ((ISequence)parent).Variables.Insert(index, variable);
             }
             return variable;
         }
 
-        //todo
+        //todo I18n
         public IVariable RemoveVariable(ISequenceFlowContainer parent, IVariable variable)
         {
+            bool removed = false;
             if (parent is ISequenceGroup)
             {
-                ((ISequenceGroup)parent).Variables.Remove(variable);
+                removed = ((ISequenceGroup)parent).Variables.Remove(variable);
             }
             if (parent is ISequence)
             {
-                ((ISequence)parent).Variables.Remove(variable);
+                removed = ((ISequence)parent).Variables.Remove(variable);
+            }
+
+            if (!removed)
+            {
+                throw new TestflowDataException(ModuleErrorCode.VariableNotFound, $"Variable not found in parent {parent.Name}");
             }
             return variable;
         }
 
+        //todo I18n
         public IVariable RemoveVariable(ISequenceFlowContainer parent, string variableName)
         {
             IVariable variable = null;
+            bool removed = false;
             if (parent is ISequenceGroup)
             {
                 variable = ((ISequenceGroup)parent).Variables.FirstOrDefault(item => item.Name.Equals(variableName));
-                ((ISequenceGroup)parent).Variables.Remove(variable);
+                removed = ((ISequenceGroup)parent).Variables.Remove(variable);
             }
             if (parent is ISequence)
             {
                 variable = ((ISequence)parent).Variables.FirstOrDefault(item => item.Name.Equals(variableName));
-                ((ISequence)parent).Variables.Remove(variable);
+                removed = ((ISequence)parent).Variables.Remove(variable);
+            }
+
+            if (!removed)
+            {
+                throw new TestflowDataException(ModuleErrorCode.VariableNotFound, $"Variable not found in parent {parent.Name}");
             }
             return variable;
             
@@ -393,28 +414,31 @@ namespace Testflow.DesigntimeService
             variable.Value = value;
         }
 
-        //todo
+        //todo I18n
         public void SetVariableValue(string variableName, string value)
         {
-            IVariable variable = Context.SequenceGroup.Variables.FirstOrDefault(item => item.Name.Equals(variableName));
-            if(variable == null)
+            IVariable variable = ModuleUtils.FindVariableByName(variableName, Context.SequenceGroup);
+            if (variable == null)
             {
-                for(int n=0; n< Context.SequenceGroup.Sequences.Count; n++)
-                {
-                    variable = Context.SequenceGroup.Sequences[n].Variables.FirstOrDefault(item => item.Name.Equals(variableName));
-                    if(variable != null)
-                    {
-                        variable.Value = value;
-                        break;
-                    }
-                }
-                //todo：报错
+                throw new TestflowDataException(ModuleErrorCode.VariableNotFound, "Variable not found in current session");
             }
-            else
-            {
-                variable.Value = value;
-            }
+            variable.Value = value;
+        }
 
+        public void SetVariableType(IVariable variable, ITypeData typeData)
+        {
+            variable.Type = typeData;
+        }
+
+        ////todo I18n
+        public void SetVariableType(string variableName, ITypeData typeData)
+        {
+            IVariable variable = ModuleUtils.FindVariableByName(variableName, Context.SequenceGroup);
+            if (variable == null)
+            {
+                throw new TestflowDataException(ModuleErrorCode.VariableNotFound, "Variable not found in current session");
+            }
+            variable.Type = typeData;
         }
         #endregion
 
@@ -439,7 +463,7 @@ namespace Testflow.DesigntimeService
 
         public void SetInstance(string variableName, ISequenceStep sequence)
         {
-            IFunctionData function = _sequenceManager.CreateFunctionData(null);
+            IFunctionData function = SequenceManager.CreateFunctionData(null);
             function.Instance = variableName;
             sequence.Function = function;
         }
@@ -490,7 +514,7 @@ namespace Testflow.DesigntimeService
 
         public void SetReturn(string variableName, ISequenceStep sequence)
         {
-            IFunctionData function = _sequenceManager.CreateFunctionData(null);
+            IFunctionData function = SequenceManager.CreateFunctionData(null);
             function.Return = variableName;
             sequence.Function = function;
         }

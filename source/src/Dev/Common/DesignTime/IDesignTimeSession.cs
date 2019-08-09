@@ -207,6 +207,21 @@ namespace Testflow.DesignTime
         /// <param name="variableName">变量名称</param>
         /// <param name="value">配置的变量值</param>
         void SetVariableValue(string variableName, string value);
+
+        /// <summary>
+        /// 配置变量类型
+        /// </summary>
+        /// <param name="variable">变量</param>
+        /// <param name="typeData">变量ITypeData</param>
+        void SetVariableType(IVariable variable, ITypeData typeData);
+
+        /// <summary>
+        /// 配置变量类型
+        /// </summary>
+        /// <param name="variableName">变量名称</param>
+        /// <param name="typeData">变量ITypeData</param>
+        void SetVariableType(string variableName, ITypeData typeData);
+
         #endregion
 
         #region Step参数值
