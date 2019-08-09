@@ -60,8 +60,7 @@ namespace Testflow.SlaveCore.Runner.Model
             StepTaskEntityBase stepEntity = _stepEntityRoot;
             do
             {
-                stepEntity.GenerateInvokeInfo();
-                stepEntity.InitializeParamsValues();
+                stepEntity.Generate();
             } while (null != (stepEntity = stepEntity.NextStep));
 
             this.State = RuntimeState.StartIdle;

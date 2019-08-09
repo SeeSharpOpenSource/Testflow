@@ -11,7 +11,7 @@ namespace Testflow.SlaveCore.Runner.Model
     {
         private string _sequenceName;
         private int _sequenceIndex;
-        public EmptyStepEntity(SlaveContext context, int sequenceIndex) : base(null, context, sequenceIndex)
+        public EmptyStepEntity(SlaveContext context, int sequenceIndex, ISequenceStep stepData) : base(stepData, context, sequenceIndex)
         {
             switch (sequenceIndex)
             {
@@ -29,12 +29,12 @@ namespace Testflow.SlaveCore.Runner.Model
             this.NextStep = null;
         }
 
-        public override void GenerateInvokeInfo()
+        protected override void GenerateInvokeInfo()
         {
             // ignore
         }
 
-        public override void InitializeParamsValues()
+        protected override void InitializeParamsValues()
         {
             // ignore
         }
@@ -48,7 +48,9 @@ namespace Testflow.SlaveCore.Runner.Model
 
         public override CallStack GetStack()
         {
-            return CallStack.GetEmptyStack(Context.SessionId, SequenceIndex);
+            return null == StepData ? 
+                CallStack.GetEmptyStack(Context.SessionId, SequenceIndex)
+                : CallStack.GetStack(Context.SessionId, StepData);
         }
     }
 }

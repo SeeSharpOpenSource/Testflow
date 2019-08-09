@@ -14,9 +14,9 @@ namespace Testflow.SlaveCore.Runner.Model
     {
         public static StepTaskEntityBase GetStepModel(ISequenceStep stepData, SlaveContext context, int sequenceIndex)
         {
-            if (stepData.HasSubSteps)
+            if (null == stepData.Function)
             {
-                return new StepExecutionEntity(stepData, context, sequenceIndex);
+                return new EmptyStepEntity(context, sequenceIndex, stepData);
             }
             switch (stepData.Function.Type)
             {
@@ -43,7 +43,7 @@ namespace Testflow.SlaveCore.Runner.Model
 
         public static StepTaskEntityBase GetEmptyStepModel(SlaveContext context, int sequenceIndex)
         {
-            return new EmptyStepEntity(context, sequenceIndex);
+            return new EmptyStepEntity(context, sequenceIndex, null);
         }
 
         private static readonly Dictionary<int, StepTaskEntityBase> CurrentModel = new Dictionary<int, StepTaskEntityBase>(Constants.DefaultRuntimeSize);
@@ -62,6 +62,7 @@ namespace Testflow.SlaveCore.Runner.Model
 
         protected readonly SlaveContext Context;
         protected readonly ISequenceStep StepData;
+        private readonly StepTaskEntityBase _subStepRoot;
 
         public StepResult Result { get; protected set; }
         public int SequenceIndex { get; }
@@ -72,6 +73,10 @@ namespace Testflow.SlaveCore.Runner.Model
             this.StepData = step;
             this.Result = StepResult.NotAvailable;
             this.SequenceIndex = sequenceIndex;
+            if (StepData.HasSubSteps)
+            {
+                this._subStepRoot = ModuleUtils.CreateSubStepModelChain(StepData.SubSteps, Context, sequenceIndex);
+            }
         }
 
         public virtual CallStack GetStack()
@@ -79,9 +84,23 @@ namespace Testflow.SlaveCore.Runner.Model
             return CallStack.GetStack(Context.SessionId, StepData);
         }
 
-        public abstract void GenerateInvokeInfo();
+        public void Generate()
+        {
+            this.GenerateInvokeInfo();
+            this.InitializeParamsValues();
+            if (StepData.HasSubSteps)
+            {
+                StepTaskEntityBase subStepEntity = _subStepRoot;
+                do
+                {
+                    subStepEntity.Generate();
+                } while (null != (subStepEntity = subStepEntity.NextStep));
+            }
+        }
 
-        public abstract void InitializeParamsValues();
+        protected abstract void GenerateInvokeInfo();
+
+        protected abstract void InitializeParamsValues();
 
         // 该方法只有在某个Sequence没有关键信息上报时使用。
         /// <summary>
@@ -114,6 +133,19 @@ namespace Testflow.SlaveCore.Runner.Model
                 return;
             }
             InvokeStep(forceInvoke);
+            if (StepData.HasSubSteps)
+            {
+                StepTaskEntityBase subStepEntity = _subStepRoot;
+                do
+                {
+                    if (!forceInvoke && Context.Cancellation.IsCancellationRequested)
+                    {
+                        this.Result = StepResult.Abort;
+                        return;
+                    }
+                    subStepEntity.Invoke(forceInvoke);
+                } while (null != (subStepEntity = subStepEntity.NextStep));
+            }
         }
 
         protected abstract void InvokeStep(bool forceInvoke);

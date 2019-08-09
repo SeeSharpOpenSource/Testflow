@@ -17,7 +17,7 @@ namespace Testflow.SlaveCore.Runner.Model
             _params = new List<object>(step.Function.Parameters.Count);
         }
 
-        public override void GenerateInvokeInfo()
+        protected override void GenerateInvokeInfo()
         {
             BindingFlags bindingFlags = BindingFlags.Public;
             bindingFlags |= (StepData.Function.Type == FunctionType.InstancePropertySetter)
@@ -37,7 +37,7 @@ namespace Testflow.SlaveCore.Runner.Model
 
         }
 
-        public override void InitializeParamsValues()
+        protected override void InitializeParamsValues()
         {
             if (!string.IsNullOrWhiteSpace(StepData.Function.Instance))
             {

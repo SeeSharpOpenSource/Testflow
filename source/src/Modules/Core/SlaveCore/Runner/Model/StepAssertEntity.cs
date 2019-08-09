@@ -20,12 +20,12 @@ namespace Testflow.SlaveCore.Runner.Model
 
         }
 
-        public override void GenerateInvokeInfo()
+        protected override void GenerateInvokeInfo()
         {
             throw new System.NotImplementedException();
         }
 
-        public override void InitializeParamsValues()
+        protected override void InitializeParamsValues()
         {
             throw new System.NotImplementedException();
         }

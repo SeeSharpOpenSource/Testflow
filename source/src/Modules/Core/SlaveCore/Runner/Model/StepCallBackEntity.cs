@@ -34,14 +34,14 @@ namespace Testflow.SlaveCore.Runner.Model
         }
 
         //method/Constructor Info
-        public override void GenerateInvokeInfo()
+        protected override void GenerateInvokeInfo()
         {
             //todo 做异步的时候再把Method加载进来，让slave运行
             //同步则无需加载method信息，因为会在master的CallBackProcessor里加载执行
         }
 
         // 改变StepData.Function.Parameters：如果是variable，则变为运行时$格式
-        public override void InitializeParamsValues()
+        protected override void InitializeParamsValues()
         {
             IArgumentCollection argumentInfos = StepData.Function.ParameterType;
             IParameterDataCollection parameters = StepData.Function.Parameters;
