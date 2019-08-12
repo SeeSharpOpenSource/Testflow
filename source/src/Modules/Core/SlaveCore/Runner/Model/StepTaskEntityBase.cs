@@ -73,7 +73,7 @@ namespace Testflow.SlaveCore.Runner.Model
             this.StepData = step;
             this.Result = StepResult.NotAvailable;
             this.SequenceIndex = sequenceIndex;
-            if (StepData.HasSubSteps)
+            if (null != StepData && StepData.HasSubSteps)
             {
                 this._subStepRoot = ModuleUtils.CreateSubStepModelChain(StepData.SubSteps, Context, sequenceIndex);
             }
@@ -88,7 +88,7 @@ namespace Testflow.SlaveCore.Runner.Model
         {
             this.GenerateInvokeInfo();
             this.InitializeParamsValues();
-            if (StepData.HasSubSteps)
+            if (null != StepData && StepData.HasSubSteps)
             {
                 StepTaskEntityBase subStepEntity = _subStepRoot;
                 do
@@ -133,7 +133,17 @@ namespace Testflow.SlaveCore.Runner.Model
                 return;
             }
             InvokeStep(forceInvoke);
-            if (StepData.HasSubSteps)
+            // 如果当前step被标记为记录状态，则返回状态信息
+            if (null != StepData && StepData.RecordStatus)
+            {
+                SequenceStatusInfo statusInfo = new SequenceStatusInfo(SequenceIndex, this.GetStack(),
+                    StatusReportType.Record, Result);
+                // 更新watch变量值
+                statusInfo.WatchDatas = Context.VariableMapper.GetWatchDataValues(StepData);
+                Context.StatusQueue.Enqueue(statusInfo);
+            }
+
+            if (null != StepData && StepData.HasSubSteps)
             {
                 StepTaskEntityBase subStepEntity = _subStepRoot;
                 do

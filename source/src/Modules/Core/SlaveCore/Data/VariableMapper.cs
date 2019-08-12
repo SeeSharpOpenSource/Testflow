@@ -142,8 +142,7 @@ namespace Testflow.SlaveCore.Data
 
         public Dictionary<string, string> GetWatchDataValues(ISequenceFlowContainer sequence)
         {
-
-            if (_keyVariables.Count == 0)
+            if (_keyVariables.Count == 0 || null == sequence)
             {
                 return null;
             }

@@ -212,15 +212,6 @@ namespace Testflow.SlaveCore.Runner.Model
                 default:
                     throw new ArgumentOutOfRangeException();
             }
-            // 如果当前step被标记为记录状态，则返回状态信息
-            if (StepData.RecordStatus)
-            {
-                SequenceStatusInfo statusInfo = new SequenceStatusInfo(SequenceIndex, this.GetStack(),
-                    StatusReportType.Record, Result);
-                // 更新watch变量值
-                statusInfo.WatchDatas = Context.VariableMapper.GetWatchDataValues(StepData);
-                Context.StatusQueue.Enqueue(statusInfo);
-            }
         }
 
         private void ExecuteSequenceStep(bool forceInvoke)
