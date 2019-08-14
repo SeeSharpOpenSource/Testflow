@@ -24,8 +24,6 @@ namespace Testflow.SlaveCore.Runner.Model
 
         #region 方法属性
 
-        public Type ClassType { get; set; }
-
         public MethodInfo Method { get; set; }
 
         public ConstructorInfo Constructor { get; set; }
@@ -38,18 +36,9 @@ namespace Testflow.SlaveCore.Runner.Model
 
         #endregion
 
-        #region 计数相关
-
-        public int LoopCount { get; set; }
-
-        public int MaxLoopCount { get; }
-
-        #endregion
-
         public StepExecutionEntity(ISequenceStep step, SlaveContext context, int sequenceIndex) : base(step, context, sequenceIndex)
         {
             int session = context.SessionId;
-            this.LoopCount = 0;
 
             this.Method = null;
             this.Params = new object[step.Function.Parameters?.Count ?? 0];
@@ -141,42 +130,6 @@ namespace Testflow.SlaveCore.Runner.Model
         }
 
         protected override void InvokeStep(bool forceInvoke)
-        {
-            this.Result = StepResult.Error;
-            switch (StepData.Behavior)
-            {
-                case RunBehavior.Normal:
-                    ExecuteSequenceStep(forceInvoke);
-                    this.Result = StepResult.Pass;
-                    break;
-                case RunBehavior.Skip:
-                    this.Result = StepResult.Skip;
-                    break;
-                case RunBehavior.ForceSuccess:
-                    try
-                    {
-                        ExecuteSequenceStep(forceInvoke);
-                        this.Result = StepResult.Pass;
-                    }
-                    catch (TaskFailedException ex)
-                    {
-                        this.Result = StepResult.Failed;
-                        Context.LogSession.Print(LogLevel.Warn, SequenceIndex, ex,
-                            "Execute failed but force success.");
-                    }
-                    break;
-                case RunBehavior.ForceFailed:
-                    ExecuteSequenceStep(forceInvoke);
-                    this.Result = StepResult.Failed;
-                    // 抛出强制失败异常
-                    throw new TaskFailedException(SequenceIndex, FailedType.ForceFailed);
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
-        }
-
-        private void ExecuteSequenceStep(bool forceInvoke)
         {
             object instance;
             object returnValue;

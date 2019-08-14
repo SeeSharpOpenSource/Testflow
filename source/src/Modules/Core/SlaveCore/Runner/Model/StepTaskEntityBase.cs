@@ -1,13 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Reflection;
 using Testflow.CoreCommon.Common;
 using Testflow.CoreCommon.Data;
 using Testflow.CoreCommon.Messages;
 using Testflow.Data;
 using Testflow.Data.Sequence;
+using Testflow.Runtime;
 using Testflow.Runtime.Data;
 using Testflow.SlaveCore.Common;
 using Testflow.SlaveCore.Data;
+using Testflow.Usr;
 
 namespace Testflow.SlaveCore.Runner.Model
 {
@@ -64,6 +67,7 @@ namespace Testflow.SlaveCore.Runner.Model
         protected readonly SlaveContext Context;
         protected readonly ISequenceStep StepData;
         private readonly StepTaskEntityBase _subStepRoot;
+        private Action<bool> _invokeStepAction;
 
         public StepResult Result { get; protected set; }
         public int SequenceIndex { get; }
@@ -89,7 +93,12 @@ namespace Testflow.SlaveCore.Runner.Model
         {
             this.GenerateInvokeInfo();
             this.InitializeParamsValues();
-            if (null != StepData && StepData.HasSubSteps)
+            if (null == StepData)
+            {
+                _invokeStepAction = InvokeStepSingleTime;
+                return;
+            }
+            if (StepData.HasSubSteps)
             {
                 StepTaskEntityBase subStepEntity = _subStepRoot;
                 do
@@ -97,8 +106,51 @@ namespace Testflow.SlaveCore.Runner.Model
                     subStepEntity.Generate();
                 } while (null != (subStepEntity = subStepEntity.NextStep));
             }
+            bool retryEnabled = null != StepData.RetryCounter && StepData.RetryCounter.MaxRetryTimes > 0 &&
+                                StepData.RetryCounter.RetryEnabled;
+            bool breakIfFailed = StepData.BreakIfFailed;
+            switch (StepData.Behavior)
+            {
+                case RunBehavior.Normal:
+                    if (retryEnabled)
+                    {
+                        if (breakIfFailed)
+                        {
+                            _invokeStepAction = InvokeStepWithRetry;
+                        }
+                        else
+                        {
+                            _invokeStepAction = InvokeStepWithRetryAndForceContinue;
+                        }
+                    }
+                    else
+                    {
+                        if (breakIfFailed)
+                        {
+                            _invokeStepAction = InvokeStepSingleTime;
+                        }
+                        else
+                        {
+                            _invokeStepAction = InvokeStepAndForceContinue;
+                        }
+                    }
+                    break;
+                case RunBehavior.Skip:
+                    _invokeStepAction = InvokeStepWithSkip;
+                    break;
+                case RunBehavior.ForceSuccess:
+                    // 不使能Retry和BreakIfFailed
+                    _invokeStepAction = InvokeStepAndForcePass;
+                    break;
+                case RunBehavior.ForceFailed:
+                    // 不使能Retry和BreakIfFailed
+                    _invokeStepAction = InvokeStepAndForceFailed;
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
         }
-
+        
         protected abstract void GenerateInvokeInfo();
 
         protected abstract void InitializeParamsValues();
@@ -117,8 +169,7 @@ namespace Testflow.SlaveCore.Runner.Model
         {
             this.Result = result;
             // 如果发生错误，无论该步骤是否被配置为recordStatus，都需要发送状态信息
-            SequenceStatusInfo statusInfo = new SequenceStatusInfo(SequenceIndex, this.GetStack(),
-                    StatusReportType.Record, Result);
+            SequenceStatusInfo statusInfo = new SequenceStatusInfo(SequenceIndex, this.GetStack(), StatusReportType.Record, Result);
             // 更新watch变量值
             statusInfo.WatchDatas = Context.VariableMapper.GetWatchDataValues(StepData);
             Context.StatusQueue.Enqueue(statusInfo);
@@ -132,8 +183,7 @@ namespace Testflow.SlaveCore.Runner.Model
                 int currentIndex = 0;
                 if (CoreUtils.IsValidVaraible(StepData.LoopCounter.CounterVariable))
                 {
-                    variableFullName = ModuleUtils.GetVariableFullName(StepData.LoopCounter.CounterVariable,
-                        StepData, Context.SessionId);
+                    variableFullName = ModuleUtils.GetVariableFullName(StepData.LoopCounter.CounterVariable, StepData, Context.SessionId);
                 }
                 bool notCancelled = true;
                 do
@@ -142,15 +192,161 @@ namespace Testflow.SlaveCore.Runner.Model
                     {
                         Context.VariableMapper.SetParamValue(variableFullName, StepData.LoopCounter.CounterVariable, currentIndex);
                     }
-                    InvokeStepSingleTime(forceInvoke);
+                    _invokeStepAction.Invoke(forceInvoke);
                     currentIndex++;
                     notCancelled = forceInvoke || !Context.Cancellation.IsCancellationRequested;
                 } while (currentIndex < StepData.LoopCounter.MaxValue && notCancelled);
             }
             else
             {
+                _invokeStepAction.Invoke(forceInvoke);
+            }
+        }
+
+        #region 调用分支
+
+        private void InvokeStepWithRetryAndForceContinue(bool forceInvoke)
+        {
+            try
+            {
+                InvokeStepWithRetry(forceInvoke);
+            }
+            catch (TaskFailedException ex)
+            {
+                this.Result = StepResult.Failed;
+                RecordInvocationError(ex, ex.FailedType);
+            }
+            catch (TestflowAssertException ex)
+            {
+                this.Result = StepResult.Failed;
+                RecordInvocationError(ex, FailedType.AssertionFailed);
+            }
+            catch (TargetInvocationException ex)
+            {
+                this.Result = StepResult.Error;
+                RecordInvocationError(ex.InnerException, FailedType.TargetError);
+            }
+        }
+
+        private void InvokeStepWithRetry(bool forceInvoke)
+        {
+            int maxRetry = StepData.RetryCounter.MaxRetryTimes;
+            string retryVar = null;
+            if (CoreUtils.IsValidVaraible(StepData.RetryCounter.CounterVariable))
+            {
+                retryVar = ModuleUtils.GetVariableFullName(StepData.RetryCounter.CounterVariable, StepData, Context.SessionId);
+            }
+            int retryTimes = -1;
+            ApplicationException exception = null;
+            do
+            {
+                retryTimes++;
+                if (null != retryVar)
+                {
+                    Context.VariableMapper.SetParamValue(retryVar, StepData.RetryCounter.CounterVariable, retryTimes);
+                }
+                try
+                {
+                    InvokeStepSingleTime(forceInvoke);
+                    exception = null;
+                    // 成功执行一次后返回
+                    break;
+                }
+                catch (TaskFailedException ex)
+                {
+                    this.Result = StepResult.Failed;
+                    exception = ex;
+                    RecordInvocationError(ex, ex.FailedType);
+                }
+                catch (TestflowAssertException ex)
+                {
+                    this.Result = StepResult.Failed;
+                    exception = ex;
+                    RecordInvocationError(ex, FailedType.AssertionFailed);
+                }
+                catch (TargetInvocationException ex)
+                {
+                    this.Result = StepResult.Error;
+                    exception = ex;
+                    RecordInvocationError(ex.InnerException, FailedType.TargetError);
+                }
+            } while (retryTimes < maxRetry);
+            if (null != exception)
+            {
+                throw exception;
+            }
+        }
+
+        private void InvokeStepAndForceContinue(bool forceInvoke)
+        {
+            try
+            {
                 InvokeStepSingleTime(forceInvoke);
             }
+            catch (TaskFailedException ex)
+            {
+                this.Result = StepResult.Failed;
+                RecordInvocationError(ex, ex.FailedType);
+            }
+            catch (TestflowAssertException ex)
+            {
+                this.Result = StepResult.Failed;
+                RecordInvocationError(ex, FailedType.AssertionFailed);
+            }
+            catch (TargetInvocationException ex)
+            {
+                this.Result = StepResult.Error;
+                RecordInvocationError(ex.InnerException, FailedType.TargetError);
+            }
+        }
+
+        private void InvokeStepWithSkip(bool forceInvoke)
+        {
+            this.Result = StepResult.Skip;
+            Context.LogSession.Print(LogLevel.Info, Context.SessionId, $"Sequence step <{this.GetStack()}> skipped.");
+            // 如果当前step被标记为记录状态，则返回状态信息
+            if (null != StepData && StepData.RecordStatus)
+            {
+                RecordRuntimeStatus();
+            }
+        }
+
+        private void InvokeStepAndForcePass(bool forceInvoke)
+        {
+            try
+            {
+                InvokeStepSingleTime(forceInvoke);
+            }
+            catch (TaskFailedException ex)
+            {
+                this.Result = StepResult.Pass;
+                Context.LogSession.Print(LogLevel.Warn, Context.SessionId, 
+                    $"Sequence step <{this.GetStack()}> failed but force pass.");
+                RecordInvocationError(ex, ex.FailedType);
+            }
+            catch (TestflowAssertException ex)
+            {
+                this.Result = StepResult.Pass;
+                Context.LogSession.Print(LogLevel.Warn, Context.SessionId,
+                    $"Sequence step <{this.GetStack()}> failed but force pass.");
+                RecordInvocationError(ex, FailedType.AssertionFailed);
+            }
+            catch (TargetInvocationException ex)
+            {
+                this.Result = StepResult.Pass;
+                Context.LogSession.Print(LogLevel.Warn, Context.SessionId,
+                    $"Sequence step <{this.GetStack()}> failed but force pass.");
+                RecordInvocationError(ex.InnerException, FailedType.TargetError);
+            }
+        }
+
+        private void InvokeStepAndForceFailed(bool forceInvoke)
+        {
+            InvokeStepSingleTime(forceInvoke);
+            this.Result = StepResult.Failed;
+            Context.LogSession.Print(LogLevel.Warn, Context.SessionId,
+                    $"Sequence step <{this.GetStack()}> passed but force failed.");
+            throw new TaskFailedException(SequenceIndex, FailedType.ForceFailed);
         }
 
         private void InvokeStepSingleTime(bool forceInvoke)
@@ -162,15 +358,13 @@ namespace Testflow.SlaveCore.Runner.Model
                 this.Result = StepResult.Abort;
                 return;
             }
+            this.Result = StepResult.Error;
             InvokeStep(forceInvoke);
+            this.Result = StepResult.Pass;
             // 如果当前step被标记为记录状态，则返回状态信息
             if (null != StepData && StepData.RecordStatus)
             {
-                SequenceStatusInfo statusInfo = new SequenceStatusInfo(SequenceIndex, this.GetStack(),
-                    StatusReportType.Record, Result);
-                // 更新watch变量值
-                statusInfo.WatchDatas = Context.VariableMapper.GetWatchDataValues(StepData);
-                Context.StatusQueue.Enqueue(statusInfo);
+                RecordRuntimeStatus();
             }
             if (null != StepData && StepData.HasSubSteps)
             {
@@ -187,6 +381,26 @@ namespace Testflow.SlaveCore.Runner.Model
                     notCancelled = forceInvoke || !Context.Cancellation.IsCancellationRequested;
                 } while (null != (subStepEntity = subStepEntity.NextStep) && notCancelled);
             }
+        }
+
+        #endregion
+
+        private void RecordRuntimeStatus()
+        {
+            SequenceStatusInfo statusInfo = new SequenceStatusInfo(SequenceIndex, this.GetStack(), 
+                StatusReportType.Record, Result);
+            // 更新watch变量值
+            statusInfo.WatchDatas = Context.VariableMapper.GetWatchDataValues(StepData);
+            Context.StatusQueue.Enqueue(statusInfo);
+        }
+
+        private void RecordInvocationError(Exception ex, FailedType failedType)
+        {
+            SequenceFailedInfo failedInfo = new SequenceFailedInfo(ex, failedType);
+            SequenceStatusInfo statusInfo = new SequenceStatusInfo(SequenceIndex, this.GetStack(),
+                StatusReportType.Record, Result, failedInfo);
+            Context.StatusQueue.Enqueue(statusInfo);
+            Context.LogSession.Print(LogLevel.Error, Context.SessionId, ex.Message);
         }
 
         protected abstract void InvokeStep(bool forceInvoke);
