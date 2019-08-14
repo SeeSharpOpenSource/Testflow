@@ -37,6 +37,7 @@ namespace Testflow.MasterCore.StatusManage
             this._stateManageContext = stateManageContext;
             this.BlockedTime = TimeSpan.Zero;
             this._blockedStart = DateTime.MaxValue;
+            this.RunStack = CallStack.GetEmptyStack(session, sequence.Index);
 
             _sequenceTestResult = this._stateManageContext.GetSequenceResults(Session, SequenceIndex);
             _sequenceResultData = new SequenceResultData()
