@@ -68,6 +68,7 @@ namespace Testflow.SlaveCore.Runner.Model
         protected readonly ISequenceStep StepData;
         private readonly StepTaskEntityBase _subStepRoot;
         private Action<bool> _invokeStepAction;
+        private bool _hasLoopCounter = false;
 
         public StepResult Result { get; protected set; }
         public int SequenceIndex { get; }
@@ -98,6 +99,7 @@ namespace Testflow.SlaveCore.Runner.Model
                 _invokeStepAction = InvokeStepSingleTime;
                 return;
             }
+            _hasLoopCounter = (null != StepData.LoopCounter && StepData.LoopCounter.MaxValue > 1);
             if (StepData.HasSubSteps)
             {
                 StepTaskEntityBase subStepEntity = _subStepRoot;
@@ -177,7 +179,7 @@ namespace Testflow.SlaveCore.Runner.Model
 
         public void Invoke(bool forceInvoke)
         {
-            if (null != StepData && null != StepData.LoopCounter && StepData.LoopCounter.MaxValue > 1)
+            if (_hasLoopCounter)
             {
                 string variableFullName = null;
                 int currentIndex = 0;
