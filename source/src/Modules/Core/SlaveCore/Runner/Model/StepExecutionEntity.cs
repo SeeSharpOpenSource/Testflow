@@ -18,10 +18,6 @@ namespace Testflow.SlaveCore.Runner.Model
     {
         #region 序列功能标志
 
-        public bool HasLoopCount { get; }
-
-        public bool HasRetryCount { get; }
-
         public FunctionType FunctionType { get; }
 
         #endregion
@@ -48,24 +44,12 @@ namespace Testflow.SlaveCore.Runner.Model
 
         public int MaxLoopCount { get; }
 
-        public string LoopVar { get; }
-
-        public int RetryCount { get; set; }
-
-        public int MaxRetryCount { get; }
-
-        public string RetryVar { get; }
-
         #endregion
 
         public StepExecutionEntity(ISequenceStep step, SlaveContext context, int sequenceIndex) : base(step, context, sequenceIndex)
         {
-            this.HasLoopCount = false;
-            this.HasRetryCount = false;
-
             int session = context.SessionId;
             this.LoopCount = 0;
-            this.RetryCount = 0;
 
             this.Method = null;
             this.Params = new object[step.Function.Parameters?.Count ?? 0];
@@ -81,28 +65,6 @@ namespace Testflow.SlaveCore.Runner.Model
             {
                 string variableName = ModuleUtils.GetVariableNameFromParamValue(step.Function.Return);
                 this.ReturnVar = ModuleUtils.GetVariableFullName(variableName, step, session);
-            }
-
-            if (null != step.LoopCounter && step.LoopCounter.MaxValue > 1 && step.LoopCounter.CounterEnabled)
-            {
-                this.HasLoopCount = true;
-                this.MaxLoopCount = step.LoopCounter.MaxValue;
-                if (CoreUtils.IsValidVaraible(step.LoopCounter.CounterVariable))
-                {
-                    string variable = ModuleUtils.GetVariableNameFromParamValue(step.LoopCounter.CounterVariable);
-                    this.LoopVar = ModuleUtils.GetVariableFullName(variable, step, session);
-                }
-            }
-
-            if (null != step.RetryCounter && step.RetryCounter.MaxRetryTimes > 1 && step.RetryCounter.RetryEnabled)
-            {
-                this.HasRetryCount = true;
-                this.MaxRetryCount = step.RetryCounter.MaxRetryTimes;
-                if (CoreUtils.IsValidVaraible(step.RetryCounter.CounterVariable))
-                {
-                    string variable = ModuleUtils.GetVariableNameFromParamValue(step.RetryCounter.CounterVariable);
-                    this.RetryVar = ModuleUtils.GetVariableFullName(variable, step, session);
-                }
             }
         }
 
@@ -215,32 +177,6 @@ namespace Testflow.SlaveCore.Runner.Model
         }
 
         private void ExecuteSequenceStep(bool forceInvoke)
-        {
-            if (!HasLoopCount)
-            {
-                ExecuteStepSingleTime(forceInvoke);
-            }
-            else
-            {
-                LoopCount = 0;
-                bool notCancelled;
-                do
-                {
-                    if (CoreUtils.IsValidVaraible(StepData.LoopCounter.CounterVariable))
-                    {
-                        Context.VariableMapper.SetParamValue(LoopVar, StepData.LoopCounter.CounterVariable, LoopCount);
-                    }
-                    ExecuteStepSingleTime(forceInvoke);
-                    if (CoreUtils.IsValidVaraible(LoopVar))
-                    {
-                        Context.VariableMapper.SetParamValue(LoopVar, StepData.LoopCounter.CounterVariable, LoopCount);
-                    }
-                    notCancelled = forceInvoke || !Context.Cancellation.IsCancellationRequested;
-                } while (++LoopCount < MaxLoopCount && notCancelled);
-            }
-        }
-
-        private void ExecuteStepSingleTime(bool forceInvoke)
         {
             object instance;
             object returnValue;

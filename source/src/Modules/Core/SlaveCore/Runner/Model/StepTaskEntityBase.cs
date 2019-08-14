@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Testflow.CoreCommon.Common;
 using Testflow.CoreCommon.Data;
 using Testflow.CoreCommon.Messages;
 using Testflow.Data;
@@ -125,6 +126,35 @@ namespace Testflow.SlaveCore.Runner.Model
 
         public void Invoke(bool forceInvoke)
         {
+            if (null != StepData && null != StepData.LoopCounter && StepData.LoopCounter.MaxValue > 1)
+            {
+                string variableFullName = null;
+                int currentIndex = 0;
+                if (CoreUtils.IsValidVaraible(StepData.LoopCounter.CounterVariable))
+                {
+                    variableFullName = ModuleUtils.GetVariableFullName(StepData.LoopCounter.CounterVariable,
+                        StepData, Context.SessionId);
+                }
+                bool notCancelled = true;
+                do
+                {
+                    if (null != variableFullName)
+                    {
+                        Context.VariableMapper.SetParamValue(variableFullName, StepData.LoopCounter.CounterVariable, currentIndex);
+                    }
+                    InvokeStepSingleTime(forceInvoke);
+                    currentIndex++;
+                    notCancelled = forceInvoke || !Context.Cancellation.IsCancellationRequested;
+                } while (currentIndex < StepData.LoopCounter.MaxValue && notCancelled);
+            }
+            else
+            {
+                InvokeStepSingleTime(forceInvoke);
+            }
+        }
+
+        private void InvokeStepSingleTime(bool forceInvoke)
+        {
             CurrentModel[SequenceIndex] = this;
             // 如果是取消状态并且不是强制执行则返回
             if (!forceInvoke && Context.Cancellation.IsCancellationRequested)
@@ -142,10 +172,10 @@ namespace Testflow.SlaveCore.Runner.Model
                 statusInfo.WatchDatas = Context.VariableMapper.GetWatchDataValues(StepData);
                 Context.StatusQueue.Enqueue(statusInfo);
             }
-
             if (null != StepData && StepData.HasSubSteps)
             {
                 StepTaskEntityBase subStepEntity = _subStepRoot;
+                bool notCancelled = true;
                 do
                 {
                     if (!forceInvoke && Context.Cancellation.IsCancellationRequested)
@@ -154,7 +184,8 @@ namespace Testflow.SlaveCore.Runner.Model
                         return;
                     }
                     subStepEntity.Invoke(forceInvoke);
-                } while (null != (subStepEntity = subStepEntity.NextStep));
+                    notCancelled = forceInvoke || !Context.Cancellation.IsCancellationRequested;
+                } while (null != (subStepEntity = subStepEntity.NextStep) && notCancelled);
             }
         }
 

@@ -80,13 +80,13 @@ namespace Testflow.SlaveCore.Runner.Model
                     StatusReportType.Start, StepResult.NotAvailable);
                 _context.StatusQueue.Enqueue(startStatusInfo);
 
-                _stepEntityRoot.Invoke(forceInvoke);
                 StepTaskEntityBase stepEntity = _stepEntityRoot;
+                bool notCancelled = true;
                 do
                 {
                     stepEntity.Invoke(forceInvoke);
-                } while (null != (stepEntity = stepEntity.NextStep));
-
+                    notCancelled = forceInvoke || !_context.Cancellation.IsCancellationRequested;
+                } while (null != (stepEntity = stepEntity.NextStep) && notCancelled);
                 SetResultState(out lastStepResult, out finalReportType, out failedInfo);
             }
             catch (TaskFailedException ex)
