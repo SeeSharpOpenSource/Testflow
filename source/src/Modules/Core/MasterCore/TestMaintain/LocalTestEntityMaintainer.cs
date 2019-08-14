@@ -193,6 +193,7 @@ namespace Testflow.MasterCore.TestMaintain
             configData.Add("DotNetLibDir", "");
             configData.Add("PlatformLibDir", "");
             configData.Add("InstanceLibDir", "");
+            configData.Add("EnablePerformanceMonitor", _globalInfo.ConfigData.GetProperty<bool>("EnablePerformanceMonitor").ToString());
 
             return JsonConvert.SerializeObject(configData);
         }

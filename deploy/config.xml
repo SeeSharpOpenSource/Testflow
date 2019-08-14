@@ -20,6 +20,7 @@
     <ConfigItems Name="TestGenTimeout" Value="5000" Type="System.Int32" />
     <ConfigItems Name="AbortTimeout" Value="10000" Type="System.Int32" />
     <ConfigItems Name="MessengerType" Value="MSMQ" Type="Testflow.Utility.MessageUtil.MessengerType" />
+    <ConfigItems Name="EnablePerformanceMonitor" Value="False" Type="System.Boolean" />
   </ModuleConfigData>
   <ModuleConfigData Name="DataMaintain">
     <ConfigItems Name="DatabaseName" Value="testflowData.db3" Type="System.String" />

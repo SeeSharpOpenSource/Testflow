@@ -121,7 +121,10 @@ namespace Testflow.SlaveCore.SlaveFlowControl
             {
                 Index = Context.MsgIndex
             };
-            ModuleUtils.FillPerformance(statusMessage);
+            if (Context.GetProperty<bool>("EnablePerformanceMonitor"))
+            {
+                ModuleUtils.FillPerformance(statusMessage);
+            }
             Context.UplinkMsgProcessor.SendMessage(statusMessage, false);
         }
 
@@ -132,7 +135,10 @@ namespace Testflow.SlaveCore.SlaveFlowControl
             {
                 Index = Context.MsgIndex
             };
-            ModuleUtils.FillPerformance(statusMessage);
+            if (Context.GetProperty<bool>("EnablePerformanceMonitor"))
+            {
+                ModuleUtils.FillPerformance(statusMessage);
+            }
             statusMessage.WatchData = Context.VariableMapper.GetReturnDataValues(Context.Sequence);
             Context.UplinkMsgProcessor.SendMessage(statusMessage, true);
         }

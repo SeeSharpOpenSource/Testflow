@@ -39,6 +39,7 @@ namespace Testflow.ConfigurationManagerTest
             globalConfigData.AddConfigItem("EngineCore", "TestGenTimeout", 5000);
             globalConfigData.AddConfigItem("EngineCore", "AbortTimeout", 10000);
             globalConfigData.AddConfigItem("EngineCore", "MessengerType", MessengerType.MSMQ);
+            globalConfigData.AddConfigItem("EngineCore", "EnablePerformanceMonitor", false);
 
             globalConfigData.AddConfigRoot("DataMaintain");
             globalConfigData.AddConfigItem("DataMaintain", "DatabaseName", "testflowData.db3");
