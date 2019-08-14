@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading;
 using Testflow.Usr;
 using Testflow.CoreCommon.Common;
 using Testflow.CoreCommon.Data.EventInfos;
@@ -244,6 +245,8 @@ namespace Testflow.MasterCore.Core
         private bool HandleRuntimeErrorMessage(RuntimeErrorMessage message)
         {
             ExceptionEventInfo exceptionEventInfo = new ExceptionEventInfo(message);
+            // TODO 阻塞足够时间后再执行，以保证其他状态数据的正确更新
+            Thread.Sleep(200);
             _globalInfo.EventQueue.Enqueue(exceptionEventInfo);
             _testsMaintainer.FreeHost(message.Id);
             return true;
