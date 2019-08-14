@@ -522,17 +522,8 @@ namespace Testflow.DataMaintainer
 
         private void InitializeDatabaseAndConnection()
         {
-            string testflowHome = Environment.GetEnvironmentVariable(CommonConst.EnvironmentVariable);
-            if (string.IsNullOrWhiteSpace(testflowHome))
-            {
-                testflowHome = Environment.CurrentDirectory;
-            }
-            if (testflowHome.EndsWith(Path.DirectorySeparatorChar.ToString()))
-            {
-                testflowHome += Path.DirectorySeparatorChar;
-            }
-            string databaseFilePath =
-                $"{testflowHome}{CommonConst.DataDir}{Path.DirectorySeparatorChar}{Constants.DataBaseName}";
+            string testflowHome = ConfigData.GetProperty<string>("TestflowHome");
+            string databaseFilePath = ConfigData.GetProperty<string>("DatabaseName");
             // 使用DbProviderFactory方式连接需要在App.Config文件中定义DbProviderFactories节点
             // 但是App.Config文件只在入口Assembly中时才会被默认加载，所以目前写死为SqlConnection
 //            Connection.ConnectionString = $"Data Source={databaseFilePath}";

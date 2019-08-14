@@ -40,6 +40,7 @@ namespace Testflow.ConfigurationManager
             GlobalConfigData globalConfigData = GetGlobalConfigData(configData);
             AddExtraGlobalConfigData(globalConfigData);
             AddExtraRuntimeConfigData(globalConfigData);
+            AddExtraDataMaintainConfigData(globalConfigData);
             return globalConfigData;
         }
 
@@ -158,6 +159,15 @@ namespace Testflow.ConfigurationManager
                 workspaceDirList.Add(dirPath);
             }
             configData.SetConfigItem(Constants.GlobalConfig, "WorkspaceDir", workspaceDirList.ToArray());
+        }
+
+        private void AddExtraDataMaintainConfigData(GlobalConfigData globalConfigData)
+        {
+            string databaseName = globalConfigData.GetConfigValue<string>(Constants.DataMaintain, "DatabaseName");
+            string testflowHome = globalConfigData.GetConfigValue<string>(Constants.GlobalConfig, "TestflowHome");
+            string databaseFilePath =
+                $"{testflowHome}{CommonConst.DataDir}{Path.DirectorySeparatorChar}{databaseName}";
+            globalConfigData.SetConfigItem(Constants.DataMaintain, "DatabaseName", databaseFilePath);
         }
 
         private static string GetDotNetDir(string dotNetVersion)

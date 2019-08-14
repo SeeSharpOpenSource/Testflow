@@ -38,7 +38,7 @@ namespace Testflow.DataMaintainer
 
         public void ApplyConfig(IModuleConfigData configData)
         {
-            // TODO
+            this.ConfigData = configData;
         }
 
         public int GetTestInstanceCount(string fileterString)
