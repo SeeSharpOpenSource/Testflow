@@ -69,7 +69,7 @@ namespace Testflow.DataMaintainer
             using (DbDataReader dataReader = ExecuteReadCommand(cmd))
             {
                 int count = 0;
-                if (dataReader.Read())
+                if (dataReader.Read() && !dataReader.IsDBNull(0))
                 {
                     count = dataReader.GetInt32(0);
                 }
@@ -273,7 +273,7 @@ namespace Testflow.DataMaintainer
                 DataBaseItemNames.ProcessorTimeColumn, filter);
             using (DbDataReader reader = ExecuteReadCommand(cmd))
             {
-                if (reader.Read())
+                if (reader.Read() && !reader.IsDBNull(0))
                 {
                     performance.CpuTime = (ulong) reader.GetDouble(0);
                 }
@@ -283,7 +283,7 @@ namespace Testflow.DataMaintainer
                 DataBaseItemNames.MemoryAllocatedColumn, filter);
             using (DbDataReader reader = ExecuteReadCommand(cmd))
             {
-                if (reader.Read())
+                if (reader.Read() && !reader.IsDBNull(0))
                 {
                     performance.MaxAllocatedMemory = reader.GetInt64(0);
                 }
@@ -293,7 +293,7 @@ namespace Testflow.DataMaintainer
                 DataBaseItemNames.MemoryUsedColumn, filter);
             using (DbDataReader reader = ExecuteReadCommand(cmd))
             {
-                if (reader.Read())
+                if (reader.Read() && !reader.IsDBNull(0))
                 {
                     performance.MaxUsedMemory = reader.GetInt64(0);
                 }
@@ -303,7 +303,7 @@ namespace Testflow.DataMaintainer
                 DataBaseItemNames.MemoryAllocatedColumn, filter);
             using (DbDataReader reader = ExecuteReadCommand(cmd))
             {
-                if (reader.Read())
+                if (reader.Read() && !reader.IsDBNull(0))
                 {
                     performance.AverageAllocatedMemory = (long) reader.GetDouble(0);
                 }
@@ -313,7 +313,7 @@ namespace Testflow.DataMaintainer
                 DataBaseItemNames.MemoryUsedColumn, filter);
             using (DbDataReader reader = ExecuteReadCommand(cmd))
             {
-                if (reader.Read())
+                if (reader.Read() && !reader.IsDBNull(0))
                 {
                     performance.AverageUsedMemory = (long) reader.GetDouble(0);
                 }
