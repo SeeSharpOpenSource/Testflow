@@ -165,6 +165,11 @@ namespace Testflow.ConfigurationManager
         {
             string databaseName = globalConfigData.GetConfigValue<string>(Constants.DataMaintain, "DatabaseName");
             string testflowHome = globalConfigData.GetConfigValue<string>(Constants.GlobalConfig, "TestflowHome");
+            string dataDirPath = $"{testflowHome}{CommonConst.DataDir}";
+            if (!Directory.Exists(dataDirPath))
+            {
+                Directory.CreateDirectory(dataDirPath);
+            }
             string databaseFilePath =
                 $"{testflowHome}{CommonConst.DataDir}{Path.DirectorySeparatorChar}{databaseName}";
             globalConfigData.SetConfigItem(Constants.DataMaintain, "DatabaseName", databaseFilePath);

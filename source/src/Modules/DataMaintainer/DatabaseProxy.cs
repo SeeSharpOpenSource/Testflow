@@ -535,11 +535,6 @@ namespace Testflow.DataMaintainer
                 Connection.Open();
                 return;
             }
-            string databaseFileDir = $"{testflowHome}{CommonConst.DataDir}";
-            if (!Directory.Exists(databaseFileDir))
-            {
-                Directory.CreateDirectory(CommonConst.DataDir);
-            }
             Connection = new SQLiteConnection($"Data Source={databaseFilePath}");
             DbTransaction transaction = null;
             try
