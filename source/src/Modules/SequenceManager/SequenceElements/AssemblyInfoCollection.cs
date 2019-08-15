@@ -70,7 +70,7 @@ namespace Testflow.SequenceManager.SequenceElements
 
         public void RemoveAt(int index)
         {
-            throw new System.NotImplementedException();
+            _innerCollection.RemoveAt(index);
         }
 
         public IAssemblyInfo this[int index]
