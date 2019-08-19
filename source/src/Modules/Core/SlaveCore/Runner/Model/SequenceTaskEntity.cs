@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Reflection;
+using System.Runtime.ExceptionServices;
 using System.Threading;
 using Testflow.Usr;
 using Testflow.CoreCommon.Data;
@@ -68,6 +69,10 @@ namespace Testflow.SlaveCore.Runner.Model
             StepTaskEntityBase.AddSequenceEntrance(_stepEntityRoot);
         }
 
+        /// <summary>
+        /// 调用序列的函数
+        /// </summary>
+        [HandleProcessCorruptedStateExceptions]
         public void Invoke(bool forceInvoke = false)
         {
             SequenceFailedInfo failedInfo = null;
