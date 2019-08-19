@@ -44,36 +44,46 @@ namespace Testflow.ComInterfaceManager
         {
             Exception = null;
             ErrorCode = 0;
-            if (!File.Exists(path))
-            {
-                this.ErrorCode = ModuleErrorCode.LibraryNotFound;
-                return null;
-            }
             Assembly assembly;
-            try
+            if (!_assemblies.ContainsKey(assemblyName))
             {
-                assembly = Assembly.LoadFile(path);
-            }
-            catch (Exception ex)
-            {
-                this.Exception = ex;
-                this.ErrorCode = ModuleErrorCode.LibraryLoadError;
-                return null;
-            }
-
-            if (string.IsNullOrWhiteSpace(assemblyName))
-            {
-                assemblyName = assembly.GetName().Name;
-                version = assembly.GetName().Version.ToString();
+                if (!File.Exists(path))
+                {
+                    this.ErrorCode = ModuleErrorCode.LibraryNotFound;
+                    return null;
+                }
+                try
+                {
+                    assembly = Assembly.LoadFrom(path);
+                }
+                catch (Exception ex)
+                {
+                    this.Exception = ex;
+                    this.ErrorCode = ModuleErrorCode.LibraryLoadError;
+                    return null;
+                }
+                if (string.IsNullOrWhiteSpace(assemblyName))
+                {
+                    assemblyName = assembly.GetName().Name;
+                    version = assembly.GetName().Version.ToString();
+                }
+                else
+                {
+                    if (!CheckVersion(version, assembly))
+                    {
+                        return null;
+                    }
+                }
+                if (!_assemblies.ContainsKey(assemblyName))
+                {
+                    _assemblies.Add(assemblyName, assembly);
+                }
             }
             else
             {
-                if (!CheckVersion(version, assembly))
-                {
-                    return null;
-                }
+                assembly = _assemblies[assemblyName];
             }
-            _assemblies.Add(assemblyName, assembly);
+            
             try
             {
                 ComInterfaceDescription descriptionData = new ComInterfaceDescription()
