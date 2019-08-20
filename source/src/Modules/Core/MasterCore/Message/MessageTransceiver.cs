@@ -103,7 +103,6 @@ namespace Testflow.MasterCore.Message
                 }
                 // TODO 目前只实现功能，未添加状态监控等功能，后期有时间再处理
                 Start();
-                UpLinkMessenger.Clear();
                 Activated = true;
             }
             finally

@@ -17,10 +17,10 @@ namespace Testflow.CoreCommon.Common
 
         public int Timeout { get; set; }
 
-        public void Wait(int waitState)
+        public bool Wait(int waitState)
         {
             Thread.VolatileWrite(ref _waitState, waitState);
-            _waitEvent.Wait(Timeout);
+            return _waitEvent.Wait(Timeout);
         }
 
         public void Free(int waitState)

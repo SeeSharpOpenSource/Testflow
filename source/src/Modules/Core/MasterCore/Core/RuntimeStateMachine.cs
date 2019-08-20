@@ -17,6 +17,7 @@ namespace Testflow.MasterCore.Core
         public event StateChangedDelegate StateAbortRequested;
         public event StateChangedDelegate StateAbort;
         public event StateChangedDelegate StateCollapsed;
+        public event StateChangedDelegate TimeOut;
 
         private readonly Dictionary<RuntimeState, Action> _stateActions;
         private int _runtimeState;
@@ -71,6 +72,9 @@ namespace Testflow.MasterCore.Core
                 },
                 {
                     RuntimeState.Collapsed, () => { StateCollapsed?.Invoke(); }
+                },
+                {
+                    RuntimeState.Timeout, () => { TimeOut?.Invoke(); }
                 }
             };
         }

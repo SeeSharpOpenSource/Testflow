@@ -24,6 +24,7 @@ namespace Testflow.MasterCore.TestMaintain
         private readonly ModuleGlobalInfo _globalInfo;
         private Dictionary<int, RuntimeContainer> _runtimeContainers;
         private readonly BlockHandle _blockHandle;
+        private object _operationLock = new object();
         
         public LocalTestEntityMaintainer(ModuleGlobalInfo globalInfo, BlockHandle blockHandle)
         {
@@ -77,11 +78,14 @@ namespace Testflow.MasterCore.TestMaintain
         {
             try
             {
-                if (_runtimeContainers.ContainsKey(id))
+                lock (_operationLock)
                 {
-                    RuntimeContainer runtimeContainer = _runtimeContainers[id];
-                    _runtimeContainers.Remove(id);
-                    runtimeContainer.Dispose();
+                    if (_runtimeContainers.ContainsKey(id))
+                    {
+                        RuntimeContainer runtimeContainer = _runtimeContainers[id];
+                        _runtimeContainers.Remove(id);
+                        runtimeContainer.Dispose();
+                    }
                 }
             }
             catch (Exception ex)

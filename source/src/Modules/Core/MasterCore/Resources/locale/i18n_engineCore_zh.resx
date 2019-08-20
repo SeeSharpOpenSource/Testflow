@@ -141,6 +141,12 @@
   <data name="OperatoinTimeout" xml:space="preserve">
     <value>操作超时。</value>
   </data>
+  <data name="TestGenTimeout" xml:space="preserve">
+    <value>测试生成超时。</value>
+  </data>
+  <data name="TestRunTimeout" xml:space="preserve">
+    <value>序列执行超时。</value>
+  </data>
   <data name="UnexistArgumentSource" xml:space="preserve">
     <value>带有入参的SequenceGroup必须和父级的TestProject同时运行。</value>
   </data>

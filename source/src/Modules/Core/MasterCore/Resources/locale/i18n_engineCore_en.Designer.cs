@@ -133,6 +133,24 @@ namespace Testflow.MasterCore.Resources.locale {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Test generation timeout..
+        /// </summary>
+        internal static string TestGenTimeout {
+            get {
+                return ResourceManager.GetString("TestGenTimeout", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sequence execution timeout..
+        /// </summary>
+        internal static string TestRunTimeout {
+            get {
+                return ResourceManager.GetString("TestRunTimeout", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to SequenceGroup with input arguments cannot run with out test project..
         /// </summary>
         internal static string UnexistArgumentSource {

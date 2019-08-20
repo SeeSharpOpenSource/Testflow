@@ -133,6 +133,24 @@ namespace Testflow.MasterCore.Resources.locale {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to 测试生成超时。.
+        /// </summary>
+        internal static string TestGenTimeout {
+            get {
+                return ResourceManager.GetString("TestGenTimeout", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 序列执行超时。.
+        /// </summary>
+        internal static string TestRunTimeout {
+            get {
+                return ResourceManager.GetString("TestRunTimeout", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to 带有入参的SequenceGroup必须和父级的TestProject同时运行。.
         /// </summary>
         internal static string UnexistArgumentSource {

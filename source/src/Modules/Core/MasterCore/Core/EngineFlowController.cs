@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading;
+using Testflow.CoreCommon;
 using Testflow.Usr;
 using Testflow.CoreCommon.Common;
 using Testflow.CoreCommon.Data.EventInfos;
@@ -31,10 +32,7 @@ namespace Testflow.MasterCore.Core
         public EngineFlowController(ModuleGlobalInfo globalInfo)
         {
             _globalInfo = globalInfo;
-            this._blockHandle = new BlockHandle()
-            {
-                Timeout = _globalInfo.ConfigData.GetProperty<int>("TestGenTimeout")
-            };
+            this._blockHandle = new BlockHandle();
             // TODO 暂时写死，只是用本地测试生成实体
             _testsMaintainer = new LocalTestEntityMaintainer(_globalInfo, _blockHandle);
             if (EnableDebug)
@@ -118,7 +116,15 @@ namespace Testflow.MasterCore.Core
                 _debugManager?.SendInitBreakPointMessage(0);
             }
             // 等待远程生成结束
-            _blockHandle.Wait(Constants.RmtGenState);
+            _blockHandle.Timeout = _globalInfo.ConfigData.GetProperty<int>("TestGenTimeout");
+            bool isNotTimeout = _blockHandle.Wait(Constants.RmtGenState);
+            if (!isNotTimeout)
+            {
+                _globalInfo.LogService.Print(LogLevel.Error, CommonConst.PlatformLogSession, "Test generation timeout.");
+                _globalInfo.StateMachine.State = RuntimeState.Timeout;
+                throw new TestflowRuntimeException(ModuleErrorCode.OperationTimeout,
+                    _globalInfo.I18N.GetStr("TestGenTimeout"));
+            }
             // 如果是异常状态则返回false
             return _globalInfo.StateMachine.State < RuntimeState.Abort;
         }
@@ -284,7 +290,12 @@ namespace Testflow.MasterCore.Core
                 }
                 // 目前使用同步Abort，每次只能释放一个
                 _abortBlocker.Timeout = _globalInfo.ConfigData.GetProperty<int>("AbortTimeout");
-                _abortBlocker.Wait(Constants.AbortState);
+                bool isNotTimeout = _abortBlocker.Wait(Constants.AbortState);
+                if (!isNotTimeout)
+                {
+                    _globalInfo.LogService.Print(LogLevel.Warn, CommonConst.PlatformLogSession, 
+                        $"Session {sessionId} abort timeout.");
+                }
             }
         }
 
@@ -292,7 +303,15 @@ namespace Testflow.MasterCore.Core
         public void WaitForTaskOver()
         {
             // 阻塞线程直到整个任务结束
-            _blockHandle.Wait(Constants.WaitOverState);
+            _blockHandle.Timeout = _globalInfo.ConfigData.GetProperty<int>("TestTimeout");
+            bool isNotTimeout = _blockHandle.Wait(Constants.WaitOverState);
+            if (!isNotTimeout)
+            {
+                _globalInfo.LogService.Print(LogLevel.Error, CommonConst.PlatformLogSession, "Test execution timeout.");
+                _globalInfo.StateMachine.State = RuntimeState.Timeout;
+                throw new TestflowRuntimeException(ModuleErrorCode.OperationTimeout, 
+                    _globalInfo.I18N.GetStr("TestRunTimeout"));
+            }
         }
 
         public void Stop()

@@ -141,6 +141,12 @@
   <data name="OperatoinTimeout" xml:space="preserve">
     <value>Operation timeout.</value>
   </data>
+  <data name="TestGenTimeout" xml:space="preserve">
+    <value>Test generation timeout.</value>
+  </data>
+  <data name="TestRunTimeout" xml:space="preserve">
+    <value>Sequence execution timeout.</value>
+  </data>
   <data name="UnexistArgumentSource" xml:space="preserve">
     <value>SequenceGroup with input arguments cannot run with out test project.</value>
   </data>
