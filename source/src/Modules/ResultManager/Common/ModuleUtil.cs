@@ -25,7 +25,7 @@ namespace Testflow.ResultManager.Common
             {
                 if (!ModuleUtil.IsValidDirectory(filePath))
                 {
-                    throw new TestflowDataException(ModuleErrorCode.InvalidFilePath, "Invalid File Path.");
+                    throw new TestflowDataException(ModuleErrorCode.InvalidFilePath, $"Invalid File or Directory Path: {filePath}");
                 }
                 filePath += "Results.txt";
             }

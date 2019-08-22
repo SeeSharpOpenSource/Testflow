@@ -54,18 +54,22 @@ namespace Testflow.ResultManager
             TestInstanceData testInstance = _dataMaintainer.GetTestInstance(runtimeHash);
             try
             {
-                sw.WriteLine(testInstance.Name);
-                sw.WriteLine(testInstance.Description);
-                sw.WriteLine(testInstance.TestProjectName);
-                sw.WriteLine(testInstance.TestProjectDescription);
-                sw.WriteLine($"StartGenTime: {testInstance.StartGenTime}");
-                sw.WriteLine($"EndGenTime: {testInstance.EndGenTime}");
-                sw.WriteLine($"StartTime: {testInstance.StartTime}");
-                sw.WriteLine($"End Time: {testInstance.EndTime}");
-                sw.WriteLine($"Elapsed Time: {testInstance.ElapsedTime}");
-                sw.WriteLine();
-				//输出报告每个session
-            	PrintSessionResults(sw, runtimeHash);            }
+                if(testInstance != null)
+                {
+                    sw.WriteLine(testInstance.Name);
+                    sw.WriteLine(testInstance.Description);
+                    sw.WriteLine(testInstance.TestProjectName);
+                    sw.WriteLine(testInstance.TestProjectDescription);
+                    sw.WriteLine($"StartGenTime: {testInstance.StartGenTime}");
+                    sw.WriteLine($"EndGenTime: {testInstance.EndGenTime}");
+                    sw.WriteLine($"StartTime: {testInstance.StartTime}");
+                    sw.WriteLine($"End Time: {testInstance.EndTime}");
+                    sw.WriteLine($"Elapsed Time: {testInstance.ElapsedTime}");
+                    sw.WriteLine();
+                }
+
+                //输出报告每个session
+                PrintSessionResults(sw, runtimeHash);            }
             catch (IOException ex)
             {
                 sw.Close();
