@@ -278,18 +278,6 @@ namespace Testflow.ComInterfaceManager
                 InitMethodParamDescription(methodInfo, funcDescription);
                 funcDescription.Signature = ModuleUtils.GetSignature(classType.Name, funcDescription);
 
-                #region CallBack特殊处理: 加一个Argument判断同步异步
-                if(funcType == FunctionType.CallBack)
-                {
-                    funcDescription.Arguments.Add(new ArgumentDescription()
-                    {
-                        ArgumentType = VariableType.Undefined,
-                        Type = null,
-                        DefaultValue = callBackAttribute.CallBackType.ToString(),
-                    });
-                }
-                #endregion
-
                 classDescription.Functions.Add(funcDescription);
             }
         }
