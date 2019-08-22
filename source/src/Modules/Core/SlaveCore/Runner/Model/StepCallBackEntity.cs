@@ -10,6 +10,8 @@ using Testflow.Runtime;
 using Testflow.Runtime.Data;
 using Testflow.SlaveCore.Common;
 using Testflow.Usr;
+using System.Reflection;
+using Testflow.Usr.Common;
 
 namespace Testflow.SlaveCore.Runner.Model
 {
@@ -23,21 +25,18 @@ namespace Testflow.SlaveCore.Runner.Model
         public StepCallBackEntity(ISequenceStep step, SlaveContext context, int sequenceIndex) : base(step, context, sequenceIndex)
         {
             this.Params = new object[step.Function.Parameters?.Count ?? 0];
-            if (step.Function.Description.Equals("Sychronous CallBack"))
-            {
-                this.callBackType = CallBackType.Synchronous;
-            }
-            else if (step.Function.Description.Equals("Asychronous CallBack"))
-            {
-                this.callBackType = CallBackType.Asynchronous;
-            }
         }
 
-        //method/Constructor Info
         protected override void GenerateInvokeInfo()
         {
-            //todo 做异步的时候再把Method加载进来，让slave运行
-            //同步则无需加载method信息，因为会在master的CallBackProcessor里加载执行
+            MethodInfo methodInfo = Context.TypeInvoker.GetMethod(StepData.Function);
+            if (null == methodInfo)
+            {
+                throw new TestflowRuntimeException(ModuleErrorCode.RuntimeError,
+                    Context.I18N.GetFStr("LoadFunctionFailed", StepData.Function.MethodName));
+            }
+            //判断同步异步
+            callBackType = methodInfo.GetCustomAttribute<CallBackAttribute>().CallBackType;
         }
 
         // 改变StepData.Function.Parameters：如果是variable，则变为运行时$格式

@@ -63,7 +63,7 @@ namespace Testflow.MasterCore.CallBack
             {
                 StepCollectionFindCallBack(sequence.Steps);
             }
-        }
+        }   
 
         private void StepCollectionFindCallBack(ISequenceStepCollection steps)
         {
@@ -103,6 +103,7 @@ namespace Testflow.MasterCore.CallBack
         }
 
         //执行step，然后发送消息
+        //todo I18n
         private void ProcessCallBack(CallBackMessage message)
         {
             string methodName = message.Name;
