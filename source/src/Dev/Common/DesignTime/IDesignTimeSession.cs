@@ -88,11 +88,18 @@ namespace Testflow.DesignTime
         bool RemoveSequence(ISequence sequence);
 
         /// <summary>
-        /// 通过sequenceId取得Context.SequenceGroup.Sequences里的某个sequence
+        /// 通过sequenceId获取sequence
         /// </summary>
-        /// <param name="id">sequence在SequenceGroup里的id</param>
+        /// <param name="id">sequenceId</param>
         /// <returns></returns>
         ISequence GetSequence(int id);
+
+        /// <summary>
+        /// 通过name获取sequence
+        /// </summary>
+        /// <param name="name">sequence名字</param>
+        /// <returns></returns>
+        ISequence GetSequence(string name);
         #endregion
 
         #region Step
@@ -118,20 +125,30 @@ namespace Testflow.DesignTime
         /// 添加空白的Step到上级节点，该节点可以添加子Step序列
         /// </summary>
         /// <param name="parent">上级节点</param>
+        /// <param name="name">Step的名字</param>
         /// <param name="description">Step的描述信息</param>
         /// <param name="index">待插入的位置</param>
         /// <returns>添加完成后的ISequenceStep</returns>
-        ISequenceStep AddSequenceStep(ISequenceFlowContainer parent, string description, int index);
+        ISequenceStep AddSequenceStep(ISequenceFlowContainer parent, string name, string description, int index);
 
         /// <summary>
         /// 添加测试步骤到上级节点
         /// </summary>
         /// <param name="parent">上级节点</param>
         /// <param name="functionData">待添加的方法</param>
+        /// <param name="name">Step的名字</param>
         /// <param name="description">当前个步骤的描述信息</param>
         /// <param name="index">待插入的位置</param>
         /// <returns>添加完成后的ISequenceStep</returns>
-        ISequenceStep AddSequenceStep(ISequenceFlowContainer parent, IFunctionData functionData, string description, int index);
+        ISequenceStep AddSequenceStep(ISequenceFlowContainer parent, IFunctionData functionData, string name, string description, int index);
+
+        /// <summary>
+        /// 移除上级节点里的某个测试步骤
+        /// </summary>
+        /// <param name="parent">上级节点</param>
+        /// <param name="name">Step的名字</param>
+        /// <returns></returns>
+        void RemoveSequenceStep(ISequenceFlowContainer parent, string name);
 
         /// <summary>
         /// 移除上级节点里的某个测试步骤
@@ -147,7 +164,7 @@ namespace Testflow.DesignTime
         /// <param name="parent">上级节点</param>
         /// <param name="step">某个测试步骤</param>
         /// <returns></returns>
-        bool RemoveSequenceStep(ISequenceFlowContainer parent, ISequenceStep step);
+        void RemoveSequenceStep(ISequenceFlowContainer parent, ISequenceStep step);
 
         /// <summary>
         /// 根据索引号
@@ -222,6 +239,14 @@ namespace Testflow.DesignTime
         /// <param name="typeData">变量ITypeData</param>
         void SetVariableType(string variableName, ITypeData typeData);
 
+
+        /// <summary>
+        /// 在Sequence和SequenceGroup里寻找变量
+        /// </summary>
+        /// <param name="variableName">变量名称</param>
+        /// <param name="Sequence">Sequence</param>
+        /// <returns>变量</returns>
+        IVariable FindVariable(string variableName, ISequence Sequence = null);
         #endregion
 
         #region Step参数值
@@ -230,17 +255,19 @@ namespace Testflow.DesignTime
         /// </summary>
         /// <param name="parameterName">参数名称</param>
         /// <param name="value">参数值</param>
+        /// <param name="parameterType">参数类型是Value或者Variable</param> 
         /// <param name="sequenceIndex">序列的索引</param>
         /// <param name="indexes">当前序列所在的Step的索引序列，如果是多层step，分别为从上层到下层的索引</param>
-        void SetParameterValue(string parameterName, string value, int sequenceIndex, params int[] indexes);
+        void SetParameterValue(string parameterName, string value, ParameterType parameterType, int sequenceIndex, params int[] indexes);
 
         /// <summary>
         /// 配置参数值
         /// </summary>
         /// <param name="parameterName">参数名称</param>
         /// <param name="value">参数值</param>
+        ///         /// <param name="parameterType">参数类型是Value或者Variable</param> 
         /// <param name="sequence">该参数所在序列的Step</param>
-        void SetParameterValue(string parameterName, string value, ISequenceStep sequence);
+        void SetParameterValue(string parameterName, string value, ParameterType parameterType, ISequenceStep sequence);
         #endregion
 
         #region 实例
