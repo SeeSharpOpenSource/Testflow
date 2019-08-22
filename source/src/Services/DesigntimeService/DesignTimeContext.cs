@@ -28,6 +28,8 @@ namespace Testflow.DesigntimeService
             this.SequenceGroup = sequenceGroup;
             this.TestProject = (ITestProject)sequenceGroup.Parent;
             this.Name = sequenceGroup.Name + " Context";
+
+            //todo _interfaceManager.GetComponenetInterfaces => foreach(){addDictioneary}
         }
 
 

@@ -49,6 +49,9 @@ namespace Testflow.RuntimeService
             //todo 目前拿不到Configuration.Type, 因为_engineController._runtimeEngine为private.并且_engineController里没有接口
             //Configuration.Type
 
+            //validate：1.assemblies & type 2. validateVariables 3.validate parent
+            _sequenceManager.ValidateSequenceData(testProject);
+
             TestProject = testProject;
             //todo, constants里定义一个defaultListSize
             for (int n=0; n < testProject.SequenceGroups.Count; n++)
@@ -64,14 +67,18 @@ namespace Testflow.RuntimeService
         public void Load(ISequenceGroup sequenceGroup)
         {
             //确保没有TestProject
-            //为什么不CreateTestProject()然后把SequenceGroup放进去呢？
-            //因为engineController里要判断是sequencegroup还是testproject
             TestProject = null;
+
+            //validate：1.assemblies & type 2. validateVariables 3.validate parent
+            _sequenceManager.ValidateSequenceData(sequenceGroup);
+
 
             IRuntimeContext context = new RuntimeContext($"RuntimeContext 0", 0, null, sequenceGroup);
             IRuntimeSession session = new RuntimeSession(0, context);
             session.Initialize();
             _sessions.Add(session);
+
+
             _engineController.SetSequenceData(sequenceGroup);
         }
         #endregion
@@ -143,7 +150,7 @@ namespace Testflow.RuntimeService
 
             if (TestProject == null && Sessions.Count == 0)
             {
-                throw new TestflowException(ModuleErrorCode.SercviceNotLoaded, "RuntimeService not loaded. Load TestProject or SequenceGroup into RuntimeService first");
+                throw new TestflowException(ModuleErrorCode.ServiceNotLoaded, "RuntimeService not loaded. Load TestProject or SequenceGroup into RuntimeService first");
             }
 
             //todo ModuleUtils.EngineStartThread会返回错误信息，看怎么处理
@@ -151,12 +158,15 @@ namespace Testflow.RuntimeService
             //加载进TestProject
             if (TestProject != null)
             {
-                ModuleUtils.EngineStartThread(TestProject);
+                foreach(IRuntimeSession session in Sessions)
+                {
+                    session.Start();
+                }
             }
             //加载进SequenceGroup
             else
             {
-                ModuleUtils.EngineStartThread(Sessions[0].Context.SequenceGroup);
+                Sessions[0].Start();
             }
         }
 

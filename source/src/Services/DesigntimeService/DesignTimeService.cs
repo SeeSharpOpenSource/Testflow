@@ -15,6 +15,7 @@ namespace Testflow.DesigntimeService
     public class DesignTimeService : IDesignTimeService
     {
         private Modules.ISequenceManager _sequenceManager;
+        private Modules.IComInterfaceManager _interfaceManager;
 
         #region 属性
         /// <summary>
@@ -103,6 +104,7 @@ namespace Testflow.DesigntimeService
             TestProject = _sequenceManager.CreateTestProject();
             TestProject.Name = name;
             TestProject.Description = description;
+            sequenceGroup.Parent = TestProject;
             AddSequenceGroup(sequenceGroup);
             return TestProject;
         }
@@ -144,6 +146,10 @@ namespace Testflow.DesigntimeService
             int index = TestProject.SequenceGroups.Count;
             //添加到TestProject
             TestProject.SequenceGroups.Add(sequenceGroup);
+            foreach(IComInterfaceDescription comDescription in _interfaceManager.GetComponentInterfaces(sequenceGroup.Assemblies))
+            {
+                AddComponent(comDescription);
+            }
             //添加到SequenceSessions
             IDesignTimeSession designtimeSession = new DesignTimeSession(index, sequenceGroup);
             SequenceSessions.Add(index, designtimeSession);
@@ -164,7 +170,7 @@ namespace Testflow.DesigntimeService
             int sessionId = TestProject.SequenceGroups.IndexOf(sequenceGroup);
             if (sessionId == -1)
             {
-                throw new TestflowDataException(ModuleErrorCode.SequenceGroupDNE, "SequenceGroup does not exist in current service");
+                throw new TestflowDataException(ModuleErrorCode.SequenceGroupNotFound, "SequenceGroup does not exist in current service");
             }
             IDesignTimeSession designTimeSession = SequenceSessions[sessionId];
             //从SequenceSessions去除
@@ -205,7 +211,7 @@ namespace Testflow.DesigntimeService
             else
             {
                 //I18N
-                throw new TestflowRuntimeException(ModuleErrorCode.ComponentDNE, "没有该组件");
+                throw new TestflowRuntimeException(ModuleErrorCode.ComponentNotFound, "没有该组件");
             }
             return comInterface;
         }
@@ -221,7 +227,7 @@ namespace Testflow.DesigntimeService
             else
             {
                 //I18N
-                throw new TestflowDataException(ModuleErrorCode.ComponentDNE, "没有该组件");
+                throw new TestflowDataException(ModuleErrorCode.ComponentNotFound, "没有该组件");
             }
             return comInterfaceDescription;
         }
@@ -254,7 +260,10 @@ namespace Testflow.DesigntimeService
             runner.DataMaintainer.DesigntimeInitialize();
             runner.EngineController.DesigntimeInitialize();
             runner.ResultManager?.DesigntimeInitialize();
+            runner.ParameterChecker?.DesigntimeInitialize();
             _sequenceManager = TestflowRunner.GetInstance().SequenceManager;
+            _interfaceManager = TestflowRunner.GetInstance().ComInterfaceManager;
+
         }
 
         //强制结束与否，由外部管理
