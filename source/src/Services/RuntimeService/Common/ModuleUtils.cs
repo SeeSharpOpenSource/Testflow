@@ -66,18 +66,7 @@ namespace Testflow.RuntimeService
         //而且还有一点。。无法返回exception给主线程。。除非加个锁？
         internal static void EngineStart(ISequenceFlowContainer sequence)
         {
-            try
-            {
                 TestflowRunner.GetInstance().EngineController.Start();
-            }
-            catch (TestflowException ex)
-            {
-                //do nothing 只是调试时用的？
-            }
-            catch (Exception ex)
-            {
-                //do nothing 只是调试时用的？
-            }
         }
     }
 }

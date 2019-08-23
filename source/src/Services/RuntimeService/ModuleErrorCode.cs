@@ -7,6 +7,6 @@ namespace Testflow.RuntimeService
     {
         public const int TestProjectDNE = 1 | CommonErrorCode.RuntimeErrorMask;
         public const int SequenceGroupDNE = 2 | CommonErrorCode.RuntimeErrorMask;
-        public const int SercviceNotLoaded = 3 | CommonErrorCode.RuntimeErrorMask;
+        public const int ServiceNotLoaded = 3 | CommonErrorCode.RuntimeErrorMask;
     }
 }

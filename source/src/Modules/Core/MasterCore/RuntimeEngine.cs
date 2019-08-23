@@ -303,7 +303,7 @@ namespace Testflow.MasterCore
             //extraParams里只有一个int sessionid，表示发给这个session
             if (0 != extraParams.Length)
             {
-                session = (int) extraParams[0];
+                session = Int32.Parse(extraParams[0].ToString());
             }
             _globalInfo.EventDispatcher.Register(callBack, session, eventName);
         }
