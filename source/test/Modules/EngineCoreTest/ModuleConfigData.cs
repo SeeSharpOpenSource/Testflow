@@ -43,6 +43,7 @@ namespace Testflow.EngineCoreTest
             Properties.Add("TestGenTimeout", 1200000);
             Properties.Add("AbortTimeout", 20000);
             Properties.Add("MessengerType", MessengerType.MSMQ);
+            Properties.Add("WorkspaceDir", new string[] { @"C:\" });
 
             this.Version = "3.5.6";
             this.Name = "Test Name";
