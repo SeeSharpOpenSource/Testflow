@@ -40,6 +40,12 @@ namespace Testflow.ComInterfaceManager
 
         public int ErrorCode { get; set; }
 
+        public override object InitializeLifetimeService()
+        {
+            // 定义该对象的声明周期为无限生存期
+            return null;
+        }
+
         public ComInterfaceDescription LoadAssemblyDescription(string path, ref string assemblyName, ref string version)
         {
             Exception = null;
