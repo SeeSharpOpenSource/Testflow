@@ -94,19 +94,24 @@ namespace Testflow.SlaveCore.Runner.Model
         {
             this.GenerateInvokeInfo();
             this.InitializeParamsValues();
-            if (null == StepData)
-            {
-                _invokeStepAction = InvokeStepSingleTime;
-                return;
-            }
-            _hasLoopCounter = (null != StepData.LoopCounter && StepData.LoopCounter.MaxValue > 1);
-            if (StepData.HasSubSteps)
+            _hasLoopCounter = (StepData?.LoopCounter != null && StepData.LoopCounter.MaxValue > 1);
+            if (StepData?.HasSubSteps ?? false)
             {
                 StepTaskEntityBase subStepEntity = _subStepRoot;
                 do
                 {
                     subStepEntity.Generate();
                 } while (null != (subStepEntity = subStepEntity.NextStep));
+            }
+            InintializeInvokeAction();
+        }
+
+        private void InintializeInvokeAction()
+        {
+            if (null == StepData)
+            {
+                _invokeStepAction = InvokeStepSingleTime;
+                return;
             }
             bool retryEnabled = null != StepData.RetryCounter && StepData.RetryCounter.MaxRetryTimes > 0 &&
                                 StepData.RetryCounter.RetryEnabled;
@@ -152,14 +157,19 @@ namespace Testflow.SlaveCore.Runner.Model
                     throw new ArgumentOutOfRangeException();
             }
         }
-        
+
+        /// <summary>
+        /// 生成调用信息
+        /// </summary>
         protected abstract void GenerateInvokeInfo();
 
+        /// <summary>
+        /// 初始化常数参数值
+        /// </summary>
         protected abstract void InitializeParamsValues();
 
-        // 该方法只有在某个Sequence没有关键信息上报时使用。
         /// <summary>
-        /// 当指定时间内该序列没有额外信息到达时传递运行时状态的信息
+        /// 当指定时间内该序列没有额外信息到达时传递运行时状态的信息，该方法只有在某个Sequence没有关键信息上报时使用
         /// </summary>
         public virtual void FillStatusInfo(StatusMessage statusMessage)
         {
@@ -177,8 +187,13 @@ namespace Testflow.SlaveCore.Runner.Model
             Context.StatusQueue.Enqueue(statusInfo);
         }
 
+        /// <summary>
+        /// 调用序列
+        /// </summary>
+        /// <param name="forceInvoke">是否忽略取消标识强制调用，在teardown中配置为true</param>
         public void Invoke(bool forceInvoke)
         {
+            CurrentModel[SequenceIndex] = this;
             if (_hasLoopCounter)
             {
                 string variableFullName = null;
@@ -207,6 +222,7 @@ namespace Testflow.SlaveCore.Runner.Model
 
         #region 调用分支
 
+        // 使能retry调用step，且失败后强制继续执行
         private void InvokeStepWithRetryAndForceContinue(bool forceInvoke)
         {
             try
@@ -230,6 +246,7 @@ namespace Testflow.SlaveCore.Runner.Model
             }
         }
 
+        // 使能retry调用step
         private void InvokeStepWithRetry(bool forceInvoke)
         {
             int maxRetry = StepData.RetryCounter.MaxRetryTimes;
@@ -279,6 +296,7 @@ namespace Testflow.SlaveCore.Runner.Model
             }
         }
 
+        // 执行step，即使失败也继续执行，如果失败，写入runtimeStatus
         private void InvokeStepAndForceContinue(bool forceInvoke)
         {
             try
@@ -302,6 +320,7 @@ namespace Testflow.SlaveCore.Runner.Model
             }
         }
 
+        // 跳过step
         private void InvokeStepWithSkip(bool forceInvoke)
         {
             this.Result = StepResult.Skip;
@@ -313,6 +332,7 @@ namespace Testflow.SlaveCore.Runner.Model
             }
         }
 
+        // 执行step，即使失败也继续执行。如果失败写入RuntimeStatus
         private void InvokeStepAndForcePass(bool forceInvoke)
         {
             try
@@ -342,6 +362,7 @@ namespace Testflow.SlaveCore.Runner.Model
             }
         }
 
+        // 执行step且强制失败
         private void InvokeStepAndForceFailed(bool forceInvoke)
         {
             InvokeStepSingleTime(forceInvoke);
@@ -351,9 +372,9 @@ namespace Testflow.SlaveCore.Runner.Model
             throw new TaskFailedException(SequenceIndex, FailedType.ForceFailed);
         }
 
+        // 单词执行序列
         private void InvokeStepSingleTime(bool forceInvoke)
         {
-            CurrentModel[SequenceIndex] = this;
             // 如果是取消状态并且不是强制执行则返回
             if (!forceInvoke && Context.Cancellation.IsCancellationRequested)
             {
