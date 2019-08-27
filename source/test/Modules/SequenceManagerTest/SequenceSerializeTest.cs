@@ -36,7 +36,7 @@ namespace Testflow.SequenceManagerTest
             fieldInfo.SetValue(null, fakeTestflowRunner);
 
             _sequenceManager = new SequenceManager.SequenceManager();
-            _configData = new TestConfigData();
+            _configData = new ModuleConfigData();
             _configData.InitExtendProperties();
             _sequenceManager.ApplyConfig(_configData);
             _sequenceManager.DesigntimeInitialize();
@@ -46,7 +46,7 @@ namespace Testflow.SequenceManagerTest
 
         private TestContext testContextInstance;
         private SequenceManager.SequenceManager _sequenceManager;
-        private TestConfigData _configData;
+        private ModuleConfigData _configData;
 
         /// <summary>
         ///Gets or sets the test context which provides
@@ -279,60 +279,6 @@ namespace Testflow.SequenceManagerTest
         {
             _sequenceManager.Dispose();
         }
-    }
-
-    internal class TestConfigData : IModuleConfigData
-    {
-        public TestConfigData()
-        {
-            Properties = new SerializableMap<string, object>(10);
-            this.Version = "1.1.0";
-            this.Name = "";
-        }
-
-        public void InitExtendProperties()
-        {
-            Properties.Add("ModelVersion", "1.0.0");
-        }
-
-        public ISerializableMap<string, object> Properties { get; }
-
-        public void SetProperty(string propertyName, object value)
-        {
-            this.Properties[propertyName] = value;
-        }
-
-        public object GetProperty(string propertyName)
-        {
-            return Properties[propertyName];
-        }
-
-        public TDataType GetProperty<TDataType>(string propertyName)
-        {
-            return (TDataType) Properties[propertyName];
-        }
-
-        public Type GetPropertyType(string propertyName)
-        {
-            if (null == Properties[propertyName])
-            {
-                return null;
-            }
-            return Properties[propertyName].GetType();
-        }
-
-        public bool ContainsProperty(string propertyName)
-        {
-            return Properties.ContainsKey(propertyName);
-        }
-
-        public IList<string> GetPropertyNames()
-        {
-            return Properties.Keys.ToArray();
-        }
-
-        public string Version { get; set; }
-        public string Name { get; set; }
     }
 
     public class TestFuncDescription : IFuncInterfaceDescription

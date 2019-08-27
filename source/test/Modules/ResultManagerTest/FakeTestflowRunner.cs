@@ -39,6 +39,9 @@ namespace Testflow.ResultManagerTest
 
         public override void Initialize()
         {
+            ModuleConfigData configData = new ModuleConfigData();
+            configData.InitExtendProperties();
+            DataMaintainer.ApplyConfig(configData);
         }
 
         public override void Dispose()

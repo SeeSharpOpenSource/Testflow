@@ -43,6 +43,12 @@ namespace Testflow.ComInterfaceManagerTest
             Properties.Add("TestGenTimeout", 1200000);
             Properties.Add("AbortTimeout", 20000);
 
+            Properties.Add("TestflowHome", Environment.GetEnvironmentVariable("TESTFLOW_HOME"));
+            Properties.Add("WorkspaceDir", new string[] { Environment.GetEnvironmentVariable("TESTFLOW_WORKSPACE") });
+            Properties.Add("EnablePerformanceMonitor", false.ToString());
+            Properties.Add("DatabaseName", "testflowData.db3");
+
+
             this.Version = "3.5.6";
             this.Name = "Test Name";
         }

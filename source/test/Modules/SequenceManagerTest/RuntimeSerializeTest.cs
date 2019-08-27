@@ -24,7 +24,7 @@ namespace Testflow.SequenceManagerTest
             fieldInfo.SetValue(null, fakeTestflowRunner);
 
             _sequenceManager = new SequenceManager.SequenceManager();
-            _configData = new TestConfigData();
+            _configData = new ModuleConfigData();
             _configData.InitExtendProperties();
             _sequenceManager.ApplyConfig(_configData);
             _sequenceManager.DesigntimeInitialize();

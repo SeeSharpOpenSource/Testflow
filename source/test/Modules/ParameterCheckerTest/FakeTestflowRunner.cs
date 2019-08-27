@@ -31,11 +31,18 @@ namespace Testflow.ParameterCheckerTest
 
         public override void Initialize()
         {
+            ModuleConfigData configData = new ModuleConfigData();
+            configData.InitExtendProperties();
+
             this.SequenceManager = new SequenceManager.SequenceManager();
             this.ComInterfaceManager = new ComInterfaceManager.InterfaceManager();
             this.ParameterChecker = new ParameterChecker.ParameterChecker();
            
             this.LogService = new Logger.LogService();
+
+            ComInterfaceManager.ApplyConfig(configData);
+            SequenceManager.ApplyConfig(configData);
+            ParameterChecker.ApplyConfig(configData);
 
             ComInterfaceManager.DesigntimeInitialize();
             SequenceManager.DesigntimeInitialize();

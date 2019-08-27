@@ -146,6 +146,8 @@ namespace Testflow.ResultManagerTest
             fieldInfo.SetValue(null, fakeTestflowRunner);
             _dataMaintainer = new DataMaintainer.DataMaintainer();
             fakeTestflowRunner.SetDataMaintainer(_dataMaintainer);
+
+            fakeTestflowRunner.Initialize();
             #endregion
 
             _resultManager = new ResultManager.ResultManager();

@@ -45,7 +45,7 @@ namespace Testflow.ParameterCheckerTest
         {
             _parameterChecker.RuntimeInitialize();
             ISequenceGroup sequenceGroup = _sequenceManager.LoadSequenceGroup(Usr.SerializationTarget.File, sequenceGroupPath);
-            IList<IWarningInfo> warnList = _parameterChecker.CheckParameters(sequenceGroup);
+            IList<IWarningInfo> warnList = _parameterChecker.CheckParameters(sequenceGroup, false);
         }
 
     }

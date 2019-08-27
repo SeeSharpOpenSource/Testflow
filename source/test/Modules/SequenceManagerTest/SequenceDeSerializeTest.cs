@@ -32,7 +32,7 @@ namespace Testflow.SequenceManagerTest
             fieldInfo.SetValue(null, fakeTestflowRunner);
 
             _sequenceManager = new SequenceManager.SequenceManager();
-            _configData = new TestConfigData();
+            _configData = new ModuleConfigData();
             _configData.InitExtendProperties();
             _sequenceManager.ApplyConfig(_configData);
             _sequenceManager.DesigntimeInitialize();
@@ -41,7 +41,7 @@ namespace Testflow.SequenceManagerTest
 
         private TestContext testContextInstance;
         private SequenceManager.SequenceManager _sequenceManager;
-        private TestConfigData _configData;
+        private ModuleConfigData _configData;
 
         /// <summary>
         ///Gets or sets the test context which provides
@@ -182,7 +182,7 @@ namespace Testflow.SequenceManagerTest
             TestProject testProject = XmlReaderHelper.ReadTestProject(TestProjectPath);
             Assert.AreEqual(testProject.Name, "TestProject1");
             Assert.AreEqual(testProject.Description, "");
-            Assert.AreEqual(testProject.ModelVersion, "1.0.0");
+            Assert.AreEqual(testProject.ModelVersion, "10.12.35");
             Assert.AreEqual(testProject.SetUp.Name, "SetUp");
             Assert.AreEqual(testProject.TearDown.Name, "TearDown");
             Assert.AreEqual(testProject.SequenceGroupLocations.Count, 3);
@@ -193,7 +193,7 @@ namespace Testflow.SequenceManagerTest
         {
             SequenceGroup sequenceGroup = XmlReaderHelper.ReadSequenceGroup(SequenceGroupPath);
             Assert.AreEqual(sequenceGroup.Name, "SequenceGroup1");
-            Assert.AreEqual(sequenceGroup.Info.Version, "1.0.0");
+            Assert.AreEqual(sequenceGroup.Info.Version, "10.12.35");
 //            Assert.AreEqual(sequenceGroup.Info.SequenceGroupFile, SequenceGroupPath);
 //            Assert.AreEqual(sequenceGroup.Info.SequenceParamFile, ParameterPath);
             Assert.AreEqual(sequenceGroup.TypeDatas.Count, 3);
@@ -210,11 +210,12 @@ namespace Testflow.SequenceManagerTest
             Assert.AreEqual(sequenceGroup.Sequences[0].Steps[0].Name, "SequenceStep1");
             Assert.AreEqual(sequenceGroup.Sequences[0].Steps[0].HasSubSteps, false);
             Assert.AreEqual(sequenceGroup.Sequences[0].Steps[0].Function.Type, FunctionType.InstanceFunction);
-            Assert.AreEqual(sequenceGroup.Sequences[0].Steps[0].Function.Instance, "Variable1");
-            Assert.AreEqual(sequenceGroup.Sequences[0].Steps[0].Function.Return, "Variable3");
+            Assert.AreEqual(sequenceGroup.Sequences[0].Steps[0].Function.Instance, "");
+            Assert.AreEqual(sequenceGroup.Sequences[0].Steps[0].Function.Return, "");
             Assert.AreEqual(sequenceGroup.Sequences[0].Steps[0].Function.MethodName, "Add");
             Assert.AreEqual(sequenceGroup.Sequences[0].Steps[0].Function.ParameterType.Count, 2);
             Assert.AreEqual(sequenceGroup.Sequences[0].Steps[0].Function.ParameterType[0].Name, "addSource");
+            Assert.AreEqual(sequenceGroup.Sequences[0].Steps[0].Function.Parameters.Count, 0);
             Assert.AreEqual(sequenceGroup.Sequences[0].Steps[2].LoopCounter.Name, "LoopCounterDemo");
             Assert.AreEqual(sequenceGroup.Sequences[0].Steps[0].RetryCounter.Name, "RetryCounterDemo");
         }
@@ -224,7 +225,7 @@ namespace Testflow.SequenceManagerTest
         {
             SequenceGroup sequenceGroup = XmlReaderHelper.ReadSequenceGroup(SequenceGroupPath);
             SequenceGroupParameter parameter = XmlReaderHelper.ReadSequenceGroupParameter(ParameterPath);
-            Assert.AreEqual(parameter.Info.Version, "1.0.0");
+            Assert.AreEqual(parameter.Info.Version, "10.12.35");
             Assert.AreEqual(parameter.Info.Hash, sequenceGroup.Info.Hash);
             Assert.AreEqual(parameter.SequenceParameters.Count, 3);
             Assert.AreEqual(parameter.SequenceParameters[0].StepParameters.Count, 3);

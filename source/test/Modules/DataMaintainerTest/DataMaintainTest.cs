@@ -58,6 +58,9 @@ namespace Testflow.DataMaintainerTest
             fakeTestflowRunner.SetLogService(null);
 
             _dataMaintainer = new DataMaintainer.DataMaintainer();
+            ModuleConfigData moduleConfigData = new ModuleConfigData();
+            moduleConfigData.InitExtendProperties();
+            _dataMaintainer.ApplyConfig(moduleConfigData);
 
             _testInstanceData1 = CreateTestInstance(1);
             _sessionResultData11 = CreateSessionResult(1, 1);

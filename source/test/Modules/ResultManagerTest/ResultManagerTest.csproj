@@ -52,6 +52,7 @@
   </Choose>
   <ItemGroup>
     <Compile Include="FakeTestflowRunner.cs" />
+    <Compile Include="ModuleConfigData.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ResultManagerTest.cs" />
   </ItemGroup>
@@ -59,6 +60,10 @@
     <ProjectReference Include="..\..\..\src\Dev\Common\Common.csproj">
       <Project>{1681cdd7-0cc2-49d2-9e82-7b03b52db283}</Project>
       <Name>Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\src\Dev\Utility\Utility.csproj">
+      <Project>{35105702-e8d2-4465-a118-687b6c85c466}</Project>
+      <Name>Utility</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\..\src\Modules\DataMaintainer\DataMaintainer.csproj">
       <Project>{cf05b3ce-b2b5-4309-93f7-fa5e07327a25}</Project>

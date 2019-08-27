@@ -7,7 +7,7 @@ using Testflow.Usr;
 using Testflow.Utility.Collections;
 using Testflow.Utility.MessageUtil;
 
-namespace Testflow.EngineCoreTest
+namespace Testflow.DataMaintainerTest
 {
     public class ModuleConfigData : IModuleConfigData
     {
@@ -45,9 +45,8 @@ namespace Testflow.EngineCoreTest
 
             Properties.Add("TestflowHome", Environment.GetEnvironmentVariable("TESTFLOW_HOME"));
             Properties.Add("WorkspaceDir", new string[] { Environment.GetEnvironmentVariable("TESTFLOW_WORKSPACE") });
-            Properties.Add("EnablePerformanceMonitor", false);
+            Properties.Add("EnablePerformanceMonitor", false.ToString());
             Properties.Add("DatabaseName", "testflowData.db3");
-            Properties.Add("MessengerType", MessengerType.MSMQ);
 
 
             this.Version = "3.5.6";

@@ -7,7 +7,7 @@ using Testflow.Usr;
 using Testflow.Utility.Collections;
 using Testflow.Utility.MessageUtil;
 
-namespace Testflow.EngineCoreTest
+namespace Testflow.ResultManagerTest
 {
     public class ModuleConfigData : IModuleConfigData
     {
@@ -31,7 +31,7 @@ namespace Testflow.EngineCoreTest
 
             Properties.Add("TestGenReportInterval", 500);
             Properties.Add("TestRunReportInterval", 500);
-            Properties.Add("EngineQueueFormat", FormatterType.Json);
+            Properties.Add("EngineQueueFormat", FormatterType.Xml);
             Properties.Add("EngineSyncMessenger", true);
             Properties.Add("RuntimeType", RuntimeType.Debug);
             Properties.Add("MessageReceiveTimeout", 10000);
@@ -45,9 +45,8 @@ namespace Testflow.EngineCoreTest
 
             Properties.Add("TestflowHome", Environment.GetEnvironmentVariable("TESTFLOW_HOME"));
             Properties.Add("WorkspaceDir", new string[] { Environment.GetEnvironmentVariable("TESTFLOW_WORKSPACE") });
-            Properties.Add("EnablePerformanceMonitor", false);
+            Properties.Add("EnablePerformanceMonitor", false.ToString());
             Properties.Add("DatabaseName", "testflowData.db3");
-            Properties.Add("MessengerType", MessengerType.MSMQ);
 
 
             this.Version = "3.5.6";

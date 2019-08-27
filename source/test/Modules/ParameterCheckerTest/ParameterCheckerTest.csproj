@@ -38,9 +38,6 @@
     <Reference Include="Castle.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
       <HintPath>..\..\..\packages\Castle.Core.4.4.0\lib\net45\Castle.Core.dll</HintPath>
     </Reference>
-    <Reference Include="Moq, Version=4.12.0.0, Culture=neutral, PublicKeyToken=69f491c39445e920, processorArchitecture=MSIL">
-      <HintPath>..\..\..\packages\Moq.4.12.0\lib\net45\Moq.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=4.0.4.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
@@ -64,6 +61,7 @@
   </Choose>
   <ItemGroup>
     <Compile Include="FakeTestflowRunner.cs" />
+    <Compile Include="ModuleConfigData.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ParameterCheckTest.cs" />
   </ItemGroup>
@@ -75,6 +73,10 @@
     <ProjectReference Include="..\..\..\src\Dev\Logger\Logger.csproj">
       <Project>{dc3cd3de-1b8e-4847-b752-63352f35f1e2}</Project>
       <Name>Logger</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\src\Dev\Utility\Utility.csproj">
+      <Project>{35105702-e8d2-4465-a118-687b6c85c466}</Project>
+      <Name>Utility</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\..\src\Modules\ComInterfaceManager\ComInterfaceManager.csproj">
       <Project>{5b1a7351-8d30-49aa-8fab-c8920a0cfdf4}</Project>
@@ -88,9 +90,6 @@
       <Project>{6c461d7e-7ea4-4bf2-9168-82180132a0c9}</Project>
       <Name>SequenceManager</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <WCFMetadata Include="Connected Services\" />
   </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">

@@ -18,7 +18,7 @@ namespace Testflow.SequenceManagerTest
             fieldInfo.SetValue(null, fakeTestflowRunner);
 
             _sequenceManager = new SequenceManager.SequenceManager();
-            _configData = new TestConfigData();
+            _configData = new ModuleConfigData();
             _configData.InitExtendProperties();
             _sequenceManager.ApplyConfig(_configData);
             Directory.CreateDirectory("Test");
@@ -26,7 +26,7 @@ namespace Testflow.SequenceManagerTest
 
         private TestContext testContextInstance;
         private SequenceManager.SequenceManager _sequenceManager;
-        private TestConfigData _configData;
+        private ModuleConfigData _configData;
 
         [TestMethod]
         public void TestProjectDeserialize()
