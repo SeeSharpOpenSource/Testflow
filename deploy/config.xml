@@ -15,7 +15,7 @@
     <ConfigItems Name="StatusUploadInterval" Value="500" Type="System.Int32" />
     <ConfigItems Name="ConnectionTimeout" Value="10000" Type="System.Int32" />
     <ConfigItems Name="SyncTimeout" Value="10000" Type="System.Int32" />
-    <ConfigItems Name="TestTimeout" Value="1000000000" Type="System.Int32" />
+    <ConfigItems Name="TestTimeout" Value="-1" Type="System.Int32" />
     <ConfigItems Name="StopTimeout" Value="10000" Type="System.Int32" />
     <ConfigItems Name="TestGenTimeout" Value="5000" Type="System.Int32" />
     <ConfigItems Name="AbortTimeout" Value="10000" Type="System.Int32" />
