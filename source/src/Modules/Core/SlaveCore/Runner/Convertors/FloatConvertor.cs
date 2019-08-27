@@ -20,5 +20,10 @@ namespace Testflow.SlaveCore.Runner.Convertors
             ConvertFuncs.Add(typeof(bool).Name, sourceValue => (float)sourceValue > 0);
             ConvertFuncs.Add(typeof(string).Name, sourceValue => sourceValue.ToString());
         }
+
+        public override object GetDefaultValue()
+        {
+            return (float) 0;
+        }
     }
 }

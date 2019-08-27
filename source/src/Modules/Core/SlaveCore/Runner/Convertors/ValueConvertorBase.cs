@@ -16,7 +16,9 @@ namespace Testflow.SlaveCore.Runner.Convertors
 
         protected abstract void InitializeConvertFuncs();
 
-        public object Convert(ITypeData targetType, object sourceValue)
+        public abstract object GetDefaultValue();
+
+        public object CastValue(ITypeData targetType, object sourceValue)
         {
             return ConvertFuncs[targetType.Name].Invoke(sourceValue);
         }

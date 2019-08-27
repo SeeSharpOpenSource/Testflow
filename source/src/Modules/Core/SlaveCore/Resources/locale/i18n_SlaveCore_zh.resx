@@ -123,6 +123,9 @@
   <data name="CannotSendWhenDeactive" xml:space="preserve">
     <value>信使处于非激活状态时不能执行消息发送。</value>
   </data>
+  <data name="CastNullValue" xml:space="preserve">
+    <value>不能将null值转换为类型”{0}“。</value>
+  </data>
   <data name="EventEnqueueTimeOut" xml:space="preserve">
     <value>事件入列超时。</value>
   </data>
@@ -143,6 +146,9 @@
   </data>
   <data name="InvalidTypeCast" xml:space="preserve">
     <value>不支持到类型‘{0}’的转换。</value>
+  </data>
+  <data name="InvalidValueTypeCast" xml:space="preserve">
+    <value>不支持从类型”{0}“到类型”{1}“的转换。</value>
   </data>
   <data name="LoadAssemblyFailed" xml:space="preserve">
     <value>加载程序集失败。</value>

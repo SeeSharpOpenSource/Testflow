@@ -79,6 +79,15 @@ namespace Testflow.SlaveCore.Resources.locale {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to 不能将null值转换为类型”{0}“。.
+        /// </summary>
+        internal static string CastNullValue {
+            get {
+                return ResourceManager.GetString("CastNullValue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to 事件入列超时。.
         /// </summary>
         internal static string EventEnqueueTimeOut {
@@ -138,6 +147,15 @@ namespace Testflow.SlaveCore.Resources.locale {
         internal static string InvalidTypeCast {
             get {
                 return ResourceManager.GetString("InvalidTypeCast", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 不支持从类型”{0}“到类型”{1}“的转换。.
+        /// </summary>
+        internal static string InvalidValueTypeCast {
+            get {
+                return ResourceManager.GetString("InvalidValueTypeCast", resourceCulture);
             }
         }
         

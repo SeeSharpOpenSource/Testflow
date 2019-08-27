@@ -20,5 +20,10 @@ namespace Testflow.SlaveCore.Runner.Convertors
 //            ConvertFuncs.Add(typeof(bool).Name, sourceValue => sourceValue.ToString());
             ConvertFuncs.Add(typeof(string).Name, sourceValue => sourceValue.ToString());
         }
+
+        public override object GetDefaultValue()
+        {
+            return false;
+        }
     }
 }

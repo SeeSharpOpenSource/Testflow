@@ -123,6 +123,9 @@
   <data name="CannotSendWhenDeactive" xml:space="preserve">
     <value>Cannot send message when messenger is deactivated</value>
   </data>
+  <data name="CastNullValue" xml:space="preserve">
+    <value>Cannot cast null value to type &lt;{0}&gt;.</value>
+  </data>
   <data name="EventEnqueueTimeOut" xml:space="preserve">
     <value>Event enqueue operation time out.</value>
   </data>
@@ -143,6 +146,9 @@
   </data>
   <data name="InvalidTypeCast" xml:space="preserve">
     <value>Unsupported cast to type '{0}'.</value>
+  </data>
+  <data name="InvalidValueTypeCast" xml:space="preserve">
+    <value>Unsupported type cast from type &lt;{0}&gt; to type &lt;1&gt;.</value>
   </data>
   <data name="LoadAssemblyFailed" xml:space="preserve">
     <value>Load assembly failed.</value>

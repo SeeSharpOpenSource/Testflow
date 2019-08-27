@@ -79,6 +79,15 @@ namespace Testflow.SlaveCore.Resources.locale {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Cannot cast null value to type &lt;{0}&gt;..
+        /// </summary>
+        internal static string CastNullValue {
+            get {
+                return ResourceManager.GetString("CastNullValue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Event enqueue operation time out..
         /// </summary>
         internal static string EventEnqueueTimeOut {
@@ -138,6 +147,15 @@ namespace Testflow.SlaveCore.Resources.locale {
         internal static string InvalidTypeCast {
             get {
                 return ResourceManager.GetString("InvalidTypeCast", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unsupported type cast from type &lt;{0}&gt; to type &lt;1&gt;..
+        /// </summary>
+        internal static string InvalidValueTypeCast {
+            get {
+                return ResourceManager.GetString("InvalidValueTypeCast", resourceCulture);
             }
         }
         
