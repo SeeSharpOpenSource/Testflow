@@ -100,8 +100,7 @@ namespace Testflow.Utility.I18nUtil
             }
             else if (UtilityConstants.EnglishName.Equals(option.FirstLanguage) || UtilityConstants.EnglishName.Equals(option.SecondLanguage))
             {
-                resourceShortName = UtilityConstants.EnglishName.Equals(option.FirstLanguage) ?
-                    option.FirstLanguage : option.SecondLanguage;
+                resourceShortName = UtilityConstants.EnglishResourceName;
             }
             else
             {
@@ -113,7 +112,9 @@ namespace Testflow.Utility.I18nUtil
             foreach (string resourceName in option.Assembly.GetManifestResourceNames())
             {
                 if (resourceName.Equals(resourceShortName) || resourceName.Contains($".{resourceShortName}.resx") ||
-                    resourceName.Contains($".{resourceShortName}.resources"))
+                    resourceName.Contains($".{resourceShortName}.resources") ||
+                    resourceName.Contains($"_{resourceShortName}.resx") ||
+                    resourceName.Contains($"_{resourceShortName}.resources"))
                 {
                     resourceFullName = resourceName.Remove(resourceName.LastIndexOf("."));
                     break;

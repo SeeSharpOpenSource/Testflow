@@ -93,7 +93,7 @@ namespace Testflow
             {
                 Name = CommonConst.I18nName
             };
-            I18N i18N = I18N.GetInstance(i18NOption);
+            I18N.GetInstance(i18NOption);
         }
 
         #region 服务接口

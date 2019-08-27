@@ -16,5 +16,10 @@
         /// 英文国际化语言名
         /// </summary>
         public const string EnglishName = "en-US";
+
+        /// <summary>
+        /// 英文资源文件后缀
+        /// </summary>
+        public const string EnglishResourceName = "en";
     }
 }

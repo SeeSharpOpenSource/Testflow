@@ -38,6 +38,11 @@
         public const string ChineseName = "zh-CN";
         public const string EnglishName = "en-US";
 
+        /// <summary>
+        /// 英文资源文件后缀
+        /// </summary>
+        public const string EnglishResourceName = "en";
+
         internal const string I18nName = "LoggerI18N";
 
         /// <summary>
