@@ -58,6 +58,11 @@ namespace Testflow.SlaveCore.Common
             return $"{typeData.Namespace}.{typeData.Name}";
         }
 
+        public static string GetTypeFullName(Type typeData)
+        {
+            return $"{typeData.Namespace}.{typeData.Name}";
+        }
+
         public static StepTaskEntityBase CreateStepModelChain(IList<ISequenceStep> steps, SlaveContext context,
             int sequenceIndex)
         {
@@ -152,58 +157,7 @@ namespace Testflow.SlaveCore.Common
             return valueElems[0];
         }
 
-        public static object GetParamValue(string paramValueStr, object varValue)
-        {
-            if (!paramValueStr.Contains(Constants.PropertyDelim))
-            {
-                return varValue;
-            }
-            object paramValue = varValue;
-            string[] paramElems = paramValueStr.Split(Constants.PropertyDelim.ToCharArray());
-            BindingFlags binding = BindingFlags.Public | BindingFlags.Instance;
-            for (int i = 1; i < paramElems.Length; i++)
-            {
-                PropertyInfo propertyInfo = paramValue.GetType().GetProperty(paramElems[i], binding);
-                if (null == propertyInfo)
-                {
-                    I18N i18N = I18N.GetInstance(Constants.I18nName);
-                    throw new TestflowDataException(ModuleErrorCode.SequenceDataError, i18N.GetFStr("UnexistVariable", paramValueStr));
-                }
-                paramValue = propertyInfo.GetValue(paramValue);
-            }
-            return paramValue;
-        }
-
-        public static object SetParamValue(string paramValueStr, object varValue, object paramValue)
-        {
-            if (!paramValueStr.Contains(Constants.PropertyDelim))
-            {
-                return paramValue;
-            }
-            object parentValue = varValue;
-            Type parentType = varValue.GetType();
-            string[] paramElems = paramValueStr.Split(Constants.PropertyDelim.ToCharArray());
-            BindingFlags binding = BindingFlags.Public | BindingFlags.Instance;
-            for (int i = 1; i < paramElems.Length - 1; i++)
-            {
-                PropertyInfo propertyInfo = parentType.GetProperty(paramElems[i], binding);
-                if (null == propertyInfo)
-                {
-                    I18N i18N = I18N.GetInstance(Constants.I18nName);
-                    throw new TestflowDataException(ModuleErrorCode.SequenceDataError, i18N.GetFStr("UnexistVariable", paramValueStr));
-                }
-                parentType = propertyInfo.PropertyType;
-                parentValue = propertyInfo.GetValue(parentValue);
-            }
-            PropertyInfo paramProperty = parentType.GetProperty(paramElems[paramElems.Length - 1], binding);
-            if (null == paramProperty)
-            {
-                I18N i18N = I18N.GetInstance(Constants.I18nName);
-                throw new TestflowDataException(ModuleErrorCode.SequenceDataError, i18N.GetFStr("UnexistVariable", paramValueStr));
-            }
-            paramProperty.SetValue(parentValue, paramValue);
-            return varValue;
-        }
+        
 
         // TODO 暂时写死，使用AppDomain为单位计算
         public static void FillPerformance(StatusMessage message)

@@ -60,7 +60,7 @@ namespace Testflow.SlaveCore.Runner.Model
                         _params.Add(null);
                         break;
                     case ParameterType.Value:
-                        _params.Add(Context.TypeInvoker.CastValue(argument.Type,
+                        _params.Add(Context.TypeInvoker.CastConstantValue(argument.Type,
                             paramValue));
                         break;
                     case ParameterType.Variable:
@@ -89,21 +89,24 @@ namespace Testflow.SlaveCore.Runner.Model
             object instance = null;
             if (StepData.Function.Type == FunctionType.InstancePropertySetter)
             {
-                instance = Context.VariableMapper.GetParamValue(_instanceVar, StepData.Function.Instance);
+                instance = Context.VariableMapper.GetParamValue(_instanceVar, StepData.Function.Instance,
+                    StepData.Function.ClassType);
             }
+            IParameterDataCollection parameters = StepData.Function.Parameters;
+            IArgumentCollection arguments = StepData.Function.ParameterType;
             for (int i = 0; i < _properties.Count; i++)
             {
                 if (null == _properties[i])
                 {
                     continue;
                 }
-                IParameterDataCollection parameters = StepData.Function.Parameters;
                 if (parameters[i].ParameterType == ParameterType.Variable)
                 {
                     // 获取变量值的名称，该名称为变量的运行时名称，其值在InitializeParamValue方法里配置
                     string variableName = ModuleUtils.GetVariableNameFromParamValue(parameters[i].Value);
                     // 根据ParamString和变量对应的值配置参数。
-                    _params[i] = Context.VariableMapper.GetParamValue(variableName, parameters[i].Value);
+                    _params[i] = Context.VariableMapper.GetParamValue(variableName, parameters[i].Value,
+                        arguments[i].Type);
                 }
                 _properties[i].SetValue(instance, _params[i]);
             }

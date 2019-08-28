@@ -142,10 +142,10 @@ namespace Testflow.SlaveCore.Runner
             return constructor;
         }
 
-        public object CastValue(ITypeData type, string valueStr)
+        public object CastConstantValue(ITypeData type, string valueStr)
         {
             Type dataType = _typeDataMapping[ModuleUtils.GetTypeFullName(type)];
-            return _context.Convertor.CastStrValue(dataType, valueStr);
+            return _context.Convertor.CastConstantValue(dataType, valueStr);
         }
 
         private void LoadAssemblies()

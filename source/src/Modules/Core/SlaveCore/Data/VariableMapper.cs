@@ -1,14 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Threading;
 using Newtonsoft.Json;
+using Testflow.CoreCommon;
 using Testflow.Usr;
 using Testflow.CoreCommon.Common;
 using Testflow.Data;
 using Testflow.Data.Sequence;
 using Testflow.SlaveCore.Common;
+using Testflow.Utility.I18nUtil;
 
 namespace Testflow.SlaveCore.Data
 {
@@ -60,10 +63,12 @@ namespace Testflow.SlaveCore.Data
             {
                 string variableName = CoreUtils.GetRuntimeVariableName(sessionId, variable);
                 object value = null;
-                // 如果是值类型并且配置的值有效，则初始化变量值
-                if (variable.VariableType == VariableType.Value && CoreUtils.IsValidVaraibleValue(variable))
+                // 如果是值类型并且配置的值有效，则初始化变量值。如果是值类型但是未配置值则获取默认值
+                if (variable.VariableType == VariableType.Value && null != variable.Type)
                 {
-                    value = _context.TypeInvoker.CastValue(variable.Type, variable.Value);
+                    value = CoreUtils.IsValidVaraibleValue(variable)
+                        ? _context.TypeInvoker.CastConstantValue(variable.Type, variable.Value)
+                        : _context.Convertor.GetDefaultValue(variable.Type);
                 }
                 this._variables.Add(variableName, value);
                 // 如果变量的OI报告级别配置为trace则添加变量到监控数据中
@@ -90,12 +95,12 @@ namespace Testflow.SlaveCore.Data
             if (_syncVariables.Contains(variableName))
             {
                 _syncVarLock.EnterWriteLock();
-                this._variables[variableName] = ModuleUtils.SetParamValue(paramValue, _variables[variableName], value);
+                this._variables[variableName] = SetParamValue(paramValue, _variables[variableName], value);
                 _syncVarLock.ExitWriteLock();
             }
             else
             {
-                this._variables[variableName] = ModuleUtils.SetParamValue(paramValue, _variables[variableName], value);
+                this._variables[variableName] = SetParamValue(paramValue, _variables[variableName], value);
             }
 
             // 监视变量值如果被更新，则添加到值更新列表中，在状态上报时上传该值
@@ -106,6 +111,43 @@ namespace Testflow.SlaveCore.Data
                 _keyVariables.Add(variableName);
                 _keyVarLock.Exit();
             }
+        }
+
+        private object SetParamValue(string paramValueStr, object varValue, object paramValue)
+        {
+            if (!paramValueStr.Contains(Constants.PropertyDelim))
+            {
+                return paramValue;
+            }
+            object parentValue = varValue;
+            Type parentType = varValue.GetType();
+            string[] paramElems = paramValueStr.Split(Constants.PropertyDelim.ToCharArray());
+            BindingFlags binding = BindingFlags.Public | BindingFlags.Instance;
+            for (int i = 1; i < paramElems.Length - 1; i++)
+            {
+                PropertyInfo propertyInfo = parentType.GetProperty(paramElems[i], binding);
+                if (null == propertyInfo)
+                {
+                    I18N i18N = I18N.GetInstance(Constants.I18nName);
+                    throw new TestflowDataException(ModuleErrorCode.SequenceDataError, i18N.GetFStr("UnexistVariable", paramValueStr));
+                }
+                parentType = propertyInfo.PropertyType;
+                parentValue = propertyInfo.GetValue(parentValue);
+            }
+            PropertyInfo paramProperty = parentType.GetProperty(paramElems[paramElems.Length - 1], binding);
+            if (null == paramProperty)
+            {
+                I18N i18N = I18N.GetInstance(Constants.I18nName);
+                throw new TestflowDataException(ModuleErrorCode.SequenceDataError, i18N.GetFStr("UnexistVariable", paramValueStr));
+            }
+            // 如果变量值不为null，并且变量类型和待写入属性类型不匹配则执行类型转换
+            Type propertyType = paramProperty.PropertyType;
+            if (null != paramValue && !paramValue.GetType().IsSubclassOf(propertyType))
+            {
+                paramValue = _context.Convertor.CastValue(propertyType, paramValue);
+            }
+            paramProperty.SetValue(parentValue, paramValue);
+            return varValue;
         }
 
         // 清空序列的变量
@@ -124,20 +166,48 @@ namespace Testflow.SlaveCore.Data
             }
         }
 
-        public object GetParamValue(string variableName, string paramValueStr)
+        public object GetParamValue(string variableName, string paramValueStr, ITypeData targetType)
         {
             object value;
             if (_syncVariables.Contains(variableName))
             {
                 _syncVarLock.EnterReadLock();
-                value = ModuleUtils.GetParamValue(paramValueStr, this._variables[variableName]);
+                value = GetParamValue(paramValueStr, this._variables[variableName], targetType);
                 _syncVarLock.ExitReadLock();
             }
             else
             {
-                value = ModuleUtils.GetParamValue(paramValueStr, this._variables[variableName]);
+                value = GetParamValue(paramValueStr, this._variables[variableName], targetType);
             }
             return value;
+        }
+
+        private object GetParamValue(string paramValueStr, object varValue, ITypeData targetType)
+        {
+            if (!paramValueStr.Contains(Constants.PropertyDelim))
+            {
+                return varValue;
+            }
+            object paramValue = varValue;
+            string[] paramElems = paramValueStr.Split(Constants.PropertyDelim.ToCharArray());
+            BindingFlags binding = BindingFlags.Public | BindingFlags.Instance;
+            for (int i = 1; i < paramElems.Length; i++)
+            {
+                PropertyInfo propertyInfo = paramValue.GetType().GetProperty(paramElems[i], binding);
+                if (null == propertyInfo)
+                {
+                    I18N i18N = I18N.GetInstance(Constants.I18nName);
+                    throw new TestflowDataException(ModuleErrorCode.SequenceDataError, i18N.GetFStr("UnexistVariable", paramValueStr));
+                }
+                paramValue = propertyInfo.GetValue(paramValue);
+            }
+            Type dstType = _context.TypeInvoker.GetType(targetType);
+            // 如果Value不为null，并且value和targetType不匹配，则执行转换
+            if (null != paramValue && !paramValue.GetType().IsSubclassOf(dstType))
+            {
+                paramValue = _context.Convertor.CastValue(targetType, paramValue);
+            }
+            return paramValue;
         }
 
         public Dictionary<string, string> GetWatchDataValues(ISequenceFlowContainer sequence)

@@ -141,7 +141,7 @@ namespace Testflow.SlaveCore.Common
             {
                 throw new InvalidCastException($"Unsupported cast type: {dataType.Name}");
             }
-            return (TDataType) Convertor.CastStrValue(dataType, _configData[propertyName]);
+            return (TDataType) Convertor.CastConstantValue(dataType, _configData[propertyName]);
         }
 
         public void Dispose()

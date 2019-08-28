@@ -32,5 +32,10 @@ namespace Testflow.SlaveCore.Runner.Convertors
         {
             return ConvertFuncs.ContainsKey(targetType.Name);
         }
+
+        public bool IsValidCastTarget(Type targetType)
+        {
+            return ConvertFuncs.ContainsKey(targetType.Name);
+        }
     }
 }

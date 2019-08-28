@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Testflow.CoreCommon;
+using Testflow.CoreCommon.Common;
 using Testflow.Data;
 using Testflow.SlaveCore.Common;
 using Testflow.SlaveCore.Runner.Convertors;
@@ -36,8 +37,14 @@ namespace Testflow.SlaveCore.Runner
             _strConvertor = _convertors[typeof (string).Name];
         }
 
-        public object CastValue(ITypeData sourceType, ITypeData targetType, object sourceValue)
+        public object CastValue(ITypeData targetType, object sourceValue)
         {
+            if (null == sourceValue)
+            {
+                _context.LogSession.Print(LogLevel.Warn, _context.SessionId, "Cannot cast null value.");
+                return null;
+            }
+            Type sourceType = sourceValue.GetType();
             if (!IsValidCast(sourceType, targetType))
             {
                 _context.LogSession.Print(LogLevel.Error, _context.SessionId, 
@@ -45,17 +52,17 @@ namespace Testflow.SlaveCore.Runner
                 throw new TestflowDataException(ModuleErrorCode.UnsupportedTypeCast, 
                     _context.I18N.GetFStr("InvalidValueTypeCast", sourceType.Name, targetType.Name));
             }
-            if (null == sourceValue)
-            {
-                _context.LogSession.Print(LogLevel.Error, _context.SessionId, "Cannot cast null value.");
-                throw new TestflowDataException(ModuleErrorCode.UnsupportedTypeCast,
-                    _context.I18N.GetFStr("CastNullValue", sourceType.Name));
-            }
             return _convertors[sourceType.Name].CastValue(targetType, sourceValue);
         }
 
-        public object CastValueOrDefault(ITypeData sourceType, ITypeData targetType, object sourceValue)
+        public object CastValue(Type targetType, object sourceValue)
         {
+            if (null == sourceValue)
+            {
+                _context.LogSession.Print(LogLevel.Warn, _context.SessionId, "Cannot cast null value.");
+                return null;
+            }
+            Type sourceType = sourceValue.GetType();
             if (!IsValidCast(sourceType, targetType))
             {
                 _context.LogSession.Print(LogLevel.Error, _context.SessionId,
@@ -63,15 +70,13 @@ namespace Testflow.SlaveCore.Runner
                 throw new TestflowDataException(ModuleErrorCode.UnsupportedTypeCast,
                     _context.I18N.GetFStr("InvalidValueTypeCast", sourceType.Name, targetType.Name));
             }
-            return null != sourceValue
-                ? _convertors[sourceType.Name].CastValue(targetType, sourceValue)
-                : _convertors[sourceType.Name].GetDefaultValue();
+            return _convertors[sourceType.Name].CastValue(targetType, sourceValue);
         }
 
         /// <summary>
         /// 字符串转换为值类型
         /// </summary>
-        public object CastStrValue(Type targetType, string sourceValue)
+        public object CastConstantValue(Type targetType, string sourceValue)
         {
             if (targetType == typeof(string))
             {
@@ -89,10 +94,28 @@ namespace Testflow.SlaveCore.Runner
                 _context.I18N.GetFStr("InvalidTypeCast", targetType.Name));
         }
 
-        private bool IsValidCast(ITypeData sourceType, ITypeData targetType)
+        public object GetDefaultValue(ITypeData type)
+        {
+            return _convertors.ContainsKey(type.Name) ? _convertors[type.Name].GetDefaultValue() : null;
+        }
+        
+        private bool IsValidCast(Type sourceType, ITypeData targetType)
         {
             return _convertors.ContainsKey(sourceType.Name) &&
                    _convertors[sourceType.Name].IsValidCastTarget(targetType);
+        }
+
+        private bool IsValidCast(Type sourceType, Type targetType)
+        {
+            return _convertors.ContainsKey(sourceType.Name) &&
+                   _convertors[sourceType.Name].IsValidCastTarget(targetType);
+        }
+
+        public bool NeedCastValue(object sourceValue, ITypeData targetType)
+        {
+            return (null != sourceValue &&
+                    ModuleUtils.GetTypeFullName(targetType) == ModuleUtils.GetTypeFullName(sourceValue.GetType())) || 
+                   (null == sourceValue && _convertors.ContainsKey(targetType.Name));
         }
     }
 }

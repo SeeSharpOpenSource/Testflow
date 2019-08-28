@@ -92,7 +92,7 @@ namespace Testflow.SlaveCore.Runner.Model
                 string paramValue = parameters[i].Value;
                 if (parameters[i].ParameterType == ParameterType.Value)
                 {
-                    Params[i] = Context.TypeInvoker.CastValue(argumentInfos[i].Type, paramValue);
+                    Params[i] = Context.TypeInvoker.CastConstantValue(argumentInfos[i].Type, paramValue);
                 }
                 else
                 {
@@ -145,7 +145,8 @@ namespace Testflow.SlaveCore.Runner.Model
                     }
                     break;
                 case FunctionType.InstanceFunction:
-                    instance = Context.VariableMapper.GetParamValue(InstanceVar, StepData.Function.Instance);
+                    instance = Context.VariableMapper.GetParamValue(InstanceVar, StepData.Function.Instance,
+                        StepData.Function.ClassType);
                     returnValue = Method.Invoke(instance, Params);
                     if (CoreUtils.IsValidVaraible(ReturnVar))
                     {
@@ -171,6 +172,7 @@ namespace Testflow.SlaveCore.Runner.Model
         // 因为Variable的值在整个过程中会变化，所以需要在运行前实时获取
         private void SetVariableParamValue()
         {
+            IArgumentCollection arguments = StepData.Function.ParameterType;
             IParameterDataCollection parameters = StepData.Function.Parameters;
             if (null == parameters)
             {
@@ -183,7 +185,8 @@ namespace Testflow.SlaveCore.Runner.Model
                     // 获取变量值的名称，该名称为变量的运行时名称，其值在InitializeParamValue方法里配置
                     string variableName = ModuleUtils.GetVariableNameFromParamValue(parameters[i].Value);
                     // 根据ParamString和变量对应的值配置参数。
-                    Params[i] = Context.VariableMapper.GetParamValue(variableName, parameters[i].Value);
+                    Params[i] = Context.VariableMapper.GetParamValue(variableName, parameters[i].Value,
+                        arguments[i].Type);
                 }
             }
         }
