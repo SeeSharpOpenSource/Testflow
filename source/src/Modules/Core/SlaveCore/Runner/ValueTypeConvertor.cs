@@ -12,6 +12,7 @@ namespace Testflow.SlaveCore.Runner
     {
         private readonly SlaveContext _context;
         private readonly Dictionary<string, ValueConvertorBase> _convertors;
+        private readonly ValueConvertorBase _strConvertor;
 
         public ValueTypeConvertor(SlaveContext context)
         {
@@ -32,6 +33,7 @@ namespace Testflow.SlaveCore.Runner
                 {typeof (bool).Name, new BoolConvertor()},
                 {typeof (string).Name, new StringConvertor()}
             };
+            _strConvertor = _convertors[typeof (string).Name];
         }
 
         public object CastValue(ITypeData sourceType, ITypeData targetType, object sourceValue)
@@ -64,6 +66,27 @@ namespace Testflow.SlaveCore.Runner
             return null != sourceValue
                 ? _convertors[sourceType.Name].CastValue(targetType, sourceValue)
                 : _convertors[sourceType.Name].GetDefaultValue();
+        }
+
+        /// <summary>
+        /// 字符串转换为值类型
+        /// </summary>
+        public object CastStrValue(Type targetType, string sourceValue)
+        {
+            if (targetType == typeof(string))
+            {
+                return sourceValue;
+            }
+            else if (targetType.IsEnum)
+            {
+                return Enum.Parse(targetType, sourceValue);
+            }
+            else if (targetType.IsValueType)
+            {
+                return _strConvertor.CastValue(targetType, sourceValue);
+            }
+            throw new TestflowDataException(ModuleErrorCode.UnsupportedTypeCast,
+                _context.I18N.GetFStr("InvalidTypeCast", targetType.Name));
         }
 
         private bool IsValidCast(ITypeData sourceType, ITypeData targetType)

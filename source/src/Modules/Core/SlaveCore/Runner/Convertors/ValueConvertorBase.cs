@@ -23,6 +23,11 @@ namespace Testflow.SlaveCore.Runner.Convertors
             return ConvertFuncs[targetType.Name].Invoke(sourceValue);
         }
 
+        public object CastValue(Type targetType, object sourceValue)
+        {
+            return ConvertFuncs[targetType.Name].Invoke(sourceValue);
+        }
+
         public bool IsValidCastTarget(ITypeData targetType)
         {
             return ConvertFuncs.ContainsKey(targetType.Name);

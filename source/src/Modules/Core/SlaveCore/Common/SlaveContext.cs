@@ -21,30 +21,22 @@ namespace Testflow.SlaveCore.Common
     internal class SlaveContext : IDisposable
     {
         private readonly Dictionary<string, string> _configData;
-        private readonly Dictionary<string, Func<string, object>> _valueConvertor;
 
         public SlaveContext(string configDataStr)
         {
             _configData = JsonConvert.DeserializeObject<Dictionary<string, string>>(configDataStr);
-            this._valueConvertor = new Dictionary<string, Func<string, object>>(10);
-            _valueConvertor.Add(typeof(string).Name, strValue => strValue);
-            _valueConvertor.Add(typeof(long).Name, strValue => long.Parse(strValue));
-            _valueConvertor.Add(typeof(int).Name, strValue => int.Parse(strValue));
-            _valueConvertor.Add(typeof(uint).Name, strValue => uint.Parse(strValue));
-            _valueConvertor.Add(typeof(short).Name, strValue => short.Parse(strValue));
-            _valueConvertor.Add(typeof(ushort).Name, strValue => ushort.Parse(strValue));
-            _valueConvertor.Add(typeof(char).Name, strValue => char.Parse(strValue));
-            _valueConvertor.Add(typeof(byte).Name, strValue => byte.Parse(strValue));
-            _valueConvertor.Add(typeof(bool).Name, strValue => bool.Parse(strValue));
-
             this._msgIndex = -1;
+
+            this.I18N = I18N.GetInstance(Constants.I18nName);
+            this.Convertor = new ValueTypeConvertor(this);
+
             SessionId = this.GetProperty<int>("Session");
             State = RuntimeState.NotAvailable;
             this.StatusQueue = new LocalEventQueue<SequenceStatusInfo>(CoreConstants.DefaultEventsQueueSize);
             string instanceName = _configData["InstanceName"];
             string sessionName = _configData["SessionName"];
             this.LogSession = new RemoteLoggerSession(instanceName, sessionName,SessionId, GetProperty<LogLevel>("LogLevel"));
-            this.I18N = I18N.GetInstance(Constants.I18nName);
+            
             this.MessageTransceiver = new MessageTransceiver(this, SessionId);
             this.UplinkMsgProcessor = new UplinkMessageProcessor(this);
             this.CallBackEventManager = new CallBackEventManager();
@@ -57,7 +49,6 @@ namespace Testflow.SlaveCore.Common
             this.BreakPoints = new HashSet<string>();
             this.RuntimeType = GetProperty<RuntimeType>("RuntimeType");
             this.Cancellation = new CancellationTokenSource();
-
             LogSession.Print(LogLevel.Debug, SessionId, "Slave context constructed.");
         }
 
@@ -88,6 +79,8 @@ namespace Testflow.SlaveCore.Common
         public Thread FlowControlThread { get; set; }
 
         public CallBackEventManager CallBackEventManager { get; set; }
+
+        public ValueTypeConvertor Convertor { get; }
 
         /// <summary>
         /// 执行取消标志
@@ -148,16 +141,7 @@ namespace Testflow.SlaveCore.Common
             {
                 throw new InvalidCastException($"Unsupported cast type: {dataType.Name}");
             }
-            object value;
-            if (dataType.IsEnum)
-            {
-                value = Enum.Parse(dataType, _configData[propertyName]);
-            }
-            else
-            {
-                value = _valueConvertor[dataType.Name].Invoke(_configData[propertyName]);
-            }
-            return (TDataType) value;
+            return (TDataType) Convertor.CastStrValue(dataType, _configData[propertyName]);
         }
 
         public void Dispose()
