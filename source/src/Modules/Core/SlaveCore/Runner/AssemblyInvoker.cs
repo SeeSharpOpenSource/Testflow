@@ -144,26 +144,8 @@ namespace Testflow.SlaveCore.Runner
 
         public object CastValue(ITypeData type, string valueStr)
         {
-            object value = null;
             Type dataType = _typeDataMapping[ModuleUtils.GetTypeFullName(type)];
-            if (dataType.IsValueType && !dataType.IsEnum)
-            {
-                value = _valueTypeConvertors[dataType.Name].Invoke(valueStr);
-            }
-            else if (dataType.IsEnum)
-            {
-                value = Enum.Parse(dataType, valueStr);
-            }
-            else if (dataType == typeof (string))
-            {
-                value = valueStr;
-            }
-            else
-            {
-                throw new TestflowRuntimeException(ModuleErrorCode.UnsupportedTypeCast,
-                    _context.I18N.GetFStr("InvalidTypeCast", type.Name));
-            }
-            return value;
+            return _context.Convertor.CastStrValue(dataType, valueStr);
         }
 
         private void LoadAssemblies()
