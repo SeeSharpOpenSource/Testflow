@@ -44,16 +44,17 @@ namespace Testflow.SlaveCore.Runner.Model
                 string instanceVarName = ModuleUtils.GetVariableNameFromParamValue(StepData.Function.Instance);
                 _instanceVar = ModuleUtils.GetVariableFullName(instanceVarName, StepData, Context.SessionId);
             }
+            IParameterDataCollection parameters = StepData.Function.Parameters;
             for (int i = 0; i < _properties.Count; i++)
             {
-                string paramValue = StepData.Function.Parameters[i].Value;
+                string paramValue = parameters[i].Value;
                 IArgument argument = StepData.Function.ParameterType[i];
                 if (null == _properties[i] || string.IsNullOrEmpty(paramValue))
                 {
                     _params.Add(null);
                     continue;
                 }
-                switch (StepData.Function.Parameters[i].ParameterType)
+                switch (parameters[i].ParameterType)
                 {
                     case ParameterType.NotAvailable:
                         _params.Add(null);
@@ -64,7 +65,11 @@ namespace Testflow.SlaveCore.Runner.Model
                         break;
                     case ParameterType.Variable:
                         string variableRawName = ModuleUtils.GetVariableNameFromParamValue(paramValue);
-                        _params.Add(ModuleUtils.GetVaraibleByRawVarName(variableRawName, StepData));
+                        string varFullName = ModuleUtils.GetVariableFullName(variableRawName, StepData,
+                            Context.SessionId);
+                        // 将parameter的Value中，变量名称替换为运行时变量名
+                        parameters[i].Value = ModuleUtils.GetFullParameterVariableName(varFullName, paramValue);
+                        _params.Add(null);
                         break;
                     default:
                         throw new ArgumentOutOfRangeException();
@@ -92,11 +97,13 @@ namespace Testflow.SlaveCore.Runner.Model
                 {
                     continue;
                 }
-                if (StepData.Function.Parameters[i].ParameterType == ParameterType.Variable)
+                IParameterDataCollection parameters = StepData.Function.Parameters;
+                if (parameters[i].ParameterType == ParameterType.Variable)
                 {
-                    // 获取变量值的名称
-                    string variableName = CoreUtils.GetRuntimeVariableName(Context.SessionId, (IVariable) _params[i]);
-                    _params[i] = Context.VariableMapper.GetParamValue(variableName, StepData.Function.Parameters[i].Value);
+                    // 获取变量值的名称，该名称为变量的运行时名称，其值在InitializeParamValue方法里配置
+                    string variableName = ModuleUtils.GetVariableNameFromParamValue(parameters[i].Value);
+                    // 根据ParamString和变量对应的值配置参数。
+                    _params[i] = Context.VariableMapper.GetParamValue(variableName, parameters[i].Value);
                 }
                 _properties[i].SetValue(instance, _params[i]);
             }
