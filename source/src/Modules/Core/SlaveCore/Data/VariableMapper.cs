@@ -184,26 +184,27 @@ namespace Testflow.SlaveCore.Data
 
         private object GetParamValue(string paramValueStr, object varValue, ITypeData targetType)
         {
-            if (!paramValueStr.Contains(Constants.PropertyDelim))
-            {
-                return varValue;
-            }
             object paramValue = varValue;
-            string[] paramElems = paramValueStr.Split(Constants.PropertyDelim.ToCharArray());
-            BindingFlags binding = BindingFlags.Public | BindingFlags.Instance;
-            for (int i = 1; i < paramElems.Length; i++)
+            // 如果ParamValue使用了类属性的定义，则需要按层取出真实属性的值
+            if (paramValueStr.Contains(Constants.PropertyDelim))
             {
-                PropertyInfo propertyInfo = paramValue.GetType().GetProperty(paramElems[i], binding);
-                if (null == propertyInfo)
+                string[] paramElems = paramValueStr.Split(Constants.PropertyDelim.ToCharArray());
+                BindingFlags binding = BindingFlags.Public | BindingFlags.Instance;
+                for (int i = 1; i < paramElems.Length; i++)
                 {
-                    I18N i18N = I18N.GetInstance(Constants.I18nName);
-                    throw new TestflowDataException(ModuleErrorCode.SequenceDataError, i18N.GetFStr("UnexistVariable", paramValueStr));
+                    PropertyInfo propertyInfo = paramValue.GetType().GetProperty(paramElems[i], binding);
+                    if (null == propertyInfo)
+                    {
+                        I18N i18N = I18N.GetInstance(Constants.I18nName);
+                        throw new TestflowDataException(ModuleErrorCode.SequenceDataError, i18N.GetFStr("UnexistVariable", paramValueStr));
+                    }
+                    paramValue = propertyInfo.GetValue(paramValue);
                 }
-                paramValue = propertyInfo.GetValue(paramValue);
             }
+            
             Type dstType = _context.TypeInvoker.GetType(targetType);
             // 如果Value不为null，并且value和targetType不匹配，则执行转换
-            if (null != paramValue && !paramValue.GetType().IsSubclassOf(dstType))
+            if (null != paramValue && !(paramValue.GetType().IsSubclassOf(dstType) || paramValue.GetType() == dstType))
             {
                 paramValue = _context.Convertor.CastValue(targetType, paramValue);
             }
