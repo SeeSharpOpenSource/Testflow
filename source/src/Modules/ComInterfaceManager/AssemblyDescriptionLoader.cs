@@ -3,13 +3,12 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Text;
 using Testflow.ComInterfaceManager.Data;
 using Testflow.Data;
 using Testflow.Data.Description;
-using Testflow.SequenceManager.SequenceElements;
 using Testflow.Usr;
 using Testflow.Usr.Common;
-using Testflow.Utility.I18nUtil;
 
 namespace Testflow.ComInterfaceManager
 {
@@ -142,8 +141,8 @@ namespace Testflow.ComInterfaceManager
                 AssemblyName = assemblyName,
                 Category = typeCategory,
                 Description = classDescriptionStr,
-                Name = classType.Name,
-                Namespace = classType.Namespace
+                Name = GetTypeName(classType),
+                Namespace = GetNamespace(classType)
             };
 
             // 枚举类型需要添加枚举值到类型信息中
@@ -168,15 +167,15 @@ namespace Testflow.ComInterfaceManager
             {
                 AssemblyName = assemblyName,
                 Category = typeCategory,
-                Name = classType.Name,
-                Namespace = classType.Namespace,
+                Name = GetTypeName(classType),
+                Namespace = GetNamespace(classType),
                 Description = classDescriptionStr,
             };
             ClassInterfaceDescription classDescription = new ClassInterfaceDescription()
             {
                 ClassTypeDescription = typeDescription,
                 Description = typeDescription.Description,
-                Name = classType.Name,
+                Name = GetTypeName(classType),
             };
             AddConstructorDescription(classType, classDescription);
             AddPropertySetterDescription(classType, classDescription);
@@ -282,7 +281,7 @@ namespace Testflow.ComInterfaceManager
                     Name = methodInfo.Name,
                 };
                 InitMethodParamDescription(methodInfo, funcDescription);
-                funcDescription.Signature = ModuleUtils.GetSignature(classType.Name, funcDescription);
+                funcDescription.Signature = ModuleUtils.GetSignature(classDescription.Name, funcDescription);
 
                 classDescription.Functions.Add(funcDescription);
             }
@@ -364,8 +363,8 @@ namespace Testflow.ComInterfaceManager
                     AssemblyName = propertyType.Assembly.GetName().Name,
                     Category = string.Empty,
                     Description = descriptionStr,
-                    Name = propertyType.Name,
-                    Namespace = propertyType.Namespace
+                    Name = GetTypeName(propertyType),
+                    Namespace = GetNamespace(propertyType)
                 };
 
                 ArgumentDescription propertyDescription = new ArgumentDescription()
@@ -423,8 +422,8 @@ namespace Testflow.ComInterfaceManager
                 AssemblyName = parameterType.Assembly.GetName().Name,
                 Category = string.Empty,
                 Description = descriptionStr,
-                Name = GetTypeName(parameterType),
-                Namespace = parameterType.Namespace
+                Name = GetParamTypeName(parameterType),
+                Namespace = GetNamespace(parameterType)
             };
 
             ArgumentModifier modifier = ArgumentModifier.None;
@@ -477,8 +476,8 @@ namespace Testflow.ComInterfaceManager
                 AssemblyName = propertyType.Assembly.GetName().Name,
                 Category = string.Empty,
                 Description = string.Empty,
-                Name = propertyType.Name,
-                Namespace = propertyType.Namespace
+                Name = GetTypeName(propertyType),
+                Namespace = GetNamespace(propertyType)
             };
 
             ArgumentDescription paramDescription = new ArgumentDescription()
@@ -571,8 +570,8 @@ namespace Testflow.ComInterfaceManager
                     AssemblyName = dataType.Assembly.GetName().Name,
                     Category = category,
                     Description = description,
-                    Name = dataType.Name,
-                    Namespace = dataType.Namespace
+                    Name = GetTypeName(dataType),
+                    Namespace = GetNamespace(dataType)
                 };
                 return typeDescription;
             }
@@ -628,8 +627,8 @@ namespace Testflow.ComInterfaceManager
                 AssemblyName = assembly.GetName().Name,
                 Category = LibraryCategory.Platform.ToString(),
                 Description = "",
-                Name = type.Name,
-                Namespace = type.Namespace
+                Name = GetTypeName(type),
+                Namespace = GetNamespace(type)
             };
 
             ClassInterfaceDescription classDescription = new ClassInterfaceDescription()
@@ -646,15 +645,47 @@ namespace Testflow.ComInterfaceManager
             comDescription.TypeDescriptions.Add(typeDescription);
         }
 
-        // 部分类型支持原生的ref类型type，这在slave端会导致识别的困难，需要将其替换为非ref类型。例如所有基础类型和数组都有原生的ref类型
         private static string GetTypeName(Type type)
         {
-            const string refTypeSymbol = "&";
-            if (!type.Name.Contains(refTypeSymbol))
+            const char delim = '.';
+            // 如果DeclaringType为空则该类不是nestedType，直接返回名称
+            if (null == type.DeclaringType)
             {
                 return type.Name;
             }
-            return type.Name.Replace(refTypeSymbol, "");
+            // 如果是nested类型，则其名称应该为：上级类类名.本类类名
+            Type nestedType = type;
+            StringBuilder typeName = new StringBuilder(50);
+            typeName.Append(type.Name);
+            while (null != nestedType.DeclaringType)
+            {
+                nestedType = nestedType.DeclaringType;
+                typeName.Insert(0, delim).Insert(0, nestedType.Name);
+            }
+            return typeName.ToString();
+        }
+
+        // 部分类型支持原生的ref类型type，这在slave端会导致识别的困难，需要将其替换为非ref类型。例如所有基础类型和数组都有原生的ref类型
+        private static string GetParamTypeName(Type type)
+        {
+            const string refTypeSymbol = "&";
+            string typeName = GetTypeName(type);
+            return !typeName.Contains(refTypeSymbol) ? typeName : typeName.Replace(refTypeSymbol, "");
+        }
+
+        private static string GetNamespace(Type type)
+        {
+            return type.Namespace;
+//            if (null == type.DeclaringType)
+//            {
+//                return type.Namespace;
+//            }
+//            Type nestedType = type;
+//            while (null != nestedType.DeclaringType)
+//            {
+//                nestedType = nestedType.DeclaringType;
+//            }
+//            return $"{nestedType.Namespace}.{nestedType.Name}";
         }
     }
 }

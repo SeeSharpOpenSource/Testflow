@@ -45,7 +45,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CallBack\AssemblyInfo.cs" />
+    <Compile Include="CallBack\AssemblyInvoker.cs" />
     <Compile Include="Common\Constants.cs" />
     <Compile Include="Common\LocalEventQueue.cs" />
     <Compile Include="Common\ModuleGlobalInfo.cs" />

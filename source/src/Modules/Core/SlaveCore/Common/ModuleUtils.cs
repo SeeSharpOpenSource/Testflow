@@ -58,9 +58,9 @@ namespace Testflow.SlaveCore.Common
             return $"{typeData.Namespace}.{typeData.Name}";
         }
 
-        public static string GetTypeFullName(Type typeData)
+        public static string GetTypeFullName(string namespaceStr, string typeName)
         {
-            return $"{typeData.Namespace}.{typeData.Name}";
+            return $"{namespaceStr}.{typeName}";
         }
 
         public static StepTaskEntityBase CreateStepModelChain(IList<ISequenceStep> steps, SlaveContext context,

@@ -202,7 +202,7 @@ namespace Testflow.MasterCore.CallBack
                     typeName = fullName;
                     assemblyName = typeData.AssemblyName;
 
-                    Type type = assembly.GetType(fullName, true, false);
+                    Type type = LoadType(assembly, typeData);
                     _typeDataMapping.Add(fullName, type);
                 }
             }
@@ -217,6 +217,25 @@ namespace Testflow.MasterCore.CallBack
                 _logService.Print(LogLevel.Error, CommonConst.PlatformLogSession, ex, "Load type failed.");
                 throw new TestflowRuntimeException(CoreCommon.ModuleErrorCode.UnaccessibleType, _I18N.GetStr("LoadTypeFailed"), ex);
             }
+        }
+
+        private static Type LoadType(Assembly assembly, ITypeData typeData)
+        {
+            const string delim = ".";
+            // 不包含域操作符则说明该类型不是nestedType，直接通过程序集获取类型
+            if (!typeData.Name.Contains(delim))
+            {
+                return assembly.GetType(ModuleUtils.GetTypeFullName(typeData), true, false);
+            }
+            string[] nestedNames = typeData.Name.Split(delim.ToCharArray());
+            string topLevelTypeName = ModuleUtils.GetTypeFullName(typeData.Namespace, nestedNames[0]);
+            // 获取最上层的Type类型，再依次向下
+            Type realType = assembly.GetType(topLevelTypeName, true, false);
+            for (int i = 1; i < nestedNames.Length; i++)
+            {
+                realType = realType.GetNestedType(nestedNames[i]);
+            }
+            return realType;
         }
 
         private string GetAssemblyFullPath(string path)

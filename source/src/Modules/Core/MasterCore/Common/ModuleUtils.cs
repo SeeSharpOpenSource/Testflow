@@ -61,6 +61,11 @@ namespace Testflow.MasterCore.Common
             return $"{typeData.Namespace}.{typeData.Name}";
         }
 
+        public static string GetTypeFullName(string namespaceStr, string typeName)
+        {
+            return $"{namespaceStr}.{typeName}";
+        }
+
         public static TDataType GetDeleage<TDataType>(Delegate action) where TDataType : class
         {
             TDataType delegateAction = action as TDataType;

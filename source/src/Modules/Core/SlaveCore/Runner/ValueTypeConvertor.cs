@@ -110,12 +110,5 @@ namespace Testflow.SlaveCore.Runner
             return _convertors.ContainsKey(sourceType.Name) &&
                    _convertors[sourceType.Name].IsValidCastTarget(targetType);
         }
-
-        public bool NeedCastValue(object sourceValue, ITypeData targetType)
-        {
-            return (null != sourceValue &&
-                    ModuleUtils.GetTypeFullName(targetType) == ModuleUtils.GetTypeFullName(sourceValue.GetType())) || 
-                   (null == sourceValue && _convertors.ContainsKey(targetType.Name));
-        }
     }
 }
