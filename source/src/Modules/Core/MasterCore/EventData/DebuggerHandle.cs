@@ -26,7 +26,7 @@ namespace Testflow.MasterCore.EventData
             _debugManager.Continue();
         }
 
-        public void SkipAllBreakPoints()
+        public void RunToEnd()
         {
             throw new System.NotImplementedException();
         }

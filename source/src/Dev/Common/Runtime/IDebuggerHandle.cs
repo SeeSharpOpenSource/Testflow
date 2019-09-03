@@ -31,7 +31,7 @@ namespace Testflow.Runtime
         /// <summary>
         /// 跳过当前序列的所有断点
         /// </summary>
-        void SkipAllBreakPoints();
+        void RunToEnd();
 
         #endregion
 
