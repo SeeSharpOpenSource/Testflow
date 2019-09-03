@@ -135,8 +135,7 @@ namespace Testflow.MasterCore.Core
             {
                 return;
             }
-            DebugMessage debugMessage = new DebugMessage(MessageNames.DownDebugMsgName, _debugHitSession,
-                DebugMessageType.FreeDebugBlock);
+            DebugMessage debugMessage = new DebugMessage(MessageNames.ContinueName, _debugHitSession, true);
             _globalInfo.MessageTransceiver.Send(debugMessage);
 
             DebugEventInfo debugEvent = new DebugEventInfo(debugMessage);
@@ -146,28 +145,19 @@ namespace Testflow.MasterCore.Core
 
         private void SendAddBreakPointMessage(int sessionId, CallStack callStack)
         {
-            DebugMessage debugMessage = new DebugMessage(MessageNames.DownDebugMsgName, sessionId,
-                DebugMessageType.AddBreakPoint)
-            {
-                BreakPoint = callStack
-            };
+            DebugMessage debugMessage = new DebugMessage(MessageNames.AddBreakPointName, sessionId, callStack, true);
             _globalInfo.MessageTransceiver.Send(debugMessage);
         }
 
         private void SendRemoveBreakPointMessage(int sessionId, CallStack callStack)
         {
-            DebugMessage debugMessage = new DebugMessage(MessageNames.DownDebugMsgName, sessionId,
-                DebugMessageType.RemoveBreakPoint)
-            {
-                BreakPoint = callStack
-            };
+            DebugMessage debugMessage = new DebugMessage(MessageNames.DelBreakPointName, sessionId, callStack, true);
             _globalInfo.MessageTransceiver.Send(debugMessage);
         }
 
         public void SendRefreshWatchMessage(int sessionId)
         {
-            DebugMessage debugMessage = new DebugMessage(MessageNames.DownDebugMsgName, sessionId,
-                DebugMessageType.RefreshWatch)
+            DebugMessage debugMessage = new DebugMessage(MessageNames.RefreshWatchName, sessionId, true)
             {
                 WatchData = new DebugWatchData()
             };
@@ -181,16 +171,24 @@ namespace Testflow.MasterCore.Core
         public bool HandleMessage(MessageBase message)
         {
             DebugMessage debugMessage = (DebugMessage)message;
-            DebugMessageType messageType = debugMessage.DebugMsgType;
-            switch (messageType)
+            switch (message.Name)
             {
-                case DebugMessageType.BreakPointHitted:
+                case MessageNames.BreakPointHitName:
                     Thread.VolatileWrite(ref _debugHitSession, debugMessage.Id);
                     DebugEventInfo debugEvent = new DebugEventInfo(debugMessage);
                     _globalInfo.EventQueue.Enqueue(debugEvent);
                     break;
+                case MessageNames.AddBreakPointName:
+
+                    break;
+                case MessageNames.DelBreakPointName:
+                    break;
+                    break;
+                case MessageNames.RequestValueName:
+                    break;
                 default:
-                    throw new ArgumentException();
+                    throw new ArgumentOutOfRangeException();
+                    break;
             }
             return true;
         }

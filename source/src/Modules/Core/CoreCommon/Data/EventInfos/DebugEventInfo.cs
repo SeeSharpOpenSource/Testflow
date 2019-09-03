@@ -24,19 +24,29 @@ namespace Testflow.CoreCommon.Data.EventInfos
 
         public DebugEventInfo(DebugMessage message) : base(message.Id, EventType.Debug, message.Time)
         {
-            this.BreakPoint = message.BreakPoint;
-            if (message.DebugMsgType == DebugMessageType.BreakPointHitted)
+            switch (message.Name)
             {
-                this.IsDebugHit = true;
-                this.WatchData = message.WatchData;
-            }
-            else if (message.DebugMsgType == DebugMessageType.FreeDebugBlock)
-            {
-                this.IsDebugHit = false;
-            }
-            else
-            {
-                throw new ArgumentException();
+                case MessageNames.BreakPointHitName:
+                    this.BreakPoint = message.BreakPoints[0];
+                    this.WatchData = message.WatchData;
+                    this.IsDebugHit = true;
+                    break;
+                case MessageNames.NextStepName:
+                case MessageNames.StepIntoName:
+                case MessageNames.ContinueName:
+                case MessageNames.RunToEndName:
+                    this.IsDebugHit = false;
+                    this.BreakPoint = null;
+                    this.WatchData = null;
+                    break;
+                case MessageNames.RequestValueName:
+                    this.IsDebugHit = false;
+                    this.BreakPoint = message.BreakPoints[0];
+                    this.WatchData = message.WatchData;
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+                    break;
             }
         }
     }

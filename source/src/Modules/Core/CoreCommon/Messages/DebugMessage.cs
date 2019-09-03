@@ -14,22 +14,37 @@ namespace Testflow.CoreCommon.Messages
     [Serializable]
     public class DebugMessage : MessageBase
     {
-        public DebugMessage(string name, int id, DebugMessageType msgType) : base(name, id, MessageType.Debug)
+        public DebugMessage(string name, int id, bool isRequest) : base(name, id, MessageType.Debug)
         {
-            this.DebugMsgType = msgType;
-            this.BreakPoint = null;
+            this.IsRequst = isRequest;
             this.WatchData = null;
+            this.BreakPoints = null;
+        }
+
+        public DebugMessage(string name, int id, CallStack breakPoint, bool isRequest) : base(name, id, MessageType.Debug)
+        {
+            this.IsRequst = isRequest;
+            this.WatchData = null;
+            this.BreakPoints = new List<CallStack>(1);
+            this.BreakPoints.Add(breakPoint);
+        }
+
+        public DebugMessage(string name, int id, IList<CallStack> breakPoint, bool isRequest) : base(name, id, MessageType.Debug)
+        {
+            this.IsRequst = isRequest;
+            this.WatchData = null;
+            this.BreakPoints = new List<CallStack>(breakPoint);
         }
 
         /// <summary>
-        /// 当前的堆栈信息
+        /// 断点列表
         /// </summary>
-        public CallStack BreakPoint { get; set; }
+        public List<CallStack> BreakPoints { get; set; }
 
         /// <summary>
-        /// 消息类型
+        /// 该消息是否为请求命令(下行)
         /// </summary>
-        public DebugMessageType DebugMsgType { get; set; }
+        public bool IsRequst { get; set; }
 
         /// <summary>
         /// 被请求的变量值信息
@@ -47,15 +62,15 @@ namespace Testflow.CoreCommon.Messages
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
             base.GetObjectData(info, context);
-            if (null != BreakPoint)
-            {
-                info.AddValue("Stack", this.BreakPoint, typeof(CallStack));
-            }
+            info.AddValue("IsRequst", IsRequst);
             if (null != WatchData && 0 == WatchData.Count)
             {
-                info.AddValue("Data", WatchData, typeof(DebugWatchData));
+                info.AddValue("WatchData", WatchData, typeof(DebugWatchData));
             }
-            info.AddValue("DebugMsgType", DebugMsgType);
+            if (null != BreakPoints && 0 == BreakPoints.Count)
+            {
+                info.AddValue("Params", BreakPoints, typeof(List<CallStack>));
+            }
         }
     }
 }

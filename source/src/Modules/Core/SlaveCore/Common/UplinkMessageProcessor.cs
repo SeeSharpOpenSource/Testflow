@@ -124,9 +124,9 @@ namespace Testflow.SlaveCore.Common
                     _transceiver.SendMessage(statusMessage);
                     break;
                 case StatusReportType.DebugHitted:
-                    DebugMessage debugMessage = new DebugMessage(MessageNames.UpDebugMsgName, statusInfo.Sequence, DebugMessageType.BreakPointHitted)
+                    DebugMessage debugMessage = new DebugMessage(MessageNames.BreakPointHitName, _context.SessionId,
+                        statusInfo.Stack, false)
                     {
-                        BreakPoint = statusInfo.Stack,
                         Time = statusInfo.Time,
                         Index = _context.MsgIndex
                     };
