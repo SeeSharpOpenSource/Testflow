@@ -142,7 +142,7 @@ namespace Testflow.SlaveCore.Data
             }
             // 如果变量值不为null，并且变量类型和待写入属性类型不匹配则执行类型转换
             Type propertyType = paramProperty.PropertyType;
-            if (null != paramValue && !paramValue.GetType().IsSubclassOf(propertyType))
+            if (null != paramValue && !propertyType.IsInstanceOfType(paramValue))
             {
                 paramValue = _context.Convertor.CastValue(propertyType, paramValue);
             }
@@ -204,7 +204,7 @@ namespace Testflow.SlaveCore.Data
             
             Type dstType = _context.TypeInvoker.GetType(targetType);
             // 如果Value不为null，并且value和targetType不匹配，则执行转换
-            if (null != paramValue && !(paramValue.GetType().IsSubclassOf(dstType) || paramValue.GetType() == dstType))
+            if (null != paramValue && !dstType.IsInstanceOfType(paramValue))
             {
                 paramValue = _context.Convertor.CastValue(targetType, paramValue);
             }
