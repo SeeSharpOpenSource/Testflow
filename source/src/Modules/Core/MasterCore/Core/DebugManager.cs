@@ -36,7 +36,7 @@ namespace Testflow.MasterCore.Core
 
         #region 监视管理
 
-        public void AddWatchVariable(int session, WatchDataObject watchDataObj)
+        private void AddWatchVariable(int session, WatchDataObject watchDataObj)
         {
             string watchDataName = ModuleUtils.GetRuntimeVariableString(watchDataObj, _sequenceData); 
             if (!_watchVariables.ContainsKey(session))
@@ -55,7 +55,7 @@ namespace Testflow.MasterCore.Core
             }
         }
 
-        public void RemoveWatchVariable(int session, WatchDataObject watchDataObj)
+        private void RemoveWatchVariable(int session, WatchDataObject watchDataObj)
         {
             string watchDataName = ModuleUtils.GetRuntimeVariableString(watchDataObj, _sequenceData);
             if (!_watchVariables.ContainsKey(session))
@@ -78,7 +78,7 @@ namespace Testflow.MasterCore.Core
             }
         }
 
-        public void SendRefreshWatchMessage(int sessionId)
+        private void SendRefreshWatchMessage(int sessionId)
         {
             DebugMessage debugMessage = new DebugMessage(MessageNames.RefreshWatchName, sessionId, true)
             {
@@ -95,9 +95,12 @@ namespace Testflow.MasterCore.Core
 
         #region 表达式管理
 
-        public void EvaluateExpression(EvaluationObject evaluationObject)
+        private void EvaluateExpression(EvaluationObject evaluationObject)
         {
-            
+            DebugMessage debugMessage = new DebugMessage(MessageNames.RequestValueName, evaluationObject.Session, false);
+            debugMessage.WatchData = new DebugWatchData();
+            debugMessage.WatchData.Names.Add(evaluationObject.Expression);
+            _globalInfo.MessageTransceiver.Send(debugMessage);
         }
 
         #endregion
@@ -105,7 +108,7 @@ namespace Testflow.MasterCore.Core
 
         #region 断点管理
 
-        public void AddBreakPoint(int sessionId, CallStack breakPoint)
+        private void AddBreakPoint(int sessionId, CallStack breakPoint)
         {
             if (_breakPoints.ContainsKey(sessionId) && _breakPoints[sessionId].Contains(breakPoint))
             {
@@ -124,7 +127,7 @@ namespace Testflow.MasterCore.Core
             }
         }
 
-        public void RemoveBreakPoint(int sessionId, CallStack breakPoint)
+        private void RemoveBreakPoint(int sessionId, CallStack breakPoint)
         {
             if (null != breakPoint && !_breakPoints.ContainsKey(sessionId) ||
                 !_breakPoints[sessionId].Contains(breakPoint))
@@ -153,11 +156,16 @@ namespace Testflow.MasterCore.Core
         {
             if (_breakPoints.ContainsKey(sessionId))
             {
-                foreach (CallStack breakPoint in _breakPoints[sessionId])
-                {
-                    SendBreakPointUpdateMessage(sessionId, MessageNames.AddBreakPointName, breakPoint);
-                }
+                DebugMessage debugMessage = new DebugMessage(MessageNames.AddBreakPointName, sessionId,
+                    _breakPoints[sessionId], true);
+                _globalInfo.MessageTransceiver.Send(debugMessage);
             }
+        }
+
+        private void SendBreakPointUpdateMessage(int sessionId, string messageName, CallStack callStack)
+        {
+            DebugMessage debugMessage = new DebugMessage(messageName, sessionId, callStack, true);
+            _globalInfo.MessageTransceiver.Send(debugMessage);
         }
 
         #endregion
@@ -198,13 +206,7 @@ namespace Testflow.MasterCore.Core
             DebugEventInfo debugEvent = new DebugEventInfo(debugMessage);
             _globalInfo.EventQueue.Enqueue(debugEvent);
         }
-
-        private void SendBreakPointUpdateMessage(int sessionId, string messageName, CallStack callStack)
-        {
-            DebugMessage debugMessage = new DebugMessage(messageName, sessionId, callStack, true);
-            _globalInfo.MessageTransceiver.Send(debugMessage);
-        }
-
+        
         #endregion
 
         public bool HandleMessage(MessageBase message)
