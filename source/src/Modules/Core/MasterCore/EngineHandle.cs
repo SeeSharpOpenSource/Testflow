@@ -87,12 +87,12 @@ namespace Testflow.MasterCore
 
         public long AddRuntimeObject(string objectType, int sessionId, params object[] param)
         {
-            return _runtimeEngine.AddRuntimeObject(objectType, sessionId, param);
+            return _runtimeEngine.RuntimeObjManager.AddRuntimeObject(objectType, sessionId, param);
         }
 
         public long RemoveRuntimeObject(int objectId, params object[] param)
         {
-            return _runtimeEngine.RemoveRuntimeObject(objectId, param);
+            return _runtimeEngine.RuntimeObjManager.RemoveRuntimeObject(objectId, param);
         }
 
         public void RegisterRuntimeEvent(Delegate callBack, string eventName, params object[] extraParams)

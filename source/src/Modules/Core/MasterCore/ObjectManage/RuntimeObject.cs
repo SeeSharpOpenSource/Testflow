@@ -11,11 +11,14 @@ namespace Testflow.MasterCore.ObjectManage
             _nextId = -1;
         }
 
+        public string ObjectName { get; }
+
         public long Id { get; }
 
-        protected RuntimeObject()
+        protected RuntimeObject(string objectName)
         {
             this.Id = Interlocked.Increment(ref _nextId);
+            this.ObjectName = objectName;
         }
     }
 }

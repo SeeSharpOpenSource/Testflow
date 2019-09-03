@@ -1,5 +1,9 @@
 ﻿using System.Collections.Generic;
+using Testflow.CoreCommon;
+using Testflow.CoreCommon.Data;
 using Testflow.MasterCore.Common;
+using Testflow.MasterCore.ObjectManage.Objects;
+using Testflow.Usr;
 
 namespace Testflow.MasterCore.ObjectManage
 {
@@ -7,11 +11,52 @@ namespace Testflow.MasterCore.ObjectManage
     {
         private readonly Dictionary<long, RuntimeObject> _runtimeObjects;
         private readonly Dictionary<string, IRuntimeObjectCustomer> _customers;
+        private readonly ModuleGlobalInfo _globalInfo;
 
-        public RuntimeObjectManager()
+        public RuntimeObjectManager(ModuleGlobalInfo globalInfo)
         {
             this._runtimeObjects = new Dictionary<long, RuntimeObject>(100);
             this._customers = new Dictionary<string, IRuntimeObjectCustomer>(Constants.DefaultRuntimeSize);
+            this._globalInfo = globalInfo;
+        }
+
+        public long AddRuntimeObject(string objectType, int sessionId, params object[] param)
+        {
+            RuntimeObject runtimeObject = null;
+            switch (objectType)
+            {
+                case Constants.BreakPointObjectName:
+                    runtimeObject = new BreakPointObject((CallStack)param[0]);
+                    break;
+                case Constants.WatchDataObjectName:
+                    runtimeObject = new WatchDataObject(sessionId, (int)param[0],
+                        (string)param[1]);
+                    break;
+                case Constants.EvaluationObjectName:
+                    runtimeObject = new EvaluationObject(sessionId, (int)param[0],
+                        (string)param[1]);
+                    break;
+                default:
+                    _globalInfo.LogService.Print(LogLevel.Warn, CommonConst.PlatformLogSession,
+                        $"Unsupported runtime object type: {0}.");
+                    _globalInfo.ExceptionManager.Append(new TestflowDataException(
+                        ModuleErrorCode.InvalidRuntimeObjectType,
+                        _globalInfo.I18N.GetFStr("InvalidRuntimeObjType", objectType)));
+                    return Constants.InvalidObjectId;
+                    break;
+            }
+            AddObject(runtimeObject);
+            return runtimeObject.Id;
+        }
+
+        public long RemoveRuntimeObject(int objectId, params object[] param)
+        {
+            if (null == this[objectId])
+            {
+                return Constants.InvalidObjectId;
+            }
+            RemoveObject(objectId);
+            return objectId;
         }
 
         public void AddObject(RuntimeObject runtimeObject)

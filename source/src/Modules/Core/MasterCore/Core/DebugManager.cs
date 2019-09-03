@@ -24,6 +24,7 @@ namespace Testflow.MasterCore.Core
         private readonly Dictionary<int, List<string>> _watchVariables;
         private readonly Dictionary<int, List<CallStack>> _breakPoints;
         private int _debugHitSession;
+        private ISequenceFlowContainer _sequenceData;
 
         public DebugManager(ModuleGlobalInfo globalInfo)
         {
@@ -33,16 +34,18 @@ namespace Testflow.MasterCore.Core
             _debugHitSession = Constants.NoDebugHitSession;
         }
 
-        public void AddWatchVariable(int session, IVariable variable)
+        #region 监视管理
+
+        public void AddWatchVariable(int session, WatchDataObject watchDataObj)
         {
-            string variableName = CoreUtils.GetRuntimeVariableName(session, variable);
+            string watchDataName = ModuleUtils.GetRuntimeVariableString(watchDataObj, _sequenceData); 
             if (!_watchVariables.ContainsKey(session))
             {
                 _watchVariables.Add(session, new List<string>(Constants.DefaultRuntimeSize));
             }
-            if (!_watchVariables[session].Contains(variableName))
+            if (!_watchVariables[session].Contains(watchDataName))
             {
-                _watchVariables[session].Add(variableName);
+                _watchVariables[session].Add(watchDataName);
             }
             RuntimeState runtimeState = _globalInfo.StateMachine.State;
             if (runtimeState == RuntimeState.Running || runtimeState == RuntimeState.Blocked ||
@@ -52,16 +55,16 @@ namespace Testflow.MasterCore.Core
             }
         }
 
-        public void RemoveWatchVariable(int session, IVariable variable)
+        public void RemoveWatchVariable(int session, WatchDataObject watchDataObj)
         {
-            string variableName = CoreUtils.GetRuntimeVariableName(session, variable);
+            string watchDataName = ModuleUtils.GetRuntimeVariableString(watchDataObj, _sequenceData);
             if (!_watchVariables.ContainsKey(session))
             {
                 return;
             }
-            if (_watchVariables[session].Contains(variableName))
+            if (_watchVariables[session].Contains(watchDataName))
             {
-                _watchVariables[session].Remove(variableName);
+                _watchVariables[session].Remove(watchDataName);
                 if (0 == _watchVariables[session].Count)
                 {
                     _watchVariables.Remove(session);
@@ -74,6 +77,33 @@ namespace Testflow.MasterCore.Core
                 SendRefreshWatchMessage(session);
             }
         }
+
+        public void SendRefreshWatchMessage(int sessionId)
+        {
+            DebugMessage debugMessage = new DebugMessage(MessageNames.RefreshWatchName, sessionId, true)
+            {
+                WatchData = new DebugWatchData()
+            };
+            if (_watchVariables.ContainsKey(sessionId))
+            {
+                debugMessage.WatchData.Names.AddRange(_watchVariables[sessionId]);
+            }
+            _globalInfo.MessageTransceiver.Send(debugMessage);
+        }
+
+        #endregion
+
+        #region 表达式管理
+
+        public void EvaluateExpression(EvaluationObject evaluationObject)
+        {
+            
+        }
+
+        #endregion
+
+
+        #region 断点管理
 
         public void AddBreakPoint(int sessionId, CallStack breakPoint)
         {
@@ -90,13 +120,14 @@ namespace Testflow.MasterCore.Core
             if (runtimeState == RuntimeState.Running || runtimeState == RuntimeState.Blocked ||
                 runtimeState == RuntimeState.DebugBlocked)
             {
-                SendAddBreakPointMessage(sessionId, breakPoint);
+                SendBreakPointUpdateMessage(sessionId, MessageNames.AddBreakPointName, breakPoint);
             }
         }
 
         public void RemoveBreakPoint(int sessionId, CallStack breakPoint)
         {
-            if (null != breakPoint && !_breakPoints.ContainsKey(sessionId) || !_breakPoints[sessionId].Contains(breakPoint))
+            if (null != breakPoint && !_breakPoints.ContainsKey(sessionId) ||
+                !_breakPoints[sessionId].Contains(breakPoint))
             {
                 return;
             }
@@ -109,12 +140,12 @@ namespace Testflow.MasterCore.Core
             {
                 _breakPoints[sessionId].Remove(breakPoint);
             }
-            
+
             RuntimeState runtimeState = _globalInfo.StateMachine.State;
             if (runtimeState == RuntimeState.Running || runtimeState == RuntimeState.Blocked ||
                 runtimeState == RuntimeState.DebugBlocked)
             {
-                SendRemoveBreakPointMessage(sessionId, breakPoint);
+                SendBreakPointUpdateMessage(sessionId, MessageNames.DelBreakPointName, breakPoint);
             }
         }
 
@@ -124,49 +155,57 @@ namespace Testflow.MasterCore.Core
             {
                 foreach (CallStack breakPoint in _breakPoints[sessionId])
                 {
-                    SendAddBreakPointMessage(sessionId, breakPoint);
+                    SendBreakPointUpdateMessage(sessionId, MessageNames.AddBreakPointName, breakPoint);
                 }
             }
         }
 
+        #endregion
+
+
+        #region 调试流程控制
+
+        public void StepInto()
+        {
+            SendRunDebugStepMessage(MessageNames.StepIntoName);
+        }
+
+        public void StepOver()
+        {
+            SendRunDebugStepMessage(MessageNames.StepOverName);
+        }
+
+        public void RunToEnd()
+        {
+            SendRunDebugStepMessage(MessageNames.RunToEndName);
+        }
+
         public void Continue()
+        {
+            SendRunDebugStepMessage(MessageNames.ContinueName);
+        }
+
+        private void SendRunDebugStepMessage(string messageName)
         {
             if (_debugHitSession == Constants.NoDebugHitSession)
             {
                 return;
             }
-            DebugMessage debugMessage = new DebugMessage(MessageNames.ContinueName, _debugHitSession, true);
+            int debugSession = Interlocked.Exchange(ref _debugHitSession, Constants.NoDebugHitSession);
+            DebugMessage debugMessage = new DebugMessage(messageName, debugSession, true);
             _globalInfo.MessageTransceiver.Send(debugMessage);
 
             DebugEventInfo debugEvent = new DebugEventInfo(debugMessage);
             _globalInfo.EventQueue.Enqueue(debugEvent);
-            this._debugHitSession = Constants.NoDebugHitSession;
         }
 
-        private void SendAddBreakPointMessage(int sessionId, CallStack callStack)
+        private void SendBreakPointUpdateMessage(int sessionId, string messageName, CallStack callStack)
         {
-            DebugMessage debugMessage = new DebugMessage(MessageNames.AddBreakPointName, sessionId, callStack, true);
+            DebugMessage debugMessage = new DebugMessage(messageName, sessionId, callStack, true);
             _globalInfo.MessageTransceiver.Send(debugMessage);
         }
 
-        private void SendRemoveBreakPointMessage(int sessionId, CallStack callStack)
-        {
-            DebugMessage debugMessage = new DebugMessage(MessageNames.DelBreakPointName, sessionId, callStack, true);
-            _globalInfo.MessageTransceiver.Send(debugMessage);
-        }
-
-        public void SendRefreshWatchMessage(int sessionId)
-        {
-            DebugMessage debugMessage = new DebugMessage(MessageNames.RefreshWatchName, sessionId, true)
-            {
-                WatchData = new DebugWatchData()
-            };
-            if (_watchVariables.ContainsKey(sessionId))
-            {
-                debugMessage.WatchData.Names.AddRange(_watchVariables[sessionId]);
-            }
-            _globalInfo.MessageTransceiver.Send(debugMessage);
-        }
+        #endregion
 
         public bool HandleMessage(MessageBase message)
         {
@@ -183,7 +222,6 @@ namespace Testflow.MasterCore.Core
                     break;
                 case MessageNames.DelBreakPointName:
                     break;
-                    break;
                 case MessageNames.RequestValueName:
                     break;
                 default:
@@ -198,21 +236,50 @@ namespace Testflow.MasterCore.Core
             throw new System.NotImplementedException();
         }
 
-        public void Initialize()
+        public void Initialize(ISequenceFlowContainer sequenceData)
         {
-            
+            this._sequenceData = sequenceData;
         }
+
+        #region 运行时对象处理
 
         public void AddObject(RuntimeObject runtimeObject)
         {
-            BreakPointObject breakPointObject = (BreakPointObject)runtimeObject;
-            AddBreakPoint(breakPointObject.BreakPoint.Sequence, breakPointObject.BreakPoint);
+            switch (runtimeObject.ObjectName)
+            {
+                case Constants.BreakPointObjectName:
+                    BreakPointObject breakPointObject = (BreakPointObject)runtimeObject;
+                    AddBreakPoint(breakPointObject.BreakPoint.Session, breakPointObject.BreakPoint);
+                    break;
+                case Constants.WatchDataObjectName:
+                    WatchDataObject watchDataObject = (WatchDataObject)runtimeObject;
+                    AddWatchVariable(watchDataObject.Session, watchDataObject);
+                    break;
+                case Constants.EvaluationObjectName:
+                    EvaluateExpression((EvaluationObject)runtimeObject);
+                    break;
+            }
         }
 
         public void RemoveObject(RuntimeObject runtimeObject)
         {
-            BreakPointObject breakPointObject = (BreakPointObject)runtimeObject;
-            RemoveBreakPoint(breakPointObject.BreakPoint.Sequence, breakPointObject.BreakPoint);
+            switch (runtimeObject.ObjectName)
+            {
+                case Constants.BreakPointObjectName:
+                    BreakPointObject breakPointObject = (BreakPointObject)runtimeObject;
+                    RemoveBreakPoint(breakPointObject.BreakPoint.Session, breakPointObject.BreakPoint);
+                    break;
+                case Constants.WatchDataObjectName:
+                    WatchDataObject watchDataObject = (WatchDataObject)runtimeObject;
+                    RemoveWatchVariable(watchDataObject.Session, watchDataObject);
+                    break;
+                case Constants.EvaluationObjectName:
+                    // ignore
+                    break;
+            }
         }
+
+        #endregion
+
     }
 }

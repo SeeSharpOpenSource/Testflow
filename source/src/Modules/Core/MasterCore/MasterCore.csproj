@@ -53,6 +53,8 @@
     <Compile Include="CallBack\CallBackProcessor.cs" />
     <Compile Include="ObjectManage\IRuntimeObjectCustomer.cs" />
     <Compile Include="ObjectManage\Objects\BreakPointObject.cs" />
+    <Compile Include="ObjectManage\Objects\EvaluationObject.cs" />
+    <Compile Include="ObjectManage\Objects\WatchDataObject.cs" />
     <Compile Include="ObjectManage\RuntimeObject.cs" />
     <Compile Include="ObjectManage\RuntimeObjectManager.cs" />
     <Compile Include="Core\EngineFlowController.cs" />

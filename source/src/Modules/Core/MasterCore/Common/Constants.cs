@@ -50,6 +50,8 @@ namespace Testflow.MasterCore.Common
 
         public const long InvalidObjectId = -1;
         public const string BreakPointObjectName = "BreakPoint";
+        public const string WatchDataObjectName = "WatchData";
+        public const string EvaluationObjectName = "Evaluation";
 
         #endregion
 

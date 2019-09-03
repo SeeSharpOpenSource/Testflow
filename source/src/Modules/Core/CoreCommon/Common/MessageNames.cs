@@ -10,7 +10,7 @@
         public const string AddBreakPointName = "AddBreakPoint";
         public const string DelBreakPointName = "DeleteBreakPoint";
         public const string BreakPointHitName = "BreakPointHitted";
-        public const string NextStepName = "ToNextStep";
+        public const string StepOverName = "StepOver";
         public const string StepIntoName = "StepInto";
         public const string ContinueName = "Continue";
         public const string RunToEndName = "RunToEnd";

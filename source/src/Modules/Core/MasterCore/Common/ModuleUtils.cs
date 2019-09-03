@@ -10,13 +10,13 @@ using Testflow.Usr;
 using Testflow.CoreCommon;
 using Testflow.CoreCommon.Common;
 using Testflow.Data.Sequence;
-using Testflow.MasterCore.EventData;
-using Testflow.MasterCore.StatusManage.StatePersistance;
 using Testflow.Modules;
 using Testflow.Runtime;
 using Testflow.Utility.I18nUtil;
 using System.IO;
+using System.Linq;
 using Testflow.Data;
+using Testflow.MasterCore.ObjectManage.Objects;
 
 namespace Testflow.MasterCore.Common
 {
@@ -255,6 +255,72 @@ namespace Testflow.MasterCore.Common
         public static bool IsOver(RuntimeState state)
         {
             return state > RuntimeState.AbortRequested;
+        }
+
+        public static string GetRuntimeVariableString(WatchDataObject watchDataObj, ISequenceFlowContainer sequenceData)
+        {
+            const char delim = '.';
+            string[] watchElem = watchDataObj.WatchData.Split(delim);
+            string variableName = watchElem[0];
+            int sequenceIndex = watchDataObj.Sequence;
+            IVariable variable = null;
+            if (sequenceData is ITestProject)
+            {
+                ITestProject testProject = sequenceData as ITestProject;
+                if (watchDataObj.Session == CommonConst.TestGroupSession)
+                {
+                    variable = GetVariableByNameAndSequence(testProject, sequenceIndex, variableName);
+                }
+                else
+                {
+                    variable = GetVariableByNameAndSequence(testProject.SequenceGroups[watchDataObj.Session],
+                        sequenceIndex, variableName);
+                }
+            }
+            else if (sequenceData is ISequenceGroup)
+            {
+                ISequenceGroup sequenceGroup = sequenceData as ISequenceGroup;
+                variable = GetVariableByNameAndSequence(sequenceGroup, sequenceIndex, variableName);
+            }
+            if (null == variable)
+            {
+                return null;
+            }
+            watchElem[0] = CoreUtils.GetRuntimeVariableName(watchDataObj.Session, variable);
+            return string.Join(delim.ToString(), watchElem);
+        }
+
+        private static IVariable GetVariableByNameAndSequence(ITestProject sequenceGroup, int sequenceIndex, string variableName)
+        {
+            IVariable variable = null;
+            if (sequenceIndex == CommonConst.SetupIndex)
+            {
+                variable = sequenceGroup.SetUp.Variables.FirstOrDefault(item => item.Name == variableName);
+            }
+            else if (sequenceIndex == CommonConst.TeardownIndex)
+            {
+                variable = sequenceGroup.TearDown.Variables.FirstOrDefault(item => item.Name == variableName);
+            }
+            return variable ?? sequenceGroup.Variables.FirstOrDefault(item => item.Name == variableName);
+        }
+
+        private static IVariable GetVariableByNameAndSequence(ISequenceGroup sequenceGroup, int sequenceIndex, string variableName)
+        {
+            IVariable variable = null;
+            if (sequenceIndex != CoreConstants.UnverifiedSequenceIndex &&
+                sequenceIndex != CommonConst.SetupIndex && sequenceIndex != CommonConst.TeardownIndex)
+            {
+                variable = sequenceGroup.Sequences[sequenceIndex].Variables.FirstOrDefault(item => item.Name == variableName);
+            }
+            else if (sequenceIndex == CommonConst.SetupIndex)
+            {
+                variable = sequenceGroup.SetUp.Variables.FirstOrDefault(item => item.Name == variableName);
+            }
+            else if (sequenceIndex == CommonConst.TeardownIndex)
+            {
+                variable = sequenceGroup.TearDown.Variables.FirstOrDefault(item => item.Name == variableName);
+            }
+            return variable ?? sequenceGroup.Variables.FirstOrDefault(item => item.Name == variableName);
         }
     }
 }

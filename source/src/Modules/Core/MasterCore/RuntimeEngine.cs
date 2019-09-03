@@ -46,7 +46,7 @@ namespace Testflow.MasterCore
 
             _globalInfo.RuntimeInitialize(messageTransceiver, _controller.Debugger);
 
-            _runtimeObjectManager = new RuntimeObjectManager();
+            _runtimeObjectManager = new RuntimeObjectManager(_globalInfo);
 
             RuntimeStateMachine stateMachine = new RuntimeStateMachine();
             _globalInfo.StateMachine = stateMachine;
@@ -60,6 +60,7 @@ namespace Testflow.MasterCore
         public SynchronousManager SyncManager => _syncManager;
         public EngineFlowController Controller => _controller;
         public CallBackProcessor CallBackProcessor => _callBackProcessor;
+        public RuntimeObjectManager RuntimeObjManager => _runtimeObjectManager;
 
         public ModuleGlobalInfo GlobalInfo => _globalInfo;
 
@@ -97,6 +98,8 @@ namespace Testflow.MasterCore
                     }), CommonConst.BroadcastSession, Constants.SessionOver);
                 // 注册运行时对象消费者
                 _runtimeObjectManager.RegisterCustomer<BreakPointObject>(_controller.Debugger);
+                _runtimeObjectManager.RegisterCustomer<WatchDataObject>(_controller.Debugger);
+                _runtimeObjectManager.RegisterCustomer<EvaluationObject>(_controller.Debugger);
             }
             catch (TestflowException ex)
             {
@@ -258,37 +261,6 @@ namespace Testflow.MasterCore
                     break;
             }
             return (TDataType) infoValue;
-        }
-
-        public long AddRuntimeObject(string objectType, int sessionId, params object[] param)
-        {
-            long objectId = Constants.InvalidObjectId;
-            switch (objectType)
-            {
-                case Constants.BreakPointObjectName:
-                    BreakPointObject breakPointObject = new BreakPointObject((CallStack)param[0]);
-                    objectId = breakPointObject.Id;
-                    _runtimeObjectManager.AddObject(breakPointObject);
-                    break;
-                default:
-                    _globalInfo.LogService.Print(LogLevel.Warn, CommonConst.PlatformLogSession, 
-                        $"Unsupported runtime object type: {0}.");
-                    _globalInfo.ExceptionManager.Append(new TestflowDataException(
-                        ModuleErrorCode.InvalidRuntimeObjectType,
-                        _globalInfo.I18N.GetFStr("InvalidRuntimeObjType", objectType)));
-                    break;
-            }
-            return objectId;
-        }
-
-        public long RemoveRuntimeObject(int objectId, params object[] param)
-        {
-            if (null == _runtimeObjectManager[objectId])
-            {
-                return Constants.InvalidObjectId;
-            }
-            _runtimeObjectManager.RemoveObject(objectId);
-            return objectId;
         }
 
         public void RegisterRuntimeEvent(Delegate callBack, string eventName, params object[] extraParams)

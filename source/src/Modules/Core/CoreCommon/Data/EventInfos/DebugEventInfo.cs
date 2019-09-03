@@ -31,7 +31,7 @@ namespace Testflow.CoreCommon.Data.EventInfos
                     this.WatchData = message.WatchData;
                     this.IsDebugHit = true;
                     break;
-                case MessageNames.NextStepName:
+                case MessageNames.StepOverName:
                 case MessageNames.StepIntoName:
                 case MessageNames.ContinueName:
                 case MessageNames.RunToEndName:

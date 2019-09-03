@@ -124,7 +124,7 @@ namespace Testflow.SlaveCore.Common
                         _context.BreakPoints.Remove(breakPoint.ToString());
                     }
                     break;
-                case MessageNames.NextStepName:
+                case MessageNames.StepOverName:
                     break;
                 case MessageNames.StepIntoName:
                     break;

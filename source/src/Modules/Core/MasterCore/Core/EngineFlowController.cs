@@ -64,6 +64,10 @@ namespace Testflow.MasterCore.Core
         {
             _sequenceData = sequenceContainer;
             GenerateTestMaintainer(sequenceContainer);
+            if (EnableDebug)
+            {
+                _debugManager.Initialize(sequenceContainer);
+            }
         }
 
         // TODO 暂时是一个失败，所有的都停止操作，后续优化为状态控制

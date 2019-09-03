@@ -13,12 +13,12 @@ namespace Testflow.MasterCore.EventData
 
         public void StepInto()
         {
-            throw new System.NotImplementedException();
+            _debugManager.StepInto();
         }
 
         public void StepOver()
         {
-            throw new System.NotImplementedException();
+            _debugManager.StepOver();
         }
 
         public void Continue()
@@ -28,7 +28,7 @@ namespace Testflow.MasterCore.EventData
 
         public void RunToEnd()
         {
-            throw new System.NotImplementedException();
+            _debugManager.RunToEnd();
         }
     }
 }
