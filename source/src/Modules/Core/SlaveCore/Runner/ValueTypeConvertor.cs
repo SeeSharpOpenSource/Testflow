@@ -105,7 +105,7 @@ namespace Testflow.SlaveCore.Runner
                    _convertors[sourceType.Name].IsValidCastTarget(targetType);
         }
 
-        private bool IsValidCast(Type sourceType, Type targetType)
+        public bool IsValidCast(Type sourceType, Type targetType)
         {
             return _convertors.ContainsKey(sourceType.Name) &&
                    _convertors[sourceType.Name].IsValidCastTarget(targetType);
