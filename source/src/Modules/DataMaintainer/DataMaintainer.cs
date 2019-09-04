@@ -146,6 +146,11 @@ namespace Testflow.DataMaintainer
             return _databaseProxy.GetRuntimeStatusByIndex(runtimeHash, index);
         }
 
+        public bool ExistFailedStep(string runtimeHash, int session, int sequence)
+        {
+            return _databaseProxy.ExistFailedStep(runtimeHash, session, sequence);
+        }
+
         public void Dispose()
         {
             _databaseProxy?.Dispose();

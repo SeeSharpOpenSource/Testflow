@@ -450,6 +450,23 @@ namespace Testflow.DataMaintainer
             return statusData;
         }
 
+        public bool ExistFailedStep(string runtimeHash, int session, int sequence)
+        {
+            const string failedResultFilter = "StepResult IN ('Error', 'Timeout', 'Failed', 'Abort')";
+            string filter =
+                $"{DataBaseItemNames.RuntimeIdColumn}='{runtimeHash}' AND {DataBaseItemNames.SessionIdColumn}={session} AND {DataBaseItemNames.SequenceIndexColumn} = {sequence} AND {failedResultFilter}";
+            string cmd = SqlCommandFactory.CreateCalcCountCmd(filter, DataBaseItemNames.StatusTableName);
+            using (DbDataReader dataReader = ExecuteReadCommand(cmd))
+            {
+                int count = 0;
+                if (dataReader.Read() && !dataReader.IsDBNull(0))
+                {
+                    count = dataReader.GetInt32(0);
+                }
+                return count > 0;
+            }
+        }
+
         private DbDataReader ExecuteReadCommand(string command, DbTransaction transaction = null)
         {
             bool getLock = false;
