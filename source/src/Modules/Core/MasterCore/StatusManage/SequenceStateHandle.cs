@@ -123,7 +123,7 @@ namespace Testflow.MasterCore.StatusManage
                 UpdateSequenceTestResult(failedInfo, null);
                 _eventDispatcher.RaiseEvent(Constants.SequenceOver, eventInfo.Session, _sequenceTestResult);
 
-                WriteRuntimeStatusData(StepResult.Abort, string.Empty);
+                WriteRuntimeStatusData(StepResult.Abort, string.Empty, eventInfo.FailInfo);
             }
         }
 
@@ -158,6 +158,7 @@ namespace Testflow.MasterCore.StatusManage
             RuntimeState newState = message.SequenceStates[index];
             this.RunStack = message.Stacks[index];
             StepResult stepResult = message.Results[index];
+            ISequenceFailedInfo failedInfo = GetFailedInfo(message);
             switch (message.Name)
             {
                 case MessageNames.StartStatusName:
@@ -179,16 +180,21 @@ namespace Testflow.MasterCore.StatusManage
                     else if ((State == RuntimeState.Running || State == RuntimeState.Blocked || State == RuntimeState.DebugBlocked)
                         && newState > RuntimeState.AbortRequested)
                     {
+                        // 如果最后执行的结果成功，则查看中间过程，是否存在失败的step，如果存在，则标记Sequence为失败
+                        if (newState == RuntimeState.Over || newState == RuntimeState.Success)
+                        {
+                            bool existFailedStep = _stateManageContext.DatabaseProxy.ExistFailedStep(Session, SequenceIndex);
+                            newState = existFailedStep ? RuntimeState.Failed : RuntimeState.Success;
+                        }
                         RefreshCommonStatus(message, newState, stepResult);
-
                         // 更新数据库中的测试数据条目
                         UpdateSequenceResultData(GetFailedInfoStr(message));
                         // 写入RuntimeStatusInfo条目
                         string watchDataStr = ModuleUtils.WatchDataToString(message.WatchData, Session, _sequence);
-                        WriteRuntimeStatusData(stepResult, watchDataStr);
+                        WriteRuntimeStatusData(stepResult, watchDataStr, failedInfo?.Message ?? string.Empty);
 
                         // 触发SequenceOver事件
-                        ISequenceFailedInfo failedInfo = GetFailedInfo(message);
+                        
                         UpdateSequenceTestResult(failedInfo, message.WatchData);
                         _stateManageContext.EventDispatcher.RaiseEvent(Constants.SequenceOver, Session,
                             _sequenceTestResult);
@@ -202,7 +208,7 @@ namespace Testflow.MasterCore.StatusManage
                         {
                             // 写入RuntimeStatusInfo条目
                             string watchDataStr = ModuleUtils.WatchDataToString(message.WatchData, Session, _sequence);
-                            WriteRuntimeStatusData(stepResult, watchDataStr);
+                            WriteRuntimeStatusData(stepResult, watchDataStr, failedInfo?.Message??string.Empty);
                         }
                     }
                     break;
@@ -217,7 +223,8 @@ namespace Testflow.MasterCore.StatusManage
                     // 更新数据库中的测试数据条目
                     UpdateSequenceResultData(message.ExceptionInfo.ToString());
                     // 写入RuntimeStatusInfo条目
-                    WriteRuntimeStatusData(stepResult, ModuleUtils.WatchDataToString(message.WatchData, Session, _sequence));
+                    WriteRuntimeStatusData(stepResult, ModuleUtils.WatchDataToString(message.WatchData, Session, _sequence), failedInfo?.Message ?? string.Empty
+                        );
 
                     // 触发SequenceOver事件
                     UpdateSequenceTestResult(message.ExceptionInfo, message.WatchData);
@@ -320,13 +327,14 @@ namespace Testflow.MasterCore.StatusManage
             }
         }
 
-        private void WriteRuntimeStatusData(StepResult result, string watchData)
+        private void WriteRuntimeStatusData(StepResult result, string watchData, string failedInfo)
         {
             _statusData.Stack = this.RunStack.ToString();
             _statusData.Time = CurrentTime;
             _statusData.ElapsedTime = this.ElapsedTime.TotalMilliseconds;
             _statusData.Result = result;
             _statusData.WatchData = watchData;
+            _statusData.FailedInfo = failedInfo;
             _statusData.StatusIndex = _stateManageContext.DataStatusIndex;
 
             _stateManageContext.DatabaseProxy.WriteData(_statusData);

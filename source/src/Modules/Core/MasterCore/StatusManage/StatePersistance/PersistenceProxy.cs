@@ -63,5 +63,10 @@ namespace Testflow.MasterCore.StatusManage.StatePersistance
             _dataMaintainer.GetPerformanceResult(_globalInfo.RuntimeHash, session, performanceResult);
             return performanceResult;
         }
+
+        public bool ExistFailedStep(int session, int sequence)
+        {
+            return _dataMaintainer.ExistFailedStep(_globalInfo.RuntimeHash, session, sequence);
+        }
     }
 }
