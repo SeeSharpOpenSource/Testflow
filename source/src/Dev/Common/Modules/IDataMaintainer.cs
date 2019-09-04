@@ -125,6 +125,11 @@ namespace Testflow.Modules
         /// </summary>
         RuntimeStatusData GetRuntimeStatusByIndex(string runtimeHash, long index);
 
+        /// <summary>
+        /// 获取某个序列执行过程中是否存在失败的step
+        /// </summary>
+        bool ExistFailedStep(string runtimeHash, int session, int sequence);
+
         #endregion
     }
 }

@@ -48,6 +48,11 @@ namespace Testflow.Runtime.Data
         public string Stack { get; set; }
 
         /// <summary>
+        /// 失败的详细消息
+        /// </summary>
+        public string FailedInfo { get; set; }
+
+        /// <summary>
         /// 监控的变量值
         /// </summary>
         public string WatchData { get; set; }
