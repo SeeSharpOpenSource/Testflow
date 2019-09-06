@@ -152,12 +152,19 @@ namespace Testflow.MasterCore.Core
             }
         }
 
-        public void SendInitBreakPointMessage(int sessionId)
+        public void SendDebugWatchAndBreakPointMessage(int sessionId)
         {
             if (_breakPoints.ContainsKey(sessionId))
             {
                 DebugMessage debugMessage = new DebugMessage(MessageNames.AddBreakPointName, sessionId,
                     _breakPoints[sessionId], true);
+                _globalInfo.MessageTransceiver.Send(debugMessage);
+            }
+            if (_watchVariables.ContainsKey(sessionId))
+            {
+                DebugMessage debugMessage = new DebugMessage(MessageNames.RefreshWatchName, sessionId, true);
+                debugMessage.WatchData = new DebugWatchData();
+                debugMessage.WatchData.Names.AddRange(_watchVariables[sessionId]);
                 _globalInfo.MessageTransceiver.Send(debugMessage);
             }
         }

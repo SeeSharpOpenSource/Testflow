@@ -23,7 +23,6 @@ namespace Testflow.MasterCore.Core
     {
         private readonly ModuleGlobalInfo _globalInfo;
         private readonly ITestEntityMaintainer _testsMaintainer;
-        private readonly DebugManager _debugManager;
         private ISequenceFlowContainer _sequenceData;
 
         private readonly BlockHandle _blockHandle;
@@ -35,17 +34,10 @@ namespace Testflow.MasterCore.Core
             this._blockHandle = new BlockHandle();
             // TODO 暂时写死，只是用本地测试生成实体
             _testsMaintainer = new LocalTestEntityMaintainer(_globalInfo, _blockHandle);
-            if (EnableDebug)
-            {
-                _debugManager = new DebugManager(_globalInfo);
-            }
+            
         }
 
-        public RuntimeType RuntimeType => _globalInfo.ConfigData.GetProperty<RuntimeType>("RuntimeType");
-
-        public bool EnableDebug => RuntimeType.Debug == RuntimeType;
-
-        public DebugManager Debugger => _debugManager;
+        
 
         public ITestEntityMaintainer TestMaintainer => _testsMaintainer;
 
@@ -54,20 +46,12 @@ namespace Testflow.MasterCore.Core
             _globalInfo.MessageTransceiver.AddConsumer(MessageType.Ctrl.ToString(), this);
             _globalInfo.MessageTransceiver.AddConsumer(MessageType.RuntimeError.ToString(), this);
             _globalInfo.MessageTransceiver.AddConsumer(MessageType.RmtGen.ToString(), _testsMaintainer);
-            if (EnableDebug)
-            {
-                _globalInfo.MessageTransceiver.AddConsumer(MessageType.Debug.ToString(), _debugManager);
-            }
         }
 
         public void Initialize(ISequenceFlowContainer sequenceContainer)
         {
             _sequenceData = sequenceContainer;
             GenerateTestMaintainer(sequenceContainer);
-            if (EnableDebug)
-            {
-                _debugManager.Initialize(sequenceContainer);
-            }
         }
 
         // TODO 暂时是一个失败，所有的都停止操作，后续优化为状态控制
@@ -108,16 +92,10 @@ namespace Testflow.MasterCore.Core
                     _testsMaintainer.SendRmtGenMessage(ModuleUtils.GetSessionId(testProject, sequenceGroup), 
                         sequenceManager.RuntimeSerialize(sequenceGroup));
                 }
-                // 初始化每个模块的监听变量
-                foreach (int session in _testsMaintainer.TestContainers.Keys)
-                {
-                    _debugManager?.SendInitBreakPointMessage(session);
-                }
             }
             else
             {
                 _testsMaintainer.SendRmtGenMessage(0, sequenceManager.RuntimeSerialize(_sequenceData as ISequenceGroup));
-                _debugManager?.SendInitBreakPointMessage(0);
             }
             // 等待远程生成结束
             _blockHandle.Timeout = _globalInfo.ConfigData.GetProperty<int>("TestGenTimeout");

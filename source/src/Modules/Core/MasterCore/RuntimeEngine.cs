@@ -24,6 +24,7 @@ namespace Testflow.MasterCore
     {
         private readonly ModuleGlobalInfo _globalInfo;
 
+        private readonly DebugManager _debugManager;
 
         private readonly RuntimeStatusManager _statusManager;
         private readonly SynchronousManager _syncManager;
@@ -43,8 +44,9 @@ namespace Testflow.MasterCore
             _statusManager = new RuntimeStatusManager(_globalInfo);
             _syncManager = new SynchronousManager(_globalInfo);
             _callBackProcessor = new CallBackProcessor(_globalInfo);
+            _debugManager = EnableDebug ? new DebugManager(_globalInfo) : null;
 
-            _globalInfo.RuntimeInitialize(messageTransceiver, _controller.Debugger);
+            _globalInfo.RuntimeInitialize(messageTransceiver, _debugManager);
 
             _runtimeObjectManager = new RuntimeObjectManager(_globalInfo);
 
@@ -61,8 +63,11 @@ namespace Testflow.MasterCore
         public EngineFlowController Controller => _controller;
         public CallBackProcessor CallBackProcessor => _callBackProcessor;
         public RuntimeObjectManager RuntimeObjManager => _runtimeObjectManager;
+        public DebugManager Debugger => _debugManager;
 
         public ModuleGlobalInfo GlobalInfo => _globalInfo;
+
+        public bool EnableDebug => RuntimeType.Debug == RuntimeType;
 
         public RuntimeType RuntimeType => _globalInfo.ConfigData.GetProperty<RuntimeType>("RuntimeType");
 
@@ -74,6 +79,10 @@ namespace Testflow.MasterCore
             _globalInfo.MessageTransceiver.AddConsumer(MessageType.TestGen.ToString(), _statusManager);
             _globalInfo.MessageTransceiver.AddConsumer(MessageType.Sync.ToString(), _syncManager);
             _globalInfo.MessageTransceiver.AddConsumer(MessageType.CallBack.ToString(), _callBackProcessor);
+            if (EnableDebug)
+            {
+                _globalInfo.MessageTransceiver.AddConsumer(MessageType.Debug.ToString(), _debugManager);
+            }
         }
 
         public void Initialize(ISequenceFlowContainer sequenceContainer)
@@ -84,6 +93,7 @@ namespace Testflow.MasterCore
                 _controller.Initialize(sequenceContainer);
                 _statusManager.Initialize(sequenceContainer);
                 _callBackProcessor.Initialize(sequenceContainer);
+                _debugManager?.Initialize(sequenceContainer);
                 // 注册状态更新事件
                 _globalInfo.StateMachine.StateAbort += Stop;
                 _globalInfo.StateMachine.StateError += Stop;
@@ -97,9 +107,9 @@ namespace Testflow.MasterCore
                        _controller.TestMaintainer.FreeHost(testResult.Session); 
                     }), CommonConst.BroadcastSession, Constants.SessionOver);
                 // 注册运行时对象消费者
-                _runtimeObjectManager.RegisterCustomer<BreakPointObject>(_controller.Debugger);
-                _runtimeObjectManager.RegisterCustomer<WatchDataObject>(_controller.Debugger);
-                _runtimeObjectManager.RegisterCustomer<EvaluationObject>(_controller.Debugger);
+                _runtimeObjectManager.RegisterCustomer<BreakPointObject>(_debugManager);
+                _runtimeObjectManager.RegisterCustomer<WatchDataObject>(_debugManager);
+                _runtimeObjectManager.RegisterCustomer<EvaluationObject>(_debugManager);
             }
             catch (TestflowException ex)
             {
@@ -138,6 +148,14 @@ namespace Testflow.MasterCore
                 if (!executionSuccess)
                 {
                     return;
+                }
+                // 如果使用调试模式，则需要更新所有session的断点和watch信息
+                if (EnableDebug)
+                {
+                    foreach (int session in _controller.TestMaintainer.TestContainers.Keys)
+                    {
+                        _debugManager.SendDebugWatchAndBreakPointMessage(session);
+                    }
                 }
                 _controller.StartTestWork();
                 _controller.WaitForTaskOver();
