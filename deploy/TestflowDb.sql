@@ -57,6 +57,7 @@ CREATE TABLE Testflow_RuntimeStatusDatas(
 	ElapsedTime REAL NOT NULL,
 	StepResult TEXT NOT NULL,
 	Stack TEXT NOT NULL,
+	FailedInfo TEXT,
 	WatchData TEXT,
 	PRIMARY KEY (RuntimeHash,StatusIndex),
 	FOREIGN KEY (RuntimeHash) REFERENCES Testflow_TestInstances(RuntimeHash)
