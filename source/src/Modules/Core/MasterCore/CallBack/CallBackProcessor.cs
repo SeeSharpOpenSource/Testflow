@@ -1,6 +1,8 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Net.Sockets;
 using System.Reflection;
 using System.Threading;
 using Testflow.CoreCommon;
@@ -17,8 +19,8 @@ namespace Testflow.MasterCore.CallBack
     {
         private readonly ModuleGlobalInfo _globalInfo;
         private Thread _callBackProcessThread;
-        private IDictionary<string, MethodInfo> _callBackMethods;
-        private IDictionary<string, IFunctionData> _callBackFunctions;
+        private readonly IDictionary<string, MethodInfo> _callBackMethods;
+        private readonly IDictionary<string, IFunctionData> _callBackFunctions;
         private AssemblyInvoker _typeInvoker;
 
         public CallBackProcessor(ModuleGlobalInfo globalInfo)
@@ -34,8 +36,11 @@ namespace Testflow.MasterCore.CallBack
             if (sequenceData is ITestProject)
             {
                 ITestProject testProject = (ITestProject)sequenceData;
+                IList<ITypeData> callBackRelatedType = GetCallBackRelatedType(testProject);
+                IList<IAssemblyInfo>[] assemblyInfoCollections = new IList<IAssemblyInfo>[testProject.SequenceGroups.Count + 1];
+                IList<IAssemblyInfo> callBackRelatedAssembly = GetCallBackRelatedAssembly(callBackRelatedType, assemblyInfoCollections);
                 //AssemblyInvoker加载程序集和类型
-                _typeInvoker = new AssemblyInvoker(_globalInfo, testProject.Assemblies, testProject.TypeDatas);
+                _typeInvoker = new AssemblyInvoker(_globalInfo, callBackRelatedAssembly, callBackRelatedType);
                 _typeInvoker.LoadAssemblyAndType();
 
                 foreach (ISequenceGroup sequenceGroup in testProject.SequenceGroups)
@@ -46,15 +51,18 @@ namespace Testflow.MasterCore.CallBack
             else
             {
                 ISequenceGroup sequenceGroup = (ISequenceGroup)sequenceData;
-                _typeInvoker = new AssemblyInvoker(_globalInfo, sequenceGroup.Assemblies, sequenceGroup.TypeDatas);
+                IList<ITypeData> callBackRelatedType = GetCallBackRelatedType(sequenceGroup);
+                IList<IAssemblyInfo> callBackRelatedAssembly = GetCallBackRelatedAssembly(callBackRelatedType,
+                    sequenceGroup.Assemblies);
+                //AssemblyInvoker加载程序集和类型
+                _typeInvoker = new AssemblyInvoker(_globalInfo, callBackRelatedAssembly, callBackRelatedType);
                 _typeInvoker.LoadAssemblyAndType();
-
                 SequenceGroupFindCallBack(sequenceGroup);
             }
         }
         #endregion
 
-        #region 寻找所有拥有CallBackAttribute的Step
+        #region 缓存所有CallBack类型的方法、类型和程序集
         private void SequenceGroupFindCallBack(ISequenceGroup sequenceGroup)
         {
             StepCollectionFindCallBack(sequenceGroup.SetUp.Steps);
@@ -81,7 +89,7 @@ namespace Testflow.MasterCore.CallBack
             }
             else
             {
-                if (step.Function.Type == Data.FunctionType.CallBack)
+                if (step.Function.Type == FunctionType.CallBack)
                 {
                     IFunctionData function = step.Function;
                     string fullname = function.ClassType.Namespace + "." + function.ClassType.Name + "." + function.MethodName;
@@ -179,5 +187,97 @@ namespace Testflow.MasterCore.CallBack
         {
             throw new System.NotImplementedException();
         }
+
+        #region 获取序列中callback步骤使用的程序集和类型列表
+
+        // TODO 目前缓存type和缓存function是分开进行的，可以放在一起处理，后续再优化
+        private IList<ITypeData> GetCallBackRelatedType(ITestProject testProject)
+        {
+            HashSet<ITypeData> typeDatas = new HashSet<ITypeData>();
+            AddCallBackRelatedType(testProject.SetUp, typeDatas);
+            foreach (ISequenceGroup sequenceGroup in testProject.SequenceGroups)
+            {
+                AddCallBackRelatedType(sequenceGroup, typeDatas);
+            }
+            AddCallBackRelatedType(testProject.TearDown, typeDatas);
+            return typeDatas.ToArray();
+        }
+
+        private IList<ITypeData> GetCallBackRelatedType(ISequenceGroup sequenceGroup)
+        {
+            HashSet<ITypeData> typeDatas = new HashSet<ITypeData>();
+            AddCallBackRelatedType(sequenceGroup, typeDatas);
+            return typeDatas.ToArray();
+        }
+
+        private void AddCallBackRelatedType(ISequenceGroup sequenceGroup, HashSet<ITypeData> typeDatas)
+        {
+            AddCallBackRelatedType(sequenceGroup.SetUp, typeDatas);
+            foreach (ISequence sequence in sequenceGroup.Sequences)
+            {
+                AddCallBackRelatedType(sequence, typeDatas);
+            }
+            AddCallBackRelatedType(sequenceGroup.TearDown, typeDatas);
+        }
+
+        private void AddCallBackRelatedType(ISequence sequence, HashSet<ITypeData> typeDatas)
+        {
+            foreach (ISequenceStep sequenceStep in sequence.Steps)
+            {
+                AddCallBackRelatedType(sequenceStep, typeDatas);
+            }
+        }
+
+        private void AddCallBackRelatedType(ISequenceStep sequenceStep, HashSet<ITypeData> typeDatas)
+        {
+            // 如果函数为回调类型，则载入该函数所有关联的类型
+            if (null != sequenceStep.Function && sequenceStep.Function.Type == FunctionType.CallBack)
+            {
+                typeDatas.Add(sequenceStep.Function.ClassType);
+                foreach (IArgument argument in sequenceStep.Function.ParameterType)
+                {
+                    typeDatas.Add(argument.Type);
+                }
+                if (null != sequenceStep.Function.ReturnType)
+                {
+                    typeDatas.Add(sequenceStep.Function.ReturnType.Type);
+                }
+            }
+            if (sequenceStep.HasSubSteps)
+            {
+                foreach (ISequenceStep subStep in sequenceStep.SubSteps)
+                {
+                    AddCallBackRelatedType(subStep, typeDatas);
+                }
+            }
+        }
+
+        private IList<IAssemblyInfo> GetCallBackRelatedAssembly(IList<ITypeData> typeDatas, params IList<IAssemblyInfo>[] assemblyCollections)
+        {
+            HashSet<string> cachedAssemblies = new HashSet<string>();
+            List<IAssemblyInfo> callBackAssemblies = new List<IAssemblyInfo>(10);
+            foreach (ITypeData typeData in typeDatas)
+            {
+                if (cachedAssemblies.Contains(typeData.AssemblyName))
+                {
+                    continue;
+                }
+                foreach (IList<IAssemblyInfo> assemblyCollection in assemblyCollections)
+                {
+                    IAssemblyInfo assemblyInfo =
+                        assemblyCollection.FirstOrDefault(item => item.AssemblyName == typeData.AssemblyName);
+                    if (null != assemblyInfo)
+                    {
+                        callBackAssemblies.Add(assemblyInfo);
+                        cachedAssemblies.Add(typeData.AssemblyName);
+                        break;
+                    }
+                }
+            }
+            return callBackAssemblies;
+        }
+
+        #endregion
+
     }
 }

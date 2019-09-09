@@ -21,15 +21,15 @@ namespace Testflow.MasterCore.CallBack
 
         private readonly Dictionary<string, Func<string, object>> _valueTypeConvertors;
 
-        private readonly IAssemblyInfoCollection _assemblyInfos;
-        private readonly ITypeDataCollection _typeDatas;
+        private readonly IList<IAssemblyInfo> _assemblyInfos;
+        private readonly IList<ITypeData> _typeDatas;
 
         //todo 从slavecore还未移植过来相应的LibDir
         private readonly string _dotNetLibDir;
         private readonly string _platformLibDir;
         private readonly string[] _instanceLibDir;
 
-        public AssemblyInvoker(ModuleGlobalInfo globalInfo, IAssemblyInfoCollection assemblyInfo, ITypeDataCollection typeDatas)
+        public AssemblyInvoker(ModuleGlobalInfo globalInfo, IList<IAssemblyInfo> assemblyInfo, IList<ITypeData> typeDatas)
         {
             this._logService = globalInfo.LogService;
             this._I18N = globalInfo.I18N;
