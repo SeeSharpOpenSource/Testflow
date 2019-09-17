@@ -30,6 +30,11 @@ namespace Testflow.ConfigurationManager
             _configData.Add(rootName, new Dictionary<string, object>(20));
         }
 
+        public IModuleConfigData GetGlobalConfigData()
+        {
+             return new ModuleConfigData(_configData[Constants.GlobalConfig], null);
+        }
+
         public IModuleConfigData GetModuleConfigData(string moduleName)
         {
             IDictionary<string, object> moduleConfigData = _configData.ContainsKey(moduleName)

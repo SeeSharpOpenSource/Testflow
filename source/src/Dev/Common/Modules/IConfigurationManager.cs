@@ -22,5 +22,12 @@ namespace Testflow.Modules
         /// </summary>
         /// <param name="controller"></param>
         void ApplyConfigData(IController controller);
+
+        /// <summary>
+        /// 获取公共配置项的值
+        /// </summary>
+        /// <typeparam name="TDataType">配置项值的类型</typeparam>
+        /// <param name="itemName">配置项的名称</param>
+        TDataType GetConfigValue<TDataType>(string itemName);
     }
 }

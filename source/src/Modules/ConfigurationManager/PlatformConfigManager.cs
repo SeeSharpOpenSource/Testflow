@@ -38,6 +38,7 @@ namespace Testflow.ConfigurationManager
             GlobalConfigData globalConfigData = Initialize();
             TestflowRunner testflowRunner = TestflowRunner.GetInstance();
 
+            this.ApplyConfig(globalConfigData.GetGlobalConfigData());
             testflowRunner.DataMaintainer.ApplyConfig(globalConfigData.GetModuleConfigData(Constants.DataMaintain));
             testflowRunner.EngineController.ApplyConfig(globalConfigData.GetModuleConfigData(Constants.EngineConfig));
             testflowRunner.SequenceManager.ApplyConfig(globalConfigData.GetModuleConfigData(Constants.SequenceManage));
@@ -50,7 +51,7 @@ namespace Testflow.ConfigurationManager
         {
             GlobalConfigData globalConfigData = Initialize();
             TestflowRunner testflowRunner = TestflowRunner.GetInstance();
-
+            this.ApplyConfig(globalConfigData.GetGlobalConfigData());
             testflowRunner.ComInterfaceManager.ApplyConfig(globalConfigData.GetModuleConfigData(Constants.InterfaceLoad));
             testflowRunner.DataMaintainer.ApplyConfig(globalConfigData.GetModuleConfigData(Constants.DataMaintain));
             testflowRunner.EngineController.ApplyConfig(globalConfigData.GetModuleConfigData(Constants.EngineConfig));
@@ -91,6 +92,11 @@ namespace Testflow.ConfigurationManager
         public void ApplyConfigData(IController controller)
         {
             // ignore
+        }
+
+        public TDataType GetConfigValue<TDataType>(string itemName)
+        {
+            throw new NotImplementedException();
         }
 
         public void Dispose()
