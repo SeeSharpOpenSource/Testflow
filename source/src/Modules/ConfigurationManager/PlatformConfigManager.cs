@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Xml;
 using Testflow.Modules;
@@ -80,7 +81,17 @@ namespace Testflow.ConfigurationManager
 
         public void ApplyConfig(IModuleConfigData configData)
         {
-            this.ConfigData = configData;
+            if (null == this.ConfigData)
+            {
+                this.ConfigData = configData;
+            }
+            else
+            {
+                foreach (KeyValuePair<string, object> keyValuePair in configData.Properties)
+                {
+                    this.ConfigData.SetProperty(keyValuePair.Key, keyValuePair.Value);
+                }
+            }
         }
 
         public IPropertyExtendable GlobalInfo { get; set; }
