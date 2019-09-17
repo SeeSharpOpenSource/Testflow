@@ -31,6 +31,7 @@ namespace Testflow.MasterCore
         private readonly EngineFlowController _controller;
         private readonly RuntimeObjectManager _runtimeObjectManager;
         private readonly CallBackProcessor _callBackProcessor;
+        private readonly RuntimeInfoSelector _runtimeInfoSelector;
 
         public RuntimeEngine(IModuleConfigData configData)
         {
@@ -235,50 +236,7 @@ namespace Testflow.MasterCore
 
         public TDataType GetRuntimeInfo<TDataType>(string infoName, params object[] extraParams)
         {
-            object infoValue = null;
-            int session = 0;
-            int sequenceIndex;
-            switch (infoName)
-            {
-                case Constants.RuntimeStateInfo:
-                    if (extraParams.Length == 0)
-                    {
-                        infoValue = _globalInfo.StateMachine.State;
-                    }
-                    else if (extraParams.Length == 1)
-                    {
-                        session = (int)extraParams[0];
-                        infoValue = _statusManager[session].State;
-                    }
-                    else if (extraParams.Length == 2)
-                    {
-                        session = (int)extraParams[0];
-                        sequenceIndex = (int)extraParams[1];
-                        infoValue = _statusManager[session][sequenceIndex].State;
-                    }
-                    break;
-                case Constants.ElapsedTimeInfo:
-                    if (extraParams.Length == 1)
-                    {
-                        session = (int)extraParams[0];
-                        infoValue = _statusManager[session].ElapsedTime.TotalMilliseconds;
-                    }
-                    else if (extraParams.Length == 2)
-                    {
-                        session = (int)extraParams[0];
-                        sequenceIndex = (int)extraParams[1];
-                        infoValue = _statusManager[session][sequenceIndex].ElapsedTime.TotalMilliseconds;
-                    }
-                    break;
-                default:
-                    _globalInfo.LogService.Print(LogLevel.Warn, CommonConst.PlatformLogSession,
-                        $"Unsupported runtime object type: {0}.");
-                    _globalInfo.ExceptionManager.Append(new TestflowDataException(
-                        ModuleErrorCode.InvalidRuntimeInfoName,
-                        _globalInfo.I18N.GetFStr("InvalidRuntimeInfoName", infoName)));
-                    break;
-            }
-            return (TDataType) infoValue;
+            return (TDataType) _runtimeInfoSelector.GetRuntimeInfo(infoName, extraParams);
         }
 
         public void RegisterRuntimeEvent(Delegate callBack, string eventName, params object[] extraParams)

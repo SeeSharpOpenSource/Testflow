@@ -70,6 +70,7 @@
     <Compile Include="EventData\TestGenerationInfo.cs" />
     <Compile Include="EventData\TestProjectResults.cs" />
     <Compile Include="EventData\TestResultCollection.cs" />
+    <Compile Include="RuntimeInfoSelector.cs" />
     <Compile Include="StatusManage\EventDispatcher.cs" />
     <Compile Include="ExceptionManager.cs" />
     <Compile Include="Message\ZombieMessageCleaner.cs" />
