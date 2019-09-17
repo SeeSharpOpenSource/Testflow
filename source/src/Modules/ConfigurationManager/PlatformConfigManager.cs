@@ -94,11 +94,6 @@ namespace Testflow.ConfigurationManager
             // ignore
         }
 
-        public TDataType GetConfigValue<TDataType>(string itemName)
-        {
-            throw new NotImplementedException();
-        }
-
         public void Dispose()
         {
             I18N.RemoveInstance(Constants.I18nName);
