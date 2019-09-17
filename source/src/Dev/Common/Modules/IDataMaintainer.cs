@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Testflow.Usr;
 using Testflow.Data.Sequence;
 using Testflow.Runtime;
@@ -90,6 +91,14 @@ namespace Testflow.Modules
         /// <param name="performanceResult">性能结果</param>
         /// <param name="runtimeHash">实例哈希值</param>
         void GetPerformanceResult(string runtimeHash, int session, IPerformanceResult performanceResult);
+
+        /// <summary>
+        /// 注册类型转换器
+        /// </summary>
+        /// <param name="type">待转换的类型</param>
+        /// <param name="parseFunc">从字符串转换为对象的函数</param>
+        /// <param name="toStringFunc">从对象转换为字符串的函数</param>
+        void RegisterTypeConvertor(Type type, Func<object, string> toStringFunc, Func<string, object> parseFunc);
 
         #endregion
 

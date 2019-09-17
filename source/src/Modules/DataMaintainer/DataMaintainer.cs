@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 using Testflow.Modules;
 using Testflow.Runtime;
@@ -114,6 +115,12 @@ namespace Testflow.DataMaintainer
         public void GetPerformanceResult(string runtimeHash, int session, IPerformanceResult performanceResult)
         {
             _databaseProxy.GetPerformanceResult(runtimeHash, session, performanceResult);
+        }
+
+        public void RegisterTypeConvertor(Type type, Func<object, string> toStringFunc, Func<string, object> parseFunc)
+        {
+            _databaseProxy.RegisterTypeConvertor(type, toStringFunc, parseFunc);
+
         }
 
         public void AddData(PerformanceStatus performanceStatus)

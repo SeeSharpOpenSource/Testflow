@@ -15,11 +15,21 @@ namespace Testflow.DataMaintainer
         private readonly Dictionary<string, Dictionary<string, string>> _tableToColumnPropertyMapping;
 
         private readonly Dictionary<string, Func<object, string>> _valueToStrConvertor;
-
+        
         private readonly Dictionary<string, Func<object, object>> _rawDataToValueConvertor;
+
+        // 类型转换和字符串转换为对象委托的映射
+        private readonly Dictionary<Type, Func<object, string>> _classTypeConvertorMapping;
+
+        // 类型转换和对象转换为字符串委托的映射
+        private readonly Dictionary<Type, Func<string, object>> _classTypeParserMapping;
+
 
         public DataModelMapper()
         {
+            _classTypeParserMapping = new Dictionary<Type, Func<string, object>>(10);
+            _classTypeConvertorMapping = new Dictionary<Type, Func<object, string>>(10);
+
             _typeToTableMapping = new Dictionary<string, string>(10)
             {
                 {typeof (TestInstanceData).Name, DataBaseItemNames.InstanceTableName},
@@ -126,9 +136,13 @@ namespace Testflow.DataMaintainer
                 {
                     propertyValue = Enum.Parse(propertyType, (string)propertyValue);
                 }
-                else
+                else if (_rawDataToValueConvertor.ContainsKey(propertyType.Name))
                 {
                     propertyValue = _rawDataToValueConvertor[propertyType.Name].Invoke(propertyValue);
+                }
+                else if (_classTypeParserMapping.ContainsKey(propertyType))
+                {
+                    propertyValue = _classTypeParserMapping[propertyType].Invoke(propertyValue.ToString());
                 }
                 propertyInfo.SetValue(dataObj, propertyValue);
             }
@@ -146,9 +160,19 @@ namespace Testflow.DataMaintainer
                 Type propertyType = propertyInfo.PropertyType;
                 object value = propertyInfo.GetValue(dataObj);
                 if (null == value) continue;
-                string valueStr = propertyType.IsEnum
-                    ? $"'{value}'"
-                    : _valueToStrConvertor[propertyType.Name].Invoke(value);
+                string valueStr = string.Empty;
+                if (propertyType.IsEnum)
+                {
+                    valueStr = $"'{value}'";
+                }
+                else if (_valueToStrConvertor.ContainsKey(propertyType.Name))
+                {
+                    valueStr = _valueToStrConvertor[propertyType.Name].Invoke(value);
+                }
+                else if (_classTypeConvertorMapping.ContainsKey(propertyType))
+                {
+                    valueStr = _classTypeConvertorMapping[propertyType].Invoke(value);
+                }
                 columnValueMapping.Add(columnName, valueStr);
             }
             return columnValueMapping;
@@ -172,6 +196,12 @@ namespace Testflow.DataMaintainer
                 return tableColumnName;
             }
             return _tableToColumnPropertyMapping[tableName][tableColumnName];
+        }
+
+        public void RegisterTypeConvertor(Type type, Func<object, string> toStringFunc, Func<string, object> parseFunc)
+        {
+            _classTypeConvertorMapping.Add(type, toStringFunc);
+            _classTypeParserMapping.Add(type, parseFunc);
         }
     }
 }

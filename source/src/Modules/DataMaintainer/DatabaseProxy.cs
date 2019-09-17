@@ -604,5 +604,10 @@ namespace Testflow.DataMaintainer
             Connection?.Close();
             _databaseLock?.Dispose();
         }
+
+        public void RegisterTypeConvertor(Type type, Func<object, string> toStringFunc, Func<string, object> parseFunc)
+        {
+            DataModelMapper.RegisterTypeConvertor(type, toStringFunc, parseFunc);
+        }
     }
 }
