@@ -2,11 +2,21 @@
 using Testflow.Usr;
 using Testflow.ResultManager.Common;
 using Testflow.Data;
+using Testflow.Utility.I18nUtil;
 
 namespace Testflow.ResultManager
 {
     public class ResultManager : IResultManager
     {
+        public ResultManager()
+        {
+            I18NOption i18NOption = new I18NOption(this.GetType().Assembly, "i18n_resultmanager_zh", "i18n_resultmanager_en")
+            {
+                Name = Constants.I18nName
+            };
+            I18N.InitInstance(i18NOption);
+        }
+
         private IDataMaintainer _dataMaintainer;
         #region 初始化
 
