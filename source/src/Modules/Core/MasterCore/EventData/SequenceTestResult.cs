@@ -31,7 +31,7 @@ namespace Testflow.MasterCore.EventData
         public DateTime StartTime { get; set; }
         public DateTime EndTime { get; set; }
         public double ElapsedTime { get; set; }
-        public ISequenceFailedInfo FailedInfo { get; set; }
+        public string FailedInfo { get; set; }
         public IDictionary<IVariable, string> VariableValues { get; }
 
         public void InitExtendProperties()
