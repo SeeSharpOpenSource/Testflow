@@ -191,7 +191,7 @@ namespace Testflow.MasterCore.StatusManage
                         UpdateSequenceResultData(GetFailedInfoStr(message));
                         // 写入RuntimeStatusInfo条目
                         string watchDataStr = ModuleUtils.WatchDataToString(message.WatchData, Session, _sequence);
-                        WriteRuntimeStatusData(stepResult, watchDataStr, failedInfo?.Message ?? string.Empty);
+                        WriteRuntimeStatusData(stepResult, watchDataStr, failedInfo?.ToString() ?? string.Empty);
 
                         // 触发SequenceOver事件
                         
