@@ -33,7 +33,7 @@ namespace Testflow.CoreCommon.Messages
 
         public Dictionary<string, string> WatchData { get; set; }
 
-        public SequenceFailedInfo ExceptionInfo { get; set; }
+        public FailedInfo ExceptionInfo { get; set; }
 
         public StatusMessage(string name, RuntimeState state, int id) : base(name, id, MessageType.Status)
         {
@@ -95,7 +95,7 @@ namespace Testflow.CoreCommon.Messages
             }
             if (null != ExceptionInfo)
             {
-                info.AddValue("ExceptionInfo", ExceptionInfo, typeof(SequenceFailedInfo));
+                info.AddValue("ExceptionInfo", ExceptionInfo, typeof(FailedInfo));
             }
             info.AddValue("Results", Results, typeof(List<StepResult>));
             if (null != FailedInfo && FailedInfo.Count > 0)

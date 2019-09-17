@@ -7,7 +7,7 @@ using Testflow.Runtime.Data;
 
 namespace Testflow.CoreCommon.Data
 {
-    public class SequenceFailedInfo : ISequenceFailedInfo, ISerializable
+    public class FailedInfo : IFailedInfo, ISerializable
     {
         private const string Delim = "$#_#$";
 
@@ -25,7 +25,7 @@ namespace Testflow.CoreCommon.Data
         public string StackTrace { get; set; }
         public string ExceptionType { get; set; }
 
-        public SequenceFailedInfo(string failedInfo, FailedType type)
+        public FailedInfo(string failedInfo, FailedType type)
         {
             Type = type;
             this.Message = failedInfo;
@@ -34,7 +34,7 @@ namespace Testflow.CoreCommon.Data
             this.ExceptionType = string.Empty;
         }
 
-        public SequenceFailedInfo(Exception exception, FailedType failedType)
+        public FailedInfo(Exception exception, FailedType failedType)
         {
             this.Message = exception.Message;
             this.Type = failedType;
@@ -44,7 +44,7 @@ namespace Testflow.CoreCommon.Data
             this.ExceptionType = $"{exceptionType.Namespace}.{exceptionType.Name}";
         }
         
-        public SequenceFailedInfo(string failedStr)
+        public FailedInfo(string failedStr)
         {
             string[] failedInfoElems = failedStr.Split(Delim.ToCharArray());
             int index = 0;
@@ -67,7 +67,7 @@ namespace Testflow.CoreCommon.Data
                 .Append(Delim).Append(StackTrace).Append(Delim).Append(ExceptionType).ToString();
         }
 
-        public SequenceFailedInfo(SerializationInfo info, StreamingContext context)
+        public FailedInfo(SerializationInfo info, StreamingContext context)
         {
             this.Type = (FailedType) info.GetValue("Type", typeof (FailedType));
             this.Message = (string)info.GetValue("Message", typeof(string));

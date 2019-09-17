@@ -419,7 +419,7 @@ namespace Testflow.SlaveCore.Runner.Model
 
         private void RecordInvocationError(Exception ex, FailedType failedType)
         {
-            SequenceFailedInfo failedInfo = new SequenceFailedInfo(ex, failedType);
+            FailedInfo failedInfo = new FailedInfo(ex, failedType);
             SequenceStatusInfo statusInfo = new SequenceStatusInfo(SequenceIndex, this.GetStack(),
                 StatusReportType.Record, Result, failedInfo);
             Context.StatusQueue.Enqueue(statusInfo);

@@ -70,7 +70,7 @@ namespace Testflow.SlaveCore.SlaveFlowControl
         {
             StatusMessage errorMessage = new StatusMessage(MessageNames.ErrorStatusName, Context.State, Context.SessionId)
             {
-                ExceptionInfo = new SequenceFailedInfo(ex, FailedType.RuntimeError),
+                ExceptionInfo = new FailedInfo(ex, FailedType.RuntimeError),
                 Index = Context.MsgIndex
             };
             Context.SessionTaskEntity.FillSequenceInfo(errorMessage, Context.I18N.GetStr("RuntimeError"));

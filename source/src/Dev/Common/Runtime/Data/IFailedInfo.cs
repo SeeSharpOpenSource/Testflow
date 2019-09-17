@@ -5,7 +5,7 @@ namespace Testflow.Runtime.Data
     /// <summary>
     /// 失败信息类
     /// </summary>
-    public interface ISequenceFailedInfo
+    public interface IFailedInfo
     {
         /// <summary>
         /// 失败类型

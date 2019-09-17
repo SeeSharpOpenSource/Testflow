@@ -75,7 +75,7 @@ namespace Testflow.SlaveCore.Runner.Model
         [HandleProcessCorruptedStateExceptions]
         public void Invoke(bool forceInvoke = false)
         {
-            SequenceFailedInfo failedInfo = null;
+            FailedInfo failedInfo = null;
             StepResult lastStepResult = StepResult.NotAvailable;
             StatusReportType finalReportType = StatusReportType.Failed;
             try
@@ -99,7 +99,7 @@ namespace Testflow.SlaveCore.Runner.Model
                 this.State = RuntimeState.Failed;
                 finalReportType = StatusReportType.Failed;
                 lastStepResult = StepResult.Failed;
-                failedInfo = new SequenceFailedInfo(ex, ex.FailedType);
+                failedInfo = new FailedInfo(ex, ex.FailedType);
                 _context.LogSession.Print(LogLevel.Info, Index, "Step force failed.");
             }
             catch (TestflowAssertException ex)
@@ -107,7 +107,7 @@ namespace Testflow.SlaveCore.Runner.Model
                 this.State = RuntimeState.Failed;
                 finalReportType = StatusReportType.Failed;
                 lastStepResult = StepResult.Failed;
-                failedInfo = new SequenceFailedInfo(ex, FailedType.AssertionFailed);
+                failedInfo = new FailedInfo(ex, FailedType.AssertionFailed);
                 _context.LogSession.Print(LogLevel.Fatal, Index, "Assert exception catched.");
             }
             catch (ThreadAbortException ex)
@@ -115,7 +115,7 @@ namespace Testflow.SlaveCore.Runner.Model
                 this.State = RuntimeState.Abort;
                 finalReportType = StatusReportType.Error;
                 lastStepResult = StepResult.Abort;
-                failedInfo = new SequenceFailedInfo(ex, FailedType.Abort);
+                failedInfo = new FailedInfo(ex, FailedType.Abort);
                 _context.LogSession.Print(LogLevel.Warn, Index, $"Sequence {Index} execution aborted");
             }
             catch (TestflowException ex)
@@ -123,7 +123,7 @@ namespace Testflow.SlaveCore.Runner.Model
                 this.State = RuntimeState.Error;
                 finalReportType = StatusReportType.Error;
                 lastStepResult = StepResult.Error;
-                failedInfo = new SequenceFailedInfo(ex, FailedType.RuntimeError);
+                failedInfo = new FailedInfo(ex, FailedType.RuntimeError);
                 _context.LogSession.Print(LogLevel.Error, Index, ex, "Inner exception catched.");
             }
             catch (TargetInvocationException ex)
@@ -131,7 +131,7 @@ namespace Testflow.SlaveCore.Runner.Model
                 this.State = RuntimeState.Failed;
                 finalReportType = StatusReportType.Failed;
                 lastStepResult = StepResult.Failed;
-                failedInfo = new SequenceFailedInfo(ex.InnerException, FailedType.TargetError);
+                failedInfo = new FailedInfo(ex.InnerException, FailedType.TargetError);
                 _context.LogSession.Print(LogLevel.Error, Index, ex, "Invocation exception catched.");
             }
             catch (Exception ex)
@@ -139,7 +139,7 @@ namespace Testflow.SlaveCore.Runner.Model
                 this.State = RuntimeState.Error;
                 finalReportType = StatusReportType.Error;
                 lastStepResult = StepResult.Error;
-                failedInfo = new SequenceFailedInfo(ex, FailedType.RuntimeError);
+                failedInfo = new FailedInfo(ex, FailedType.RuntimeError);
                 _context.LogSession.Print(LogLevel.Error, Index, ex, "Runtime exception catched.");
             }
             finally
@@ -163,7 +163,7 @@ namespace Testflow.SlaveCore.Runner.Model
         }
 
         private void SetResultState(out StepResult lastStepResult, out StatusReportType finalReportType, 
-            out SequenceFailedInfo failedInfo)
+            out FailedInfo failedInfo)
         {
             StepTaskEntityBase lastStep = StepTaskEntityBase.GetCurrentStep(this.Index);
             lastStepResult = lastStep.Result;
@@ -182,7 +182,7 @@ namespace Testflow.SlaveCore.Runner.Model
                 case StepResult.Abort:
                     this.State = RuntimeState.Abort;
                     finalReportType = StatusReportType.Error;
-                    failedInfo = new SequenceFailedInfo("Sequence aborted", FailedType.Abort);
+                    failedInfo = new FailedInfo("Sequence aborted", FailedType.Abort);
                     _context.LogSession.Print(LogLevel.Warn, Index, $"Sequence {Index} execution aborted");
                     break;
                 case StepResult.Timeout:

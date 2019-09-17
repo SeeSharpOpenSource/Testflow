@@ -66,7 +66,7 @@ namespace Testflow.SlaveCore.SlaveFlowControl
             {
                 sessionTaskEntity.GetSequenceTaskEntity(i).State = RuntimeState.Failed;
 
-                SequenceFailedInfo failedInfo = new SequenceFailedInfo(Context.I18N.GetStr("SetUpFailed"),
+                FailedInfo failedInfo = new FailedInfo(Context.I18N.GetStr("SetUpFailed"),
                     FailedType.SetUpFailed);
                 SequenceStatusInfo statusInfo = new SequenceStatusInfo(i, ModuleUtils.GetSequenceStack(i),
                     StatusReportType.Failed, StepResult.NotAvailable,
@@ -141,7 +141,7 @@ namespace Testflow.SlaveCore.SlaveFlowControl
         {
             StatusMessage errorMessage = new StatusMessage(MessageNames.ErrorStatusName, Context.State, Context.SessionId)
             {
-                ExceptionInfo = new SequenceFailedInfo(ex, FailedType.RuntimeError),
+                ExceptionInfo = new FailedInfo(ex, FailedType.RuntimeError),
                 Index = Context.MsgIndex
             };
             Context.SessionTaskEntity.FillSequenceInfo(errorMessage, Context.I18N.GetStr("RuntimeError"));

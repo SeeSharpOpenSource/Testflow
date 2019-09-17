@@ -119,7 +119,7 @@ namespace Testflow.MasterCore.StatusManage
             {
                 RefreshCommonStatus(eventInfo, RuntimeState.Abort, StepResult.Abort);
 
-                SequenceFailedInfo failedInfo = new SequenceFailedInfo(_stateManageContext.GlobalInfo.I18N.GetStr("UserAbort"), FailedType.Abort);
+                FailedInfo failedInfo = new FailedInfo(_stateManageContext.GlobalInfo.I18N.GetStr("UserAbort"), FailedType.Abort);
                 UpdateSequenceTestResult(failedInfo, null);
                 _eventDispatcher.RaiseEvent(Constants.SequenceOver, eventInfo.Session, _sequenceTestResult);
 
@@ -158,7 +158,7 @@ namespace Testflow.MasterCore.StatusManage
             RuntimeState newState = message.SequenceStates[index];
             this.RunStack = message.Stacks[index];
             StepResult stepResult = message.Results[index];
-            ISequenceFailedInfo failedInfo = GetFailedInfo(message);
+            IFailedInfo failedInfo = GetFailedInfo(message);
             switch (message.Name)
             {
                 case MessageNames.StartStatusName:
@@ -188,7 +188,7 @@ namespace Testflow.MasterCore.StatusManage
                         }
                         RefreshCommonStatus(message, newState, stepResult);
                         // 更新数据库中的测试数据条目
-                        UpdateSequenceResultData(GetFailedInfoStr(message));
+                        UpdateSequenceResultData(failedInfo?.Message ?? string.Empty);
                         // 写入RuntimeStatusInfo条目
                         string watchDataStr = ModuleUtils.WatchDataToString(message.WatchData, Session, _sequence);
                         WriteRuntimeStatusData(stepResult, watchDataStr, failedInfo?.ToString() ?? string.Empty);
@@ -208,7 +208,7 @@ namespace Testflow.MasterCore.StatusManage
                         {
                             // 写入RuntimeStatusInfo条目
                             string watchDataStr = ModuleUtils.WatchDataToString(message.WatchData, Session, _sequence);
-                            WriteRuntimeStatusData(stepResult, watchDataStr, failedInfo?.Message??string.Empty);
+                            WriteRuntimeStatusData(stepResult, watchDataStr, failedInfo?.ToString()??string.Empty);
                         }
                     }
                     break;
@@ -221,10 +221,11 @@ namespace Testflow.MasterCore.StatusManage
                     RefreshCommonStatus(message, newState, stepResult);
 
                     // 更新数据库中的测试数据条目
-                    UpdateSequenceResultData(message.ExceptionInfo.ToString());
+                    UpdateSequenceResultData(message.ExceptionInfo.Message);
                     // 写入RuntimeStatusInfo条目
-                    WriteRuntimeStatusData(stepResult, ModuleUtils.WatchDataToString(message.WatchData, Session, _sequence), failedInfo?.Message ?? string.Empty
-                        );
+                    WriteRuntimeStatusData(stepResult,
+                        ModuleUtils.WatchDataToString(message.WatchData, Session, _sequence),
+                        failedInfo?.ToString() ?? string.Empty);
 
                     // 触发SequenceOver事件
                     UpdateSequenceTestResult(message.ExceptionInfo, message.WatchData);
@@ -304,13 +305,13 @@ namespace Testflow.MasterCore.StatusManage
             this.StepResult = stepResult;
         }
 
-        private void UpdateSequenceTestResult(ISequenceFailedInfo failedInfo, Dictionary<string, string> watchData)
+        private void UpdateSequenceTestResult(IFailedInfo failedInfo, Dictionary<string, string> watchData)
         {
             _sequenceTestResult.ResultState = this.State;
             _sequenceTestResult.StartTime = this.StartTime;
             _sequenceTestResult.EndTime = this.EndTime;
             _sequenceTestResult.ElapsedTime = this.ElapsedTime.TotalMilliseconds;
-            _sequenceTestResult.FailedInfo = failedInfo;
+            _sequenceTestResult.FailedInfo = failedInfo?.Message ?? string.Empty;
             _sequenceTestResult.VariableValues.Clear();
 
             if (null != watchData)
@@ -368,20 +369,14 @@ namespace Testflow.MasterCore.StatusManage
             _sequenceTestResult.ElapsedTime = ElapsedTime.TotalMilliseconds;
             _sequenceTestResult.ResultState = State;
             _sequenceTestResult.EndTime = EndTime;
-            _sequenceTestResult.FailedInfo = new SequenceFailedInfo(failedInfo);
+            _sequenceTestResult.FailedInfo = new FailedInfo(failedInfo).Message;
             _stateManageContext.DatabaseProxy.UpdateData(_sequenceResultData);
         }
 
-        private ISequenceFailedInfo GetFailedInfo(StatusMessage message)
+        private IFailedInfo GetFailedInfo(StatusMessage message)
         {
             return !message.FailedInfo.ContainsKey(SequenceIndex) ? 
-                null : new SequenceFailedInfo(message.FailedInfo[SequenceIndex]);
-        }
-
-        private string GetFailedInfoStr(StatusMessage message)
-        {
-            return !message.FailedInfo.ContainsKey(SequenceIndex) ?
-                string.Empty : message.FailedInfo[SequenceIndex];
+                null : new FailedInfo(message.FailedInfo[SequenceIndex]);
         }
     }
 }

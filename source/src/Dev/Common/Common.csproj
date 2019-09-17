@@ -162,7 +162,7 @@
     <Compile Include="Data\Description\IComInterfaceDescription.cs" />
     <Compile Include="Runtime\IRuntimeContext.cs" />
     <Compile Include="Runtime\RuntimeType.cs" />
-    <Compile Include="Runtime\Data\ISequenceFailedInfo.cs" />
+    <Compile Include="Runtime\Data\IFailedInfo.cs" />
     <Compile Include="TestflowStates.cs" />
   </ItemGroup>
   <ItemGroup>

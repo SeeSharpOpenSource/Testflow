@@ -110,7 +110,7 @@ namespace Testflow.SlaveCore.SlaveFlowControl
             RmtGenMessage rmtGenMessage = new RmtGenMessage(MessageNames.UpRmtGenMsgName, Context.SessionId,
                 RunnerType.SequenceGroup);
             rmtGenMessage.Params.Add("MsgType", "Failed");
-            SequenceFailedInfo failedInfo = new SequenceFailedInfo(Context.I18N.GetStr("OperationAborted"), FailedType.Abort);
+            FailedInfo failedInfo = new FailedInfo(Context.I18N.GetStr("OperationAborted"), FailedType.Abort);
             rmtGenMessage.Params.Add("FailedInfo", failedInfo.ToString());
             Context.UplinkMsgProcessor.SendMessage(rmtGenMessage, true);
 
@@ -131,7 +131,7 @@ namespace Testflow.SlaveCore.SlaveFlowControl
             RmtGenMessage rmtGenMessage = new RmtGenMessage(MessageNames.UpRmtGenMsgName, Context.SessionId,
                 RunnerType.SequenceGroup);
             rmtGenMessage.Params.Add("MsgType", "Failed");
-            SequenceFailedInfo failedInfo = new SequenceFailedInfo(ex, FailedType.TestGenFailed);
+            FailedInfo failedInfo = new FailedInfo(ex, FailedType.TestGenFailed);
             rmtGenMessage.Params.Add("FailedInfo", failedInfo.ToString());
             Context.UplinkMsgProcessor.SendMessage(rmtGenMessage, true);
         }
