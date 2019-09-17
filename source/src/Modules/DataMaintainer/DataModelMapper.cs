@@ -171,7 +171,7 @@ namespace Testflow.DataMaintainer
                 }
                 else if (_classTypeConvertorMapping.ContainsKey(propertyType))
                 {
-                    valueStr = _classTypeConvertorMapping[propertyType].Invoke(value);
+                    valueStr = $"'{_classTypeConvertorMapping[propertyType].Invoke(value)}'";
                 }
                 columnValueMapping.Add(columnName, valueStr);
             }
