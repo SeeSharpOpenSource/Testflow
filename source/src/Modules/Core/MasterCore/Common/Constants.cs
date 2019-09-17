@@ -60,6 +60,7 @@ namespace Testflow.MasterCore.Common
         public const string RuntimeStateInfo = "RuntimeState";
         public const string ElapsedTimeInfo = "ElapsedTime";
         public const string RuntimeHashInfo = "RuntimeHash";
+        public const string TestInstanceName = "TestName";
 
         #endregion
 

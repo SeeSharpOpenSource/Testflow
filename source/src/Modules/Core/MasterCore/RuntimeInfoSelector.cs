@@ -56,6 +56,9 @@ namespace Testflow.MasterCore
                 case Constants.RuntimeHashInfo:
                     infoValue = _globalInfo.RuntimeHash;
                     break;
+                case Constants.TestInstanceName:
+                    infoValue = _globalInfo.ConfigData.GetProperty<string>("TestName");
+                    break;
                 default:
                     _globalInfo.LogService.Print(LogLevel.Warn, CommonConst.PlatformLogSession,
                         $"Unsupported runtime object type: {0}.");

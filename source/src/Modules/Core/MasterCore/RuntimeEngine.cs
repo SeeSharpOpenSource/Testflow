@@ -46,6 +46,7 @@ namespace Testflow.MasterCore
             _syncManager = new SynchronousManager(_globalInfo);
             _callBackProcessor = new CallBackProcessor(_globalInfo);
             _debugManager = EnableDebug ? new DebugManager(_globalInfo) : null;
+            _runtimeInfoSelector = new RuntimeInfoSelector(_globalInfo, this);
 
             _globalInfo.RuntimeInitialize(messageTransceiver, _debugManager);
 
