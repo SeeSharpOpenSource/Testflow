@@ -137,7 +137,7 @@ namespace Testflow.SequenceManager.Serializer
                 {
                     ILogService logService = TestflowRunner.GetInstance().LogService;
                     logService.Print(LogLevel.Warn, CommonConst.PlatformLogSession, 0, 
-                        $"Variable{variable.Name} {sequenecGroup.Name} value in parameter data is invalid.");
+                        $"Variable <{sequenecGroup.Name}.{variable.Name}> value in parameter data is invalid.");
                     I18N i18N = I18N.GetInstance(Constants.I18nName);
                     throw new TestflowDataException(ModuleErrorCode.UnmatchedParameter, i18N.GetStr("UnmatchedData"));
                 }
