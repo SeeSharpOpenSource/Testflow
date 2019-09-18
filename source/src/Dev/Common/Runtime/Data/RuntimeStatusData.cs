@@ -50,7 +50,7 @@ namespace Testflow.Runtime.Data
         /// <summary>
         /// 失败的详细消息
         /// </summary>
-        public string FailedInfo { get; set; }
+        public IFailedInfo FailedInfo { get; set; }
 
         /// <summary>
         /// 监控的变量值

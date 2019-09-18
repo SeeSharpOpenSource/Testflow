@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Threading;
+using Testflow.CoreCommon.Data;
 using Testflow.Usr;
 using Testflow.Data.Sequence;
 using Testflow.MasterCore.Common;
 using Testflow.Modules;
 using Testflow.Runtime;
+using Testflow.Runtime.Data;
 using Testflow.Utility.I18nUtil;
 
 namespace Testflow.MasterCore
@@ -48,6 +50,7 @@ namespace Testflow.MasterCore
 
         public void RuntimeInitialize()
         {
+            RegisterFailedInfoConvertion();
             _runtimeEngine = new RuntimeEngine(ConfigData);
             _runtimeEngine.GlobalInfo.ExceptionManager.ExceptionRaised += (exception) => { ExceptionRaised?.Invoke(exception); };
         }
@@ -55,6 +58,16 @@ namespace Testflow.MasterCore
         public void DesigntimeInitialize()
         {
             // ignore
+            RegisterFailedInfoConvertion();
+        }
+
+        private void RegisterFailedInfoConvertion()
+        {
+            TestflowRunner.GetInstance().DataMaintainer.RegisterTypeConvertor(
+                typeof(IFailedInfo),
+                value => value?.ToString() ?? string.Empty,
+                valueStr => string.IsNullOrWhiteSpace(valueStr) ? null : new FailedInfo(valueStr)
+                    );
         }
 
         public void ApplyConfig(IModuleConfigData configData)

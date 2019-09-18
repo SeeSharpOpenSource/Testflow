@@ -78,7 +78,7 @@ namespace Testflow.Runtime.Data
         /// <summary>
         /// 失败信息
         /// </summary>
-        IList<string> FailedInfos { get; set; }
+        IDictionary<int, IFailedInfo> FailedInfos { get; set; }
 
         /// <summary>
         /// 被监视的变量数据

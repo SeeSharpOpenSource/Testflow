@@ -285,9 +285,8 @@ namespace Testflow.SlaveCore.Runner.Model
                 }
                 catch (TargetInvocationException ex)
                 {
-                    this.Result = StepResult.Error;
                     exception = ex;
-                    RecordInvocationError(ex.InnerException, FailedType.TargetError);
+                    RecordTargetInvocationError(ex);
                 }
             } while (retryTimes < maxRetry);
             if (null != exception)
@@ -315,11 +314,10 @@ namespace Testflow.SlaveCore.Runner.Model
             }
             catch (TargetInvocationException ex)
             {
-                this.Result = StepResult.Error;
-                RecordInvocationError(ex.InnerException, FailedType.TargetError);
+                RecordTargetInvocationError(ex);
             }
         }
-
+        
         // 跳过step
         private void InvokeStepWithSkip(bool forceInvoke)
         {
@@ -403,6 +401,26 @@ namespace Testflow.SlaveCore.Runner.Model
                     subStepEntity.Invoke(forceInvoke);
                     notCancelled = forceInvoke || !Context.Cancellation.IsCancellationRequested;
                 } while (null != (subStepEntity = subStepEntity.NextStep) && notCancelled);
+            }
+        }
+
+        private void RecordTargetInvocationError(TargetInvocationException ex)
+        {
+            Exception innerException = ex.InnerException;
+            if (innerException is TaskFailedException)
+            {
+                this.Result = StepResult.Failed;
+                RecordInvocationError(innerException, ((TaskFailedException)innerException).FailedType);
+            }
+            else if (innerException is TestflowAssertException)
+            {
+                this.Result = StepResult.Failed;
+                RecordInvocationError(innerException, FailedType.AssertionFailed);
+            }
+            else
+            {
+                this.Result = StepResult.Error;
+                RecordInvocationError(innerException, FailedType.TargetError);
             }
         }
 

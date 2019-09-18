@@ -55,7 +55,7 @@ namespace Testflow.Runtime.Data
         /// <summary>
         /// 失败信息
         /// </summary>
-        public string FailInfo { get; set; }
+        public IFailedInfo FailInfo { get; set; }
 
         /// <summary>
         /// 失败时的堆栈信息

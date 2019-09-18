@@ -5,6 +5,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using Testflow.Usr;
 using Testflow.CoreCommon.Common;
+using Testflow.CoreCommon.Data;
 using Testflow.CoreCommon.Data.EventInfos;
 using Testflow.CoreCommon.Messages;
 using Testflow.Data.Sequence;
@@ -77,7 +78,7 @@ namespace Testflow.MasterCore.StatusManage
                 Session = this.Session,
                 SequenceHash = (sequenceData is ISequenceGroup) ? ((ISequenceGroup)sequenceData).Info.Hash : string.Empty,
                 State = RuntimeState.NotAvailable,
-                FailedInfo = string.Empty
+                FailedInfo = null
             };
             _performanceStatus = new PerformanceStatus()
             {
@@ -176,7 +177,7 @@ namespace Testflow.MasterCore.StatusManage
                         sequenceStateHandle.StopStateHandle(eventInfo.TimeStamp, State, eventInfo.ErrorInfo);
                     }
                     // 持久化会话失败信息
-                    UpdateSessionResultData(eventInfo.ErrorInfo);
+                    UpdateSessionResultData(new FailedInfo(eventInfo.ErrorInfo));
                     // 更新TestResults信息
                     SetTestResultStatistics(null);
                     // 触发生成失败的事件
@@ -203,7 +204,7 @@ namespace Testflow.MasterCore.StatusManage
                 RefreshTime(eventInfo);
 
                 SetTestResultStatistics(null);
-                UpdateSessionResultData(string.Empty);
+                UpdateSessionResultData(null);
                 _stateManageContext.EventDispatcher.RaiseEvent(Constants.SessionOver, Session, _testResults);
             }
         }
@@ -244,7 +245,7 @@ namespace Testflow.MasterCore.StatusManage
                     this.StartTime = message.Time;
                     RefreshTime(message);
 
-                    UpdateSessionResultData(string.Empty);
+                    UpdateSessionResultData(null);
 
                     SetTestResultStatistics(message.WatchData);
                     // 写入性能记录条目
@@ -292,7 +293,7 @@ namespace Testflow.MasterCore.StatusManage
 
                     SetTestResultStatistics(message.WatchData);
 
-                    UpdateSessionResultData(string.Empty);
+                    UpdateSessionResultData(null);
                     
                     _testResults.Performance = _stateManageContext.DatabaseProxy.GetPerformanceResult(Session);
                     _testResults.TestOver = true;
@@ -311,7 +312,7 @@ namespace Testflow.MasterCore.StatusManage
                         }
                     }
 
-                    UpdateSessionResultData(message.ExceptionInfo.ToString());
+                    UpdateSessionResultData(message.ExceptionInfo);
 
                     SetTestResultStatistics(message.WatchData);
                     // 写入性能记录条目
@@ -398,7 +399,7 @@ namespace Testflow.MasterCore.StatusManage
             }
         }
 
-        private void UpdateSessionResultData(string failedInfo)
+        private void UpdateSessionResultData(IFailedInfo failedInfo)
         {
             if (StartTime == DateTime.MaxValue)
             {
@@ -471,8 +472,12 @@ namespace Testflow.MasterCore.StatusManage
             {
                 varValues = new Dictionary<IVariable, string>(1);
             }
+            if (message.FailedInfo != null && message.FailedInfo.Count > 0)
+            {
+
+            }
             ulong dataStatusIndex = (ulong) _stateManageContext.EventStatusIndex;
-            return new RuntimeStatusInfo(this, dataStatusIndex, null, varValues, message.Performance);
+            return new RuntimeStatusInfo(this, dataStatusIndex, message.FailedInfo, varValues, message.Performance);
         }
 
         #endregion

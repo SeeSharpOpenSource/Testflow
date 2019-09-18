@@ -48,7 +48,7 @@ namespace Testflow.Runtime.Data
         /// <summary>
         /// 测试失败信息
         /// </summary>
-        string FailedInfo { get; set; }
+        IFailedInfo FailedInfo { get; set; }
 
         /// <summary>
         /// 变量的事实取值

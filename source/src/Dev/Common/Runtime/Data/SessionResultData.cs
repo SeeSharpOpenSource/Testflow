@@ -55,6 +55,6 @@ namespace Testflow.Runtime.Data
         /// <summary>
         /// 错误信息
         /// </summary>
-        public string FailedInfo { get; set; }
+        public IFailedInfo FailedInfo { get; set; }
     }
 }
