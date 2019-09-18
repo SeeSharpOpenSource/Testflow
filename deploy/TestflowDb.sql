@@ -42,7 +42,7 @@ CREATE TABLE Testflow_SequenceResults(
 	EndTime TEXT NOT NULL,
 	ElapsedTime REAL NOT NULL,
 	FailInfo TEXT,
-	FailStack TEXT NOT NULL,
+	FailStack TEXT,
 	PRIMARY KEY (RuntimeHash,SessionId,SequenceIndex),
 	FOREIGN KEY (RuntimeHash,SessionId) REFERENCES Testflow_SessionResults(RuntimeHash,SessionId)
 );
