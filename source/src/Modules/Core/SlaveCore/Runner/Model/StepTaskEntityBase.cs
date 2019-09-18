@@ -72,6 +72,7 @@ namespace Testflow.SlaveCore.Runner.Model
 
         public StepResult Result { get; protected set; }
         public int SequenceIndex { get; }
+        public bool BreakIfFailed => StepData?.BreakIfFailed ?? false;
 
         protected StepTaskEntityBase(ISequenceStep step, SlaveContext context, int sequenceIndex)
         {
@@ -177,11 +178,12 @@ namespace Testflow.SlaveCore.Runner.Model
             statusMessage.Results.Add(this.Result);
         }
 
-        public void SetStatusAndSendErrorEvent(StepResult result)
+        public void SetStatusAndSendErrorEvent(StepResult result, FailedInfo failedInfo)
         {
             this.Result = result;
             // 如果发生错误，无论该步骤是否被配置为recordStatus，都需要发送状态信息
-            SequenceStatusInfo statusInfo = new SequenceStatusInfo(SequenceIndex, this.GetStack(), StatusReportType.Record, Result);
+            SequenceStatusInfo statusInfo = new SequenceStatusInfo(SequenceIndex, this.GetStack(),
+                StatusReportType.Record, Result, failedInfo);
             // 更新watch变量值
             statusInfo.WatchDatas = Context.VariableMapper.GetWatchDataValues(StepData);
             Context.StatusQueue.Enqueue(statusInfo);
