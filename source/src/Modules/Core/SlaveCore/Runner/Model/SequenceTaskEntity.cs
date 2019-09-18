@@ -94,64 +94,25 @@ namespace Testflow.SlaveCore.Runner.Model
                 } while (null != (stepEntity = stepEntity.NextStep) && notCancelled);
                 SetResultState(out lastStepResult, out finalReportType, out failedInfo);
             }
-            catch (TaskFailedException ex)
-            {
-                this.State = RuntimeState.Failed;
-                finalReportType = StatusReportType.Failed;
-                lastStepResult = StepResult.Failed;
-                failedInfo = new FailedInfo(ex, ex.FailedType);
-                _context.LogSession.Print(LogLevel.Info, Index, "Step force failed.");
-            }
-            catch (TestflowAssertException ex)
-            {
-                this.State = RuntimeState.Failed;
-                finalReportType = StatusReportType.Failed;
-                lastStepResult = StepResult.Failed;
-                failedInfo = new FailedInfo(ex, FailedType.AssertionFailed);
-                _context.LogSession.Print(LogLevel.Fatal, Index, "Assert exception catched.");
-            }
-            catch (ThreadAbortException ex)
-            {
-                this.State = RuntimeState.Abort;
-                finalReportType = StatusReportType.Error;
-                lastStepResult = StepResult.Abort;
-                failedInfo = new FailedInfo(ex, FailedType.Abort);
-                _context.LogSession.Print(LogLevel.Warn, Index, $"Sequence {Index} execution aborted");
-            }
-            catch (TestflowException ex)
-            {
-                this.State = RuntimeState.Error;
-                finalReportType = StatusReportType.Error;
-                lastStepResult = StepResult.Error;
-                failedInfo = new FailedInfo(ex, FailedType.RuntimeError);
-                _context.LogSession.Print(LogLevel.Error, Index, ex, "Inner exception catched.");
-            }
             catch (TargetInvocationException ex)
             {
-                this.State = RuntimeState.Failed;
-                finalReportType = StatusReportType.Failed;
-                lastStepResult = StepResult.Failed;
-                failedInfo = new FailedInfo(ex.InnerException, FailedType.TargetError);
-                _context.LogSession.Print(LogLevel.Error, Index, ex, "Invocation exception catched.");
+                FillFinalExceptionReportInfo(ex.InnerException, out finalReportType, out lastStepResult, out failedInfo);
             }
             catch (Exception ex)
             {
-                this.State = RuntimeState.Error;
-                finalReportType = StatusReportType.Error;
-                lastStepResult = StepResult.Error;
-                failedInfo = new FailedInfo(ex, FailedType.RuntimeError);
-                _context.LogSession.Print(LogLevel.Error, Index, ex, "Runtime exception catched.");
+                FillFinalExceptionReportInfo(ex, out finalReportType, out lastStepResult, out failedInfo);
             }
             finally
             {
                 StepTaskEntityBase currentStep = StepTaskEntityBase.GetCurrentStep(Index);
-                // 如果序列未成功则发送失败事件
-                if (this.State != RuntimeState.Success)
+                // 如果序列未成功且该序列失败后未自行发送消息则发送失败事件
+                if (this.State != RuntimeState.Success && currentStep.BreakIfFailed)
                 {
-                    currentStep.SetStatusAndSendErrorEvent(lastStepResult);
+                    currentStep.SetStatusAndSendErrorEvent(lastStepResult, failedInfo);
                 }
                 // 发送结束事件，包括所有的ReturnData信息
-                SequenceStatusInfo overStatusInfo = new SequenceStatusInfo(Index, currentStep.GetStack(), finalReportType, StepResult.Over, failedInfo);
+                SequenceStatusInfo overStatusInfo = new SequenceStatusInfo(Index, currentStep.GetStack(),
+                    finalReportType, StepResult.Over, failedInfo);
                 overStatusInfo.WatchDatas = _context.VariableMapper.GetReturnDataValues(_sequence);
                 this._context.StatusQueue.Enqueue(overStatusInfo);
 
@@ -160,6 +121,59 @@ namespace Testflow.SlaveCore.Runner.Model
                 // 将失败步骤职责链以后的step标记为null
                 currentStep.NextStep = null;
             }
+        }
+
+        private void FillFinalExceptionReportInfo(Exception ex, out StatusReportType finalReportType,
+            out StepResult lastStepResult, out FailedInfo failedInfo)
+        {
+            if (ex is TaskFailedException)
+            {
+                this.State = RuntimeState.Failed;
+                finalReportType = StatusReportType.Failed;
+                lastStepResult = StepResult.Failed;
+                failedInfo = new FailedInfo(ex, ((TaskFailedException) ex).FailedType);
+                _context.LogSession.Print(LogLevel.Info, Index, "Step force failed.");
+            }
+            else if (ex is TestflowAssertException)
+            {
+                this.State = RuntimeState.Failed;
+                finalReportType = StatusReportType.Failed;
+                lastStepResult = StepResult.Failed;
+                failedInfo = new FailedInfo(ex, FailedType.AssertionFailed);
+                _context.LogSession.Print(LogLevel.Fatal, Index, "Assert exception catched.");
+            }
+            else if (ex is ThreadAbortException)
+            {
+                this.State = RuntimeState.Abort;
+                finalReportType = StatusReportType.Error;
+                lastStepResult = StepResult.Abort;
+                failedInfo = new FailedInfo(ex, FailedType.Abort);
+                _context.LogSession.Print(LogLevel.Warn, Index, $"Sequence {Index} execution aborted");
+            }
+            else if (ex is TestflowException)
+            {
+                this.State = RuntimeState.Error;
+                finalReportType = StatusReportType.Error;
+                lastStepResult = StepResult.Error;
+                failedInfo = new FailedInfo(ex, FailedType.RuntimeError);
+                _context.LogSession.Print(LogLevel.Error, Index, ex, "Inner exception catched.");
+            }
+            else
+            {
+                this.State = RuntimeState.Error;
+                finalReportType = StatusReportType.Error;
+                lastStepResult = StepResult.Error;
+                failedInfo = new FailedInfo(ex, FailedType.RuntimeError);
+                _context.LogSession.Print(LogLevel.Error, Index, ex, "Runtime exception catched.");
+            }
+//            else if (ex is TargetInvocationException)
+//            {
+//                this.State = RuntimeState.Failed;
+//                finalReportType = StatusReportType.Failed;
+//                lastStepResult = StepResult.Failed;
+//                failedInfo = new FailedInfo(ex.InnerException, FailedType.TargetError);
+//                _context.LogSession.Print(LogLevel.Error, Index, ex, "Invocation exception catched.");
+//            }
         }
 
         private void SetResultState(out StepResult lastStepResult, out StatusReportType finalReportType, 
