@@ -406,6 +406,8 @@ namespace Testflow.SlaveCore.Runner.Model
             }
         }
 
+        #endregion
+
         private void RecordTargetInvocationError(TargetInvocationException ex)
         {
             Exception innerException = ex.InnerException;
@@ -426,8 +428,6 @@ namespace Testflow.SlaveCore.Runner.Model
             }
         }
 
-        #endregion
-
         private void RecordRuntimeStatus()
         {
             SequenceStatusInfo statusInfo = new SequenceStatusInfo(SequenceIndex, this.GetStack(), 
@@ -442,6 +442,8 @@ namespace Testflow.SlaveCore.Runner.Model
             FailedInfo failedInfo = new FailedInfo(ex, failedType);
             SequenceStatusInfo statusInfo = new SequenceStatusInfo(SequenceIndex, this.GetStack(),
                 StatusReportType.Record, Result, failedInfo);
+            // 一旦失败，需要记录WatchData
+            statusInfo.WatchDatas = Context.VariableMapper.GetWatchDataValues(StepData);
             Context.StatusQueue.Enqueue(statusInfo);
             Context.LogSession.Print(LogLevel.Error, Context.SessionId, ex.Message);
         }
