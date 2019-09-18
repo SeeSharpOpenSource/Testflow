@@ -201,4 +201,19 @@
   <data name="TimeoutState" xml:space="preserve">
     <value>超时</value>
   </data>
+  <data name="FailedInfoTitle" xml:space="preserve">
+    <value>| 失败信息</value>
+  </data>
+  <data name="RecordTimeTitle" xml:space="preserve">
+    <value>| 记录时间</value>
+  </data>
+  <data name="RuntimeStatusName" xml:space="preserve">
+    <value>运行时状态信息：</value>
+  </data>
+  <data name="StepNameTitle" xml:space="preserve">
+    <value>| 步骤名称</value>
+  </data>
+  <data name="StepResultTitle" xml:space="preserve">
+    <value>| 步骤运行结果</value>
+  </data>
 </root>

@@ -76,8 +76,6 @@ namespace Testflow.ResultManager
                     _resultPrinter = customPrinter;//继承IResultPrinter的自定义Printer
                     break;
             }
-
-            _dataMaintainer.DesigntimeInitialize();
             //输出报告
             _resultPrinter.PrintReport(newFilePath, runtimeHash);
         }

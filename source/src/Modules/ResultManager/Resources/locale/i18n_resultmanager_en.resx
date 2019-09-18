@@ -201,4 +201,19 @@
   <data name="TestProjectDescription" xml:space="preserve">
     <value>Test Project Description:</value>
   </data>
+  <data name="RuntimeStatusName" xml:space="preserve">
+    <value>Runtime information:</value>
+  </data>
+  <data name="FailedInfoTitle" xml:space="preserve">
+    <value>| Failed Information</value>
+  </data>
+  <data name="RecordTimeTitle" xml:space="preserve">
+    <value>| Record Time</value>
+  </data>
+  <data name="StepNameTitle" xml:space="preserve">
+    <value>| Step Name</value>
+  </data>
+  <data name="StepResultTitle" xml:space="preserve">
+    <value>| Step Result</value>
+  </data>
 </root>

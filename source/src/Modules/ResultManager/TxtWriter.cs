@@ -19,6 +19,7 @@ namespace Testflow.ResultManager
         private readonly I18N _i18n;
         const string DateFormat = "yyyy-MM-dd hh:mm:ss.fff";
         const string DoubleFormat = "F3";
+        const int TabLength = 8;
 
         internal TxtWriter()
         {
@@ -94,7 +95,7 @@ namespace Testflow.ResultManager
                 WriteRecord(sw, 1, "SessionResult", sessionResult.State.ToString());
                 if (sessionResult.State == Runtime.RuntimeState.Failed || sessionResult.State == Runtime.RuntimeState.Error)
                 {
-                    WriteRecord(sw, 1, "FailedInfo", sessionResult.FailedInfo);
+                    WriteRecord(sw, 1, "FailedInfo", sessionResult.FailedInfo.Message);
                 }
 
                 sw.WriteLine();
@@ -122,13 +123,81 @@ namespace Testflow.ResultManager
                 WriteRecord(sw, 2, "StartTime", sequenceResult.StartTime.ToString(DateFormat));
                 WriteRecord(sw, 2, "EndTime", sequenceResult.EndTime.ToString(DateFormat));
                 WriteRecord(sw, 2, "ElapsedTime", (sequenceResult.ElapsedTime / 1000).ToString(DoubleFormat));
-                if (sequenceResult.Result == Runtime.RuntimeState.Failed)
+                if (sequenceResult.Result == Runtime.RuntimeState.Failed && null != sequenceResult.FailInfo)
                 {
-                    WriteRecord(sw, 2, "FailedInfo", sequenceResult.FailInfo);
+                    WriteRecord(sw, 2, "FailedInfo", sequenceResult.FailInfo.Message);
                     WriteRecord(sw, 2, "FailedStack", sequenceResult.FailStack);
                 }
+                PrintRuntimeStatus(sw, runtimeHash, sessionId, sequenceResult.SequenceIndex);
                 sw.WriteLine();
             }
+        }
+
+        private void PrintRuntimeStatus(StreamWriter sw, string runtimeHash, int sessionId, int sequenceIndex)
+        {
+            const int stepNameLength = 3;
+            const int recordTimeLength = 4;
+            const int resultLength = 2;
+            const int failInfoLength = 5;
+            const string preOffset = "\t\t";
+
+            IList<RuntimeStatusData> runtimeStatus = _dataMaintainer.GetRuntimeStatus(runtimeHash, sessionId, sequenceIndex);
+            if (runtimeStatus.Count > 1)
+            {
+                sw.WriteLine(preOffset + _i18n.GetStr("RuntimeStatusName"));
+                StringBuilder tableContent = new StringBuilder(300);
+                string stepNameTitle = _i18n.GetStr("StepNameTitle");
+                string recordTimeTitle = _i18n.GetStr("RecordTimeTitle");
+                string resultTitle = _i18n.GetStr("StepResultTitle");
+                string failInfoTitle = _i18n.GetStr("FailedInfoTitle");
+
+                tableContent.Append(preOffset).Append(stepNameTitle).Append(GetDelimTab(stepNameTitle, stepNameLength));
+                tableContent.Append(recordTimeTitle).Append(GetDelimTab(recordTimeTitle, recordTimeLength));
+                tableContent.Append(resultTitle).Append(GetDelimTab(resultTitle, resultLength));
+                tableContent.Append(failInfoTitle).Append(GetDelimTab(failInfoTitle, failInfoLength));
+
+                sw.WriteLine(tableContent.ToString());
+                int titleLength = Encoding.GetEncoding("GBK").GetByteCount(tableContent.ToString());
+                titleLength += 30;
+                tableContent.Clear();
+                tableContent.Append(preOffset);
+                for (int i = 0; i < titleLength - 2; i++)
+                {
+                    tableContent.Append("-");
+                }
+                sw.WriteLine(tableContent.ToString());
+                for (int i = 0; i < runtimeStatus.Count - 1; i++)
+                {
+                    tableContent.Clear();
+                    tableContent.Append(preOffset);
+                    string stepName = runtimeStatus[i].Stack;
+                    string time = runtimeStatus[i].Time.ToString(DateFormat);
+                    string result = runtimeStatus[i].Result.ToString();
+                    string failInfo = runtimeStatus[i].FailedInfo?.Message ?? string.Empty;
+                    tableContent.Append(stepName).Append(GetDelimTab(stepName, stepNameLength));
+                    tableContent.Append(time).Append(GetDelimTab(time, recordTimeLength));
+                    tableContent.Append(result).Append(GetDelimTab(result, resultLength));
+                    tableContent.Append(failInfo).Append(GetDelimTab(stepName, failInfoLength));
+                    sw.WriteLine(tableContent.ToString());
+                }
+                sw.WriteLine("");
+            }
+        }
+
+        private string GetDelimTab(string printText, int maxTabCount)
+        {
+            int labelShowLength = Encoding.GetEncoding("GBK").GetByteCount(printText);
+            int delimCount = (int)Math.Ceiling(((double)maxTabCount*TabLength - labelShowLength) / 8);
+            StringBuilder delims = new StringBuilder(5);
+            if (delimCount <= 0 && maxTabCount * TabLength < labelShowLength)
+            {
+                delimCount = 1;
+            }
+            for (int i = 0; i < delimCount; i++)
+            {
+                delims.Append("\t");
+            }
+            return delims.ToString();
         }
 
         /// <summary>
@@ -138,7 +207,6 @@ namespace Testflow.ResultManager
         /// 实际计算方法在ResultManager.Common.ModuleUtil类
         /// </summary>
         /// <param name="sw"></param>
-        /// <param name="dataMaintainer"></param>
         /// <param name="runtimeHash"></param>
         /// <param name="sessionId"> 会话id </param>
         private void PrintPerformance(StreamWriter sw, string runtimeHash, int sessionId)
@@ -162,9 +230,7 @@ namespace Testflow.ResultManager
 
         private void WriteRecord(StreamWriter writer, int level, string labelKey, string value)
         {
-            const int tabLength = 8;
-            const int valueStartOffset = tabLength*3;
-
+            const int valueStartOffset = TabLength*3;
             if (string.IsNullOrWhiteSpace(value))
             {
                 return;
