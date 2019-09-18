@@ -14,14 +14,7 @@ namespace Testflow.EngineCoreTest
         {
         }
 
-        public override IComInterfaceManager ComInterfaceManager { get; protected set; }
-        public override IConfigurationManager ConfigurationManager { get; protected set; }
-        public override IDataMaintainer DataMaintainer { get; protected set; }
-        public override IEngineController EngineController { get; protected set; }
-        public override ILogService LogService { get; protected set; }
-        public override IParameterChecker ParameterChecker { get; protected set; }
-        public override IResultManager ResultManager { get; protected set; }
-        public override ISequenceManager SequenceManager { get; protected set; }
+
         public override void Initialize()
         {
             this.LogService = new LogService();

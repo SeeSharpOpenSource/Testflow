@@ -25,25 +25,17 @@ namespace Testflow
         /// <summary>
         /// 获取或创建当前AppDomain下的FlowRunner实例
         /// </summary>
-        /// <param name="options">FlowRunner的选项配置</param>
         /// <returns></returns>
-        public static TestflowRunner GetInstance(TestflowRunnerOptions options)
+        protected static void SetInstance(TestflowRunner runnerInstance)
         {
-            CheckIfExistDifferentRunner(options);
-            if (null != _runnerInst)
+            lock (_instLock)
             {
-                return _runnerInst;
-            }
-            lock(_instLock)
-            {
-                Thread.MemoryBarrier();
-                CheckIfExistDifferentRunner(options);
-                if (null != _runnerInst)
+                if (null != _runnerInst && ReferenceEquals(_runnerInst, runnerInstance))
                 {
-                    _runnerInst = GenerateFlowRunner(options);
+                    throw new TestflowRuntimeException(-1, "A flowrunner instance with different option exist.");
                 }
+                _runnerInst = runnerInstance;
             }
-            return _runnerInst;
         }
 
         /// <summary>
@@ -61,23 +53,11 @@ namespace Testflow
                 if (null != _runnerInst)
                 {
                     I18N i18N = I18N.GetInstance(CommonConst.I18nName);
-                    throw new TestflowInternalException(CommonErrorCode.InternalError, i18N.GetStr("PlatformNotInitialized"));
+                    throw new TestflowInternalException(CommonErrorCode.InternalError, 
+                        i18N.GetStr("PlatformNotInitialized"));
                 }
             }
             return _runnerInst;
-        }
-
-        private static void CheckIfExistDifferentRunner(TestflowRunnerOptions options)
-        {
-            if (null != _runnerInst && !_runnerInst.Option.Equals(options))
-            {
-                throw new TestflowRuntimeException(-1, "A flowrunner instance with different option exist.");
-            }
-        }
-
-        private static TestflowRunner GenerateFlowRunner(TestflowRunnerOptions options)
-        {
-            throw new System.NotImplementedException();
         }
 
         /// <summary>
@@ -115,42 +95,42 @@ namespace Testflow
         /// <summary>
         /// 组件接口加载模块
         /// </summary>
-        public abstract IComInterfaceManager ComInterfaceManager { get; protected set; }
+        public IComInterfaceManager ComInterfaceManager { get; protected set; }
 
         /// <summary>
         /// 配置管理模块
         /// </summary>
-        public abstract IConfigurationManager ConfigurationManager { get; protected set; }
+        public IConfigurationManager ConfigurationManager { get; protected set; }
 
         /// <summary>
         /// 数据持久化模块
         /// </summary>
-        public abstract IDataMaintainer DataMaintainer { get; protected set; }
+        public IDataMaintainer DataMaintainer { get; protected set; }
 
         /// <summary>
         /// 引擎控制模块
         /// </summary>
-        public abstract IEngineController EngineController { get; protected set; }
+        public IEngineController EngineController { get; protected set; }
 
         /// <summary>
         /// 日志服务模块
         /// </summary>
-        public abstract ILogService LogService { get; protected set; }
+        public ILogService LogService { get; protected set; }
 
         /// <summary>
         /// 参数检查模块
         /// </summary>
-        public abstract IParameterChecker ParameterChecker { get; protected set; }
+        public IParameterChecker ParameterChecker { get; protected set; }
 
         /// <summary>
         /// 结果管理模块
         /// </summary>
-        public abstract IResultManager ResultManager { get; protected set; }
+        public IResultManager ResultManager { get; protected set; }
 
         /// <summary>
         /// 序列管理模块
         /// </summary>
-        public abstract ISequenceManager SequenceManager { get; protected set; }
+        public ISequenceManager SequenceManager { get; protected set; }
 
         #endregion
 
@@ -170,8 +150,53 @@ namespace Testflow
         public abstract void Initialize();
 
         /// <summary>
+        /// 设计时初始化
+        /// </summary>
+        public virtual void DesigntimeInitialize()
+        {
+            RuntimeService.Deactivate();
+            ConfigurationManager.DesigntimeInitialize();
+            LogService.DesigntimeInitialize();
+            ParameterChecker.DesigntimeInitialize();
+            ResultManager.DesigntimeInitialize();
+            ComInterfaceManager.DesigntimeInitialize();
+            SequenceManager.DesigntimeInitialize();
+            DataMaintainer.DesigntimeInitialize();
+            EngineController.DesigntimeInitialize();
+            DesignTimeService.Activate();
+        }
+
+        /// <summary>
+        /// 运行时初始化
+        /// </summary>
+        public virtual void RuntimeInitialize()
+        {
+            DesignTimeService?.Deactivate();
+            ConfigurationManager.RuntimeInitialize();
+            LogService.RuntimeInitialize();
+            ResultManager.RuntimeInitialize();
+            SequenceManager.RuntimeInitialize();
+            DataMaintainer.RuntimeInitialize();
+            EngineController.RuntimeInitialize();
+            RuntimeService.Activate();
+        }
+
+        /// <summary>
         /// 销毁当前Runner
         /// </summary>
-        public abstract void Dispose();
+        public virtual void Dispose()
+        {
+            _runnerInst = null;
+            DesignTimeService?.Dispose();
+            RuntimeService?.Dispose();
+            EngineController?.Dispose();
+            DataMaintainer?.Dispose();
+            SequenceManager?.Dispose();
+            ComInterfaceManager?.Dispose();
+            ResultManager?.Dispose();
+            ParameterChecker?.Dispose();
+            LogService?.Dispose();
+            ConfigurationManager?.Dispose();
+        }
     }
 }
