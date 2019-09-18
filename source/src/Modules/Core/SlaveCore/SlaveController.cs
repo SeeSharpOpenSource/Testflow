@@ -37,9 +37,10 @@ namespace Testflow.SlaveCore
                 IsBackground = true,
                 Name = string.Format(Constants.TaskRootThreadNameFormat, _context.SessionId)
             };
+            // TODO 配置运行时线程为STA模式以支持对SLAVE端显示界面的支持，目前该配置除了对COM组件的调用以外未发现有额外的影响
+            _flowTaskThread.SetApartmentState(ApartmentState.STA);
             // 开始流程处理线程
             _flowTaskThread.Start();
-
             _context.FlowControlThread = _flowTaskThread;
 
             // 打印状态日志
