@@ -130,6 +130,11 @@ namespace Testflow.Modules
         IList<RuntimeStatusData> GetRuntimeStatus(string runtimeHash, int session);
 
         /// <summary>
+        /// 获取某个会话的运行时信息
+        /// </summary>
+        IList<RuntimeStatusData> GetRuntimeStatus(string runtimeHash, int session, int sequenceIndex);
+
+        /// <summary>
         /// 获取某个会话某个索引的运行时信息
         /// </summary>
         RuntimeStatusData GetRuntimeStatusByIndex(string runtimeHash, long index);

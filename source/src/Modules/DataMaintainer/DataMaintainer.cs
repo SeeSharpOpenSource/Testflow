@@ -148,6 +148,11 @@ namespace Testflow.DataMaintainer
             return _databaseProxy.GetRuntimeStatus(runtimeHash, session);
         }
 
+        public IList<RuntimeStatusData> GetRuntimeStatus(string runtimeHash, int session, int sequenceIndex)
+        {
+            return _databaseProxy.GetRuntimeStatus(runtimeHash, session, sequenceIndex);
+        }
+
         public RuntimeStatusData GetRuntimeStatusByIndex(string runtimeHash, long index)
         {
             return _databaseProxy.GetRuntimeStatusByIndex(runtimeHash, index);

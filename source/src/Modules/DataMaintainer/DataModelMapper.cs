@@ -123,7 +123,7 @@ namespace Testflow.DataMaintainer
             {
                 string columnName = GetTableColumnName(type.Name, propertyInfo.Name);
                 object propertyValue = reader[columnName];
-                if (null == propertyValue)
+                if (null == propertyValue || DBNull.Value == propertyValue)
                 {
                     continue;
                 }
@@ -200,8 +200,16 @@ namespace Testflow.DataMaintainer
 
         public void RegisterTypeConvertor(Type type, Func<object, string> toStringFunc, Func<string, object> parseFunc)
         {
-            _classTypeConvertorMapping.Add(type, toStringFunc);
-            _classTypeParserMapping.Add(type, parseFunc);
+            if (_classTypeConvertorMapping.ContainsKey(type))
+            {
+                _classTypeConvertorMapping[type] = toStringFunc;
+                _classTypeParserMapping[type] = parseFunc;
+            }
+            else
+            {
+                _classTypeConvertorMapping.Add(type, toStringFunc);
+                _classTypeParserMapping.Add(type, parseFunc);
+            }
         }
     }
 }

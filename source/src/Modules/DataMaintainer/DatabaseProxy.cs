@@ -433,6 +433,25 @@ namespace Testflow.DataMaintainer
             return statusDatas;
         }
 
+        public IList<RuntimeStatusData> GetRuntimeStatus(string runtimeHash, int session, int sequenceIndex)
+        {
+            string filter =
+                $"{DataBaseItemNames.RuntimeIdColumn}='{runtimeHash}' AND {DataBaseItemNames.SessionIdColumn}={session} AND {DataBaseItemNames.SequenceIndexColumn}={sequenceIndex}";
+            string cmd = SqlCommandFactory.CreateQueryCmdWithOrder(filter, DataBaseItemNames.StatusTableName,
+                DataBaseItemNames.StatusIndexColumn);
+            List<RuntimeStatusData> statusDatas = new List<RuntimeStatusData>(500);
+            using (DbDataReader dataReader = ExecuteReadCommand(cmd))
+            {
+                while (dataReader.Read())
+                {
+                    RuntimeStatusData runtimeStatusData = new RuntimeStatusData();
+                    DataModelMapper.ReadToObject(dataReader, runtimeStatusData);
+                    statusDatas.Add(runtimeStatusData);
+                }
+            }
+            return statusDatas;
+        }
+
         public virtual RuntimeStatusData GetRuntimeStatusByIndex(string runtimeHash, long index)
         {
             string filter =
