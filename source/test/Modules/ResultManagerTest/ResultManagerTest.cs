@@ -79,7 +79,7 @@ namespace Testflow.ResultManagerTest
                 EndTime = DateTime.Now - new TimeSpan(0, 0, 0, 1),
                 ElapsedTime = 10000,
                 State = RuntimeState.Over,
-                FailedInfo = ""
+                FailedInfo = null
             };
         }
 
@@ -96,7 +96,7 @@ namespace Testflow.ResultManagerTest
                 StartTime = DateTime.Now - new TimeSpan(0, 0, 1, 1),
                 EndTime = DateTime.Now - new TimeSpan(0, 0, 0, 1),
                 ElapsedTime = 10000,
-                FailInfo = "",
+                FailInfo = null,
                 FailStack = ""
             };
         }

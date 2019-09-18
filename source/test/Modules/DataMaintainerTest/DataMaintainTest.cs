@@ -475,7 +475,7 @@ namespace Testflow.DataMaintainerTest
                 EndTime = DateTime.Now - new TimeSpan(0, 0, 0, 1),
                 ElapsedTime = 10000,
                 State = RuntimeState.Over,
-                FailedInfo = ""
+                FailedInfo = null
             };
             return sessionResultData;
         }
@@ -493,7 +493,7 @@ namespace Testflow.DataMaintainerTest
                 StartTime = DateTime.Now - new TimeSpan(0, 0, 1, 1),
                 EndTime = DateTime.Now - new TimeSpan(0, 0, 0, 1),
                 ElapsedTime = 10000,
-                FailInfo = "",
+                FailInfo = null,
                 FailStack = ""
             };
             return sequenceResult;
