@@ -58,8 +58,13 @@ namespace Testflow.SequenceManager.SequenceElements
                 Version = this.Info.Version
             };
 
-            VariableInitValueCollection initValueCollection = new VariableInitValueCollection();
-            ModuleUtils.CloneDataCollection(this.VariableValues, initValueCollection);
+            VariableInitValueCollection initValueCollection = null;
+            if (this.VariableValues != null)
+            {
+                initValueCollection = new VariableInitValueCollection();
+                ModuleUtils.CloneDataCollection(this.VariableValues, initValueCollection);
+            }
+            
 
             SequenceParameterCollection sequenceParameterCollection = new SequenceParameterCollection();
             ModuleUtils.CloneDataCollection(this.SequenceParameters, sequenceParameterCollection);

@@ -43,6 +43,7 @@
   <ItemGroup>
     <Compile Include="Common\Constants.cs" />
     <Compile Include="Common\ModuleUtils.cs" />
+    <Compile Include="Common\TypeChecker.cs" />
     <Compile Include="DesignTimeContext.cs" />
     <Compile Include="DesignTimeSession.cs" />
     <Compile Include="DesignTimeService.cs" />

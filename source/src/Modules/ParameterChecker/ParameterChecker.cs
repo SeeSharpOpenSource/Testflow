@@ -81,7 +81,7 @@ namespace Testflow.ParameterChecker
             if(string.IsNullOrEmpty(function.Instance))
             {
                 //如果是静态方法，则不用检查,返回空的List
-                if (function.Type == FunctionType.StaticFunction || function.Type == FunctionType.StaticPropertySetter) { }
+                if (function.Type == FunctionType.StaticFunction || function.Type == FunctionType.StaticPropertySetter) { return null; }
                 else
                 {
                     return new WarningInfo(){
@@ -136,6 +136,13 @@ namespace Testflow.ParameterChecker
             IList<IWarningInfo> warningList = new List<IWarningInfo>();
             IFunctionData function = Step.Function;
 
+            #region 空function, 空step
+            if(function == null)
+            {
+                return warningList;
+            }
+            #endregion
+
             IWarningInfo warnInfo = null;
 
             #region Instance
@@ -155,19 +162,15 @@ namespace Testflow.ParameterChecker
             #endregion
 
             #region Parameters
-            if (function.Parameters == null)
-            {
-                return warningList;
-            }
-
-            for (int n = 0; n < function.Parameters.Count; n++)
-            {
-                warnInfo = CheckParameterData(function, n, arr, overwriteType);
-                if (warnInfo != null)
+            if (function.Parameters == null) { }
+            else for (int n = 0; n < function.Parameters.Count; n++)
                 {
-                    warningList.Add(warnInfo);
+                    warnInfo = CheckParameterData(function, n, arr, overwriteType);
+                    if (warnInfo != null)
+                    {
+                        warningList.Add(warnInfo);
+                    }
                 }
-            }
             #endregion
 
             foreach(IWarningInfo info in warningList)
@@ -215,7 +218,7 @@ namespace Testflow.ParameterChecker
                         };
                     }
 
-                    if (parameterType.VariableType == VariableType.Enumeration)
+                    else if (parameterType.VariableType == VariableType.Enumeration)
                     {
                         //获取assembly信息里的enumeration字典
                         //字典键：namespace.class
@@ -248,18 +251,21 @@ namespace Testflow.ParameterChecker
                                 Infomation = $"Could not find enumeration {parameterData.Value} in class {parameterType.Type.Namespace}.{parameterType.Type.Name}"
                             };
                         }
-                    }
 
-                    //判断值类型是符合的值类型吗
-                    if (!ValueConvertor.CheckValue(parameterType.Type.Name, parameterData.Value))
+                    }
+                    else            //parameterType.VariableType == VariableType.Value
                     {
-                        return new WarningInfo()
+                        //判断值类型是符合的值类型吗
+                        if (!ValueConvertor.CheckValue(parameterType.Type.Name, parameterData.Value))
                         {
-                            WarnCode = WarnCode.TypeInvalid,
-                            Infomation = $"Parameter \"{parameterType.Name}\" data type invalid: failed to parse input into parameter type"
-                        };
+                            return new WarningInfo()
+                            {
+                                WarnCode = WarnCode.TypeInvalid,
+                                Infomation = $"Parameter \"{parameterType.Name}\" data type invalid: failed to parse input into parameter type"
+                            };
+                        }
                     }
-
+                    
                     return null;
                 #endregion
 
@@ -283,7 +289,7 @@ namespace Testflow.ParameterChecker
                 //检查step是不是function，如果hasSubStep，去校验子substep
                 if (step.HasSubSteps == true)
                 {
-                    warningList = warningList.Concat(CheckSteps(step.SubSteps, overwriteType)).ToList();
+                    warningList = warningList.Concat(CheckSteps(step.SubSteps, overwriteType, arr)).ToList();
                 }
                 // 校验step
                 else
@@ -427,7 +433,7 @@ namespace Testflow.ParameterChecker
                 return new WarningInfo()
                 {
                     WarnCode = WarnCode.VariableDNE,
-                    Infomation = $"Variable {variableString} does not exist."
+                    Infomation = $"Variable \"{variableString}\" does not exist."
                 };
             }
             #endregion
@@ -464,7 +470,7 @@ namespace Testflow.ParameterChecker
                 return new WarningInfo()
                 {
                     WarnCode = WarnCode.TypeInvalid,
-                    Infomation = $"Variable {variableString} has null type. Different from {checkType.Name} type. May cause issues during runtime."
+                    Infomation = $"Variable {variableString} has Type null . Different from Type \"{checkType.Name}\" . May cause issues during runtime."
                 };
             }
             else if (!type.Equals(checkType))
@@ -472,7 +478,7 @@ namespace Testflow.ParameterChecker
                 return new WarningInfo()
                 {
                     WarnCode = WarnCode.TypeInvalid,
-                    Infomation = $"Variable {variableString} type {type.Name} different from {checkType.Name} type. May cause issues during runtime."
+                    Infomation = $"Variable {variableString} Type \"{type.Name}\" different from Type \"{checkType.Name}\". May cause issues during runtime."
                 };
             }
             #endregion

@@ -241,12 +241,21 @@ namespace Testflow.DesignTime
 
 
         /// <summary>
-        /// 在Sequence和SequenceGroup里寻找变量
+        /// 在parent里寻找变量
         /// </summary>
         /// <param name="variableName">变量名称</param>
-        /// <param name="Sequence">Sequence</param>
-        /// <returns>变量</returns>
-        IVariable FindVariable(string variableName, ISequence Sequence = null);
+        /// <param name="parent">所找的父级</param>
+        /// <returns>null 或 变量</returns>
+        IVariable FindVariableInParent(string variableName, ISequenceFlowContainer parent);
+
+        /// <summary>
+        /// 在Sequence和SequenceGroup里寻找变量
+        /// Sequence里的变量优先返回
+        /// </summary>
+        /// <param name="variableName">变量名称</param>
+        /// <param name="sequence">所找Sequence</param>
+        /// <returns>null 或 变量</returns>
+        IVariable FindVariable(string variableName, ISequence sequence);
         #endregion
 
         #region Step参数值

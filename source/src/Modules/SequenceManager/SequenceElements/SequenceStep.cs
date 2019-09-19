@@ -111,6 +111,7 @@ namespace Testflow.SequenceManager.SequenceElements
                 Function = this.Function?.Clone(),
                 BreakIfFailed = this.BreakIfFailed,
                 Behavior = this.Behavior,
+                RecordStatus = this.RecordStatus,
                 LoopCounter = this.LoopCounter?.Clone(),
                 RetryCounter = this.RetryCounter?.Clone(),
             };
