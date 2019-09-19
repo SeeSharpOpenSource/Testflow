@@ -398,7 +398,37 @@ namespace Testflow.DesigntimeService
         #endregion
 
         #region 加减变量, 设置变量, parent是Isequence或Isequencegroup或testProject todo判定index正确性
-        //todo
+
+        public IVariable FindVariable(string variableName, ISequence sequence)
+        {
+            IVariable variable = FindVariableInParent(variableName, sequence);
+            if(variable == null)
+            {
+                variable = FindVariableInParent(variableName, Context.SequenceGroup);
+            }
+            return variable;
+        }
+
+        //todo I18n
+        public IVariable FindVariableInParent(string variableName, ISequenceFlowContainer parent)
+        {
+            IVariableCollection variables;
+            if(parent is ISequenceGroup)
+            {
+                variables = ((ISequenceGroup)parent).Variables;
+            }
+            else if(parent is ISequence)
+            {
+                variables = ((ISequence)parent).Variables;
+            }
+            else
+            {
+                throw new TestflowDataException(ModuleErrorCode.InvalidParent, "Parent must be ISequenceGroup or ISequence.");
+            }
+
+            return variables.FirstOrDefault(item => item.Name.Equals(variableName));
+        }
+
         public IVariable AddVariable(ISequenceFlowContainer parent, string variableName, string value, int index)
         {
             IVariable variable = _sequenceManager.CreateVarialbe();
@@ -410,18 +440,22 @@ namespace Testflow.DesigntimeService
         //todo I18n
         public IVariable AddVariable(ISequenceFlowContainer parent, IVariable variable, int index)
         {
-            if(ModuleUtils.FindVariableByName(variable.Name, Context.SequenceGroup) != null)
+            if(FindVariableInParent(variable.Name, parent) != null)
             {
-                throw new TestflowDataException(ModuleErrorCode.VariableExists, $"Variable with name {variable.Name} exists in session.");
+                throw new TestflowDataException(ModuleErrorCode.VariableExists, $"Variable with name {variable.Name} exists in {parent.Name}.");
             }
 
             if (parent is ISequenceGroup)
             {
                 ((ISequenceGroup)parent).Variables.Insert(index, variable);
             }
-            if (parent is ISequence)
+            else if (parent is ISequence)
             {
                 ((ISequence)parent).Variables.Insert(index, variable);
+            }
+            else
+            {
+                throw new TestflowDataException(ModuleErrorCode.InvalidParent, "Parent must be ISequenceGroup or ISequence.");
             }
 
             variable.Parent = parent;
@@ -480,7 +514,7 @@ namespace Testflow.DesigntimeService
         //todo I18n
         public void SetVariableValue(string variableName, string value)
         {
-            IVariable variable = ModuleUtils.FindVariableByName(variableName, Context.SequenceGroup);
+            IVariable variable = ModuleUtils.FindVariableInSequenceGroup(variableName, Context.SequenceGroup);
             if (variable == null)
             {
                 throw new TestflowDataException(ModuleErrorCode.VariableNotFound, "Variable not found in current session");
@@ -491,44 +525,22 @@ namespace Testflow.DesigntimeService
         public void SetVariableType(IVariable variable, ITypeData typeData)
         {
             variable.Type = typeData;
+            if (TypeChecker.CheckForValueType(typeData))
+            {
+                variable.VariableType = VariableType.Value;
+            }
         }
 
         ////todo I18n
         public void SetVariableType(string variableName, ITypeData typeData)
         {
-            IVariable variable = ModuleUtils.FindVariableByName(variableName, Context.SequenceGroup);
+            IVariable variable = ModuleUtils.FindVariableInSequenceGroup(variableName, Context.SequenceGroup);
             if (variable == null)
             {
                 throw new TestflowDataException(ModuleErrorCode.VariableNotFound, "Variable not found in current session");
             }
-            variable.Type = typeData;
+            SetVariableType(variable, typeData);
         }
-
-        //todo I18n
-        public IVariable FindVariable(string variableName, ISequence sequence = null)
-        {
-            if (sequence != null)
-            {
-                if(!Context.SequenceGroup.SetUp.Equals(sequence) && Context.SequenceGroup.TearDown.Equals(sequence) && Context.SequenceGroup.Sequences.Contains(sequence))
-                {
-                    throw new TestflowDataException(ModuleErrorCode.SequenceNotFound, $"Sequence {sequence.Name} not in session");
-                }
-
-                IVariable variable;
-                //在Sequence里找变量
-                //没找到就在SequenceGroup里找变量
-                if ((variable = sequence.Variables.FirstOrDefault(item => item.Name.Equals(variableName))) == null)
-                {
-                    variable = Context.SequenceGroup.Variables.FirstOrDefault(item => item.Name.Equals(variableName));
-                }
-                return variable;
-            }
-            else
-            {
-                return Context.SequenceGroup.Variables.FirstOrDefault(item => item.Name.Equals(variableName));
-            }
-        }
-
         #endregion
 
         #region 设置Instance, Return, Parameters

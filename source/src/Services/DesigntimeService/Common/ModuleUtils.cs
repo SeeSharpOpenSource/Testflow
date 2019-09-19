@@ -33,7 +33,7 @@ namespace Testflow.DesigntimeService.Common
             return testProject.SequenceGroups[sessionID]; 
         }
 
-        internal static IVariable FindVariableByName(string varName, ISequenceGroup sequenceGroup)
+        internal static IVariable FindVariableInSequenceGroup(string varName, ISequenceGroup sequenceGroup)
         {
             foreach (IVariable variable in sequenceGroup.Variables)
             {
