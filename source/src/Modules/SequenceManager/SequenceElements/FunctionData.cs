@@ -63,8 +63,14 @@ namespace Testflow.SequenceManager.SequenceElements
             ArgumentCollection parameterType = new ArgumentCollection();
             ModuleUtils.CloneCollection(ParameterType, parameterType);
 
-            ParameterDataCollection parameters = new ParameterDataCollection();
-            ModuleUtils.CloneCollection(Parameters, parameters);
+            ParameterDataCollection parameters = null;
+            if (Parameters != null)
+            {
+                parameters = new ParameterDataCollection();
+                ModuleUtils.CloneCollection(Parameters, parameters);
+            }
+            
+            
 
             FunctionData functionData = new FunctionData()
             {
@@ -76,7 +82,7 @@ namespace Testflow.SequenceManager.SequenceElements
                 Parameters = parameters,
                 Instance = this.Instance,
                 Return = this.Return,
-                ReturnType = this.ReturnType.Clone(),
+                ReturnType = this.ReturnType?.Clone(),
                 Description = this.Description
             };
             return functionData;
