@@ -11,7 +11,7 @@ namespace Testflow.ParameterChecker
     internal static class ValueConvertor
     {
         private static Dictionary<string, Func<string, object>> _convertorHandler;
-        //private static HashSet<ITypeData> _valueTypes;
+        private static HashSet<ITypeData> _valueTypes;
 
         static ValueConvertor()
         {
@@ -32,33 +32,34 @@ namespace Testflow.ParameterChecker
             };
 
             #region 记录 
-            //IComInterfaceManager _interfaceManager = TestflowRunner.GetInstance().ComInterfaceManager;
-            //IComInterfaceDescription comDescription = _interfaceManager.GetComInterfaceByName("mscorlib");
-            //_valueTypes.Add(comDescription.VariableTypes.FirstOrDefault(item => item.Name.Equals("Boolean")));
-            //_valueTypes.Add(comDescription.VariableTypes.FirstOrDefault(item => item.Name.Equals("Double")));
-            //_valueTypes.Add(comDescription.VariableTypes.FirstOrDefault(item => item.Name.Equals("Single")));
-            //_valueTypes.Add(comDescription.VariableTypes.FirstOrDefault(item => item.Name.Equals("Int64")));
-            //_valueTypes.Add(comDescription.VariableTypes.FirstOrDefault(item => item.Name.Equals("UInt64")));
-            //_valueTypes.Add(comDescription.VariableTypes.FirstOrDefault(item => item.Name.Equals("Int32")));
-            //_valueTypes.Add(comDescription.VariableTypes.FirstOrDefault(item => item.Name.Equals("Int16")));
-            //_valueTypes.Add(comDescription.VariableTypes.FirstOrDefault(item => item.Name.Equals("UInt16")));
-            //_valueTypes.Add(comDescription.VariableTypes.FirstOrDefault(item => item.Name.Equals("Char")));
-            //_valueTypes.Add(comDescription.VariableTypes.FirstOrDefault(item => item.Name.Equals("Byte")));
-            //_valueTypes.Add(comDescription.VariableTypes.FirstOrDefault(item => item.Name.Equals("String")));
+            IComInterfaceManager _interfaceManager = TestflowRunner.GetInstance().ComInterfaceManager;
+            IComInterfaceDescription comDescription = _interfaceManager.GetComInterfaceByName("mscorlib");
+            _valueTypes = new HashSet<ITypeData>();
+            _valueTypes.Add(comDescription.VariableTypes.FirstOrDefault(item => item.Name.Equals("Boolean")));
+            _valueTypes.Add(comDescription.VariableTypes.FirstOrDefault(item => item.Name.Equals("Double")));
+            _valueTypes.Add(comDescription.VariableTypes.FirstOrDefault(item => item.Name.Equals("Single")));
+            _valueTypes.Add(comDescription.VariableTypes.FirstOrDefault(item => item.Name.Equals("Int64")));
+            _valueTypes.Add(comDescription.VariableTypes.FirstOrDefault(item => item.Name.Equals("UInt64")));
+            _valueTypes.Add(comDescription.VariableTypes.FirstOrDefault(item => item.Name.Equals("Int32")));
+            _valueTypes.Add(comDescription.VariableTypes.FirstOrDefault(item => item.Name.Equals("Int16")));
+            _valueTypes.Add(comDescription.VariableTypes.FirstOrDefault(item => item.Name.Equals("UInt16")));
+            _valueTypes.Add(comDescription.VariableTypes.FirstOrDefault(item => item.Name.Equals("Char")));
+            _valueTypes.Add(comDescription.VariableTypes.FirstOrDefault(item => item.Name.Equals("Byte")));
+            _valueTypes.Add(comDescription.VariableTypes.FirstOrDefault(item => item.Name.Equals("String")));
             #endregion
         }
 
-        //internal static bool CheckForValueType(ITypeData typeData)
-        //{
-        //    if (_valueTypes.Contains(typeData))
-        //    {
-        //        return true;
-        //    }
-        //    else
-        //    {
-        //        return false;
-        //    }
-        //}
+        internal static bool CheckForValueType(ITypeData typeData)
+        {
+            if (_valueTypes.Contains(typeData))
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
 
 
         //todo I18n
