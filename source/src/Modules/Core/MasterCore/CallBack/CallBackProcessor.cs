@@ -77,7 +77,10 @@ namespace Testflow.MasterCore.CallBack
         {
             foreach (ISequenceStep step in steps)
             {
-                StepFindCallBack(step);
+                if (null != step.Function)
+                {
+                    StepFindCallBack(step);
+                }
             }
         }
 
