@@ -17,7 +17,12 @@ namespace Testflow.SlaveCore
             };
             I18N.InitInstance(i18NOption);
             _slaveContext = new SlaveContext(configDataStr);
-            
+        }
+
+        public override object InitializeLifetimeService()
+        {
+            // 定义该对象的声明周期为无限生存期
+            return null;
         }
 
         public void Start()
