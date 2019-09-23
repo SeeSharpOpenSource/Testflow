@@ -70,12 +70,11 @@ namespace Testflow.DesigntimeService
             //或
             //todo
             //用load去创建新TestProject
-            throw new NotImplementedException();
 
         }
         public void Deactivate()
         {
-            throw new NotImplementedException();
+            // ignore
         }
         #endregion
 

@@ -35,11 +35,11 @@ namespace Testflow.RuntimeService
         #region activate, deactivate先不实现
         public void Activate()
         {
-            throw new NotImplementedException();
+            // ignore
         }
         public void Deactivate()
         {
-            throw new NotImplementedException();
+            // ignore
         }
         #endregion
 
