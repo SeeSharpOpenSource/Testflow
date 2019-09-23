@@ -16,6 +16,7 @@ namespace Testflow.Loader
     {
         public TestflowActivator(TestflowRunnerOptions options) : base(options)
         {
+            TestflowRunner.SetInstance(this);
         }
         public override void Initialize()
         {
