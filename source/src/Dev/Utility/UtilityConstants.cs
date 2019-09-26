@@ -6,6 +6,7 @@
         internal const int DefaultEntityCount = 8;
         internal const string I18nName = "LoggerI18N";
         internal const string MessengerName = "MessengerI18N";
+        internal const string UtilsName = "Utils";
 
         /// <summary>
         /// 中文国际化语言名

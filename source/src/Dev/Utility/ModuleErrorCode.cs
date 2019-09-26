@@ -16,5 +16,10 @@ namespace Testflow.Utility
         /// 消息队列接收错误
         /// </summary>
         public const int MessengerReceiveError = 100 | CommonErrorCode.UtilityErrorMask;
+
+        /// <summary>
+        /// 消息队列接收错误
+        /// </summary>
+        public const int SequenceDataError = 200 | CommonErrorCode.UtilityErrorMask;
     }
 }
