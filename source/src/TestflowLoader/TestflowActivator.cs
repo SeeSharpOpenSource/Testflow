@@ -14,10 +14,17 @@ namespace Testflow.Loader
 {
     public class TestflowActivator : TestflowRunner
     {
-        public TestflowActivator(TestflowRunnerOptions options) : base(options)
+        public static TestflowRunner CreateRunner(TestflowRunnerOptions options)
         {
-            TestflowRunner.SetInstance(this);
+            TestflowActivator activator = new TestflowActivator(options);
+            SetInstance(activator);
+            return activator;
         }
+
+        private TestflowActivator(TestflowRunnerOptions options) : base(options)
+        {
+        }
+
         public override void Initialize()
         {
             switch (Option.Mode)
