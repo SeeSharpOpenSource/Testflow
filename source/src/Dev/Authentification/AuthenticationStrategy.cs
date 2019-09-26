@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace TestStation.Authentication
+namespace Testflow.Authentication
 {
     public class AuthenticationStrategy
     {

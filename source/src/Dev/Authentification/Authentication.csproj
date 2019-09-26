@@ -7,7 +7,7 @@
     <ProjectGuid>{A3451458-F57D-441B-A45B-AC2AE315EE33}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>TestStation.Authentication</RootNamespace>
+    <RootNamespace>Testflow.Authentication</RootNamespace>
     <AssemblyName>Authentication</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -43,7 +43,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AuthenticationInspector.cs" />
     <Compile Include="AuthenticationStrategy.cs" />
+    <Compile Include="AuthorityRequired.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Resources\locale\I8n_authentication_en.Designer.cs">
       <DependentUpon>I8n_authentication_en.resx</DependentUpon>

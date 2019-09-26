@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace TestStation.Authentication.Resources.locale {
+namespace Testflow.Authentication.Resources.locale {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace TestStation.Authentication.Resources.locale {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("TestStation.Authentication.Resources.locale.I8n_authentication_en", typeof(I8n_authentication_en).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Testflow.Authentication.Resources.locale.I8n_authentication_en", typeof(I8n_authentication_en).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
