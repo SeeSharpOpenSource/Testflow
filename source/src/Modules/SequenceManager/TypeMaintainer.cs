@@ -72,14 +72,16 @@ namespace Testflow.SequenceManager
             {
                 string variableName = ModuleUtils.GetVarNameByParamValue(sequenceStep.LoopCounter.CounterVariable);
                 IVariable variable = variableTree.GetVariable(variableName);
+                Type varType = typeof(int);
                 // Argument不能作为遍历变量
                 if (null == variable)
                 {
                     ThrowIfVariableNotFound(variableName, sequenceStep);
                 }
-                else if (!ModuleUtils.IsPropertyParam(sequenceStep.LoopCounter.CounterVariable))
+                else if (!ModuleUtils.IsPropertyParam(sequenceStep.LoopCounter.CounterVariable) && 
+                    (variable.Type == null || !variable.Type.Name.Equals(varType.Name)))
                 {
-                    Type varType = typeof(int);
+                    
                     variable.Type = _comInterfaceManager.GetTypeByName(varType.Name, varType.Namespace);
                 }
             }
