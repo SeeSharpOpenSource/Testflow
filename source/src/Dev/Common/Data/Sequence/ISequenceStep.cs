@@ -25,6 +25,16 @@ namespace Testflow.Data.Sequence
         IFunctionData Function { get; set; }
 
         /// <summary>
+        /// 步骤的类型
+        /// </summary>
+        SequenceStepType StepType { get; }
+
+        /// <summary>
+        /// 标签属性
+        /// </summary>
+        string Tag { get; set; }
+
+        /// <summary>
         /// 是否包含子步骤
         /// </summary>
         [XmlIgnore]

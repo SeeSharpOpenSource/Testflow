@@ -81,6 +81,7 @@
     <Compile Include="Data\Sequence\RunBehavior.cs" />
     <Compile Include="Data\Sequence\ParameterType.cs" />
     <Compile Include="Data\RecordLevel.cs" />
+    <Compile Include="Data\Sequence\SequenceStepType.cs" />
     <Compile Include="I18nUtil\I18N.cs" />
     <Compile Include="I18nUtil\I18NOption.cs" />
     <Compile Include="I18nUtil\I18NOptionComparer.cs" />

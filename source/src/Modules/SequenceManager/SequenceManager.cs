@@ -93,9 +93,10 @@ namespace Testflow.SequenceManager
             return new Sequence();
         }
 
-        public ISequenceStep CreateSequenceStep(bool createSubStepCollection = false)
+        public ISequenceStep CreateSequenceStep(bool createSubStepCollection = false, 
+            SequenceStepType stepType = SequenceStepType.Execution)
         {
-            SequenceStep sequenceStep = new SequenceStep();
+            SequenceStep sequenceStep = new SequenceStep(stepType);
             if (createSubStepCollection)
             {
                 sequenceStep.SubSteps = new SequenceStepCollection();

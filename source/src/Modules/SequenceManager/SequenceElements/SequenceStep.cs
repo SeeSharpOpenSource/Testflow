@@ -11,7 +11,7 @@ namespace Testflow.SequenceManager.SequenceElements
     [Serializable]
     public class SequenceStep : ISequenceStep
     {
-        public SequenceStep()
+        public SequenceStep(SequenceStepType stepType)
         {
             this.Name = string.Empty;
             this.Description = string.Empty;
@@ -24,7 +24,8 @@ namespace Testflow.SequenceManager.SequenceElements
             this.LoopCounter = null;
             this.RetryCounter = null;
             this.RecordStatus = false;
-            this.BreakIfFailed = true;
+            this.StepType = SequenceStepType.Execution;
+            this.StepType = stepType;
         }
         [RuntimeSerializeIgnore]
         public string Name { get; set; }
@@ -45,6 +46,11 @@ namespace Testflow.SequenceManager.SequenceElements
 
         [RuntimeType(typeof(FunctionData))]
         public IFunctionData Function { get; set; }
+
+        public SequenceStepType StepType { get; }
+
+        [RuntimeSerializeIgnore]
+        public string Tag { get; set; }
 
         [XmlIgnore]
         [SerializationIgnore]
@@ -101,7 +107,7 @@ namespace Testflow.SequenceManager.SequenceElements
                 ModuleUtils.CloneFlowCollection(SubSteps, subStepCollection);
             }
 
-            SequenceStep sequenceStep = new SequenceStep()
+            SequenceStep sequenceStep = new SequenceStep(this.StepType)
             {
                 Name = this.Name + Constants.CopyPostfix,
                 Description = this.Description,
