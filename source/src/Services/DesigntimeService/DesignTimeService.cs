@@ -9,6 +9,7 @@ using Testflow.DesignTime;
 using Testflow.SequenceManager.SequenceElements;
 using Testflow.DesigntimeService.Common;
 using Testflow.Usr;
+using Testflow.Utility.I18nUtil;
 
 namespace Testflow.DesigntimeService
 {
@@ -54,6 +55,13 @@ namespace Testflow.DesigntimeService
 
             SequenceSessions = new Dictionary<int, IDesignTimeSession>();
             Components = new Dictionary<string, IComInterfaceDescription>();
+
+            I18NOption i18NOption = new I18NOption(this.GetType().Assembly, "i18n_designService_zh",
+                "i18n_designService_en")
+            {
+                Name = Constants.I18nName
+            };
+            I18N.InitInstance(i18NOption);
 
             SetUpSession = null;
             TearDownSession = null;
@@ -169,7 +177,7 @@ namespace Testflow.DesigntimeService
             int sessionId = TestProject.SequenceGroups.IndexOf(sequenceGroup);
             if (sessionId == -1)
             {
-                throw new TestflowDataException(ModuleErrorCode.SequenceGroupNotFound, "SequenceGroup does not exist in current service");
+                throw new TestflowDataException(ModuleErrorCode.TargetNotExist, "SequenceGroup does not exist in current service");
             }
             IDesignTimeSession designTimeSession = SequenceSessions[sessionId];
             //从SequenceSessions去除
@@ -210,7 +218,7 @@ namespace Testflow.DesigntimeService
             else
             {
                 //I18N
-                throw new TestflowRuntimeException(ModuleErrorCode.ComponentNotFound, "没有该组件");
+                throw new TestflowRuntimeException(ModuleErrorCode.TargetNotExist, "没有该组件");
             }
             return comInterface;
         }
@@ -226,7 +234,7 @@ namespace Testflow.DesigntimeService
             else
             {
                 //I18N
-                throw new TestflowDataException(ModuleErrorCode.ComponentNotFound, "没有该组件");
+                throw new TestflowDataException(ModuleErrorCode.TargetNotExist, "没有该组件");
             }
             return comInterfaceDescription;
         }
@@ -269,14 +277,7 @@ namespace Testflow.DesigntimeService
         public void Dispose()
         {
             Unload();
-            TestflowRunner runner = TestflowRunner.GetInstance();
-            runner.LogService?.Dispose();
-            runner.ComInterfaceManager?.Dispose();
-            runner.SequenceManager?.Dispose();
-            runner.DataMaintainer?.Dispose();
-            runner.EngineController?.Dispose();
-            runner.ParameterChecker?.Dispose();
-            runner.ResultManager?.Dispose();
+            I18N.RemoveInstance(Constants.I18nName);
         }
     }
 }

@@ -24,13 +24,9 @@ namespace Testflow.DesigntimeService.Common
         //    return index;
         //}
 
-        internal static ISequenceGroup GetSequenceGroup(int sessionID, ITestProject testProject)
+        internal static ISequenceGroup GetSequenceGroup(int sessionId, ITestProject testProject)
         {
-            if (null == testProject)
-            {
-                throw new TestflowDataException(ModuleErrorCode.TestProjectNotFound, "TestProject is null");
-            }
-            return testProject.SequenceGroups[sessionID]; 
+            return testProject.SequenceGroups[sessionId]; 
         }
 
         internal static IVariable FindVariableInSequenceGroup(string varName, ISequenceGroup sequenceGroup)
@@ -75,7 +71,7 @@ namespace Testflow.DesigntimeService.Common
             IArgument argument = sequenceStep.Function.ParameterType.FirstOrDefault(item => item.Name.Equals(paramName));
             if(argument == null)
             {
-                throw new TestflowDataException(ModuleErrorCode.ParameterNotFound, $"Parameter with {paramName} not found");
+                throw new TestflowDataException(ModuleErrorCode.TargetNotExist, $"Parameter with {paramName} not found");
             }
 
             int index = sequenceStep.Function.ParameterType.IndexOf(argument);

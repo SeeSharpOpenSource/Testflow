@@ -9,6 +9,7 @@ using Testflow.DesignTime;
 using Testflow.Modules;
 using Testflow.DesigntimeService.Common;
 using Testflow.Usr;
+using Testflow.Utility.I18nUtil;
 
 namespace Testflow.DesigntimeService
 {
@@ -240,7 +241,7 @@ namespace Testflow.DesigntimeService
                 ISequence sequence = Context.SequenceGroup.Sequences.FirstOrDefault(item => item.Name.Equals(name));
                 if(sequence == null)
                 {
-                    throw new TestflowDataException(ModuleErrorCode.SequenceNotFound, $"Sequence {name} not found in session");
+                    throw new TestflowDataException(ModuleErrorCode.TargetNotExist, $"Sequence {name} not found in session");
                 }
                 return sequence;
             }
@@ -256,13 +257,20 @@ namespace Testflow.DesigntimeService
             }
             else if (parent is ISequenceStep)
             {
-                ((ISequenceStep)parent).SubSteps.Insert(index, stepData);
+                ISequenceStep parentStep = (ISequenceStep)parent;
+                if (parentStep.StepType == SequenceStepType.TryFinallyBlock ||
+                    parentStep.StepType == SequenceStepType.SequenceCall)
+                {
+                    I18N i18N = I18N.GetInstance(Constants.I18nName);
+                    throw new TestflowDataException(ModuleErrorCode.InvalidEditOperation, 
+                        i18N.GetStr("InvalidOperation"));
+                }
+                parentStep.SubSteps.Insert(index, stepData);
             }
             else
             {
-                throw new TestflowDataException(ModuleErrorCode.InvalidParent, "Parent needs to be Sequence or SequenceStep");
+                throw new TestflowDataException(ModuleErrorCode.InvalidEditOperation, "Parent needs to be Sequence or SequenceStep");
             }
-
             stepData.Parent = parent;
             ContextSequenceGroupModify();
             return stepData;
@@ -282,13 +290,21 @@ namespace Testflow.DesigntimeService
             {
                 for (int n = 0; n < stepDatas.Count; n++)
                 {
-                    ((ISequenceStep)parent).SubSteps.Insert(n + index, stepDatas[n]);
+                    ISequenceStep parentStep = (ISequenceStep)parent;
+                    if (parentStep.StepType == SequenceStepType.TryFinallyBlock ||
+                        parentStep.StepType == SequenceStepType.SequenceCall)
+                    {
+                        I18N i18N = I18N.GetInstance(Constants.I18nName);
+                        throw new TestflowDataException(ModuleErrorCode.InvalidEditOperation,
+                            i18N.GetStr("InvalidOperation"));
+                    }
+                    parentStep.SubSteps.Insert(n + index, stepDatas[n]);
                     stepDatas[n].Parent = parent;
                 }
             }
             else
             {
-                throw new TestflowDataException(ModuleErrorCode.InvalidParent, "Parent needs to be Sequence or SequenceStep");
+                throw new TestflowDataException(ModuleErrorCode.InvalidEditOperation, "Parent needs to be Sequence or SequenceStep");
             }
 
 
@@ -327,11 +343,11 @@ namespace Testflow.DesigntimeService
             }
             else
             {
-                throw new TestflowDataException(ModuleErrorCode.InvalidParent, "Parent needs to be Sequence or SequenceStep");
+                throw new TestflowDataException(ModuleErrorCode.InvalidEditOperation, "Parent needs to be Sequence or SequenceStep");
             }
             if (step == null)
             {
-                throw new TestflowDataException(ModuleErrorCode.StepNotFound, $"Step {name} could not be found in parent {parent.Name}");
+                throw new TestflowDataException(ModuleErrorCode.TargetNotExist, $"Step {name} could not be found in parent {parent.Name}");
             }
             RemoveSequenceStep(parent, step);
         }
@@ -345,12 +361,19 @@ namespace Testflow.DesigntimeService
             }
             else if (parent is ISequenceStep)
             {
-
-                ((ISequenceStep)parent).SubSteps.RemoveAt(index);
+                ISequenceStep parentStep = (ISequenceStep)parent;
+                if (parentStep.StepType == SequenceStepType.TryFinallyBlock ||
+                    parentStep.StepType == SequenceStepType.SequenceCall)
+                {
+                    I18N i18N = I18N.GetInstance(Constants.I18nName);
+                    throw new TestflowDataException(ModuleErrorCode.InvalidEditOperation,
+                        i18N.GetStr("InvalidOperation"));
+                }
+                (parentStep).SubSteps.RemoveAt(index);
             }
             else
             {
-                throw new TestflowDataException(ModuleErrorCode.InvalidParent, "Parent needs to be Sequence or SequenceStep");
+                throw new TestflowDataException(ModuleErrorCode.InvalidEditOperation, "Parent needs to be Sequence or SequenceStep");
             }
             ContextSequenceGroupModify();
         }
@@ -365,11 +388,19 @@ namespace Testflow.DesigntimeService
             }
             else if (parent is ISequenceStep)
             {
-                removed = ((ISequenceStep)parent).SubSteps.Remove(step);
+                ISequenceStep parentStep = (ISequenceStep)parent;
+                if (parentStep.StepType == SequenceStepType.TryFinallyBlock ||
+                    parentStep.StepType == SequenceStepType.SequenceCall)
+                {
+                    I18N i18N = I18N.GetInstance(Constants.I18nName);
+                    throw new TestflowDataException(ModuleErrorCode.InvalidEditOperation,
+                        i18N.GetStr("InvalidOperation"));
+                }
+                removed = (parentStep).SubSteps.Remove(step);
             }
             else
             {
-                throw new TestflowDataException(ModuleErrorCode.InvalidParent, "Parent needs to be Sequence or SequenceStep");
+                throw new TestflowDataException(ModuleErrorCode.InvalidEditOperation, "Parent needs to be Sequence or SequenceStep");
             }
 
             //判断成功remove与否
@@ -379,7 +410,7 @@ namespace Testflow.DesigntimeService
             }
             else
             {
-                throw new TestflowDataException(ModuleErrorCode.StepNotFound, $"Step {step.Name} could not be found in parent {parent.Name}");
+                throw new TestflowDataException(ModuleErrorCode.TargetNotExist, $"Step {step.Name} could not be found in parent {parent.Name}");
             }
         }
 
@@ -423,7 +454,7 @@ namespace Testflow.DesigntimeService
             }
             else
             {
-                throw new TestflowDataException(ModuleErrorCode.InvalidParent, "Parent must be ISequenceGroup or ISequence.");
+                throw new TestflowDataException(ModuleErrorCode.InvalidEditOperation, "Parent must be ISequenceGroup or ISequence.");
             }
 
             return variables.FirstOrDefault(item => item.Name.Equals(variableName));
@@ -442,7 +473,7 @@ namespace Testflow.DesigntimeService
         {
             if(FindVariableInParent(variable.Name, parent) != null)
             {
-                throw new TestflowDataException(ModuleErrorCode.VariableExists, $"Variable with name {variable.Name} exists in {parent.Name}.");
+                throw new TestflowDataException(ModuleErrorCode.DuplicateDefinition, $"Variable with name {variable.Name} exists in {parent.Name}.");
             }
 
             if (parent is ISequenceGroup)
@@ -455,7 +486,7 @@ namespace Testflow.DesigntimeService
             }
             else
             {
-                throw new TestflowDataException(ModuleErrorCode.InvalidParent, "Parent must be ISequenceGroup or ISequence.");
+                throw new TestflowDataException(ModuleErrorCode.InvalidEditOperation, "Parent must be ISequenceGroup or ISequence.");
             }
 
             variable.Parent = parent;
@@ -477,7 +508,7 @@ namespace Testflow.DesigntimeService
 
             if (!removed)
             {
-                throw new TestflowDataException(ModuleErrorCode.VariableNotFound, $"Variable not found in parent {parent.Name}");
+                throw new TestflowDataException(ModuleErrorCode.TargetNotExist, $"Variable not found in parent {parent.Name}");
             }
             return variable;
         }
@@ -500,7 +531,7 @@ namespace Testflow.DesigntimeService
 
             if (!removed)
             {
-                throw new TestflowDataException(ModuleErrorCode.VariableNotFound, $"Variable not found in parent {parent.Name}");
+                throw new TestflowDataException(ModuleErrorCode.TargetNotExist, $"Variable not found in parent {parent.Name}");
             }
             return variable;
             
@@ -517,7 +548,7 @@ namespace Testflow.DesigntimeService
             IVariable variable = ModuleUtils.FindVariableInSequenceGroup(variableName, Context.SequenceGroup);
             if (variable == null)
             {
-                throw new TestflowDataException(ModuleErrorCode.VariableNotFound, "Variable not found in current session");
+                throw new TestflowDataException(ModuleErrorCode.TargetNotExist, "Variable not found in current session");
             }
             variable.Value = value;
         }
@@ -537,7 +568,7 @@ namespace Testflow.DesigntimeService
             IVariable variable = ModuleUtils.FindVariableInSequenceGroup(variableName, Context.SequenceGroup);
             if (variable == null)
             {
-                throw new TestflowDataException(ModuleErrorCode.VariableNotFound, "Variable not found in current session");
+                throw new TestflowDataException(ModuleErrorCode.TargetNotExist, "Variable not found in current session");
             }
             SetVariableType(variable, typeData);
         }
