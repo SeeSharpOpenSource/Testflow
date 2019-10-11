@@ -93,15 +93,39 @@ namespace Testflow.SequenceManager
             return new Sequence();
         }
 
-        public ISequenceStep CreateSequenceStep(bool createSubStepCollection = false, 
-            SequenceStepType stepType = SequenceStepType.Execution)
+        public ISequenceStep CreateSequenceStep(bool createSubStepCollection = false)
         {
-            SequenceStep sequenceStep = new SequenceStep(stepType);
+            SequenceStep sequenceStep = new SequenceStep(SequenceStepType.Execution);
             if (createSubStepCollection)
             {
                 sequenceStep.SubSteps = new SequenceStepCollection();
             }
             return sequenceStep;
+        }
+
+        public ISequenceStep CreateNonExecutionStep(SequenceStepType stepType)
+        {
+            SequenceStep step = new SequenceStep(stepType);
+            switch (stepType)
+            {
+                case SequenceStepType.ConditionBlock:
+                    break;
+                case SequenceStepType.TryFinallyBlock:
+                    break;
+                case SequenceStepType.ConditionLoopBlock:
+                    break;
+                case SequenceStepType.SequenceCall:
+                    break;
+                case SequenceStepType.MultiThreadBlock:
+                    break;
+                case SequenceStepType.TimerBlock:
+                    break;
+                case SequenceStepType.BatchBlock:
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(stepType), stepType, null);
+            }
+            return step;
         }
 
         public IArgument CreateArugment()
@@ -150,9 +174,7 @@ namespace Testflow.SequenceManager
         {
             return new TypeData()
             {
-                AssemblyName = description.AssemblyName,
-                Name = description.Name,
-                Namespace = description.Namespace
+                AssemblyName = description.AssemblyName, Name = description.Name, Namespace = description.Namespace
             };
         }
 
@@ -239,8 +261,7 @@ namespace Testflow.SequenceManager
             switch (source)
             {
                 case SerializationTarget.File:
-                    SequenceGroup sequenceGroup = SequenceDeserializer.LoadSequenceGroup(param[0], forceLoad,
-                        this.ConfigData);
+                    SequenceGroup sequenceGroup = SequenceDeserializer.LoadSequenceGroup(param[0], forceLoad, this.ConfigData);
                     ModuleUtils.ValidateParent(sequenceGroup, null);
                     _directoryHelper.SetToAbsolutePath(sequenceGroup);
                     return sequenceGroup;
@@ -296,7 +317,7 @@ namespace Testflow.SequenceManager
             _typeMaintainer.VerifyVariableTypes(sequenceGroup);
             _typeMaintainer.RefreshUsedAssemblyAndType(sequenceGroup);
             ModuleUtils.ValidateParent(sequenceGroup, parent);
-            ((SequenceGroup)sequenceGroup).RefreshSignature();
+            ((SequenceGroup) sequenceGroup).RefreshSignature();
         }
 
         public void Dispose()

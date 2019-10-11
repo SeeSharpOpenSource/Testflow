@@ -21,13 +21,28 @@
         TryFinallyBlock = 2,
 
         /// <summary>
-        /// 多Socket块
+        /// 条件循环块
         /// </summary>
-        MultiSocketBlock = 3,
+        ConditionLoopBlock = 3,
 
         /// <summary>
         /// 序列调用步骤
         /// </summary>
         SequenceCall = 4,
+
+        /// <summary>
+        /// 多线程块
+        /// </summary>
+        MultiThreadBlock = 5,
+
+        /// <summary>
+        /// 定时调用块
+        /// </summary>
+        TimerBlock = 6,
+
+        /// <summary>
+        /// 批处理块
+        /// </summary>
+        BatchBlock = 7
     }
 }

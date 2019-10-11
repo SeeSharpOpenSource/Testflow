@@ -39,8 +39,13 @@ namespace Testflow.Modules
         /// 创建空白的序列Step
         /// </summary>
         /// <returns></returns>
-        ISequenceStep CreateSequenceStep(bool createSubStepCollection = false,
-            SequenceStepType stepType = SequenceStepType.Execution);
+        ISequenceStep CreateSequenceStep(bool createSubStepCollection = false);
+
+        /// <summary>
+        /// 根据类型创建的序列Step
+        /// </summary>
+        /// <returns></returns>
+        ISequenceStep CreateNonExecutionStep(SequenceStepType stepType);
 
         /// <summary>
         /// 创建空白的Argument

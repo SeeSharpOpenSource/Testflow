@@ -24,7 +24,6 @@ namespace Testflow.SequenceManager.SequenceElements
             this.LoopCounter = null;
             this.RetryCounter = null;
             this.RecordStatus = false;
-            this.StepType = SequenceStepType.Execution;
             this.StepType = stepType;
         }
         [RuntimeSerializeIgnore]
