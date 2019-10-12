@@ -1,8 +1,6 @@
-﻿using Testflow.Usr.Common;
-
+﻿
 namespace Testflow.FunctionDefinitions
 {
-    [Hide]
     public static class StepFunctions
     {
         /// <summary>
