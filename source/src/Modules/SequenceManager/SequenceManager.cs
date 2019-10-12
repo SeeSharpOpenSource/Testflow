@@ -8,6 +8,7 @@ using Testflow.Modules;
 using Testflow.SequenceManager.Common;
 using Testflow.SequenceManager.SequenceElements;
 using Testflow.SequenceManager.Serializer;
+using Testflow.SequenceManager.StepCreators;
 using Testflow.Utility.I18nUtil;
 
 namespace Testflow.SequenceManager
@@ -95,7 +96,7 @@ namespace Testflow.SequenceManager
 
         public ISequenceStep CreateSequenceStep(bool createSubStepCollection = false)
         {
-            SequenceStep sequenceStep = new SequenceStep(SequenceStepType.Execution);
+            ISequenceStep sequenceStep = SequenceStepCreator.CreateSequenceStep(SequenceStepType.Execution);
             if (createSubStepCollection)
             {
                 sequenceStep.SubSteps = new SequenceStepCollection();
@@ -105,27 +106,7 @@ namespace Testflow.SequenceManager
 
         public ISequenceStep CreateNonExecutionStep(SequenceStepType stepType)
         {
-            SequenceStep step = new SequenceStep(stepType);
-            switch (stepType)
-            {
-                case SequenceStepType.ConditionBlock:
-                    break;
-                case SequenceStepType.TryFinallyBlock:
-                    break;
-                case SequenceStepType.ConditionLoopBlock:
-                    break;
-                case SequenceStepType.SequenceCall:
-                    break;
-                case SequenceStepType.MultiThreadBlock:
-                    break;
-                case SequenceStepType.TimerBlock:
-                    break;
-                case SequenceStepType.BatchBlock:
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(stepType), stepType, null);
-            }
-            return step;
+            return SequenceStepCreator.CreateSequenceStep(stepType);
         }
 
         public IArgument CreateArugment()

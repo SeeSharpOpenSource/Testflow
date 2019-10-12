@@ -99,6 +99,13 @@
     <Compile Include="SequenceManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ModuleErrorCode.cs" />
+    <Compile Include="StepCreators\BatchBlockCreator.cs" />
+    <Compile Include="StepCreators\ConditionBlockCreator.cs" />
+    <Compile Include="StepCreators\ConditionLoopBlockCreator.cs" />
+    <Compile Include="StepCreators\ExecutionCreator.cs" />
+    <Compile Include="StepCreators\MultiThreadBlockCreator.cs" />
+    <Compile Include="StepCreators\SequenceCallCreator.cs" />
+    <Compile Include="StepCreators\SequenceStepCreator.cs" />
     <Compile Include="Serializer\Convertor\EnumConvertor.cs" />
     <Compile Include="Serializer\Convertor\ValueConvertor.cs" />
     <Compile Include="Serializer\SequenceDeserializer.cs" />
@@ -106,6 +113,8 @@
     <Compile Include="Serializer\SequenceJsonConvertor.cs" />
     <Compile Include="Serializer\XmlReaderHelper.cs" />
     <Compile Include="Serializer\XmlWriterHelper.cs" />
+    <Compile Include="StepCreators\TimerBlockCreator.cs" />
+    <Compile Include="StepCreators\TryFinallyBlockCreator.cs" />
     <Compile Include="TypeMaintainer.cs" />
   </ItemGroup>
   <ItemGroup>

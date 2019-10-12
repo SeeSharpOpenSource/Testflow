@@ -11,7 +11,7 @@ namespace Testflow.SequenceManager.SequenceElements
     [Serializable]
     public class SequenceStep : ISequenceStep
     {
-        public SequenceStep(SequenceStepType stepType)
+        public SequenceStep()
         {
             this.Name = string.Empty;
             this.Description = string.Empty;
@@ -24,8 +24,9 @@ namespace Testflow.SequenceManager.SequenceElements
             this.LoopCounter = null;
             this.RetryCounter = null;
             this.RecordStatus = false;
-            this.StepType = stepType;
+            this.StepType = SequenceStepType.Execution;
         }
+
         [RuntimeSerializeIgnore]
         public string Name { get; set; }
         [RuntimeSerializeIgnore]
@@ -46,7 +47,7 @@ namespace Testflow.SequenceManager.SequenceElements
         [RuntimeType(typeof(FunctionData))]
         public IFunctionData Function { get; set; }
 
-        public SequenceStepType StepType { get; }
+        public SequenceStepType StepType { get; set; }
 
         [RuntimeSerializeIgnore]
         public string Tag { get; set; }
@@ -61,10 +62,10 @@ namespace Testflow.SequenceManager.SequenceElements
 
         public RunBehavior Behavior { get; set; }
 
-        [RuntimeType(typeof(LoopCounter))]
+        [RuntimeType(typeof (LoopCounter))]
         public ILoopCounter LoopCounter { get; set; }
 
-        [RuntimeType(typeof(RetryCounter))]
+        [RuntimeType(typeof (RetryCounter))]
         public IRetryCounter RetryCounter { get; set; }
 
         public void Initialize(ISequenceFlowContainer parent)
@@ -106,19 +107,9 @@ namespace Testflow.SequenceManager.SequenceElements
                 ModuleUtils.CloneFlowCollection(SubSteps, subStepCollection);
             }
 
-            SequenceStep sequenceStep = new SequenceStep(this.StepType)
+            SequenceStep sequenceStep = new SequenceStep()
             {
-                Name = this.Name + Constants.CopyPostfix,
-                Description = this.Description,
-                Parent = null,
-                SubSteps = subStepCollection,
-                Index = Constants.UnverifiedIndex,
-                Function = this.Function?.Clone(),
-                BreakIfFailed = this.BreakIfFailed,
-                Behavior = this.Behavior,
-                RecordStatus = this.RecordStatus,
-                LoopCounter = this.LoopCounter?.Clone(),
-                RetryCounter = this.RetryCounter?.Clone(),
+                Name = this.Name + Constants.CopyPostfix, Description = this.Description, Parent = null, SubSteps = subStepCollection, Index = Constants.UnverifiedIndex, Function = this.Function?.Clone(), BreakIfFailed = this.BreakIfFailed, Behavior = this.Behavior, RecordStatus = this.RecordStatus, StepType = this.StepType, LoopCounter = this.LoopCounter?.Clone(), RetryCounter = this.RetryCounter?.Clone(),
             };
             return sequenceStep;
         }
