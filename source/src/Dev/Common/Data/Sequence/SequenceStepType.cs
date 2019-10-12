@@ -16,38 +16,43 @@
         ConditionBlock = 1,
 
         /// <summary>
+        /// 条件表达语句
+        /// </summary>
+        ConditionStatement = 2,
+
+        /// <summary>
         /// Try-Finally块
         /// </summary>
-        TryFinallyBlock = 2,
+        TryFinallyBlock = 3,
 
         /// <summary>
         /// 条件循环块
         /// </summary>
-        ConditionLoop = 3,
+        ConditionLoop = 4,
 
         /// <summary>
         /// 序列调用步骤
         /// </summary>
-        SequenceCall = 4,
+        SequenceCall = 5,
 
         /// <summary>
         /// 跳转
         /// </summary>
-        Goto = 5,
+        Goto = 6,
 
         /// <summary>
         /// 多线程块
         /// </summary>
-        MultiThreadBlock = 6,
+        MultiThreadBlock = 7,
 
         /// <summary>
         /// 定时调用块
         /// </summary>
-        TimerBlock = 7,
+        TimerBlock = 8,
 
         /// <summary>
         /// 批处理块
         /// </summary>
-        BatchBlock = 8
+        BatchBlock = 9
     }
 }
