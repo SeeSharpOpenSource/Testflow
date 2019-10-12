@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Reflection;
 using Testflow.Data.Sequence;
 
@@ -14,6 +13,11 @@ namespace Testflow.SequenceManager.StepCreators
             ConstructorInfo constructor = creatorType.GetConstructor(BindingFlags.Instance | BindingFlags.Public, null, new Type[0], null);
             SequenceStepCreator creator = (SequenceStepCreator)constructor.Invoke(new object[0]);
             return creator.CreateSequenceStep();
+        }
+
+        public static void StepDataCheck(ISequenceStep step)
+        {
+            throw new NotImplementedException();
         }
 
         protected abstract ISequenceStep CreateSequenceStep();

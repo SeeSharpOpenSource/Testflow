@@ -101,7 +101,8 @@
     <Compile Include="ModuleErrorCode.cs" />
     <Compile Include="StepCreators\BatchBlockCreator.cs" />
     <Compile Include="StepCreators\ConditionBlockCreator.cs" />
-    <Compile Include="StepCreators\ConditionLoopBlockCreator.cs" />
+    <Compile Include="StepCreators\ConditionLoopCreator.cs" />
+    <Compile Include="StepCreators\ConditionStatementCreator.cs" />
     <Compile Include="StepCreators\ExecutionCreator.cs" />
     <Compile Include="StepCreators\MultiThreadBlockCreator.cs" />
     <Compile Include="StepCreators\SequenceCallCreator.cs" />

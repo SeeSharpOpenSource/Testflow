@@ -1,4 +1,9 @@
-﻿using Testflow.Data.Sequence;
+﻿using System.Linq;
+using Testflow.Data;
+using Testflow.Data.Description;
+using Testflow.Data.Sequence;
+using Testflow.Modules;
+using Testflow.SequenceManager.SequenceElements;
 
 namespace Testflow.SequenceManager.StepCreators
 {
@@ -6,7 +11,19 @@ namespace Testflow.SequenceManager.StepCreators
     {
         protected override ISequenceStep CreateSequenceStep()
         {
-            throw new System.NotImplementedException();
+            SequenceStep step = new SequenceStep()
+            {
+                StepType = SequenceStepType.ConditionBlock,
+                SubSteps = new SequenceStepCollection(),
+                Name = "ConditionBlock"
+            };
+            SequenceStep conditionStatement = new SequenceStep()
+            {
+                StepType = SequenceStepType.Execution,
+                SubSteps = new SequenceStepCollection()
+            };
+            step.SubSteps.Add(conditionStatement);
+            return step;
         }
     }
 }

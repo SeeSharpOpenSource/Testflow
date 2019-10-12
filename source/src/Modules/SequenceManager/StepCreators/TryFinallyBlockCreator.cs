@@ -12,16 +12,20 @@ namespace Testflow.SequenceManager.StepCreators
                 StepType = SequenceStepType.TryFinallyBlock,
                 SubSteps = new SequenceStepCollection()
             };
-            SequenceStep tryBlock = new SequenceStep();
-            tryBlock.Name = "Try";
-            tryBlock.Parent = step;
-            tryBlock.SubSteps = new SequenceStepCollection();
+            SequenceStep tryBlock = new SequenceStep
+            {
+                Name = "Try",
+                Parent = step,
+                SubSteps = new SequenceStepCollection()
+            };
             step.SubSteps.Add(tryBlock);
 
-            SequenceStep finallyBlock = new SequenceStep();
-            finallyBlock.Name = "Finally";
-            finallyBlock.Parent = step;
-            finallyBlock.SubSteps = new SequenceStepCollection();
+            SequenceStep finallyBlock = new SequenceStep
+            {
+                Name = "Finally",
+                Parent = step,
+                SubSteps = new SequenceStepCollection()
+            };
             step.SubSteps.Add(finallyBlock);
             step.SubSteps.Add(tryBlock);
             return step;
