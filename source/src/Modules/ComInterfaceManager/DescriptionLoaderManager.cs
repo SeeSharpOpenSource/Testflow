@@ -32,9 +32,10 @@ namespace Testflow.ComInterfaceManager
             _sequenceManager = TestflowRunner.GetInstance().SequenceManager;
         }
 
-        public void LoadDefaultAssemblyDescription(DescriptionDataTable descriptionCollection)
+        public void LoadDefaultAssemblyDescription(DescriptionDataTable descriptionCollection, string testflowHome)
         {
             LoadMscorLibDescription(descriptionCollection);
+            LoadFuncDefinitionDescriptions(descriptionCollection, testflowHome);
         }
 
         private void LoadMscorLibDescription(DescriptionDataTable descriptionCollection)
@@ -53,6 +54,12 @@ namespace Testflow.ComInterfaceManager
             assemblyInfo.Available = true;
             mscoreLibDescription.Assembly = assemblyInfo;
             descriptionCollection.Add(mscoreLibDescription);
+        }
+
+        private void LoadFuncDefinitionDescriptions(DescriptionDataTable descriptionCollection, string testflowHome)
+        {
+            string funcDefLibPath = $"{testflowHome}lib{Path.DirectorySeparatorChar}funcdefs.dll";
+            LoadAssemblyDescription(funcDefLibPath, descriptionCollection);
         }
 
         public ComInterfaceDescription LoadAssemblyDescription(IAssemblyInfo assemblyInfo, 

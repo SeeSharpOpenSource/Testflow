@@ -38,7 +38,8 @@ namespace Testflow.ComInterfaceManager
 
             _descriptionData = new DescriptionDataTable();
             _loaderManager = new DescriptionLoaderManager();
-            _loaderManager.LoadDefaultAssemblyDescription(_descriptionData);
+            _loaderManager.LoadDefaultAssemblyDescription(_descriptionData,
+                _configData.GetProperty<string>("TestflowHome"));
         }
 
         public void ApplyConfig(IModuleConfigData configData)
