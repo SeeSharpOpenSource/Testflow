@@ -23,7 +23,7 @@
         /// <summary>
         /// 条件循环块
         /// </summary>
-        ConditionLoopBlock = 3,
+        ConditionLoop = 3,
 
         /// <summary>
         /// 序列调用步骤
@@ -31,18 +31,23 @@
         SequenceCall = 4,
 
         /// <summary>
+        /// 跳转
+        /// </summary>
+        Goto = 5,
+
+        /// <summary>
         /// 多线程块
         /// </summary>
-        MultiThreadBlock = 5,
+        MultiThreadBlock = 6,
 
         /// <summary>
         /// 定时调用块
         /// </summary>
-        TimerBlock = 6,
+        TimerBlock = 7,
 
         /// <summary>
         /// 批处理块
         /// </summary>
-        BatchBlock = 7
+        BatchBlock = 8
     }
 }
