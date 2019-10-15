@@ -88,6 +88,15 @@ namespace Testflow.SlaveCore.Resources.locale {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to ConditionBlock with function data exist in sequence datas..
+        /// </summary>
+        internal static string ConditionBlockHasFunc {
+            get {
+                return ResourceManager.GetString("ConditionBlockHasFunc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Event enqueue operation time out..
         /// </summary>
         internal static string EventEnqueueTimeOut {
@@ -102,6 +111,15 @@ namespace Testflow.SlaveCore.Resources.locale {
         internal static string EventQueueOverflow {
             get {
                 return ResourceManager.GetString("EventQueueOverflow", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Illegal step type exist in sequence data..
+        /// </summary>
+        internal static string IllegalStepType {
+            get {
+                return ResourceManager.GetString("IllegalStepType", resourceCulture);
             }
         }
         

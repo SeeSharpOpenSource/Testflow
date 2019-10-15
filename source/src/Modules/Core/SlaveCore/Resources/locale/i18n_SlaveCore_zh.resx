@@ -126,11 +126,17 @@
   <data name="CastNullValue" xml:space="preserve">
     <value>不能将null值转换为类型”{0}“。</value>
   </data>
+  <data name="ConditionBlockHasFunc" xml:space="preserve">
+    <value>序列中存在Function不为空的条件分支块。</value>
+  </data>
   <data name="EventEnqueueTimeOut" xml:space="preserve">
     <value>事件入列超时。</value>
   </data>
   <data name="EventQueueOverflow" xml:space="preserve">
     <value>事件队列已溢出。</value>
+  </data>
+  <data name="IllegalStepType" xml:space="preserve">
+    <value>序列中存在类型不符合规则的步骤。</value>
   </data>
   <data name="IncorrectDelegate" xml:space="preserve">
     <value>错误的委托类型：{0}。</value>

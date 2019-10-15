@@ -234,6 +234,9 @@ namespace Testflow.SlaveCore.Runner.Model
             }
         }
 
+        // 单次执行序列
+        protected abstract void InvokeStepSingleTime(bool forceInvoke);
+
         #region 调用分支
 
         // 使能retry调用step，且失败后强制继续执行
@@ -379,10 +382,7 @@ namespace Testflow.SlaveCore.Runner.Model
             Context.LogSession.Print(LogLevel.Warn, Context.SessionId, $"Sequence step <{this.GetStack()}> passed but force failed.");
             throw new TaskFailedException(SequenceIndex, FailedType.ForceFailed);
         }
-
-        // 单次执行序列
-        protected abstract void InvokeStepSingleTime(bool forceInvoke);
-
+        
         #endregion
 
         private void RecordTargetInvocationError(TargetInvocationException ex)

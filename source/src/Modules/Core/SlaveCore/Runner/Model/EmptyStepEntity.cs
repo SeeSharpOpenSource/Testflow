@@ -1,5 +1,6 @@
 ﻿using Testflow.CoreCommon.Data;
 using Testflow.Data.Sequence;
+using Testflow.Runtime.Data;
 using Testflow.SlaveCore.Common;
 using Testflow.Usr;
 
@@ -26,8 +27,24 @@ namespace Testflow.SlaveCore.Runner.Model
 
         protected override void InvokeStepSingleTime(bool forceInvoke)
         {
+            this.Result = StepResult.Pass;
             Context.LogSession.Print(LogLevel.Debug, Context.SessionId,
                 $"The empty step {GetStack()} invoked.");
+            if (null != StepData && StepData.HasSubSteps)
+            {
+                StepTaskEntityBase subStepEntity = SubStepRoot;
+                bool notCancelled = true;
+                do
+                {
+                    if (!forceInvoke && Context.Cancellation.IsCancellationRequested)
+                    {
+                        this.Result = StepResult.Abort;
+                        return;
+                    }
+                    subStepEntity.Invoke(forceInvoke);
+                    notCancelled = forceInvoke || !Context.Cancellation.IsCancellationRequested;
+                } while (null != (subStepEntity = subStepEntity.NextStep) && notCancelled);
+            }
         }
 
         public override CallStack GetStack()

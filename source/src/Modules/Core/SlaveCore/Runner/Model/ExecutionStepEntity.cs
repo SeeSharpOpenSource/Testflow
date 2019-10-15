@@ -19,8 +19,7 @@ namespace Testflow.SlaveCore.Runner.Model
                 return;
             }
             this.Result = StepResult.Error;
-            Actuator.InvokeStep(forceInvoke);
-            this.Result = StepResult.Pass;
+            this.Result = Actuator.InvokeStep(forceInvoke);
             // 如果当前step被标记为记录状态，则返回状态信息
             if (null != StepData && StepData.RecordStatus)
             {

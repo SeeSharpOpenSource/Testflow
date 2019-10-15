@@ -88,6 +88,15 @@ namespace Testflow.SlaveCore.Resources.locale {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to 序列中存在Function不为空的条件分支块。.
+        /// </summary>
+        internal static string ConditionBlockHasFunc {
+            get {
+                return ResourceManager.GetString("ConditionBlockHasFunc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to 事件入列超时。.
         /// </summary>
         internal static string EventEnqueueTimeOut {
@@ -102,6 +111,15 @@ namespace Testflow.SlaveCore.Resources.locale {
         internal static string EventQueueOverflow {
             get {
                 return ResourceManager.GetString("EventQueueOverflow", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 序列中存在类型不符合规则的步骤。.
+        /// </summary>
+        internal static string IllegalStepType {
+            get {
+                return ResourceManager.GetString("IllegalStepType", resourceCulture);
             }
         }
         

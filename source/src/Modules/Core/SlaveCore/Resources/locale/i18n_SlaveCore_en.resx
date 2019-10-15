@@ -126,11 +126,17 @@
   <data name="CastNullValue" xml:space="preserve">
     <value>Cannot cast null value to type &lt;{0}&gt;.</value>
   </data>
+  <data name="ConditionBlockHasFunc" xml:space="preserve">
+    <value>ConditionBlock with function data exist in sequence datas.</value>
+  </data>
   <data name="EventEnqueueTimeOut" xml:space="preserve">
     <value>Event enqueue operation time out.</value>
   </data>
   <data name="EventQueueOverflow" xml:space="preserve">
     <value>The event queue is overflow.</value>
+  </data>
+  <data name="IllegalStepType" xml:space="preserve">
+    <value>Illegal step type exist in sequence data.</value>
   </data>
   <data name="IncorrectDelegate" xml:space="preserve">
     <value>Incorrect delegate type "{0}".</value>
