@@ -1,17 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Reflection;
-using Testflow.CoreCommon.Common;
 using Testflow.Data;
 using Testflow.Data.Sequence;
 using Testflow.Runtime.Data;
 using Testflow.SlaveCore.Common;
+using Testflow.SlaveCore.Runner.Model;
 
-namespace Testflow.SlaveCore.Runner.Model
+namespace Testflow.SlaveCore.Runner.Actuators
 {
-    internal class StepPropertySetterEntity : StepTaskEntityBase
+    internal class PropertySetterActuator : ActuatorBase
     {
-        public StepPropertySetterEntity(ISequenceStep step, SlaveContext context, int sequenceIndex) : base(step, context, sequenceIndex)
+        public PropertySetterActuator(ISequenceStep step, SlaveContext context, int sequenceIndex) : base(step, context, sequenceIndex)
         {
             _properties = new List<PropertyInfo>(step.Function.Parameters.Count);
             _params = new List<object>(step.Function.Parameters.Count);
@@ -20,18 +20,18 @@ namespace Testflow.SlaveCore.Runner.Model
         protected override void GenerateInvokeInfo()
         {
             BindingFlags bindingFlags = BindingFlags.Public;
-            bindingFlags |= (StepData.Function.Type == FunctionType.InstancePropertySetter)
+            bindingFlags |= (Function.Type == FunctionType.InstancePropertySetter)
                 ? BindingFlags.Instance
                 : BindingFlags.Static;
-            for (int i = 0; i < StepData.Function.ParameterType.Count; i++)
+            for (int i = 0; i < Function.ParameterType.Count; i++)
             {
-                if (StepData.Function.Parameters[i].ParameterType == ParameterType.NotAvailable)
+                if (Function.Parameters[i].ParameterType == ParameterType.NotAvailable)
                 {
                     _properties.Add(null);
                     continue;
                 }
-                string propertyName = StepData.Function.ParameterType[i].Name;
-                Type classType = Context.TypeInvoker.GetType(StepData.Function.ClassType);
+                string propertyName = Function.ParameterType[i].Name;
+                Type classType = Context.TypeInvoker.GetType(Function.ClassType);
                 _properties.Add(classType.GetProperty(propertyName, bindingFlags));
             }
 
@@ -39,16 +39,16 @@ namespace Testflow.SlaveCore.Runner.Model
 
         protected override void InitializeParamsValues()
         {
-            if (!string.IsNullOrWhiteSpace(StepData.Function.Instance))
+            if (!string.IsNullOrWhiteSpace(Function.Instance))
             {
-                string instanceVarName = ModuleUtils.GetVariableNameFromParamValue(StepData.Function.Instance);
+                string instanceVarName = ModuleUtils.GetVariableNameFromParamValue(Function.Instance);
                 _instanceVar = ModuleUtils.GetVariableFullName(instanceVarName, StepData, Context.SessionId);
             }
-            IParameterDataCollection parameters = StepData.Function.Parameters;
+            IParameterDataCollection parameters = Function.Parameters;
             for (int i = 0; i < _properties.Count; i++)
             {
                 string paramValue = parameters[i].Value;
-                IArgument argument = StepData.Function.ParameterType[i];
+                IArgument argument = Function.ParameterType[i];
                 if (null == _properties[i] || string.IsNullOrEmpty(paramValue))
                 {
                     _params.Add(null);
@@ -83,17 +83,16 @@ namespace Testflow.SlaveCore.Runner.Model
 
         private string _instanceVar;
 
-        protected override void InvokeStep(bool forceInvoke)
+        public override StepResult InvokeStep(bool forceInvoke)
         {
-            this.Result = StepResult.Error;
             object instance = null;
-            if (StepData.Function.Type == FunctionType.InstancePropertySetter)
+            if (Function.Type == FunctionType.InstancePropertySetter)
             {
-                instance = Context.VariableMapper.GetParamValue(_instanceVar, StepData.Function.Instance,
-                    StepData.Function.ClassType);
+                instance = Context.VariableMapper.GetParamValue(_instanceVar, Function.Instance,
+                    Function.ClassType);
             }
-            IParameterDataCollection parameters = StepData.Function.Parameters;
-            IArgumentCollection arguments = StepData.Function.ParameterType;
+            IParameterDataCollection parameters = Function.Parameters;
+            IArgumentCollection arguments = Function.ParameterType;
             for (int i = 0; i < _properties.Count; i++)
             {
                 if (null == _properties[i])
@@ -110,7 +109,7 @@ namespace Testflow.SlaveCore.Runner.Model
                 }
                 _properties[i].SetValue(instance, _params[i]);
             }
-            this.Result = StepResult.Pass;
+            return StepResult.Pass;
         }
     }
 }

@@ -1,20 +1,19 @@
 ﻿using System;
-using System.Linq;
 using System.Reflection;
 using Newtonsoft.Json;
-using Testflow.Usr;
 using Testflow.CoreCommon;
 using Testflow.CoreCommon.Common;
+using Testflow.CoreCommon.Data;
 using Testflow.Data;
 using Testflow.Data.Sequence;
-using Testflow.Runtime;
 using Testflow.Runtime.Data;
 using Testflow.SlaveCore.Common;
-using Testflow.SlaveCore.Data;
+using Testflow.SlaveCore.Runner.Model;
+using Testflow.Usr;
 
-namespace Testflow.SlaveCore.Runner.Model
+namespace Testflow.SlaveCore.Runner.Actuators
 {
-    internal class StepExecutionEntity : StepTaskEntityBase
+    internal class FunctionActuator : ActuatorBase
     {
         #region 序列功能标志
 
@@ -36,7 +35,7 @@ namespace Testflow.SlaveCore.Runner.Model
 
         #endregion
 
-        public StepExecutionEntity(ISequenceStep step, SlaveContext context, int sequenceIndex) : base(step, context, sequenceIndex)
+        public FunctionActuator(ISequenceStep step, SlaveContext context, int sequenceIndex) : base(step, context, sequenceIndex)
         {
             int session = context.SessionId;
 
@@ -63,19 +62,19 @@ namespace Testflow.SlaveCore.Runner.Model
             {
                 case FunctionType.StaticFunction:
                 case FunctionType.InstanceFunction:
-                    this.Method = Context.TypeInvoker.GetMethod(StepData.Function);
+                    this.Method = Context.TypeInvoker.GetMethod(Function);
                     if (null == Method)
                     {
                         throw new TestflowRuntimeException(ModuleErrorCode.RuntimeError,
-                            Context.I18N.GetFStr("LoadFunctionFailed", StepData.Function.MethodName));
+                            Context.I18N.GetFStr("LoadFunctionFailed", Function.MethodName));
                     }
                     break;
                 case FunctionType.Constructor:
-                    this.Constructor = Context.TypeInvoker.GetConstructor(StepData.Function);
+                    this.Constructor = Context.TypeInvoker.GetConstructor(Function);
                     if (null == Constructor)
                     {
                         throw new TestflowRuntimeException(ModuleErrorCode.RuntimeError,
-                            Context.I18N.GetFStr("LoadFunctionFailed", StepData.Function.MethodName));
+                            Context.I18N.GetFStr("LoadFunctionFailed", Function.MethodName));
                     }
                     break;
                 default:
@@ -85,8 +84,8 @@ namespace Testflow.SlaveCore.Runner.Model
 
         protected override void InitializeParamsValues()
         {
-            IArgumentCollection argumentInfos = StepData.Function.ParameterType;
-            IParameterDataCollection parameters = StepData.Function.Parameters;
+            IArgumentCollection argumentInfos = Function.ParameterType;
+            IParameterDataCollection parameters = Function.Parameters;
             for (int i = 0; i < argumentInfos.Count; i++)
             {
                 string paramValue = parameters[i].Value;
@@ -113,10 +112,10 @@ namespace Testflow.SlaveCore.Runner.Model
                     Params[i] = null;
                 }
             }
-            if (null != StepData.Function.ReturnType && CoreUtils.IsValidVaraible(StepData.Function.Return))
+            if (null != Function.ReturnType && CoreUtils.IsValidVaraible(Function.Return))
             {
                 // 如果是变量，则先获取对应的Varaible变量，真正的值在运行时才更新获取
-                string variableName = ModuleUtils.GetVariableNameFromParamValue(StepData.Function.Return);
+                string variableName = ModuleUtils.GetVariableNameFromParamValue(Function.Return);
                 IVariable variable = ModuleUtils.GetVaraibleByRawVarName(variableName, StepData);
                 if (null == variable)
                 {
@@ -129,7 +128,7 @@ namespace Testflow.SlaveCore.Runner.Model
             }
         }
 
-        protected override void InvokeStep(bool forceInvoke)
+        public override StepResult InvokeStep(bool forceInvoke)
         {
             object instance;
             object returnValue;
@@ -140,26 +139,26 @@ namespace Testflow.SlaveCore.Runner.Model
                     instance = Constructor.Invoke(Params);
                     if (CoreUtils.IsValidVaraible(InstanceVar))
                     {
-                        Context.VariableMapper.SetParamValue(InstanceVar, StepData.Function.Instance, instance);
-                        LogTraceVariable(StepData.Function.Instance, InstanceVar);
+                        Context.VariableMapper.SetParamValue(InstanceVar, Function.Instance, instance);
+                        LogTraceVariable(Function.Instance, InstanceVar);
                     }
                     break;
                 case FunctionType.InstanceFunction:
-                    instance = Context.VariableMapper.GetParamValue(InstanceVar, StepData.Function.Instance,
-                        StepData.Function.ClassType);
+                    instance = Context.VariableMapper.GetParamValue(InstanceVar, Function.Instance,
+                        Function.ClassType);
                     returnValue = Method.Invoke(instance, Params);
                     if (CoreUtils.IsValidVaraible(ReturnVar))
                     {
-                        Context.VariableMapper.SetParamValue(ReturnVar, StepData.Function.Return, returnValue);
-                        LogTraceVariable(StepData.Function.Return, returnValue);
+                        Context.VariableMapper.SetParamValue(ReturnVar, Function.Return, returnValue);
+                        LogTraceVariable(Function.Return, returnValue);
                     }
                     break;
                 case FunctionType.StaticFunction:
                     returnValue = Method.Invoke(null, Params);
                     if (CoreUtils.IsValidVaraible(ReturnVar))
                     {
-                        Context.VariableMapper.SetParamValue(ReturnVar, StepData.Function.Return, returnValue);
-                        LogTraceVariable(StepData.Function.Return, returnValue);
+                        Context.VariableMapper.SetParamValue(ReturnVar, Function.Return, returnValue);
+                        LogTraceVariable(Function.Return, returnValue);
                     }
                     break;
                 default:
@@ -167,13 +166,14 @@ namespace Testflow.SlaveCore.Runner.Model
             }
             // 更新所有被ref修饰的变量类型的值
             UpdateParamVariableValue();
+            return StepResult.Pass;
         }
 
         // 因为Variable的值在整个过程中会变化，所以需要在运行前实时获取
         private void SetVariableParamValue()
         {
-            IArgumentCollection arguments = StepData.Function.ParameterType;
-            IParameterDataCollection parameters = StepData.Function.Parameters;
+            IArgumentCollection arguments = Function.ParameterType;
+            IParameterDataCollection parameters = Function.Parameters;
             if (null == parameters)
             {
                 return;
@@ -196,8 +196,8 @@ namespace Testflow.SlaveCore.Runner.Model
         {
             for (int i = 0; i < Params.Length; i++)
             {
-                IArgument argument = StepData.Function.ParameterType[i];
-                IParameterData parameter = StepData.Function.Parameters[i];
+                IArgument argument = Function.ParameterType[i];
+                IParameterData parameter = Function.Parameters[i];
                 // 如果参数值是直接传递值，或者参数没有使用ref或out修饰，则返回
                 if (parameter.ParameterType == ParameterType.Value || argument.Modifier == ArgumentModifier.None)
                 {
@@ -218,7 +218,7 @@ namespace Testflow.SlaveCore.Runner.Model
         private void LogTraceVariable(IVariable variable, object value)
         {
             const string variableLogFormat = "[Variable Trace] Name:{0}, Stack:{1}, Value: {2}.";
-            string stackStr = GetStack().ToString();
+            string stackStr = CallStack.GetStack(Context.SessionId, StepData).ToString();
             string varValueStr;
             if (null != value)
             {

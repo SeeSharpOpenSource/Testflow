@@ -192,4 +192,7 @@
   <data name="UnregisteredMessage" xml:space="preserve">
     <value>Unregistered message type: {0}.</value>
   </data>
+  <data name="UnsupportedStepType" xml:space="preserve">
+    <value>Unsupported step type "{0}" exist in sequence data.</value>
+  </data>
 </root>

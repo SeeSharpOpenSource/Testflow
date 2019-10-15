@@ -1,6 +1,7 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using System;
+using System.Reflection;
 using System.Threading;
+using Newtonsoft.Json;
 using Testflow.CoreCommon;
 using Testflow.CoreCommon.Common;
 using Testflow.CoreCommon.Messages;
@@ -9,31 +10,31 @@ using Testflow.Data.Sequence;
 using Testflow.Runtime;
 using Testflow.Runtime.Data;
 using Testflow.SlaveCore.Common;
+using Testflow.SlaveCore.Runner.Model;
 using Testflow.Usr;
-using System.Reflection;
 using Testflow.Usr.Common;
 
-namespace Testflow.SlaveCore.Runner.Model
+namespace Testflow.SlaveCore.Runner.Actuators
 {
-    internal class StepCallBackEntity : StepTaskEntityBase
+    internal class CallBackActuator : ActuatorBase
     {
         private object[] Params;
         private string FullName;
         private int CallBackId;
         private CallBackType callBackType;
 
-        public StepCallBackEntity(ISequenceStep step, SlaveContext context, int sequenceIndex) : base(step, context, sequenceIndex)
+        public CallBackActuator(ISequenceStep step, SlaveContext context, int sequenceIndex) : base(step, context, sequenceIndex)
         {
-            this.Params = new object[step.Function.Parameters?.Count ?? 0];
+            this.Params = new object[Function.Parameters?.Count ?? 0];
         }
 
         protected override void GenerateInvokeInfo()
         {
-            MethodInfo methodInfo = Context.TypeInvoker.GetMethod(StepData.Function);
+            MethodInfo methodInfo = Context.TypeInvoker.GetMethod(Function);
             if (null == methodInfo)
             {
                 throw new TestflowRuntimeException(ModuleErrorCode.RuntimeError,
-                    Context.I18N.GetFStr("LoadFunctionFailed", StepData.Function.MethodName));
+                    Context.I18N.GetFStr("LoadFunctionFailed", Function.MethodName));
             }
             //判断同步异步
             callBackType = methodInfo.GetCustomAttribute<CallBackAttribute>().CallBackType;
@@ -42,8 +43,8 @@ namespace Testflow.SlaveCore.Runner.Model
         // 改变StepData.Function.Parameters：如果是variable，则变为运行时$格式
         protected override void InitializeParamsValues()
         {
-            IArgumentCollection argumentInfos = StepData.Function.ParameterType;
-            IParameterDataCollection parameters = StepData.Function.Parameters;
+            IArgumentCollection argumentInfos = Function.ParameterType;
+            IParameterDataCollection parameters = Function.Parameters;
             for (int i = 0; i < argumentInfos.Count; i++)
             {
                 string paramValue = parameters[i].Value;
@@ -74,11 +75,11 @@ namespace Testflow.SlaveCore.Runner.Model
         }
 
         //发送CallBackMessage至queue，让CallBackProcessor接受
-        public void SendCallBackMessage()
+        private void SendCallBackMessage()
         {
             CallBackId = Context.CallBackEventManager.GetCallBackId();
 
-            IFunctionData function = StepData.Function;
+            IFunctionData function = Function;
             FullName = function.ClassType.Namespace + "." + function.ClassType.Name + "." + function.MethodName;
             CallBackMessage callBackMessage;
 
@@ -117,8 +118,10 @@ namespace Testflow.SlaveCore.Runner.Model
             return stringParams;
         }
 
-        private void ExecuteCallBack(bool forceInvoke)
+        //todo 未考虑循环的事，如果循环，注意forceInvoke
+        public override StepResult InvokeStep(bool forceInvoke)
         {
+            StepResult result1 = StepResult.NotAvailable;
             SendCallBackMessage();
             #region 同步：等待master发回消息
             if (callBackType == CallBackType.Synchronous)
@@ -129,7 +132,7 @@ namespace Testflow.SlaveCore.Runner.Model
                 //超时就抛出异常
                 if (block.WaitOne(Constants.ThreadAbortJoinTime) == false)
                 {
-                    this.Result = StepResult.Failed;
+                    result1 = StepResult.Failed;
                     throw new TaskFailedException(SequenceIndex, "CallBack has exceeded waiting Time", FailedType.RuntimeError);
                 }
 
@@ -138,64 +141,33 @@ namespace Testflow.SlaveCore.Runner.Model
                 //回调成功
                 if (callBackMsg.SuccessFlag)
                 {
-                    this.Result = StepResult.Pass;
+                    result1 = StepResult.Pass;
                 }
                 //回调不成功
                 else
                 {
-                    this.Result = StepResult.Failed;
+                    result1 = StepResult.Failed;
                     // 抛出强制失败异常
                     throw new TaskFailedException(SequenceIndex, "CallBack failed", FailedType.RuntimeError);
                 }
             }
-            #endregion
-            #region 异步：不管master直接通过步骤
+                #endregion
+                #region 异步：不管master直接通过步骤
             else
             {
-                this.Result = StepResult.Pass;
+                result1 = StepResult.Pass;
             }
             #endregion
-        }
 
-        //todo 未考虑循环的事，如果循环，注意forceInvoke
-        protected override void InvokeStep(bool forceInvoke)
-        {
-            this.Result = StepResult.Error;
-            switch (StepData.Behavior)
-            {
-                case RunBehavior.Normal:
-                    ExecuteCallBack(forceInvoke);
-                    break;
-                case RunBehavior.Skip:
-                    this.Result = StepResult.Skip;
-                    break;
-                case RunBehavior.ForceSuccess:
-                    try
-                    {
-                        ExecuteCallBack(forceInvoke);
-                    }
-                    catch (TaskFailedException ex)
-                    {
-                        this.Result = StepResult.Failed;
-                        Context.LogSession.Print(LogLevel.Warn, SequenceIndex, ex,
-                            "Execute failed but force success.");
-                    }
-                    break;
-                case RunBehavior.ForceFailed:
-                    ExecuteCallBack(forceInvoke);
-                    this.Result = StepResult.Failed;
-                    // 抛出强制失败异常
-                    throw new TaskFailedException(SequenceIndex, FailedType.ForceFailed);
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
+            StepResult result = result1;
+            return result;
         }
 
         // 因为Variable的值在整个过程中会变化，所以需要在运行前实时获取
         private void SetVariableParamValue()
         {
-            IArgumentCollection arguments = StepData.Function.ParameterType;
-            IParameterDataCollection parameters = StepData.Function.Parameters;
+            IArgumentCollection arguments = Function.ParameterType;
+            IParameterDataCollection parameters = Function.Parameters;
             if (null == parameters)
             {
                 return;

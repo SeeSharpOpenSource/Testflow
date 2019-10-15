@@ -192,4 +192,7 @@
   <data name="UnregisteredMessage" xml:space="preserve">
     <value>未注册的消息类型：“{0}”。</value>
   </data>
+  <data name="UnsupportedStepType" xml:space="preserve">
+    <value>序列中存在不支持的Step类型“{0}”。</value>
+  </data>
 </root>

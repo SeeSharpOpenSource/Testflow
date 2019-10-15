@@ -284,5 +284,14 @@ namespace Testflow.SlaveCore.Resources.locale {
                 return ResourceManager.GetString("UnregisteredMessage", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 序列中存在不支持的Step类型“{0}”。.
+        /// </summary>
+        internal static string UnsupportedStepType {
+            get {
+                return ResourceManager.GetString("UnsupportedStepType", resourceCulture);
+            }
+        }
     }
 }

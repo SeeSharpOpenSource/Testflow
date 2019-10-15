@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Reflection;
+using Testflow.CoreCommon;
 using Testflow.CoreCommon.Common;
 using Testflow.CoreCommon.Data;
 using Testflow.CoreCommon.Messages;
@@ -10,7 +11,9 @@ using Testflow.Runtime;
 using Testflow.Runtime.Data;
 using Testflow.SlaveCore.Common;
 using Testflow.SlaveCore.Data;
+using Testflow.SlaveCore.Runner.Actuators;
 using Testflow.Usr;
+using Testflow.Utility.I18nUtil;
 
 namespace Testflow.SlaveCore.Runner.Model
 {
@@ -22,27 +25,47 @@ namespace Testflow.SlaveCore.Runner.Model
             {
                 return new EmptyStepEntity(context, sequenceIndex, stepData);
             }
-            switch (stepData.Function.Type)
+            StepTaskEntityBase stepEntity;
+            switch (stepData.StepType)
             {
-                case FunctionType.Constructor:
-                case FunctionType.InstanceFunction:
-                case FunctionType.StaticFunction:
-                    return new StepExecutionEntity(stepData, context, sequenceIndex);
+                case SequenceStepType.Execution:
+                    stepEntity = new ExecutionStepEntity(stepData, context, sequenceIndex);
                     break;
-                case FunctionType.Assertion:
-                    return new StepAssertEntity(stepData, context, sequenceIndex);
+                case SequenceStepType.ConditionBlock:
+                    stepEntity = new ConditionBlockStepEntity(stepData, context, sequenceIndex);
                     break;
-                case FunctionType.CallBack:
-                    return new StepCallBackEntity(stepData, context, sequenceIndex);
+                case SequenceStepType.ConditionStatement:
+                    stepEntity = new ConditionStatementStepEntity(stepData, context, sequenceIndex);
                     break;
-                case FunctionType.StaticPropertySetter:
-                case FunctionType.InstancePropertySetter:
-                    return new StepPropertySetterEntity(stepData, context, sequenceIndex);
+                case SequenceStepType.TryFinallyBlock:
+                    stepEntity = new TryFinallyBlockStepEntity(stepData, context, sequenceIndex);
+                    break;
+                case SequenceStepType.ConditionLoop:
+                    stepEntity = new ConditionLoopStepEntity(stepData, context, sequenceIndex);
+                    break;
+                case SequenceStepType.SequenceCall:
+                    stepEntity = new SequenceCallStepEntity(stepData, context, sequenceIndex);
+                    break;
+                case SequenceStepType.Goto:
+                    stepEntity = new GotoStepEntity(stepData, context, sequenceIndex);
+                    break;
+                case SequenceStepType.MultiThreadBlock:
+                    stepEntity = new MultiThreadStepEntity(stepData, context, sequenceIndex);
+                    break;
+                case SequenceStepType.TimerBlock:
+                    stepEntity = new TimerBlockStepEntity(stepData, context, sequenceIndex);
+                    break;
+                case SequenceStepType.BatchBlock:
+                    stepEntity = new BatchBlockStepEntity(stepData, context, sequenceIndex);
                     break;
                 default:
-                    throw new InvalidOperationException();
-                    break;
+                    context.LogSession.Print(LogLevel.Error, context.SessionId, 
+                        $"The step type of <{stepData.Name}> is invalid.");
+                    I18N i18N = I18N.GetInstance(Constants.I18nName);
+                    throw new TestflowDataException(ModuleErrorCode.SequenceDataError, 
+                        i18N.GetFStr("UnsupportedStepType", stepData.StepType.ToString()));
             }
+            return stepEntity;
         }
 
         public static StepTaskEntityBase GetEmptyStepModel(SlaveContext context, int sequenceIndex)
@@ -66,9 +89,10 @@ namespace Testflow.SlaveCore.Runner.Model
 
         protected readonly SlaveContext Context;
         protected readonly ISequenceStep StepData;
-        private readonly StepTaskEntityBase _subStepRoot;
+        protected readonly StepTaskEntityBase SubStepRoot;
         private Action<bool> _invokeStepAction;
         private bool _hasLoopCounter = false;
+        protected readonly ActuatorBase Actuator;
 
         public StepResult Result { get; protected set; }
         public int SequenceIndex { get; }
@@ -80,9 +104,10 @@ namespace Testflow.SlaveCore.Runner.Model
             this.StepData = step;
             this.Result = StepResult.NotAvailable;
             this.SequenceIndex = sequenceIndex;
+            this.Actuator = ActuatorBase.GetActuator(step, context, sequenceIndex);
             if (null != StepData && StepData.HasSubSteps)
             {
-                this._subStepRoot = ModuleUtils.CreateSubStepModelChain(StepData.SubSteps, Context, sequenceIndex);
+                this.SubStepRoot = ModuleUtils.CreateSubStepModelChain(StepData.SubSteps, Context, sequenceIndex);
             }
         }
 
@@ -93,12 +118,11 @@ namespace Testflow.SlaveCore.Runner.Model
 
         public void Generate()
         {
-            this.GenerateInvokeInfo();
-            this.InitializeParamsValues();
+            Actuator.Generate();
             _hasLoopCounter = (StepData?.LoopCounter != null && StepData.LoopCounter.MaxValue > 1);
             if (StepData?.HasSubSteps ?? false)
             {
-                StepTaskEntityBase subStepEntity = _subStepRoot;
+                StepTaskEntityBase subStepEntity = SubStepRoot;
                 do
                 {
                     subStepEntity.Generate();
@@ -114,8 +138,7 @@ namespace Testflow.SlaveCore.Runner.Model
                 _invokeStepAction = InvokeStepSingleTime;
                 return;
             }
-            bool retryEnabled = null != StepData.RetryCounter && StepData.RetryCounter.MaxRetryTimes > 0 &&
-                                StepData.RetryCounter.RetryEnabled;
+            bool retryEnabled = null != StepData.RetryCounter && StepData.RetryCounter.MaxRetryTimes > 0 && StepData.RetryCounter.RetryEnabled;
             bool breakIfFailed = StepData.BreakIfFailed;
             switch (StepData.Behavior)
             {
@@ -160,16 +183,6 @@ namespace Testflow.SlaveCore.Runner.Model
         }
 
         /// <summary>
-        /// 生成调用信息
-        /// </summary>
-        protected abstract void GenerateInvokeInfo();
-
-        /// <summary>
-        /// 初始化常数参数值
-        /// </summary>
-        protected abstract void InitializeParamsValues();
-
-        /// <summary>
         /// 当指定时间内该序列没有额外信息到达时传递运行时状态的信息，该方法只有在某个Sequence没有关键信息上报时使用
         /// </summary>
         public virtual void FillStatusInfo(StatusMessage statusMessage)
@@ -182,8 +195,7 @@ namespace Testflow.SlaveCore.Runner.Model
         {
             this.Result = result;
             // 如果发生错误，无论该步骤是否被配置为recordStatus，都需要发送状态信息
-            SequenceStatusInfo statusInfo = new SequenceStatusInfo(SequenceIndex, this.GetStack(),
-                StatusReportType.Record, Result, failedInfo);
+            SequenceStatusInfo statusInfo = new SequenceStatusInfo(SequenceIndex, this.GetStack(), StatusReportType.Record, Result, failedInfo);
             // 更新watch变量值
             statusInfo.WatchDatas = Context.VariableMapper.GetWatchDataValues(StepData);
             Context.StatusQueue.Enqueue(statusInfo);
@@ -319,7 +331,7 @@ namespace Testflow.SlaveCore.Runner.Model
                 RecordTargetInvocationError(ex);
             }
         }
-        
+
         // 跳过step
         private void InvokeStepWithSkip(bool forceInvoke)
         {
@@ -342,22 +354,19 @@ namespace Testflow.SlaveCore.Runner.Model
             catch (TaskFailedException ex)
             {
                 this.Result = StepResult.Pass;
-                Context.LogSession.Print(LogLevel.Warn, Context.SessionId, 
-                    $"Sequence step <{this.GetStack()}> failed but force pass.");
+                Context.LogSession.Print(LogLevel.Warn, Context.SessionId, $"Sequence step <{this.GetStack()}> failed but force pass.");
                 RecordInvocationError(ex, ex.FailedType);
             }
             catch (TestflowAssertException ex)
             {
                 this.Result = StepResult.Pass;
-                Context.LogSession.Print(LogLevel.Warn, Context.SessionId,
-                    $"Sequence step <{this.GetStack()}> failed but force pass.");
+                Context.LogSession.Print(LogLevel.Warn, Context.SessionId, $"Sequence step <{this.GetStack()}> failed but force pass.");
                 RecordInvocationError(ex, FailedType.AssertionFailed);
             }
             catch (TargetInvocationException ex)
             {
                 this.Result = StepResult.Pass;
-                Context.LogSession.Print(LogLevel.Warn, Context.SessionId,
-                    $"Sequence step <{this.GetStack()}> failed but force pass.");
+                Context.LogSession.Print(LogLevel.Warn, Context.SessionId, $"Sequence step <{this.GetStack()}> failed but force pass.");
                 RecordInvocationError(ex.InnerException, FailedType.TargetError);
             }
         }
@@ -367,44 +376,12 @@ namespace Testflow.SlaveCore.Runner.Model
         {
             InvokeStepSingleTime(forceInvoke);
             this.Result = StepResult.Failed;
-            Context.LogSession.Print(LogLevel.Warn, Context.SessionId,
-                    $"Sequence step <{this.GetStack()}> passed but force failed.");
+            Context.LogSession.Print(LogLevel.Warn, Context.SessionId, $"Sequence step <{this.GetStack()}> passed but force failed.");
             throw new TaskFailedException(SequenceIndex, FailedType.ForceFailed);
         }
 
-        // 单词执行序列
-        private void InvokeStepSingleTime(bool forceInvoke)
-        {
-            // 如果是取消状态并且不是强制执行则返回
-            if (!forceInvoke && Context.Cancellation.IsCancellationRequested)
-            {
-                this.Result = StepResult.Abort;
-                return;
-            }
-            this.Result = StepResult.Error;
-            InvokeStep(forceInvoke);
-            this.Result = StepResult.Pass;
-            // 如果当前step被标记为记录状态，则返回状态信息
-            if (null != StepData && StepData.RecordStatus)
-            {
-                RecordRuntimeStatus();
-            }
-            if (null != StepData && StepData.HasSubSteps)
-            {
-                StepTaskEntityBase subStepEntity = _subStepRoot;
-                bool notCancelled = true;
-                do
-                {
-                    if (!forceInvoke && Context.Cancellation.IsCancellationRequested)
-                    {
-                        this.Result = StepResult.Abort;
-                        return;
-                    }
-                    subStepEntity.Invoke(forceInvoke);
-                    notCancelled = forceInvoke || !Context.Cancellation.IsCancellationRequested;
-                } while (null != (subStepEntity = subStepEntity.NextStep) && notCancelled);
-            }
-        }
+        // 单次执行序列
+        protected abstract void InvokeStepSingleTime(bool forceInvoke);
 
         #endregion
 
@@ -414,7 +391,7 @@ namespace Testflow.SlaveCore.Runner.Model
             if (innerException is TaskFailedException)
             {
                 this.Result = StepResult.Failed;
-                RecordInvocationError(innerException, ((TaskFailedException)innerException).FailedType);
+                RecordInvocationError(innerException, ((TaskFailedException) innerException).FailedType);
             }
             else if (innerException is TestflowAssertException)
             {
@@ -428,10 +405,9 @@ namespace Testflow.SlaveCore.Runner.Model
             }
         }
 
-        private void RecordRuntimeStatus()
+        protected void RecordRuntimeStatus()
         {
-            SequenceStatusInfo statusInfo = new SequenceStatusInfo(SequenceIndex, this.GetStack(), 
-                StatusReportType.Record, Result);
+            SequenceStatusInfo statusInfo = new SequenceStatusInfo(SequenceIndex, this.GetStack(), StatusReportType.Record, Result);
             // 更新watch变量值
             statusInfo.WatchDatas = Context.VariableMapper.GetWatchDataValues(StepData);
             Context.StatusQueue.Enqueue(statusInfo);
@@ -440,14 +416,13 @@ namespace Testflow.SlaveCore.Runner.Model
         private void RecordInvocationError(Exception ex, FailedType failedType)
         {
             FailedInfo failedInfo = new FailedInfo(ex, failedType);
-            SequenceStatusInfo statusInfo = new SequenceStatusInfo(SequenceIndex, this.GetStack(),
-                StatusReportType.Record, Result, failedInfo);
+            SequenceStatusInfo statusInfo = new SequenceStatusInfo(SequenceIndex, this.GetStack(), StatusReportType.Record, Result, failedInfo);
             // 一旦失败，需要记录WatchData
             statusInfo.WatchDatas = Context.VariableMapper.GetWatchDataValues(StepData);
             Context.StatusQueue.Enqueue(statusInfo);
             Context.LogSession.Print(LogLevel.Error, Context.SessionId, ex.Message);
         }
 
-        protected abstract void InvokeStep(bool forceInvoke);
+//        protected abstract void InvokeStep(bool forceInvoke);
     }
 }

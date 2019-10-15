@@ -284,5 +284,14 @@ namespace Testflow.SlaveCore.Resources.locale {
                 return ResourceManager.GetString("UnregisteredMessage", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unsupported step type &quot;{0}&quot; exist in sequence data..
+        /// </summary>
+        internal static string UnsupportedStepType {
+            get {
+                return ResourceManager.GetString("UnsupportedStepType", resourceCulture);
+            }
+        }
     }
 }

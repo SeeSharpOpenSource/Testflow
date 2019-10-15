@@ -1,11 +1,10 @@
-﻿using Testflow.CoreCommon.Messages;
-using Testflow.Data.Sequence;
+﻿using Testflow.Data.Sequence;
+using Testflow.Runtime.Data;
 using Testflow.SlaveCore.Common;
-using Testflow.SlaveCore.Data;
 
-namespace Testflow.SlaveCore.Runner.Model
+namespace Testflow.SlaveCore.Runner.Actuators
 {
-    internal class StepAssertEntity : StepTaskEntityBase
+    internal class AssertActuator : ActuatorBase
     {
         public string VariableName { get; }
 
@@ -15,7 +14,7 @@ namespace Testflow.SlaveCore.Runner.Model
 
         public string RealValue { get; }
 
-        public StepAssertEntity(ISequenceStep step, SlaveContext context, int sequenceIndex) : base(step, context, sequenceIndex)
+        public AssertActuator(ISequenceStep stepData, SlaveContext context, int sequenceIndex) : base(stepData, context, sequenceIndex)
         {
 
         }
@@ -30,7 +29,7 @@ namespace Testflow.SlaveCore.Runner.Model
             throw new System.NotImplementedException();
         }
 
-        protected override void InvokeStep(bool forceInvoke)
+        public override StepResult InvokeStep(bool forceInvoke)
         {
             throw new System.NotImplementedException();
         }
