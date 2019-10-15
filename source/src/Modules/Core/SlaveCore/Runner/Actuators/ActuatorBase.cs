@@ -74,8 +74,8 @@ namespace Testflow.SlaveCore.Runner.Actuators
         /// </summary>
         public void Generate()
         {
-            this.InitializeParamsValues();
             this.GenerateInvokeInfo();
+            this.InitializeParamsValues();
         }
 
         /// <summary>
