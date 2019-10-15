@@ -194,6 +194,11 @@ namespace Testflow.Modules
         /// </summary>
         void ValidateSequenceData(ISequenceGroup sequenceGroup, ITestProject parent = null);
 
+        /// <summary>
+        /// 校验序列数据，如果失败抛出TestflowDataExceptoin
+        /// </summary>
+        void CheckSequenceData(ISequenceFlowContainer sequenceData);
+
         #endregion
 
 

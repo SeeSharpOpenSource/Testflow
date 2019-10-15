@@ -301,6 +301,11 @@ namespace Testflow.SequenceManager
             ((SequenceGroup) sequenceGroup).RefreshSignature();
         }
 
+        public void CheckSequenceData(ISequenceFlowContainer sequenceData)
+        {
+            throw new NotImplementedException();
+        }
+
         public void Dispose()
         {
             _instance = null;

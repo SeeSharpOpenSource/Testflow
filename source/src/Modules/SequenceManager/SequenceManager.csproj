@@ -45,6 +45,17 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Checker\BatchBlockChecker.cs" />
+    <Compile Include="Checker\ConditionBlockChecker.cs" />
+    <Compile Include="Checker\ConditionLoopChecker.cs" />
+    <Compile Include="Checker\ConditionStatementChecker.cs" />
+    <Compile Include="Checker\ExecutionChecker.cs" />
+    <Compile Include="Checker\GotoChecker.cs" />
+    <Compile Include="Checker\IStepChecker.cs" />
+    <Compile Include="Checker\MultiThreadBlockChecker.cs" />
+    <Compile Include="Checker\SequenceCallChecker.cs" />
+    <Compile Include="Checker\TimerBlockChecker.cs" />
+    <Compile Include="Checker\TryFinallyBlockChecker.cs" />
     <Compile Include="Common\RuntimeElementTypeAttribute.cs" />
     <Compile Include="Common\RuntimeSerializeIgnoreAttribute.cs" />
     <Compile Include="Common\RuntimeTypeAttribute.cs" />
@@ -64,6 +75,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>i18n_sequence_en.resx</DependentUpon>
     </Compile>
+    <Compile Include="SequenceChecker.cs" />
     <Compile Include="SequenceElements\Argument.cs" />
     <Compile Include="SequenceElements\ArgumentCollection.cs" />
     <Compile Include="SequenceElements\AssemblyInfo.cs" />
