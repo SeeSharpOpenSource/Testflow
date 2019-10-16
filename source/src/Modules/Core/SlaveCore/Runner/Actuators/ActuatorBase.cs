@@ -14,7 +14,7 @@ namespace Testflow.SlaveCore.Runner.Actuators
     {
         public static ActuatorBase GetActuator(ISequenceStep stepData, SlaveContext context, int sequenceIndex)
         {
-            if (null == stepData.Function)
+            if (stepData?.Function == null)
             {
                 return new EmptyActuator(context, stepData, sequenceIndex);
             }
@@ -44,7 +44,7 @@ namespace Testflow.SlaveCore.Runner.Actuators
         protected ActuatorBase(ISequenceStep step, SlaveContext context, int sequenceIndex)
         {
             this.Context = context;
-            this.Function = step.Function;
+            this.Function = step?.Function;
             this.StepData = step;
             this.SequenceIndex = sequenceIndex;
             this.Return = null;

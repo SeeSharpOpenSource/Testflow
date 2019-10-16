@@ -19,9 +19,22 @@ namespace Testflow.SlaveCore.Runner.Model
 {
     internal abstract class StepTaskEntityBase
     {
+        // 块步骤类型集合。块集合中的Function可以为null或者定义在funcdefs的特殊类型接口
+        private static HashSet<SequenceStepType> _blockStepTypes = new HashSet<SequenceStepType>();
+
+        static StepTaskEntityBase()
+        {
+            _blockStepTypes.Add(SequenceStepType.ConditionBlock);
+            _blockStepTypes.Add(SequenceStepType.TryFinallyBlock);
+            _blockStepTypes.Add(SequenceStepType.MultiThreadBlock);
+            _blockStepTypes.Add(SequenceStepType.TimerBlock);
+            _blockStepTypes.Add(SequenceStepType.BatchBlock);
+        }
+
         public static StepTaskEntityBase GetStepModel(ISequenceStep stepData, SlaveContext context, int sequenceIndex)
         {
-            if (null == stepData.Function)
+            // 如果某个Step的Function为null，且不是块步骤类型，则为该Step分配空类型运行实体
+            if (null == stepData.Function && !_blockStepTypes.Contains(stepData.StepType))
             {
                 return new EmptyStepEntity(context, sequenceIndex, stepData);
             }
