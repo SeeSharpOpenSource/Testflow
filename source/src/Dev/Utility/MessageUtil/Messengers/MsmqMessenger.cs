@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Messaging;
 using System.Text;
-using MessageQueuing;
 using Testflow.Usr;
 using Testflow.Utility.I18nUtil;
 

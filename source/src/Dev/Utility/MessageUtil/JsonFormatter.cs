@@ -3,9 +3,8 @@ using System.IO;
 using System.Messaging;
 using System.Text;
 using Newtonsoft.Json;
-using Testflow.Utility.MessageUtil;
 
-namespace MessageQueuing
+namespace Testflow.Utility.MessageUtil
 {
     /// <summary>
     /// Json格式化器
