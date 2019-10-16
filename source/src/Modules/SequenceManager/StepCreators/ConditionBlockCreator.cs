@@ -19,7 +19,7 @@ namespace Testflow.SequenceManager.StepCreators
             };
             SequenceStep conditionStatement = new SequenceStep()
             {
-                StepType = SequenceStepType.Execution,
+                StepType = SequenceStepType.ConditionStatement,
                 SubSteps = new SequenceStepCollection()
             };
             step.SubSteps.Add(conditionStatement);

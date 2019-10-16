@@ -40,5 +40,10 @@
 
         #endregion
 
+        public const string FuncAssemblyName = "funcdefs";
+
+        public const string FuncNamespace = "Testflow.FunctionDefinitions";
+
+        public const string FuncClassName = "StepFunctions";
     }
 }
