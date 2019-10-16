@@ -158,7 +158,6 @@ namespace Testflow.SlaveCore.Runner.Actuators
                 result1 = StepResult.Pass;
             }
             #endregion
-
             StepResult result = result1;
             return result;
         }

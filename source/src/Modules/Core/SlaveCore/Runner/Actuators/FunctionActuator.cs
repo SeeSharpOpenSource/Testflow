@@ -131,7 +131,7 @@ namespace Testflow.SlaveCore.Runner.Actuators
         public override StepResult InvokeStep(bool forceInvoke)
         {
             object instance;
-            object returnValue;
+            object returnValue = null;
             SetVariableParamValue();
             switch (FunctionType)
             {
@@ -164,6 +164,7 @@ namespace Testflow.SlaveCore.Runner.Actuators
                 default:
                     throw new ArgumentOutOfRangeException();
             }
+            this.Return = returnValue;
             // 更新所有被ref修饰的变量类型的值
             UpdateParamVariableValue();
             return StepResult.Pass;

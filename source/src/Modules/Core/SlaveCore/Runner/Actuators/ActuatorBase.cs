@@ -47,6 +47,7 @@ namespace Testflow.SlaveCore.Runner.Actuators
             this.Function = step.Function;
             this.StepData = step;
             this.SequenceIndex = sequenceIndex;
+            this.Return = null;
         }
 
         protected SlaveContext Context { get; }

@@ -96,6 +96,8 @@ namespace Testflow.SlaveCore.Runner.Model
 
         public StepResult Result { get; protected set; }
         public int SequenceIndex { get; }
+        public object Return => Actuator?.Return ?? null;
+
         public bool BreakIfFailed => StepData?.BreakIfFailed ?? false;
 
         protected StepTaskEntityBase(ISequenceStep step, SlaveContext context, int sequenceIndex)
@@ -116,10 +118,12 @@ namespace Testflow.SlaveCore.Runner.Model
             return CallStack.GetStack(Context.SessionId, StepData);
         }
 
-        public void Generate()
+        public virtual void Generate()
         {
             Actuator.Generate();
-            _hasLoopCounter = (StepData?.LoopCounter != null && StepData.LoopCounter.MaxValue > 1);
+            // 只有在StepData的LoopCounter不为null，loop最大值大于1，并且Step类型不是ConditionLoop的情况下才会执行LoopCounter
+            _hasLoopCounter = (StepData?.LoopCounter != null && StepData.LoopCounter.MaxValue > 1 && 
+                StepData.StepType != SequenceStepType.ConditionLoop);
             if (StepData?.HasSubSteps ?? false)
             {
                 StepTaskEntityBase subStepEntity = SubStepRoot;
