@@ -99,12 +99,17 @@ namespace Testflow.SlaveCore.Common
         public void StopReceive()
         {
             _cancellation.Cancel();
+            Thread.MemoryBarrier();
+            _messageQueue.FreeBlocks();
+            Thread.MemoryBarrier();
+            // 发送消息，让DownlinkMessageQueue退出阻塞状态。该消息不会被真正处理
+            ControlMessage stopMessage = new ControlMessage(MessageNames.CtrlAbort, _slaveContext.SessionId);
+            _downLinkMessenger.Send(stopMessage);
             Thread.Sleep(100);
             if (_peakThread.IsAlive)
             {
                 _peakThread.Abort();
             }
-            _messageQueue.Clear();
             // 打印状态日志
             _slaveContext.LogSession.Print(LogLevel.Info, _slaveContext.SessionId,
                             "Message receive stopped.");

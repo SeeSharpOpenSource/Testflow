@@ -71,14 +71,17 @@ namespace Testflow.MasterCore.Message
         protected override void Stop()
         {
             _cancellation.Cancel();
+            Thread.MemoryBarrier();
             ModuleUtils.StopThreadWork(_receiveThread);
             //如果两个队列在被锁的状态则释放锁
-            _engineMessageQueue.StopEnqueue();
-            _callBackMessageQueue.StopEnqueue();
+            _engineMessageQueue.FreeBlocks();
+            _statusMessageQueue.FreeBlocks();
+            _callBackMessageQueue.FreeBlocks();
+            // 发送停止消息，该消息只是为了释放被Receive阻塞的线程，并不会真的被处理
+            ControlMessage stopMessage = new ControlMessage(MessageNames.CtrlAbort, CommonConst.BroadcastSession);
+            UpLinkMessenger.Send(stopMessage);
 
-            _engineMessageQueue.FreeLock();
-            _statusMessageQueue.FreeLock();
-            _callBackMessageQueue.FreeLock();
+            Thread.MemoryBarrier();
 
             ModuleUtils.StopThreadWork(_engineMessageListener);
             ModuleUtils.StopThreadWork(_statusMessageListener);

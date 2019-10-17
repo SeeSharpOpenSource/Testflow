@@ -94,6 +94,7 @@ namespace Testflow.SlaveCore
             }
             _context.UplinkMsgProcessor?.Stop();
             _downlinkMsgProcessor?.Stop();
+            _context.Dispose();
         }
 
         public void Dispose()

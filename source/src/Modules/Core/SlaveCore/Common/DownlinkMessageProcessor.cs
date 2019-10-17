@@ -74,8 +74,7 @@ namespace Testflow.SlaveCore.Common
         public void Stop()
         {
             _context.Cancellation.Cancel();
-            _messageQueue?.StopEnqueue();
-            _messageQueue?.FreeLock();
+            _messageQueue?.FreeBlocks();
         }
 
         private void ProcessCallBackMessage(CallBackMessage message)
