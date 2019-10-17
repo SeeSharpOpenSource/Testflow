@@ -145,12 +145,6 @@ namespace Testflow.MasterCore.Message
                 this.Stop();
             }
         }
-        
-        public override void Dispose()
-        {
-            base.Dispose();
-            Stop();
-        }
 
         private void MessageProcessingLoop(object queueObj)
         {
