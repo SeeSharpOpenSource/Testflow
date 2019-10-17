@@ -134,11 +134,14 @@ namespace Testflow.MasterCore.TestMaintain
 
         public void FreeHosts()
         {
-            foreach (RuntimeContainer runtimeContainer in _runtimeContainers.Values)
+            lock (_operationLock)
             {
-                runtimeContainer.Dispose();
+                foreach (RuntimeContainer runtimeContainer in _runtimeContainers.Values)
+                {
+                    runtimeContainer.Dispose();
+                }
+                _runtimeContainers.Clear();
             }
-            _runtimeContainers.Clear();
         }
 
         public bool HandleMessage(MessageBase message)
