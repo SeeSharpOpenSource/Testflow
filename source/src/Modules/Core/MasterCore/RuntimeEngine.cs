@@ -164,7 +164,8 @@ namespace Testflow.MasterCore
             }
             catch (TestflowException ex)
             {
-                _globalInfo.LogService.Print(LogLevel.Error, CommonConst.PlatformLogSession, ex, "Start engine internal error.");
+                _globalInfo.LogService.Print(LogLevel.Error, CommonConst.PlatformLogSession, ex,
+                    "Start engine internal error.");
                 _globalInfo.StateMachine.State = RuntimeState.Error;
                 _globalInfo.ExceptionManager.Append(ex);
                 // for test
@@ -172,7 +173,8 @@ namespace Testflow.MasterCore
             }
             catch (ApplicationException ex)
             {
-                _globalInfo.LogService.Print(LogLevel.Error, CommonConst.PlatformLogSession, ex, "Start engine runtime error.");
+                _globalInfo.LogService.Print(LogLevel.Error, CommonConst.PlatformLogSession, ex,
+                    "Start engine runtime error.");
                 _globalInfo.StateMachine.State = RuntimeState.Error;
                 _globalInfo.ExceptionManager.Append(ex);
                 // for test
@@ -180,11 +182,16 @@ namespace Testflow.MasterCore
             }
             catch (Exception ex)
             {
-                _globalInfo.LogService.Print(LogLevel.Fatal, CommonConst.PlatformLogSession, ex, "Start engine fatal error.");
+                _globalInfo.LogService.Print(LogLevel.Fatal, CommonConst.PlatformLogSession, ex,
+                    "Start engine fatal error.");
                 _globalInfo.StateMachine.State = RuntimeState.Collapsed;
                 _globalInfo.ExceptionManager.Append(ex);
                 // for test
                 throw;
+            }
+            finally
+            {
+                Dispose();
             }
         }
 
@@ -207,6 +214,10 @@ namespace Testflow.MasterCore
                 _globalInfo.LogService.Print(LogLevel.Fatal, CommonConst.PlatformLogSession, ex, "Stop engine failed.");
                 _globalInfo.StateMachine.State = RuntimeState.Collapsed;
                 _globalInfo.ExceptionManager.Append(ex);
+            }
+            finally
+            {
+                Dispose();
             }
         }
 
