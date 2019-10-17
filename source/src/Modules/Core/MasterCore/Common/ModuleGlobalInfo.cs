@@ -65,7 +65,6 @@ namespace Testflow.MasterCore.Common
         {
             MessageTransceiver?.Dispose();
             TestGenBlocker?.Dispose();
-            LogService?.Dispose();
         }
     }
 }
