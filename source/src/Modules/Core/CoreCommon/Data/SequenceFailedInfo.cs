@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.Serialization;
 using System.Text;
-using Testflow.CoreCommon.Common;
+using System.Threading;
 using Testflow.Runtime;
 using Testflow.Runtime.Data;
 
@@ -17,6 +17,14 @@ namespace Testflow.CoreCommon.Data
             return failedStr.Append(failedType).Append(Delim).Append(exception.Message).Append(Delim)
                 .Append(exception.Source).Append(Delim).Append(exception.StackTrace).Append(Delim)
                 .Append(exception.GetType().Name).ToString();
+        }
+
+        public static string GetFailedStr(string message, FailedType failedType)
+        {
+            StringBuilder failedStr = new StringBuilder(400);
+            return failedStr.Append(failedType).Append(Delim).Append(message).Append(Delim)
+                .Append(string.Empty).Append(Delim).Append(string.Empty).Append(Delim)
+                .Append(string.Empty).ToString();
         }
 
         public FailedType Type { get; set; }

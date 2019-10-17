@@ -4,6 +4,7 @@ using System.Threading;
 using Testflow.CoreCommon;
 using Testflow.Usr;
 using Testflow.CoreCommon.Common;
+using Testflow.CoreCommon.Data;
 using Testflow.CoreCommon.Data.EventInfos;
 using Testflow.CoreCommon.Messages;
 using Testflow.Data.Sequence;
@@ -210,9 +211,15 @@ namespace Testflow.MasterCore.Core
                 case MessageNames.CtrlAbort:
                     bool abortSuccess = bool.Parse(message.Params["AbortSuccess"]);
                     AbortEventInfo abortEventInfo = new AbortEventInfo(session, false, abortSuccess);
+                    // 如果不包含，说明取消成功
                     if (!abortSuccess && message.Params.ContainsKey("Message"))
                     {
                         abortEventInfo.FailInfo = message.Params["Message"];
+                    }
+                    else
+                    {
+                        abortEventInfo.FailInfo = FailedInfo.GetFailedStr(_globalInfo.I18N.GetStr("UserAbort"),
+                            FailedType.Abort);
                     }
                     _globalInfo.EventQueue.Enqueue(abortEventInfo);
                     _testsMaintainer.FreeHost(session);
@@ -222,7 +229,7 @@ namespace Testflow.MasterCore.Core
                         _globalInfo.StateMachine.State = RuntimeState.Abort;
                     }
                     // 同步释放，每个Session的停止都是同步执行的。
-                    _abortBlocker.Free(Constants.AbortState);
+                    _abortBlocker?.Free(Constants.AbortState);
                     break;
                 default:
                     throw new InvalidOperationException();
