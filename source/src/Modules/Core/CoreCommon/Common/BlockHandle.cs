@@ -27,6 +27,7 @@ namespace Testflow.CoreCommon.Common
         {
             if (waitState == _waitState)
             {
+                Interlocked.Exchange(ref _waitState, int.MaxValue);
                 _waitEvent.Release();
             }
         }

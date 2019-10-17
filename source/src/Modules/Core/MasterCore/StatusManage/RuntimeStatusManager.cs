@@ -307,7 +307,7 @@ namespace Testflow.MasterCore.StatusManage
         {
             _globalInfo.TestGenBlocker.Set();
             _cancellation.Cancel();
-            _globalInfo.EventQueue.StopEnqueue();
+            _globalInfo.EventQueue.FreeBlocks();
             Thread.Sleep(_globalInfo.ConfigData.GetProperty<int>("StopTimeout"));
             ModuleUtils.StopThreadWork(_internalMessageThd);
         }

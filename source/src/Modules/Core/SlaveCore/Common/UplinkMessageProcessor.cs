@@ -52,8 +52,7 @@ namespace Testflow.SlaveCore.Common
 
         public void Stop()
         {
-            _context.StatusQueue.StopEnqueue();
-            _context.StatusQueue.FreeLock();
+            _context.StatusQueue.FreeBlocks();
 
             _waitTimer?.Change(Timeout.Infinite, Timeout.Infinite);
             _cancellation?.Cancel();
@@ -73,7 +72,11 @@ namespace Testflow.SlaveCore.Common
                 Thread.VolatileWrite(ref _eventProcessFlag, 0);
 
                 SequenceStatusInfo statusInfo = statusQueue.WaitUntilMessageCome();
-                
+                // 如果为null，StatusQueue已经停止接收，直接跳出
+                if (null == statusInfo)
+                {
+                    return;
+                }
                 // 标记事件处理flag为处理中
                 Thread.MemoryBarrier();
                 Thread.VolatileWrite(ref _eventProcessFlag, 1);
