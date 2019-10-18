@@ -143,6 +143,8 @@ namespace Testflow.MasterCore.Message
             finally
             {
                 this.Stop();
+                GlobalInfo.LogService.Print(LogLevel.Info, CommonConst.PlatformLogSession,
+                   $"thread {Thread.CurrentThread.Name} is Stopped.");
             }
         }
 

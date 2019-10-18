@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using Testflow.Usr;
 using Testflow.CoreCommon;
 using Testflow.CoreCommon.Common;
@@ -200,14 +201,20 @@ namespace Testflow.MasterCore
             _controller.Abort(session);
         }
 
+        private int _stopFlag = 0;
         public void Stop()
         {
+            if (_stopFlag == 1)
+            {
+                return;
+            }
             try
             {
                 _controller?.Stop();
                 _syncManager?.Stop();
                 _statusManager?.Stop();
                 _globalInfo.MessageTransceiver.Deactivate();
+                Thread.VolatileWrite(ref _stopFlag, 1);
             }
             catch (Exception ex)
             {

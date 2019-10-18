@@ -303,18 +303,24 @@ namespace Testflow.MasterCore.StatusManage
             throw new System.NotImplementedException();
         }
 
+        private int _stopFlag = 0;
         public void Stop()
         {
+            if (_stopFlag == 1)
+            {
+                return;
+            }
             _globalInfo.TestGenBlocker.Set();
             _cancellation.Cancel();
             _globalInfo.EventQueue.FreeBlocks();
             Thread.Sleep(_globalInfo.ConfigData.GetProperty<int>("StopTimeout"));
             ModuleUtils.StopThreadWork(_internalMessageThd);
+            Thread.VolatileWrite(ref _stopFlag, 1);
         }
 
         public void Dispose()
         {
-            this.Stop();
+            // ignore
         }
 
         /// <summary>

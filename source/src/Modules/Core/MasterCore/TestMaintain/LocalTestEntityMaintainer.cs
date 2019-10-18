@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using Newtonsoft.Json;
 using Testflow.Usr;
 using Testflow.CoreCommon;
@@ -132,8 +133,13 @@ namespace Testflow.MasterCore.TestMaintain
         
         public Dictionary<int, RuntimeContainer> TestContainers => _runtimeContainers;
 
+        private int _stopFlag = 0;
         public void FreeHosts()
         {
+            if (_stopFlag == 1)
+            {
+                return;
+            }
             lock (_operationLock)
             {
                 foreach (RuntimeContainer runtimeContainer in _runtimeContainers.Values)
@@ -141,6 +147,7 @@ namespace Testflow.MasterCore.TestMaintain
                     runtimeContainer.Dispose();
                 }
                 _runtimeContainers.Clear();
+                Thread.VolatileWrite(ref _stopFlag, 1);
             }
         }
 

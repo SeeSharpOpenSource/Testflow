@@ -96,8 +96,13 @@ namespace Testflow.SlaveCore.Common
             }
         }
 
+        private int _stopFlag = 0;
         public void StopReceive()
         {
+            if (_stopFlag == 1)
+            {
+                return;
+            }
             _cancellation.Cancel();
             Thread.MemoryBarrier();
             _messageQueue.FreeBlocks();
@@ -110,6 +115,7 @@ namespace Testflow.SlaveCore.Common
             {
                 _peakThread.Abort();
             }
+            Thread.VolatileWrite(ref _stopFlag, 1);
             // 打印状态日志
             _slaveContext.LogSession.Print(LogLevel.Info, _slaveContext.SessionId,
                             "Message receive stopped.");

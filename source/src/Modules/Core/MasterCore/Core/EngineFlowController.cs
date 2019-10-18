@@ -303,17 +303,22 @@ namespace Testflow.MasterCore.Core
             }
         }
 
+        private int _stopFlag = 0;
         public void Stop()
         {
+            if (_stopFlag == 1)
+            {
+                return;
+            }
             _abortBlocker?.Free(Constants.AbortState);
             _blockHandle?.Free(Constants.WaitOverState);
             _blockHandle?.Free(Constants.RmtGenState);
             _testsMaintainer.FreeHosts();
+            Thread.VolatileWrite(ref _stopFlag, 1);
         }
 
         public void Dispose()
         {
-            Stop();
             _abortBlocker?.Dispose();
             _blockHandle.Dispose();
         }

@@ -175,13 +175,19 @@ namespace Testflow.MasterCore.Message
             _operationLock.Exit();
         }
 
+        private int _stopFlag = 0;
         public virtual void Dispose()
         {
+            if (_stopFlag == 1)
+            {
+                return;
+            }
             Stop();
             UpLinkMessenger.Clear();
             DownLinkMessenger.Clear();
             UpLinkMessenger.Dispose();
             DownLinkMessenger.Dispose();
+            Thread.VolatileWrite(ref _stopFlag, 1);
         }
 
         // 为了提高效率，暂时写死，后续优化
