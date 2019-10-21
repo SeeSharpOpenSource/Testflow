@@ -301,6 +301,11 @@ namespace Testflow.MasterCore.Core
                 throw new TestflowRuntimeException(ModuleErrorCode.OperationTimeout, 
                     _globalInfo.I18N.GetStr("TestRunTimeout"));
             }
+            // 阻塞线程，直到状态机已经停止，并且处理完所有的状态变更事件则
+            while (!ModuleUtils.IsOver(_globalInfo.StateMachine.State) || _globalInfo.StateMachine.EventRunning)
+            {
+                Thread.Yield();
+            }
         }
 
         private int _stopFlag = 0;

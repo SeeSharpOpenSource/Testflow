@@ -222,10 +222,6 @@ namespace Testflow.MasterCore
                 _globalInfo.StateMachine.State = RuntimeState.Collapsed;
                 _globalInfo.ExceptionManager.Append(ex);
             }
-            finally
-            {
-                Dispose();
-            }
         }
 
         public void FreeTests()

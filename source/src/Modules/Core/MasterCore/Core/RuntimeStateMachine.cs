@@ -36,14 +36,38 @@ namespace Testflow.MasterCore.Core
                     return;
                 }
                 Thread.VolatileWrite(ref _runtimeState, (int)value);
-                if (_stateActions.ContainsKey(value))
+                this.EventRunning = true;
+                Thread.MemoryBarrier();
+                try
                 {
-                    _stateActions[value].Invoke();
-                }
-                else
-                {
+                    if (_stateActions.ContainsKey(value))
+                    {
+                        _stateActions[value].Invoke();
+                    }
+                    else
+                    {
 //                    throw new TestflowInternalException(CommonErrorCode.InternalError, $"Unsupported state {value}");
+                    }
+                    Thread.MemoryBarrier();
                 }
+                finally
+                {
+                    this.EventRunning = false;
+                }
+            }
+        }
+
+
+        private int _eventRunFlag = 0;
+        /// <summary>
+        /// 事件是否正在运行的标识。true时状态切换后的事件还未执行结束；false时状态切换后的事件已执行结束
+        /// </summary>
+        public bool EventRunning
+        {
+            get { return _eventRunFlag == 1; }
+            private set
+            {
+                Thread.VolatileWrite(ref _eventRunFlag, value ? 1 : 0);
             }
         }
 

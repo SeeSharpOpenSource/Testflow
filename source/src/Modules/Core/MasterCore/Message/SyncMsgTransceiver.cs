@@ -86,8 +86,9 @@ namespace Testflow.MasterCore.Message
             ModuleUtils.StopThreadWork(_engineMessageListener);
             ModuleUtils.StopThreadWork(_statusMessageListener);
             ModuleUtils.StopThreadWork(_callBackMessageListener);
+            ModuleUtils.StopThreadWork(_receiveThread);
             ZombieCleaner.Stop();
-
+            UpLinkMessenger.Clear();
             GlobalInfo.LogService.Print(LogLevel.Info, CommonConst.PlatformLogSession,
                 "Message transceiver stopped.");
         }
