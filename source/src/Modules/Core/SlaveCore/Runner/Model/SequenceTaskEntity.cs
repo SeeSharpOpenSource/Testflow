@@ -140,7 +140,7 @@ namespace Testflow.SlaveCore.Runner.Model
                 finalReportType = StatusReportType.Failed;
                 lastStepResult = StepResult.Failed;
                 failedInfo = new FailedInfo(ex, FailedType.AssertionFailed);
-                _context.LogSession.Print(LogLevel.Fatal, Index, "Assert exception catched.");
+                _context.LogSession.Print(LogLevel.Error, Index, "Assert exception catched.");
             }
             else if (ex is ThreadAbortException)
             {
