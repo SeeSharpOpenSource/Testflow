@@ -38,6 +38,16 @@ namespace Testflow.Runtime.Data
         public double ElapsedTime { get; set; }
 
         /// <summary>
+        /// 执行时间
+        /// </summary>
+        public DateTime ExecutionTime { get; set; }
+
+        /// <summary>
+        /// 当前Step执行的Tick时间(1e-7秒)
+        /// </summary>
+        public int ExecutionTicks { get; set; }
+
+        /// <summary>
         /// Step执行结果
         /// </summary>
         public StepResult Result { get; set; }

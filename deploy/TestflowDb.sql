@@ -55,6 +55,8 @@ CREATE TABLE Testflow_RuntimeStatusDatas(
 	StatusIndex INTEGER NOT NULL,
 	RecordTime TEXT NOT NULL,
 	ElapsedTime REAL NOT NULL,
+	ExecutionTime TEXT NOT NULL,
+	ExecutionTicks INTEGER NOT NULL,
 	StepResult TEXT NOT NULL,
 	Stack TEXT NOT NULL,
 	FailedInfo TEXT,
