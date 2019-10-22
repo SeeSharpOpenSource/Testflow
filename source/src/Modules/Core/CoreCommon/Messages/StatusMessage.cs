@@ -50,6 +50,9 @@ namespace Testflow.CoreCommon.Messages
             this.SequenceStates = new List<RuntimeState>(CoreConstants.DefaultRuntimeSize);
             this.Results = new List<StepResult>(CoreConstants.DefaultRuntimeSize);
             this.FailedInfo = new Dictionary<int, string>(CoreConstants.DefaultRuntimeSize);
+            this.ExecutionTicks = new List<long>(CoreConstants.DefaultRuntimeSize);
+            this.ExecutionTimes = new List<string>(CoreConstants.DefaultRuntimeSize);
+            this.Coroutines = new List<int>(CoreConstants.DefaultRuntimeSize);
         }
 
         public StatusMessage(SerializationInfo info, StreamingContext context) : base(info, context)

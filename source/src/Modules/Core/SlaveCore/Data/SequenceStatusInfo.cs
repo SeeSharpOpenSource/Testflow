@@ -13,6 +13,9 @@ namespace Testflow.SlaveCore.Data
         public StepResult Result { get; }
         public StatusReportType ReportType { get; }
         public FailedInfo FailedInfo { get; }
+        public DateTime ExecutionTime { get; set; }
+        public long ExecutionTicks { get; set; }
+        public int CoroutineId { get; set; }
         public DateTime Time { get; }
         public Dictionary<string, string> WatchDatas { get; set; }
 

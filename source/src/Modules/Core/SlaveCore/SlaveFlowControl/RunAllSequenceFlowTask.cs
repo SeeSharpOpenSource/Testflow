@@ -64,13 +64,19 @@ namespace Testflow.SlaveCore.SlaveFlowControl
         {
             for (int i = 0; i < sessionTaskEntity.SequenceCount; i++)
             {
-                sessionTaskEntity.GetSequenceTaskEntity(i).State = RuntimeState.Failed;
+                SequenceTaskEntity sequenceTaskEntity = sessionTaskEntity.GetSequenceTaskEntity(i);
+                sequenceTaskEntity.State = RuntimeState.Failed;
 
                 FailedInfo failedInfo = new FailedInfo(Context.I18N.GetStr("SetUpFailed"),
                     FailedType.SetUpFailed);
                 SequenceStatusInfo statusInfo = new SequenceStatusInfo(i, ModuleUtils.GetSequenceStack(i),
                     StatusReportType.Failed, StepResult.NotAvailable,
-                    failedInfo);
+                    failedInfo)
+                {
+                    ExecutionTime = DateTime.Now,
+                    ExecutionTicks = -1,
+                    CoroutineId = sequenceTaskEntity.RootCoroutineId
+                };
                 Context.StatusQueue.Enqueue(statusInfo);
             }
         }

@@ -110,6 +110,7 @@ namespace Testflow.SlaveCore.Runner.Model
         public StepResult Result { get; protected set; }
         public int SequenceIndex { get; }
         public object Return => Actuator?.Return ?? null;
+        public int CoroutineId { get; private set; }
 
         public bool BreakIfFailed => StepData?.BreakIfFailed ?? false;
 
@@ -120,6 +121,7 @@ namespace Testflow.SlaveCore.Runner.Model
             this.Result = StepResult.NotAvailable;
             this.SequenceIndex = sequenceIndex;
             this.Actuator = ActuatorBase.GetActuator(step, context, sequenceIndex);
+            this.CoroutineId = -1;
             if (null != StepData && StepData.HasSubSteps)
             {
                 this.SubStepRoot = ModuleUtils.CreateSubStepModelChain(StepData.SubSteps, Context, sequenceIndex);
@@ -133,6 +135,7 @@ namespace Testflow.SlaveCore.Runner.Model
 
         public virtual void Generate(ref int coroutineId)
         {
+            this.CoroutineId = coroutineId;
             Actuator.Generate(coroutineId);
             // 只有在StepData的LoopCounter不为null，loop最大值大于1，并且Step类型不是ConditionLoop的情况下才会执行LoopCounter
             _hasLoopCounter = (StepData?.LoopCounter != null && StepData.LoopCounter.MaxValue > 1 && 
@@ -212,7 +215,12 @@ namespace Testflow.SlaveCore.Runner.Model
         {
             this.Result = result;
             // 如果发生错误，无论该步骤是否被配置为recordStatus，都需要发送状态信息
-            SequenceStatusInfo statusInfo = new SequenceStatusInfo(SequenceIndex, this.GetStack(), StatusReportType.Record, Result, failedInfo);
+            SequenceStatusInfo statusInfo = new SequenceStatusInfo(SequenceIndex, this.GetStack(), StatusReportType.Record, Result, failedInfo)
+            {
+                ExecutionTime = Actuator.ExecutionTime,
+                CoroutineId = this.CoroutineId,
+                ExecutionTicks = Actuator.ExecutionTicks
+            };
             // 更新watch变量值
             statusInfo.WatchDatas = Context.VariableMapper.GetWatchDataValues(StepData);
             Context.StatusQueue.Enqueue(statusInfo);
@@ -457,7 +465,12 @@ namespace Testflow.SlaveCore.Runner.Model
 
         protected void RecordRuntimeStatus()
         {
-            SequenceStatusInfo statusInfo = new SequenceStatusInfo(SequenceIndex, this.GetStack(), StatusReportType.Record, Result);
+            SequenceStatusInfo statusInfo = new SequenceStatusInfo(SequenceIndex, this.GetStack(), StatusReportType.Record, Result)
+            {
+                ExecutionTime = Actuator.ExecutionTime,
+                ExecutionTicks = Actuator.ExecutionTicks,
+                CoroutineId = this.CoroutineId
+            };
             // 更新watch变量值
             statusInfo.WatchDatas = Context.VariableMapper.GetWatchDataValues(StepData);
             Context.StatusQueue.Enqueue(statusInfo);
@@ -466,9 +479,15 @@ namespace Testflow.SlaveCore.Runner.Model
         private void RecordInvocationError(Exception ex, FailedType failedType)
         {
             FailedInfo failedInfo = new FailedInfo(ex, failedType);
-            SequenceStatusInfo statusInfo = new SequenceStatusInfo(SequenceIndex, this.GetStack(), StatusReportType.Record, Result, failedInfo);
+            SequenceStatusInfo statusInfo = new SequenceStatusInfo(SequenceIndex, this.GetStack(),
+                StatusReportType.Record, Result, failedInfo)
+            {
+                ExecutionTime = Actuator.ExecutionTime,
+                ExecutionTicks = Actuator.ExecutionTicks,
+                CoroutineId = this.CoroutineId,
+                WatchDatas = Context.VariableMapper.GetWatchDataValues(StepData)
+            };
             // 一旦失败，需要记录WatchData
-            statusInfo.WatchDatas = Context.VariableMapper.GetWatchDataValues(StepData);
             Context.StatusQueue.Enqueue(statusInfo);
             Context.LogSession.Print(LogLevel.Error, Context.SessionId, ex.Message);
         }

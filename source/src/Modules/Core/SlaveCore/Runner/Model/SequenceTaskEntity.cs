@@ -19,12 +19,14 @@ namespace Testflow.SlaveCore.Runner.Model
         private readonly SlaveContext _context;
 
         private StepTaskEntityBase _stepEntityRoot;
+        public int RootCoroutineId { get; private set; }
 
         public SequenceTaskEntity(ISequence sequence, SlaveContext context)
         {
             this._sequence = sequence;
             this._context = context;
             this.State = RuntimeState.Idle;
+            this.RootCoroutineId = -1;
         }
 
         public int Index => _sequence.Index;
@@ -50,6 +52,7 @@ namespace Testflow.SlaveCore.Runner.Model
 
         public void Generate(int startCoroutineId)
         {
+            this.RootCoroutineId = startCoroutineId;
             this.State = RuntimeState.TestGen;
             _stepEntityRoot = ModuleUtils.CreateStepModelChain(_sequence.Steps, _context, _sequence.Index);
             if (null == _stepEntityRoot)
@@ -81,7 +84,12 @@ namespace Testflow.SlaveCore.Runner.Model
             {
                 this.State = RuntimeState.Running;
                 SequenceStatusInfo startStatusInfo = new SequenceStatusInfo(Index, _stepEntityRoot.GetStack(),
-                    StatusReportType.Start, StepResult.NotAvailable);
+                    StatusReportType.Start, StepResult.NotAvailable)
+                {
+                    ExecutionTime = DateTime.Now,
+                    ExecutionTicks = -1,
+                    CoroutineId = RootCoroutineId
+                };
                 _context.StatusQueue.Enqueue(startStatusInfo);
 
                 StepTaskEntityBase stepEntity = _stepEntityRoot;
@@ -115,7 +123,12 @@ namespace Testflow.SlaveCore.Runner.Model
                 }
                 // 发送结束事件，包括所有的ReturnData信息
                 SequenceStatusInfo overStatusInfo = new SequenceStatusInfo(Index, currentStep.GetStack(),
-                    finalReportType, StepResult.Over, failedInfo);
+                    finalReportType, StepResult.Over, failedInfo)
+                {
+                    ExecutionTime = DateTime.Now,
+                    CoroutineId = RootCoroutineId,
+                    ExecutionTicks = 0
+                };
                 overStatusInfo.WatchDatas = _context.VariableMapper.GetReturnDataValues(_sequence);
                 this._context.StatusQueue.Enqueue(overStatusInfo);
 
