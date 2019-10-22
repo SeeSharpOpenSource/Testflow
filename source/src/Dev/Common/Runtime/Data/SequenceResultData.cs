@@ -48,6 +48,11 @@ namespace Testflow.Runtime.Data
         public DateTime EndTime { get; set; }
 
         /// <summary>
+        /// 根协程的逻辑ID
+        /// </summary>
+        public int CoroutineId { get; set; }
+
+        /// <summary>
         /// 执行时间
         /// </summary>
         public double ElapsedTime { get; set; }
