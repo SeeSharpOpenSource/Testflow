@@ -109,5 +109,9 @@
         /// 全局通用的时间戳格式化字符串
         /// </summary>
         public const string GlobalTimeFormat = "yyyy-MM-ddThh:mm:ss.fffffffK";
+
+
+        // 单个序列能支持的协程上限数量
+        public const int SequenceCoroutineCapacity = 1000;
     }
 }

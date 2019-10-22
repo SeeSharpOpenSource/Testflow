@@ -45,7 +45,12 @@ namespace Testflow.Runtime.Data
         /// <summary>
         /// 当前Step执行的Tick时间(1e-7秒)
         /// </summary>
-        public int ExecutionTicks { get; set; }
+        public long ExecutionTicks { get; set; }
+
+        /// <summary>
+        /// 当前执行的协程逻辑ID
+        /// </summary>
+        public int CoroutineId { get; set; }
 
         /// <summary>
         /// Step执行结果
