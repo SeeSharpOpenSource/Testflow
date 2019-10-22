@@ -22,10 +22,10 @@
     </appender>
 	
     <root>
-	    <level value="DEBUG" />
+	    <level value="INFO" />
         <appender-ref ref="RootAppender" />
 	</root>	
 	<logger name="PlatformLogger">
-        <level value="DEBUG" />
+        <level value="INFO" />
     </logger>
 </log4net>

@@ -20,10 +20,10 @@
         </layout>
     </appender>
 	<root>
-	    <level value="DEBUG" />
+	    <level value="INFO" />
         <appender-ref ref="SlaveAppender" />
 	</root>
 	<logger name="SlaveLogger">
-        <level value="DEBUG" />
+        <level value="INFO" />
     </logger>
 </log4net>
