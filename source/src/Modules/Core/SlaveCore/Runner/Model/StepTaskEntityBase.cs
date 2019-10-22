@@ -5,7 +5,6 @@ using Testflow.CoreCommon;
 using Testflow.CoreCommon.Common;
 using Testflow.CoreCommon.Data;
 using Testflow.CoreCommon.Messages;
-using Testflow.Data;
 using Testflow.Data.Sequence;
 using Testflow.Runtime;
 using Testflow.Runtime.Data;
@@ -86,16 +85,23 @@ namespace Testflow.SlaveCore.Runner.Model
             return new EmptyStepEntity(context, sequenceIndex, null);
         }
 
-        private static readonly Dictionary<int, StepTaskEntityBase> CurrentModel = new Dictionary<int, StepTaskEntityBase>(Constants.DefaultRuntimeSize);
+        private static readonly Dictionary<int, Dictionary<int, StepTaskEntityBase>> CurrentModel = 
+            new Dictionary<int, Dictionary<int, StepTaskEntityBase>>(Constants.DefaultRuntimeSize);
 
-        public static StepTaskEntityBase GetCurrentStep(int sequenceIndex)
+        public static StepTaskEntityBase GetCurrentStep(int sequenceIndex, int coroutineId)
         {
-            return CurrentModel.ContainsKey(sequenceIndex) ? CurrentModel[sequenceIndex] : null;
+//            return CurrentModel.ContainsKey(sequenceIndex) ? CurrentModel[sequenceIndex] : null;
+            return CurrentModel[sequenceIndex][coroutineId];
         }
 
         public static void AddSequenceEntrance(StepTaskEntityBase stepModel)
         {
-            CurrentModel.Add(stepModel.SequenceIndex, stepModel);
+            if (!CurrentModel.ContainsKey(stepModel.SequenceIndex))
+            {
+                CurrentModel.Add(stepModel.SequenceIndex, 
+                    new Dictionary<int, StepTaskEntityBase>(Constants.DefaultRuntimeSize));
+            }
+            CurrentModel[stepModel.SequenceIndex].Add(stepModel.CoroutineId, stepModel);
         }
 
         public StepTaskEntityBase NextStep { get; set; }
@@ -232,7 +238,7 @@ namespace Testflow.SlaveCore.Runner.Model
         /// <param name="forceInvoke">是否忽略取消标识强制调用，在teardown中配置为true</param>
         public void Invoke(bool forceInvoke)
         {
-            CurrentModel[SequenceIndex] = this;
+            CurrentModel[SequenceIndex][CoroutineId] = this;
             if (_hasLoopCounter)
             {
                 string variableFullName = null;

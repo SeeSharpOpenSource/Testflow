@@ -44,7 +44,8 @@ namespace Testflow.SlaveCore.SlaveFlowControl
                     sequenceTaskEntity.State = RuntimeState.Failed;
 
                     FailedInfo failedInfo = new FailedInfo(Context.I18N.GetStr("SetUpFailed"), FailedType.SetUpFailed);
-                    SequenceStatusInfo statusInfo = new SequenceStatusInfo(i, ModuleUtils.GetSequenceStack(i), 
+                    CallStack sequenceStack = ModuleUtils.GetSequenceStack(i, sequenceTaskEntity.RootCoroutineId);
+                    SequenceStatusInfo statusInfo = new SequenceStatusInfo(i, sequenceStack, 
                         StatusReportType.Failed, StepResult.NotAvailable, failedInfo)
                     {
                         ExecutionTime = DateTime.Now,

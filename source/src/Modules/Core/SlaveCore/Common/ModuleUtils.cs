@@ -189,9 +189,9 @@ namespace Testflow.SlaveCore.Common
             return string.Join(Constants.PropertyDelim, elems);
         }
 
-        public static CallStack GetSequenceStack(int index)
+        public static CallStack GetSequenceStack(int index, int coroutineId)
         {
-            return StepTaskEntityBase.GetCurrentStep(index).GetStack();
+            return StepTaskEntityBase.GetCurrentStep(index, coroutineId).GetStack();
         }
 
         public static string GetVariableFullName(string variableName, ISequenceStep step, int session)
