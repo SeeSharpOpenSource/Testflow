@@ -136,7 +136,11 @@ namespace Testflow.SlaveCore.Runner.Actuators
             switch (FunctionType)
             {
                 case FunctionType.Constructor:
+                    // 开始计时
+                    StartTiming();
                     instance = Constructor.Invoke(Params);
+                    // 停止计时
+                    EndTiming();
                     if (CoreUtils.IsValidVaraible(InstanceVar))
                     {
                         Context.VariableMapper.SetParamValue(InstanceVar, Function.Instance, instance);
@@ -146,7 +150,11 @@ namespace Testflow.SlaveCore.Runner.Actuators
                 case FunctionType.InstanceFunction:
                     instance = Context.VariableMapper.GetParamValue(InstanceVar, Function.Instance,
                         Function.ClassType);
+                    // 开始计时
+                    StartTiming();
                     returnValue = Method.Invoke(instance, Params);
+                    // 停止计时
+                    EndTiming();
                     if (CoreUtils.IsValidVaraible(ReturnVar))
                     {
                         Context.VariableMapper.SetParamValue(ReturnVar, Function.Return, returnValue);
@@ -154,7 +162,11 @@ namespace Testflow.SlaveCore.Runner.Actuators
                     }
                     break;
                 case FunctionType.StaticFunction:
+                    // 开始计时
+                    StartTiming();
                     returnValue = Method.Invoke(null, Params);
+                    // 停止计时
+                    EndTiming();
                     if (CoreUtils.IsValidVaraible(ReturnVar))
                     {
                         Context.VariableMapper.SetParamValue(ReturnVar, Function.Return, returnValue);

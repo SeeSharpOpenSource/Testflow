@@ -12,12 +12,18 @@ namespace Testflow.SlaveCore.Runner.Model
 
         protected override void InvokeStepSingleTime(bool forceInvoke)
         {
+            // 重置计时
+            Actuator.ResetTiming();
             // 如果是取消状态并且不是强制执行则返回
             if (!forceInvoke && Context.Cancellation.IsCancellationRequested)
             {
                 this.Result = StepResult.Abort;
                 return;
             }
+            // 开始计时
+            Actuator.StartTiming();
+            // 停止计时
+            Actuator.EndTiming();
             // 应为TryFinally块上级为空，默认为pass
             this.Result = StepResult.Pass;
             

@@ -48,10 +48,9 @@ namespace Testflow.SlaveCore.Runner.Model
             }
         }
 
-        public void Generate()
+        public void Generate(int startCoroutineId)
         {
             this.State = RuntimeState.TestGen;
-
             _stepEntityRoot = ModuleUtils.CreateStepModelChain(_sequence.Steps, _context, _sequence.Index);
             if (null == _stepEntityRoot)
             {
@@ -61,7 +60,7 @@ namespace Testflow.SlaveCore.Runner.Model
             StepTaskEntityBase stepEntity = _stepEntityRoot;
             do
             {
-                stepEntity.Generate();
+                stepEntity.Generate(ref startCoroutineId);
             } while (null != (stepEntity = stepEntity.NextStep));
 
             this.State = RuntimeState.StartIdle;
@@ -96,10 +95,14 @@ namespace Testflow.SlaveCore.Runner.Model
             }
             catch (TargetInvocationException ex)
             {
+                // 停止失败的step的计时
+                StepTaskEntityBase.GetCurrentStep(Index)?.EndTiming();
                 FillFinalExceptionReportInfo(ex.InnerException, out finalReportType, out lastStepResult, out failedInfo);
             }
             catch (Exception ex)
             {
+                // 停止失败的step的计时
+                StepTaskEntityBase.GetCurrentStep(Index)?.EndTiming();
                 FillFinalExceptionReportInfo(ex, out finalReportType, out lastStepResult, out failedInfo);
             }
             finally

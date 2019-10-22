@@ -22,6 +22,10 @@ namespace Testflow.SlaveCore.Runner.Actuators
 
         public override StepResult InvokeStep(bool forceInvoke)
         {
+            // 开始计时
+            StartTiming();
+            // 停止计时
+            EndTiming();
             return StepResult.Pass;
         }
     }

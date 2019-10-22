@@ -14,9 +14,9 @@ namespace Testflow.SlaveCore.Runner.Model
 
         private string _loopVariable;
 
-        public override void Generate()
+        public override void Generate(ref int coroutineId)
         {
-            base.Generate();
+            base.Generate(ref coroutineId);
             if (null != StepData.LoopCounter && CoreUtils.IsValidVaraible(StepData.LoopCounter.CounterVariable))
             {
                 _loopVariable = ModuleUtils.GetVariableFullName(StepData.LoopCounter.CounterVariable, StepData, 
@@ -29,6 +29,8 @@ namespace Testflow.SlaveCore.Runner.Model
             int index = 0;
             while (true)
             {
+                // 重置计时时间
+                Actuator.ResetTiming();
                 // 如果是取消状态并且不是强制执行则返回
                 if (!forceInvoke && Context.Cancellation.IsCancellationRequested)
                 {

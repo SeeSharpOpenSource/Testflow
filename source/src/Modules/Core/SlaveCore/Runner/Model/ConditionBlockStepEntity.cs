@@ -36,12 +36,18 @@ namespace Testflow.SlaveCore.Runner.Model
 
         protected override void InvokeStepSingleTime(bool forceInvoke)
         {
+            // 重置计时时间
+            Actuator.ResetTiming();
             // 如果是取消状态并且不是强制执行则返回
             if (!forceInvoke && Context.Cancellation.IsCancellationRequested)
             {
                 this.Result = StepResult.Abort;
                 return;
             }
+            // 开始计时
+            Actuator.StartTiming();
+            // 停止计时
+            Actuator.EndTiming();
             this.Result = StepResult.Pass;
             // 如果当前step被标记为记录状态，则返回状态信息
             if (null != StepData && StepData.RecordStatus)

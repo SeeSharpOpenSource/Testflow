@@ -6,6 +6,7 @@ using Testflow.CoreCommon.Messages;
 using Testflow.Data.Sequence;
 using Testflow.Runtime;
 using Testflow.SlaveCore.Common;
+using Testflow.Data;
 
 namespace Testflow.SlaveCore.Runner.Model
 {
@@ -49,13 +50,28 @@ namespace Testflow.SlaveCore.Runner.Model
             }
         }
 
-        public void Generate()
+        public void Generate(ExecutionModel executionModel)
         {
-            _setUp.Generate();
-            _tearDown.Generate();
-            foreach (SequenceTaskEntity sequenceModel in _sequenceEntities)
+            _setUp.Generate(0);
+            _tearDown.Generate(0);
+            switch (executionModel)
             {
-                sequenceModel.Generate();
+                case ExecutionModel.SequentialExecution:
+                    foreach (SequenceTaskEntity sequenceModel in _sequenceEntities)
+                    {
+                        sequenceModel.Generate(0);
+                    }
+                    break;
+                case ExecutionModel.ParallelExecution:
+                    int coroutineId = CommonConst.SequenceCoroutineCapacity;
+                    foreach (SequenceTaskEntity sequenceModel in _sequenceEntities)
+                    {
+                        sequenceModel.Generate(coroutineId);
+                        coroutineId += CommonConst.SequenceCoroutineCapacity;
+                    }
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(executionModel), executionModel, null);
             }
         }
 

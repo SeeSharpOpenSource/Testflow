@@ -49,6 +49,7 @@ namespace Testflow.SlaveCore.Common
             this.BreakPoints = new HashSet<string>();
             this.RuntimeType = GetProperty<RuntimeType>("RuntimeType");
             this.Cancellation = new CancellationTokenSource();
+            this.TimingManager = new StopWatchManager(this);
             LogSession.Print(LogLevel.Debug, SessionId, "Slave context constructed.");
         }
 
@@ -81,6 +82,8 @@ namespace Testflow.SlaveCore.Common
         public CallBackEventManager CallBackEventManager { get; set; }
 
         public ValueTypeConvertor Convertor { get; }
+
+        public StopWatchManager TimingManager { get; }
 
         /// <summary>
         /// 执行取消标志
@@ -147,6 +150,7 @@ namespace Testflow.SlaveCore.Common
         public void Dispose()
         {
             MessageTransceiver?.Dispose();
+            TimingManager.Dispose();
         }
     }
 }

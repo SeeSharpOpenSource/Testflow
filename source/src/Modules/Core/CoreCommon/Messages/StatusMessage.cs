@@ -31,6 +31,13 @@ namespace Testflow.CoreCommon.Messages
         /// </summary>
         public List<int> InterestedSequence { get; set; }
 
+        // 如果使用DateTime直接序列化会损失tick的精度，所以使用string传递，使用的时候再转换
+        public List<string> ExecutionTimes { get; set; }
+
+        public List<long> ExecutionTicks { get; set; }
+
+        public List<int> Coroutines { get; set; }
+
         public Dictionary<string, string> WatchData { get; set; }
 
         public FailedInfo ExceptionInfo { get; set; }
@@ -77,6 +84,19 @@ namespace Testflow.CoreCommon.Messages
             {
                 this.Results = new List<StepResult>(1);
             }
+            if (null == ExecutionTicks)
+            {
+                this.ExecutionTicks = new List<long>(1);
+            }
+            if (null == ExecutionTimes)
+            {
+                this.ExecutionTimes = new List<string>(1);
+            }
+
+            if (null == Coroutines)
+            {
+                this.Coroutines = new List<int>(1);
+            }
         }
 
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
@@ -105,6 +125,18 @@ namespace Testflow.CoreCommon.Messages
             if (null != InterestedSequence && InterestedSequence.Count > 0)
             {
                 info.AddValue("InterestedSequence", InterestedSequence, typeof(List<int>));
+            }
+            if (null != ExecutionTimes)
+            {
+                info.AddValue("ExecutionTimes", ExecutionTimes, typeof(List<string>));
+            }
+            if (null != ExecutionTicks)
+            {
+                info.AddValue("ExecutionTicks", ExecutionTicks, typeof(List<long>));
+            }
+            if (null != Coroutines)
+            {
+                info.AddValue("Coroutines", Coroutines, typeof(List<int>));
             }
         }
     }

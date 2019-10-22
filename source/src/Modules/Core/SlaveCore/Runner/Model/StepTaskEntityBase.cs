@@ -131,9 +131,9 @@ namespace Testflow.SlaveCore.Runner.Model
             return CallStack.GetStack(Context.SessionId, StepData);
         }
 
-        public virtual void Generate()
+        public virtual void Generate(ref int coroutineId)
         {
-            Actuator.Generate();
+            Actuator.Generate(coroutineId);
             // 只有在StepData的LoopCounter不为null，loop最大值大于1，并且Step类型不是ConditionLoop的情况下才会执行LoopCounter
             _hasLoopCounter = (StepData?.LoopCounter != null && StepData.LoopCounter.MaxValue > 1 && 
                 StepData.StepType != SequenceStepType.ConditionLoop);
@@ -142,7 +142,7 @@ namespace Testflow.SlaveCore.Runner.Model
                 StepTaskEntityBase subStepEntity = SubStepRoot;
                 do
                 {
-                    subStepEntity.Generate();
+                    subStepEntity.Generate(ref coroutineId);
                 } while (null != (subStepEntity = subStepEntity.NextStep));
             }
             InintializeInvokeAction();
@@ -251,6 +251,11 @@ namespace Testflow.SlaveCore.Runner.Model
             }
         }
 
+        public void EndTiming()
+        {
+            Actuator.EndTiming();
+        }
+
         // 单次执行序列
         protected abstract void InvokeStepSingleTime(bool forceInvoke);
 
@@ -265,16 +270,22 @@ namespace Testflow.SlaveCore.Runner.Model
             }
             catch (TaskFailedException ex)
             {
+                // 停止计时
+                Actuator.EndTiming();
                 this.Result = StepResult.Failed;
                 RecordInvocationError(ex, ex.FailedType);
             }
             catch (TestflowAssertException ex)
             {
+                // 停止计时
+                Actuator.EndTiming();
                 this.Result = StepResult.Failed;
                 RecordInvocationError(ex, FailedType.AssertionFailed);
             }
             catch (TargetInvocationException ex)
             {
+                // 停止计时
+                Actuator.EndTiming();
                 this.Result = StepResult.Error;
                 RecordInvocationError(ex.InnerException, FailedType.TargetError);
             }
@@ -307,18 +318,24 @@ namespace Testflow.SlaveCore.Runner.Model
                 }
                 catch (TaskFailedException ex)
                 {
+                    // 停止计时
+                    Actuator.EndTiming();
                     this.Result = StepResult.Failed;
                     exception = ex;
                     RecordInvocationError(ex, ex.FailedType);
                 }
                 catch (TestflowAssertException ex)
                 {
+                    // 停止计时
+                    Actuator.EndTiming();
                     this.Result = StepResult.Failed;
                     exception = ex;
                     RecordInvocationError(ex, FailedType.AssertionFailed);
                 }
                 catch (TargetInvocationException ex)
                 {
+                    // 停止计时
+                    Actuator.EndTiming();
                     exception = ex;
                     RecordTargetInvocationError(ex);
                 }
@@ -338,16 +355,22 @@ namespace Testflow.SlaveCore.Runner.Model
             }
             catch (TaskFailedException ex)
             {
+                // 停止计时
+                Actuator.EndTiming();
                 this.Result = StepResult.Failed;
                 RecordInvocationError(ex, ex.FailedType);
             }
             catch (TestflowAssertException ex)
             {
+                // 停止计时
+                Actuator.EndTiming();
                 this.Result = StepResult.Failed;
                 RecordInvocationError(ex, FailedType.AssertionFailed);
             }
             catch (TargetInvocationException ex)
             {
+                // 停止计时
+                Actuator.EndTiming();
                 RecordTargetInvocationError(ex);
             }
         }
@@ -355,6 +378,10 @@ namespace Testflow.SlaveCore.Runner.Model
         // 跳过step
         private void InvokeStepWithSkip(bool forceInvoke)
         {
+            // 开始计时
+            Actuator.StartTiming();
+            // 停止计时
+            Actuator.EndTiming();
             this.Result = StepResult.Skip;
             Context.LogSession.Print(LogLevel.Info, Context.SessionId, $"Sequence step <{this.GetStack()}> skipped.");
             // 如果当前step被标记为记录状态，则返回状态信息
@@ -373,18 +400,24 @@ namespace Testflow.SlaveCore.Runner.Model
             }
             catch (TaskFailedException ex)
             {
+                // 停止计时
+                Actuator.EndTiming();
                 this.Result = StepResult.Pass;
                 Context.LogSession.Print(LogLevel.Warn, Context.SessionId, $"Sequence step <{this.GetStack()}> failed but force pass.");
                 RecordInvocationError(ex, ex.FailedType);
             }
             catch (TestflowAssertException ex)
             {
+                // 停止计时
+                Actuator.EndTiming();
                 this.Result = StepResult.Pass;
                 Context.LogSession.Print(LogLevel.Warn, Context.SessionId, $"Sequence step <{this.GetStack()}> failed but force pass.");
                 RecordInvocationError(ex, FailedType.AssertionFailed);
             }
             catch (TargetInvocationException ex)
             {
+                // 停止计时
+                Actuator.EndTiming();
                 this.Result = StepResult.Pass;
                 Context.LogSession.Print(LogLevel.Warn, Context.SessionId, $"Sequence step <{this.GetStack()}> failed but force pass.");
                 RecordInvocationError(ex.InnerException, FailedType.TargetError);
@@ -439,7 +472,6 @@ namespace Testflow.SlaveCore.Runner.Model
             Context.StatusQueue.Enqueue(statusInfo);
             Context.LogSession.Print(LogLevel.Error, Context.SessionId, ex.Message);
         }
-
 //        protected abstract void InvokeStep(bool forceInvoke);
     }
 }

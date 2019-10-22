@@ -12,6 +12,8 @@ namespace Testflow.SlaveCore.Runner.Model
 
         protected override void InvokeStepSingleTime(bool forceInvoke)
         {
+            // 重置计时时间
+            Actuator.ResetTiming();
             // 如果是取消状态并且不是强制执行则返回
             if (!forceInvoke && Context.Cancellation.IsCancellationRequested)
             {

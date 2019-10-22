@@ -122,6 +122,8 @@ namespace Testflow.SlaveCore.Runner.Actuators
         public override StepResult InvokeStep(bool forceInvoke)
         {
             StepResult result1 = StepResult.NotAvailable;
+            // 开始计时
+            StartTiming();
             SendCallBackMessage();
             #region 同步：等待master发回消息
             if (callBackType == CallBackType.Synchronous)
@@ -157,6 +159,8 @@ namespace Testflow.SlaveCore.Runner.Actuators
             {
                 result1 = StepResult.Pass;
             }
+            // 停止计时
+            EndTiming();
             #endregion
             StepResult result = result1;
             return result;

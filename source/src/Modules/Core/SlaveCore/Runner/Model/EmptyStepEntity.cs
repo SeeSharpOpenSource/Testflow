@@ -27,7 +27,15 @@ namespace Testflow.SlaveCore.Runner.Model
 
         protected override void InvokeStepSingleTime(bool forceInvoke)
         {
-            this.Result = StepResult.Pass;
+            // 重置计时时间
+            Actuator.ResetTiming();
+            // 如果是取消状态并且不是强制执行则返回
+            if (!forceInvoke && Context.Cancellation.IsCancellationRequested)
+            {
+                this.Result = StepResult.Abort;
+                return;
+            }
+            Actuator.InvokeStep(forceInvoke);
             Context.LogSession.Print(LogLevel.Debug, Context.SessionId,
                 $"The empty step {GetStack()} invoked.");
             if (null != StepData && StepData.HasSubSteps)
@@ -38,7 +46,6 @@ namespace Testflow.SlaveCore.Runner.Model
                 {
                     if (!forceInvoke && Context.Cancellation.IsCancellationRequested)
                     {
-                        this.Result = StepResult.Abort;
                         return;
                     }
                     subStepEntity.Invoke(forceInvoke);

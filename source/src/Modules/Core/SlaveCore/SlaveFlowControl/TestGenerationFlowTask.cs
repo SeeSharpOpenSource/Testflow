@@ -75,7 +75,7 @@ namespace Testflow.SlaveCore.SlaveFlowControl
             // 创建序列执行实体
             Context.SessionTaskEntity = new SessionTaskEntity(Context);
             // 生成执行实体的调用对象
-            Context.SessionTaskEntity.Generate();
+            Context.SessionTaskEntity.Generate(Context.ExecutionModel);
 
             // 发送生成结束的消息
             TestGenMessage testGenOverMessage = new TestGenMessage(MessageNames.TestGenName, Context.SessionId,

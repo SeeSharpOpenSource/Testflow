@@ -93,6 +93,8 @@ namespace Testflow.SlaveCore.Runner.Actuators
             }
             IParameterDataCollection parameters = Function.Parameters;
             IArgumentCollection arguments = Function.ParameterType;
+            // 开始计时
+            StartTiming();
             for (int i = 0; i < _properties.Count; i++)
             {
                 if (null == _properties[i])
@@ -109,6 +111,8 @@ namespace Testflow.SlaveCore.Runner.Actuators
                 }
                 _properties[i].SetValue(instance, _params[i]);
             }
+            // 停止计时
+            EndTiming();
             return StepResult.Pass;
         }
     }
