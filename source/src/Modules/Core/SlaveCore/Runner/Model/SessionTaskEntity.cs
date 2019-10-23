@@ -52,6 +52,7 @@ namespace Testflow.SlaveCore.Runner.Model
 
         public void Generate(ExecutionModel executionModel)
         {
+            _context.TimingManager.RegisterStopWatch(0);
             _setUp.Generate(0);
             _tearDown.Generate(0);
             switch (executionModel)
@@ -66,6 +67,7 @@ namespace Testflow.SlaveCore.Runner.Model
                     int coroutineId = CommonConst.SequenceCoroutineCapacity;
                     foreach (SequenceTaskEntity sequenceModel in _sequenceEntities)
                     {
+                        _context.TimingManager.RegisterStopWatch(coroutineId);
                         sequenceModel.Generate(coroutineId);
                         coroutineId += CommonConst.SequenceCoroutineCapacity;
                     }
