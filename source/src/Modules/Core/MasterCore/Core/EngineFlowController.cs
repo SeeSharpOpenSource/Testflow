@@ -239,10 +239,11 @@ namespace Testflow.MasterCore.Core
 
         private bool HandleRuntimeErrorMessage(RuntimeErrorMessage message)
         {
-            ExceptionEventInfo exceptionEventInfo = new ExceptionEventInfo(message);
-            // TODO 阻塞足够时间后再执行，以保证其他状态数据的正确更新
-            Thread.Sleep(200);
-            _globalInfo.EventQueue.Enqueue(exceptionEventInfo);
+            // 阻塞足够时间后再执行，以保证其他状态数据的正确更新
+            Thread.Sleep(500);
+            // 接收到ExceptionMessage后只是释放Host，删除执行ExceptionEventInfo。因为状态维护模块会自动维护相关的信息
+//            ExceptionEventInfo exceptionEventInfo = new ExceptionEventInfo(message);
+//            _globalInfo.EventQueue.Enqueue(exceptionEventInfo);
             _testsMaintainer.FreeHost(message.Id);
             return true;
         }

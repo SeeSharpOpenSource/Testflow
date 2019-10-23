@@ -129,16 +129,10 @@ namespace Testflow.CoreCommon.Messages
             {
                 info.AddValue("InterestedSequence", InterestedSequence, typeof(List<int>));
             }
-            if (null != ExecutionTimes)
+            if (null != ExecutionTimes && ExecutionTimes.Count > 0)
             {
                 info.AddValue("ExecutionTimes", ExecutionTimes, typeof(List<string>));
-            }
-            if (null != ExecutionTicks)
-            {
                 info.AddValue("ExecutionTicks", ExecutionTicks, typeof(List<long>));
-            }
-            if (null != Coroutines)
-            {
                 info.AddValue("Coroutines", Coroutines, typeof(List<int>));
             }
         }

@@ -230,6 +230,11 @@ namespace Testflow.MasterCore.StatusManage
                 case MessageNames.ErrorStatusName:
                     newState = RuntimeState.Error;
                     stepResult = StepResult.Error;
+                    // 如果序列未开始运行即失败，则定义StartTime和Endtime一致
+                    if (ModuleUtils.IsNotStart(State))
+                    {
+                        this.StartTime = message.Time;
+                    }
                     RefreshCommonStatus(message, newState, stepResult);
                     RefreshExecutionStatus(message, index);
                     // 更新数据库中的测试数据条目
@@ -328,7 +333,7 @@ namespace Testflow.MasterCore.StatusManage
             {
                 this.ExecutionTicks = -1;
                 this.ExecutionTime = DateTime.Now;
-                this.Coroutine = 0;
+                this.Coroutine = -1;
             }
         }
 

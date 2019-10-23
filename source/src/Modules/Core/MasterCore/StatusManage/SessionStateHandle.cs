@@ -238,114 +238,140 @@ namespace Testflow.MasterCore.StatusManage
         public bool HandleStatusMessage(StatusMessage message)
         {
             this.State = message.State;
-            IRuntimeStatusInfo runtimeStatusInfo;
             switch (message.Name)
             {
                 case MessageNames.StartStatusName:
-                    this.StartTime = message.Time;
-                    RefreshTime(message);
-
-                    UpdateSessionResultData(null);
-
-                    SetTestResultStatistics(message.WatchData);
-                    // 写入性能记录条目
-                    if (null != message.Performance)
-                    {
-                        WritePerformanceStatus(message.Performance);
-                    }
-                    for (int i = 0; i < message.Stacks.Count; i++)
-                    {
-                        if (message.SequenceStates[i] == RuntimeState.Running)
-                        {
-                            _sequenceHandles[message.Stacks[i].Sequence].HandleStatusMessage(message, i);
-                        }
-                    }
-                    _testResults.Performance = _stateManageContext.DatabaseProxy.GetPerformanceResult(Session);
-
-                    _stateManageContext.EventDispatcher.RaiseEvent(Constants.SessionStart, Session, _testResults);
+                    HandleStartStatusMessage(message);
                     break;
                 case MessageNames.ReportStatusName:
-                    RefreshTime(message);
-
-                    for (int i = 0; i < message.Stacks.Count; i++)
-                    {
-                        SequenceStateHandle sequenceStateHandle = _sequenceHandles[message.Stacks[i].Sequence];
-                        RuntimeState sequenceState = sequenceStateHandle.State;
-                        if (sequenceState == RuntimeState.StartIdle || sequenceState == RuntimeState.Running || 
-                            RuntimeState.Blocked == sequenceState || RuntimeState.DebugBlocked == sequenceState)
-                        {
-                            sequenceStateHandle.HandleStatusMessage(message, i);
-                        }
-                    }
-
-                    runtimeStatusInfo = CreateRuntimeStatusInfo(message);
-
-                    // 写入性能记录条目
-                    if (null != message.Performance)
-                    {
-                        WritePerformanceStatus(message.Performance);
-                    }
-                    _stateManageContext.EventDispatcher.RaiseEvent(Constants.StatusReceived, Session, runtimeStatusInfo);
+                    HandleReportStatusMessage(message);
                     break;
                 case MessageNames.ResultStatusName:
-                    this.EndTime = message.Time;
-                    RefreshTime(message);
-
-                    SetTestResultStatistics(message.WatchData);
-
-                    UpdateSessionResultData(null);
-                    
-                    _testResults.Performance = _stateManageContext.DatabaseProxy.GetPerformanceResult(Session);
-                    _testResults.TestOver = true;
-                    _stateManageContext.EventDispatcher.RaiseEvent(Constants.SessionOver, Session, _testResults);
+                    HandleResultStatusMessage(message);
                     break;
                 case MessageNames.ErrorStatusName:
-                    this.EndTime = message.Time;
-                    RefreshTime(message);
-
-                    foreach (SequenceStateHandle sequenceStateHandle in _sequenceHandles.Values)
-                    {
-                        RuntimeState runtimeState = sequenceStateHandle.State;
-                        if (runtimeState == RuntimeState.Running || runtimeState == RuntimeState.Blocked || runtimeState == RuntimeState.DebugBlocked)
-                        {
-                            sequenceStateHandle.HandleStatusMessage(message, CommonConst.BroadcastSession);
-                        }
-                    }
-
-                    UpdateSessionResultData(message.ExceptionInfo);
-
-                    SetTestResultStatistics(message.WatchData);
-                    // 写入性能记录条目
-                    if (null != message.Performance)
-                    {
-                        WritePerformanceStatus(message.Performance);
-                    }
-                    _testResults.Performance = _stateManageContext.DatabaseProxy.GetPerformanceResult(Session);
-                    _testResults.TestOver = true;
-                    _stateManageContext.EventDispatcher.RaiseEvent(Constants.SessionOver, Session, _testResults);
+                    HandleErrorStatusMessage(message);
                     break;
                 case MessageNames.HeartBeatStatusName:
-                    RefreshTime(message);
-                    for (int i = 0; i < message.Stacks.Count; i++)
-                    {
-                        if (message.SequenceStates[i] == RuntimeState.Running)
-                        {
-                            _sequenceHandles[message.Stacks[i].Sequence].HandleStatusMessage(message, i);
-                        }
-                    }
-                    // 写入性能记录条目
-                    if (null != message.Performance)
-                    {
-                        WritePerformanceStatus(message.Performance);
-                    }
-                    runtimeStatusInfo = CreateRuntimeStatusInfo(message);
-                    _stateManageContext.EventDispatcher.RaiseEvent(Constants.StatusReceived, Session, runtimeStatusInfo);
+                    HandleHeartBeatStatusMessage(message);
                     break;
                 default:
                     throw new InvalidOperationException();
                     break;
             }
             return true;
+        }
+
+        private void HandleStartStatusMessage(StatusMessage message)
+        {
+            this.StartTime = message.Time;
+            RefreshTime(message);
+
+            UpdateSessionResultData(null);
+
+            SetTestResultStatistics(message.WatchData);
+            // 写入性能记录条目
+            if (null != message.Performance)
+            {
+                WritePerformanceStatus(message.Performance);
+            }
+            for (int i = 0; i < message.Stacks.Count; i++)
+            {
+                if (message.SequenceStates[i] == RuntimeState.Running)
+                {
+                    _sequenceHandles[message.Stacks[i].Sequence].HandleStatusMessage(message, i);
+                }
+            }
+            _testResults.Performance = _stateManageContext.DatabaseProxy.GetPerformanceResult(Session);
+
+            _stateManageContext.EventDispatcher.RaiseEvent(Constants.SessionStart, Session, _testResults);
+        }
+
+        private void HandleReportStatusMessage(StatusMessage message)
+        {
+            IRuntimeStatusInfo runtimeStatusInfo;
+            RefreshTime(message);
+            for (int i = 0; i < message.Stacks.Count; i++)
+            {
+                SequenceStateHandle sequenceStateHandle = _sequenceHandles[message.Stacks[i].Sequence];
+                RuntimeState sequenceState = sequenceStateHandle.State;
+                if (sequenceState == RuntimeState.StartIdle || sequenceState == RuntimeState.Running ||
+                    RuntimeState.Blocked == sequenceState || RuntimeState.DebugBlocked == sequenceState)
+                {
+                    sequenceStateHandle.HandleStatusMessage(message, i);
+                }
+            }
+
+            runtimeStatusInfo = CreateRuntimeStatusInfo(message);
+
+            // 写入性能记录条目
+            if (null != message.Performance)
+            {
+                WritePerformanceStatus(message.Performance);
+            }
+            _stateManageContext.EventDispatcher.RaiseEvent(Constants.StatusReceived, Session, runtimeStatusInfo);
+        }
+
+        private void HandleResultStatusMessage(StatusMessage message)
+        {
+            this.EndTime = message.Time;
+            RefreshTime(message);
+
+            SetTestResultStatistics(message.WatchData);
+
+            UpdateSessionResultData(null);
+
+            _testResults.Performance = _stateManageContext.DatabaseProxy.GetPerformanceResult(Session);
+            _testResults.TestOver = true;
+            _stateManageContext.EventDispatcher.RaiseEvent(Constants.SessionOver, Session, _testResults);
+        }
+
+        private void HandleErrorStatusMessage(StatusMessage message)
+        {
+            this.EndTime = message.Time;
+            RefreshTime(message);
+            for (int i = 0; i < message.Stacks.Count; i++)
+            {
+                SequenceStateHandle sequenceStateHandle = _sequenceHandles[message.Stacks[i].Sequence];
+                // 只更新未结束的状态
+                if (!ModuleUtils.IsOver(sequenceStateHandle.State))
+                {
+                    sequenceStateHandle.HandleStatusMessage(message, i);
+                }
+            }
+
+            UpdateSessionResultData(message.ExceptionInfo);
+
+            SetTestResultStatistics(message.WatchData);
+            // 写入性能记录条目
+            if (null != message.Performance)
+            {
+                WritePerformanceStatus(message.Performance);
+            }
+            _testResults.Performance = _stateManageContext.DatabaseProxy.GetPerformanceResult(Session);
+            _testResults.TestOver = true;
+            _stateManageContext.EventDispatcher.RaiseEvent(Constants.SessionOver, Session, _testResults);
+        }
+
+        private void HandleHeartBeatStatusMessage(StatusMessage message)
+        {
+            IRuntimeStatusInfo runtimeStatusInfo;
+            RefreshTime(message);
+            for (int i = 0; i < message.Stacks.Count; i++)
+            {
+                if (message.SequenceStates[i] == RuntimeState.Running)
+                {
+                    _sequenceHandles[message.Stacks[i].Sequence].HandleStatusMessage(message, i);
+                }
+            }
+            // 写入性能记录条目
+            if (null != message.Performance)
+            {
+                WritePerformanceStatus(message.Performance);
+            }
+            runtimeStatusInfo = CreateRuntimeStatusInfo(message);
+            _stateManageContext.EventDispatcher.RaiseEvent(Constants.StatusReceived, Session, runtimeStatusInfo);
+            return;
         }
 
         #endregion

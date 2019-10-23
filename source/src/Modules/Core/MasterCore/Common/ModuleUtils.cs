@@ -257,6 +257,11 @@ namespace Testflow.MasterCore.Common
             return state > RuntimeState.AbortRequested;
         }
 
+        public static bool IsNotStart(RuntimeState state)
+        {
+            return state < RuntimeState.Running;
+        }
+
         public static string GetRuntimeVariableString(WatchDataObject watchDataObj, ISequenceFlowContainer sequenceData)
         {
             const char delim = '.';
