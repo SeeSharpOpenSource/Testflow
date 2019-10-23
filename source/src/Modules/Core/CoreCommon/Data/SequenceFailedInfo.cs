@@ -7,6 +7,7 @@ using Testflow.Runtime.Data;
 
 namespace Testflow.CoreCommon.Data
 {
+    [Serializable]
     public class FailedInfo : IFailedInfo, ISerializable
     {
         private const string Delim = "$#_#$";
