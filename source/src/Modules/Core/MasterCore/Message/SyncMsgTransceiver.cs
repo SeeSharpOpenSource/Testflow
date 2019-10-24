@@ -68,8 +68,13 @@ namespace Testflow.MasterCore.Message
                 "Message transceiver started.");
         }
 
+        private int _stopFlag = 0;
         protected override void Stop()
         {
+            if (_stopFlag == 1)
+            {
+                return;
+            }
             _cancellation.Cancel();
             Thread.MemoryBarrier();
             ModuleUtils.StopThreadWork(_receiveThread);
@@ -89,6 +94,7 @@ namespace Testflow.MasterCore.Message
             ModuleUtils.StopThreadWork(_receiveThread);
             ZombieCleaner.Stop();
             UpLinkMessenger.Clear();
+            Thread.VolatileWrite(ref _stopFlag, 1);
             GlobalInfo.LogService.Print(LogLevel.Info, CommonConst.PlatformLogSession,
                 "Message transceiver stopped.");
         }
@@ -138,12 +144,13 @@ namespace Testflow.MasterCore.Message
             }
             catch (Exception ex)
             {
+                // 只有在因为非用户操作的情况下停止才执行停止操作
+                this.Stop();
                 GlobalInfo.EventQueue.Enqueue(new ExceptionEventInfo(ex));
                 GlobalInfo.LogService.Print(LogLevel.Fatal, CommonConst.PlatformLogSession, ex);
             }
             finally
             {
-                this.Stop();
                 GlobalInfo.LogService.Print(LogLevel.Info, CommonConst.PlatformLogSession,
                    $"thread {Thread.CurrentThread.Name} is Stopped.");
             }
