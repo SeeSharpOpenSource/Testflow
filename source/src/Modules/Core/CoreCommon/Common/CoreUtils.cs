@@ -138,9 +138,10 @@ namespace Testflow.CoreCommon.Common
             SerializationInfoEnumerator enumerator = info.GetEnumerator();
             while (enumerator.MoveNext())
             {
+                // 只处理Message自定义的属性，父类的属性已经处理过
                 PropertyInfo propertyInfo = type.GetProperty(enumerator.Name,
-                    BindingFlags.Instance | BindingFlags.Public);
-                propertyInfo.SetValue(target, info.GetValue(enumerator.Name, propertyInfo.PropertyType));
+                    BindingFlags.Instance | BindingFlags.Public | BindingFlags.DeclaredOnly);
+                propertyInfo?.SetValue(target, info.GetValue(enumerator.Name, propertyInfo.PropertyType));
             }
         }
 
