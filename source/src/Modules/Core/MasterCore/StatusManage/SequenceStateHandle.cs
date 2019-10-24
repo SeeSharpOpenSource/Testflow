@@ -204,7 +204,7 @@ namespace Testflow.MasterCore.StatusManage
                         if (ModuleUtils.IsNotStart(oldState))
                         {
                             this.StartTime = message.Time;
-                            this.ElapsedTime = new TimeSpan(0);
+                            this.ElapsedTime = TimeSpan.Zero;
                         }
                         // 更新数据库中的测试数据条目
                         UpdateSequenceResultData(failedInfo);
