@@ -166,16 +166,18 @@ namespace Testflow.MasterCore.StatusManage
             this.RunStack = message.Stacks[index];
             StepResult stepResult = message.Results[index];
             IFailedInfo failedInfo = GetFailedInfo(message);
+            RuntimeState oldState = this.State;
             string watchDataStr;
             switch (message.Name)
             {
                 case MessageNames.StartStatusName:
                 case MessageNames.ReportStatusName:
-                    if (State == RuntimeState.StartIdle && newState == RuntimeState.Running)
+                    if (oldState == RuntimeState.StartIdle && newState == RuntimeState.Running)
                     {
                         this.StartTime = message.Time;
                         // 序列刚开始执行
                         RefreshCommonStatus(message, newState, stepResult);
+                        RefreshExecutionStatus(message, index);
                         // 第一次需要额外配置序列记过中CoroutineId的值
                         _sequenceResultData.CoroutineId = message.Coroutines[index];
                         // 更新数据库中的测试数据条目
@@ -187,7 +189,7 @@ namespace Testflow.MasterCore.StatusManage
 
                     }
                     // 序列执行结束
-                    else if ((State == RuntimeState.Running || State == RuntimeState.Blocked || State == RuntimeState.DebugBlocked)
+                    else if ((oldState == RuntimeState.Running || oldState == RuntimeState.Blocked || oldState == RuntimeState.DebugBlocked)
                         && newState > RuntimeState.AbortRequested)
                     {
                         // 如果最后执行的结果成功，则查看中间过程，是否存在失败的step，如果存在，则标记Sequence为失败
@@ -198,6 +200,12 @@ namespace Testflow.MasterCore.StatusManage
                         }
                         RefreshCommonStatus(message, newState, stepResult);
                         RefreshExecutionStatus(message, index);
+                        // 如果序列未开始运行即失败，则定义StartTime和Endtime一致
+                        if (ModuleUtils.IsNotStart(oldState))
+                        {
+                            this.StartTime = message.Time;
+                            this.ElapsedTime = new TimeSpan(0);
+                        }
                         // 更新数据库中的测试数据条目
                         UpdateSequenceResultData(failedInfo);
                         // 写入RuntimeStatusInfo条目
@@ -230,13 +238,14 @@ namespace Testflow.MasterCore.StatusManage
                 case MessageNames.ErrorStatusName:
                     newState = RuntimeState.Error;
                     stepResult = StepResult.Error;
-                    // 如果序列未开始运行即失败，则定义StartTime和Endtime一致
-                    if (ModuleUtils.IsNotStart(State))
-                    {
-                        this.StartTime = message.Time;
-                    }
                     RefreshCommonStatus(message, newState, stepResult);
                     RefreshExecutionStatus(message, index);
+                    // 如果序列未开始运行即失败，则定义StartTime和Endtime一致
+                    if (ModuleUtils.IsNotStart(oldState))
+                    {
+                        this.StartTime = message.Time;
+                        this.ElapsedTime = new TimeSpan(0);
+                    }
                     // 更新数据库中的测试数据条目
                     UpdateSequenceResultData(message.ExceptionInfo);
                     // 写入RuntimeStatusInfo条目
