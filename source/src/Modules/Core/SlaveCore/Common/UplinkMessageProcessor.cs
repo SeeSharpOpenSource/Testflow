@@ -107,7 +107,7 @@ namespace Testflow.SlaveCore.Common
                     statusMessage.Stacks.Add(statusInfo.Stack);
                     statusMessage.SequenceStates.Add(RuntimeState.Running);
                     statusMessage.Results.Add(statusInfo.Result);
-                    statusMessage.ExecutionTimes.Add(statusInfo.ExecutionTime.ToString(CommonConst.GlobalTimeFormat));
+                    statusMessage.ExecutionTimes.Add(statusInfo.ExecutionTime);
                     statusMessage.ExecutionTicks.Add(statusInfo.ExecutionTicks);
                     statusMessage.Coroutines.Add(statusInfo.CoroutineId);
                     _transceiver.SendMessage(statusMessage);
@@ -122,7 +122,7 @@ namespace Testflow.SlaveCore.Common
                     statusMessage.SequenceStates.Add(RuntimeState.Running);
                     statusMessage.Results.Add(statusInfo.Result);
                     statusMessage.WatchData = statusInfo.WatchDatas;
-                    statusMessage.ExecutionTimes.Add(statusInfo.ExecutionTime.ToString(CommonConst.GlobalTimeFormat));
+                    statusMessage.ExecutionTimes.Add(statusInfo.ExecutionTime);
                     statusMessage.ExecutionTicks.Add(statusInfo.ExecutionTicks);
                     statusMessage.Coroutines.Add(statusInfo.CoroutineId);
                     if (statusInfo.FailedInfo != null)
@@ -151,7 +151,7 @@ namespace Testflow.SlaveCore.Common
                     statusMessage.SequenceStates.Add(RuntimeState.Failed);
                     statusMessage.Results.Add(statusInfo.Result);
                     statusMessage.WatchData = statusInfo.WatchDatas;
-                    statusMessage.ExecutionTimes.Add(statusInfo.ExecutionTime.ToString(CommonConst.GlobalTimeFormat));
+                    statusMessage.ExecutionTimes.Add(statusInfo.ExecutionTime);
                     statusMessage.ExecutionTicks.Add(statusInfo.ExecutionTicks);
                     statusMessage.Coroutines.Add(statusInfo.CoroutineId);
                     if (statusInfo.FailedInfo != null)
@@ -170,7 +170,7 @@ namespace Testflow.SlaveCore.Common
                     statusMessage.SequenceStates.Add(RuntimeState.Success);
                     statusMessage.Results.Add(statusInfo.Result);
                     statusMessage.WatchData = statusInfo.WatchDatas;
-                    statusMessage.ExecutionTimes.Add(statusInfo.ExecutionTime.ToString(CommonConst.GlobalTimeFormat));
+                    statusMessage.ExecutionTimes.Add(statusInfo.ExecutionTime);
                     statusMessage.ExecutionTicks.Add(statusInfo.ExecutionTicks);
                     statusMessage.Coroutines.Add(statusInfo.CoroutineId);
                     _transceiver.SendMessage(statusMessage);
@@ -185,7 +185,7 @@ namespace Testflow.SlaveCore.Common
                     statusMessage.SequenceStates.Add(RuntimeState.Error);
                     statusMessage.Results.Add(statusInfo.Result);
                     statusMessage.WatchData = statusInfo.WatchDatas;
-                    statusMessage.ExecutionTimes.Add(statusInfo.ExecutionTime.ToString(CommonConst.GlobalTimeFormat));
+                    statusMessage.ExecutionTimes.Add(statusInfo.ExecutionTime);
                     statusMessage.ExecutionTicks.Add(statusInfo.ExecutionTicks);
                     statusMessage.Coroutines.Add(statusInfo.CoroutineId);
                     if (statusInfo.FailedInfo != null)

@@ -244,7 +244,7 @@ namespace Testflow.MasterCore.StatusManage
                     if (ModuleUtils.IsNotStart(oldState))
                     {
                         this.StartTime = message.Time;
-                        this.ElapsedTime = new TimeSpan(0);
+                        this.ElapsedTime = TimeSpan.Zero;
                     }
                     // 更新数据库中的测试数据条目
                     UpdateSequenceResultData(message.ExceptionInfo);
@@ -335,7 +335,7 @@ namespace Testflow.MasterCore.StatusManage
             if (null != message && message.Coroutines.Count > index)
             {
                 this.ExecutionTicks = message.ExecutionTicks[index];
-                this.ExecutionTime = DateTime.Parse(message.ExecutionTimes[index]);
+                this.ExecutionTime = message.ExecutionTimes[index];
                 this.Coroutine = message.Coroutines[index];
             }
             else

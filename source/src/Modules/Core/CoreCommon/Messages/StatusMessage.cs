@@ -32,7 +32,7 @@ namespace Testflow.CoreCommon.Messages
         public List<int> InterestedSequence { get; set; }
 
         // 如果使用DateTime直接序列化会损失tick的精度，所以使用string传递，使用的时候再转换
-        public List<string> ExecutionTimes { get; set; }
+        public List<DateTime> ExecutionTimes { get; set; }
 
         public List<long> ExecutionTicks { get; set; }
 
@@ -51,17 +51,12 @@ namespace Testflow.CoreCommon.Messages
             this.Results = new List<StepResult>(CoreConstants.DefaultRuntimeSize);
             this.FailedInfo = new Dictionary<int, string>(CoreConstants.DefaultRuntimeSize);
             this.ExecutionTicks = new List<long>(CoreConstants.DefaultRuntimeSize);
-            this.ExecutionTimes = new List<string>(CoreConstants.DefaultRuntimeSize);
+            this.ExecutionTimes = new List<DateTime>(CoreConstants.DefaultRuntimeSize);
             this.Coroutines = new List<int>(CoreConstants.DefaultRuntimeSize);
         }
 
         public StatusMessage(SerializationInfo info, StreamingContext context) : base(info, context)
         {
-//            this.Stack = info.GetValue("Stack", typeof(CallStack)) as CallStack;
-//            this.State = (RuntimeState)info.GetValue("State", typeof(RuntimeState));
-//            this.Performance = info.GetValue("Performance", typeof(PerformanceData)) as PerformanceData;
-//            this.WatchData =
-//                info.GetValue("WatchData", typeof(Dictionary<string, string>)) as Dictionary<string, string>;
             CoreUtils.SetMessageValue(info, this, this.GetType());
             if (null == FailedInfo)
             {
@@ -93,7 +88,7 @@ namespace Testflow.CoreCommon.Messages
             }
             if (null == ExecutionTimes)
             {
-                this.ExecutionTimes = new List<string>(1);
+                this.ExecutionTimes = new List<DateTime>(1);
             }
 
             if (null == Coroutines)
