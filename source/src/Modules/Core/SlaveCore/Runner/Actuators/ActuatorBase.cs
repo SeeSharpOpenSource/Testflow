@@ -108,7 +108,7 @@ namespace Testflow.SlaveCore.Runner.Actuators
         public void EndTiming()
         {
             long ticks = Context.TimingManager.EndTiming(_coroutineId);
-            if (this.ExecutionTicks > -1)
+            if (this.ExecutionTicks <= -1)
             {
                 this.ExecutionTicks = ticks;
             }
