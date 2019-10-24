@@ -59,7 +59,7 @@ namespace Testflow.CoreCommon.Messages
             this.Name = (string) info.GetValue("Name", typeof (string));
             this.Type = (MessageType) info.GetValue("Type", typeof (MessageType));
             this.Id = (int) info.GetValue("Id", typeof (int));
-            this.Time = DateTime.Parse(info.GetString("Time"));
+            this.Time = (DateTime) info.GetValue("Time", typeof(DateTime));
             this.Index = (long) info.GetValue("Index", typeof (long));
         }
 
