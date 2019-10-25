@@ -15,8 +15,13 @@ namespace Testflow.CoreCommon.Data
         public static string GetFailedStr(Exception exception, FailedType failedType)
         {
             StringBuilder failedStr = new StringBuilder(400);
+            string stackTrace = exception.StackTrace;
+            if (!string.IsNullOrWhiteSpace(stackTrace) && stackTrace.Contains("'"))
+            {
+                stackTrace = stackTrace.Replace("'", "*");
+            }
             return failedStr.Append(failedType).Append(Delim).Append(exception.Message).Append(Delim)
-                .Append(exception.Source).Append(Delim).Append(exception.StackTrace).Append(Delim)
+                .Append(exception.Source).Append(Delim).Append(stackTrace).Append(Delim)
                 .Append(exception.GetType().Name).ToString();
         }
 
@@ -48,7 +53,12 @@ namespace Testflow.CoreCommon.Data
             this.Message = exception.Message;
             this.Type = failedType;
             this.Source = exception.Source;
-            this.StackTrace = exception.StackTrace;
+            string stackTrace = exception.StackTrace;
+            if (!string.IsNullOrWhiteSpace(stackTrace) && stackTrace.Contains("'"))
+            {
+                stackTrace = stackTrace.Replace("'", "*");
+            }
+            this.StackTrace = stackTrace;
             Type exceptionType = typeof(Exception);
             this.ExceptionType = $"{exceptionType.Namespace}.{exceptionType.Name}";
         }
@@ -64,7 +74,12 @@ namespace Testflow.CoreCommon.Data
             index += step;
             this.Source = failedInfoElems[index];
             index += step;
-            this.StackTrace = failedInfoElems[index];
+            string stackTrace = failedInfoElems[index];
+            if (!string.IsNullOrWhiteSpace(stackTrace) && stackTrace.Contains("'"))
+            {
+                stackTrace = stackTrace.Replace("'", "*");
+            }
+            this.StackTrace = stackTrace;
             index += step;
             this.ExceptionType = failedInfoElems[index];
         }
