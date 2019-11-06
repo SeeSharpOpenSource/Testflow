@@ -36,7 +36,7 @@ namespace Testflow.SlaveCore.Runner.Model
                 return;
             }
             this.Result = StepResult.Error;
-            Actuator.InvokeStep(forceInvoke);
+            this.Result = Actuator.InvokeStep(forceInvoke);
             Context.LogSession.Print(LogLevel.Debug, Context.SessionId,
                 $"The empty step {GetStack()} invoked.");
             if (null != StepData && StepData.HasSubSteps)
