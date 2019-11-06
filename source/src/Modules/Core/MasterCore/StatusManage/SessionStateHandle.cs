@@ -317,6 +317,14 @@ namespace Testflow.MasterCore.StatusManage
             this.EndTime = message.Time;
             RefreshTime(message);
 
+            //foreach (SequenceStateHandle handle in _sequenceHandles.Values)
+            //{
+            //    if (!ModuleUtils.IsOver(handle.State))
+            //    {
+            //        handle.HandleStatusMessage(message, 0);
+            //    }
+            //}
+
             SetTestResultStatistics(message.WatchData);
 
             UpdateSessionResultData(null);

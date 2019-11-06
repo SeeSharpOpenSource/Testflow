@@ -189,8 +189,7 @@ namespace Testflow.MasterCore.StatusManage
 
                     }
                     // 序列执行结束
-                    else if ((oldState == RuntimeState.Running || oldState == RuntimeState.Blocked || oldState == RuntimeState.DebugBlocked)
-                        && newState > RuntimeState.AbortRequested)
+                    else if (!ModuleUtils.IsOver(oldState) &&  ModuleUtils.IsOver(newState))
                     {
                         // 如果最后执行的结果成功，则查看中间过程，是否存在失败的step，如果存在，则标记Sequence为失败
                         if (newState == RuntimeState.Over || newState == RuntimeState.Success)

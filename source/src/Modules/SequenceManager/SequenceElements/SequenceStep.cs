@@ -110,7 +110,18 @@ namespace Testflow.SequenceManager.SequenceElements
 
             SequenceStep sequenceStep = new SequenceStep()
             {
-                Name = this.Name + Constants.CopyPostfix, Description = this.Description, Parent = null, SubSteps = subStepCollection, Index = Constants.UnverifiedIndex, Function = this.Function?.Clone(), BreakIfFailed = this.BreakIfFailed, Behavior = this.Behavior, RecordStatus = this.RecordStatus, StepType = this.StepType, LoopCounter = this.LoopCounter?.Clone(), RetryCounter = this.RetryCounter?.Clone(),
+                Name = this.Name + Constants.CopyPostfix,
+                Description = this.Description,
+                Parent = null,
+                SubSteps = subStepCollection,
+                Index = Constants.UnverifiedIndex,
+                Function = this.Function?.Clone(),
+                BreakIfFailed = this.BreakIfFailed,
+                Behavior = this.Behavior,
+                RecordStatus = this.RecordStatus,
+                StepType = this.StepType,
+                LoopCounter = this.LoopCounter?.Clone(),
+                RetryCounter = this.RetryCounter?.Clone(),
             };
             return sequenceStep;
         }

@@ -221,6 +221,9 @@ namespace Testflow.MasterCore.Core
                         abortEventInfo.FailInfo = FailedInfo.GetFailedStr(_globalInfo.I18N.GetStr("UserAbort"),
                             FailedType.Abort);
                     }
+
+
+
                     _globalInfo.EventQueue.Enqueue(abortEventInfo);
                     _testsMaintainer.FreeHost(session);
                     // 如果所有的都已经结束，则修改状态机状态
