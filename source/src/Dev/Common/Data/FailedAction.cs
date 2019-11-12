@@ -16,12 +16,12 @@
         Continue = 1,
 
         /// <summary>
-        /// 跳出循环
+        /// 跳出循环，只在n层上级Step为Loop的情况下使能
         /// </summary>
         BreakLoop = 2,
 
         /// <summary>
-        /// 跳出当前运行并进入下次循环
+        /// 跳出当前运行并进入下次循环，只在n层上级Step为Loop的情况下使能
         /// </summary>
         NextLoop = 3
     }
