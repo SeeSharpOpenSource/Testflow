@@ -104,23 +104,30 @@ namespace Testflow.SlaveCore.Runner.Model
             catch (TargetInvocationException ex)
             {
                 // 停止失败的step的计时
-                StepTaskEntityBase.GetCurrentStep(Index, RootCoroutineId)?.EndTiming();
+                StepTaskEntityBase currentStep = StepTaskEntityBase.GetCurrentStep(Index, RootCoroutineId);
+                currentStep?.EndTiming();
                 FillFinalExceptionReportInfo(ex.InnerException, out finalReportType, out lastStepResult, out failedInfo);
+                // 如果抛出TargetInvokcationException到当前位置则说明内部没有发送错误事件
+                if (null != currentStep && currentStep.BreakIfFailed)
+                {
+                    currentStep.SetStatusAndSendErrorEvent(lastStepResult, failedInfo);
+                }
             }
             catch (Exception ex)
             {
                 // 停止失败的step的计时
-                StepTaskEntityBase.GetCurrentStep(Index, RootCoroutineId)?.EndTiming();
+                StepTaskEntityBase currentStep = StepTaskEntityBase.GetCurrentStep(Index, RootCoroutineId);
+                currentStep?.EndTiming();
                 FillFinalExceptionReportInfo(ex, out finalReportType, out lastStepResult, out failedInfo);
+                // 如果抛出Exception到当前位置则说明内部没有发送错误事件
+                if (null != currentStep && currentStep.BreakIfFailed)
+                {
+                    currentStep.SetStatusAndSendErrorEvent(lastStepResult, failedInfo);
+                }
             }
             finally
             {
                 StepTaskEntityBase currentStep = StepTaskEntityBase.GetCurrentStep(Index, RootCoroutineId);
-                // 如果序列未成功且该序列失败后未自行发送消息则发送失败事件
-                if (this.State != RuntimeState.Success && currentStep.BreakIfFailed)
-                {
-                    currentStep.SetStatusAndSendErrorEvent(lastStepResult, failedInfo);
-                }
                 // 发送结束事件，包括所有的ReturnData信息
                 SequenceStatusInfo overStatusInfo = new SequenceStatusInfo(Index, currentStep.GetStack(),
                     finalReportType, StepResult.Over, failedInfo)

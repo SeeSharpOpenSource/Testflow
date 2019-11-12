@@ -5,6 +5,7 @@ using Testflow.CoreCommon;
 using Testflow.CoreCommon.Common;
 using Testflow.CoreCommon.Data;
 using Testflow.CoreCommon.Messages;
+using Testflow.Data;
 using Testflow.Data.Sequence;
 using Testflow.Runtime;
 using Testflow.Runtime.Data;
@@ -117,8 +118,7 @@ namespace Testflow.SlaveCore.Runner.Model
         public int SequenceIndex { get; }
         public object Return => Actuator?.Return ?? null;
         public int CoroutineId { get; private set; }
-
-        public bool BreakIfFailed => StepData?.BreakIfFailed ?? false;
+        public bool BreakIfFailed { get; }
 
         protected StepTaskEntityBase(ISequenceStep step, SlaveContext context, int sequenceIndex)
         {
@@ -128,10 +128,13 @@ namespace Testflow.SlaveCore.Runner.Model
             this.SequenceIndex = sequenceIndex;
             this.Actuator = ActuatorBase.GetActuator(step, context, sequenceIndex);
             this.CoroutineId = -1;
+            // 只有在断言失败和调用异常都配置为终止执行时，该步骤才会被判断为失败后终止
             if (null != StepData && StepData.HasSubSteps)
             {
                 this.SubStepRoot = ModuleUtils.CreateSubStepModelChain(StepData.SubSteps, Context, sequenceIndex);
             }
+            BreakIfFailed = (null == StepData) || (StepData.AssertFailedAction == FailedAction.Terminate &&
+                                                      StepData.InvokeErrorAction == FailedAction.Terminate);
         }
 
         public virtual CallStack GetStack()
@@ -165,13 +168,13 @@ namespace Testflow.SlaveCore.Runner.Model
                 return;
             }
             bool retryEnabled = null != StepData.RetryCounter && StepData.RetryCounter.MaxRetryTimes > 0 && StepData.RetryCounter.RetryEnabled;
-            bool breakIfFailed = StepData.BreakIfFailed;
+            
             switch (StepData.Behavior)
             {
                 case RunBehavior.Normal:
                     if (retryEnabled)
                     {
-                        if (breakIfFailed)
+                        if (BreakIfFailed)
                         {
                             _invokeStepAction = InvokeStepWithRetry;
                         }
@@ -182,7 +185,7 @@ namespace Testflow.SlaveCore.Runner.Model
                     }
                     else
                     {
-                        if (breakIfFailed)
+                        if (BreakIfFailed)
                         {
                             _invokeStepAction = InvokeStepSingleTime;
                         }
@@ -287,7 +290,13 @@ namespace Testflow.SlaveCore.Runner.Model
                 // 停止计时
                 Actuator.EndTiming();
                 this.Result = StepResult.Failed;
+                // 如果InvokeErrorAction不是Continue，则抛出异常
                 RecordInvocationError(ex, ex.FailedType);
+                // 如果失败行为是终止，则抛出异常
+                if (StepData.InvokeErrorAction == FailedAction.Terminate)
+                {
+                    throw;
+                }
             }
             catch (TestflowAssertException ex)
             {
@@ -295,6 +304,11 @@ namespace Testflow.SlaveCore.Runner.Model
                 Actuator.EndTiming();
                 this.Result = StepResult.Failed;
                 RecordInvocationError(ex, FailedType.AssertionFailed);
+                // 如果失败行为是终止，则抛出异常
+                if (StepData.AssertFailedAction == FailedAction.Terminate)
+                {
+                    throw;
+                }
             }
             catch (TargetInvocationException ex)
             {
@@ -302,6 +316,11 @@ namespace Testflow.SlaveCore.Runner.Model
                 Actuator.EndTiming();
                 this.Result = StepResult.Error;
                 RecordInvocationError(ex.InnerException, FailedType.TargetError);
+                // 如果失败行为是终止，则抛出异常
+                if (StepData.InvokeErrorAction == FailedAction.Terminate)
+                {
+                    throw;
+                }
             }
         }
 
@@ -373,6 +392,11 @@ namespace Testflow.SlaveCore.Runner.Model
                 Actuator.EndTiming();
                 this.Result = StepResult.Failed;
                 RecordInvocationError(ex, ex.FailedType);
+                // 如果失败行为是终止，则抛出异常
+                if (StepData.InvokeErrorAction == FailedAction.Terminate)
+                {
+                    throw;
+                }
             }
             catch (TestflowAssertException ex)
             {
@@ -380,12 +404,22 @@ namespace Testflow.SlaveCore.Runner.Model
                 Actuator.EndTiming();
                 this.Result = StepResult.Failed;
                 RecordInvocationError(ex, FailedType.AssertionFailed);
+                // 如果失败行为是终止，则抛出异常
+                if (StepData.AssertFailedAction == FailedAction.Terminate)
+                {
+                    throw;
+                }
             }
             catch (TargetInvocationException ex)
             {
                 // 停止计时
                 Actuator.EndTiming();
                 RecordTargetInvocationError(ex);
+                // 如果失败行为是终止，则抛出异常
+                if (StepData.InvokeErrorAction == FailedAction.Terminate)
+                {
+                    throw;
+                }
             }
         }
 
