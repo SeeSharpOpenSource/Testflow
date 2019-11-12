@@ -7,14 +7,7 @@ namespace Testflow.SequenceManager.StepCreators
     {
         protected override ISequenceStep CreateSequenceStep()
         {
-            SequenceStep sequenceStep = new SequenceStep()
-            {
-                Behavior = RunBehavior.Normal,
-                BreakIfFailed = true,
-                RecordStatus = false,
-                StepType = SequenceStepType.Execution
-            };
-            return sequenceStep;
+            return new SequenceStep();
         }
     }
 }
