@@ -113,11 +113,13 @@ namespace Testflow.SlaveCore.Runner.Model
         private Action<bool> _invokeStepAction;
         private bool _hasLoopCounter = false;
         protected readonly ActuatorBase Actuator;
-
+        // step执行结果
         public StepResult Result { get; protected set; }
         public int SequenceIndex { get; }
         public object Return => Actuator?.Return ?? null;
+        // Step执行的协程ID
         public int CoroutineId { get; private set; }
+        // 执行失败后是否直接终止运行
         public bool BreakIfFailed { get; }
 
         protected StepTaskEntityBase(ISequenceStep step, SlaveContext context, int sequenceIndex)
