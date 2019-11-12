@@ -39,16 +39,27 @@ namespace Testflow.Data.Sequence
         /// </summary>
         [XmlIgnore]
         bool HasSubSteps { get; }
-        
+
         /// <summary>
         /// 当执行失败时是否停止执行
         /// </summary>
+        [Obsolete]
         bool BreakIfFailed { get; set; }
 
         /// <summary>
         /// 标记当前Step的执行状态是否会被记录
         /// </summary>
         bool RecordStatus { get; set; }
+
+        /// <summary>
+        /// Step运行触发断言失败后的行为
+        /// </summary>
+        FailedAction AssertFailedAction { get; set; }
+
+        /// <summary>
+        /// Step运行触发调用异常后的行为
+        /// </summary>
+        FailedAction InvokeErrorAction { get; set; }
 
         /// <summary>
         /// 运行行为，正常运行/跳过/强制成功/强制失败

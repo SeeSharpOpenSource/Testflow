@@ -46,6 +46,7 @@
     <Compile Include="Common\IEntityComponent.cs" />
     <Compile Include="Common\IPropertyExtendable.cs" />
     <Compile Include="Data\CallBackType.cs" />
+    <Compile Include="Data\FailedAction.cs" />
     <Compile Include="Data\IResultPrinter.cs" />
     <Compile Include="Data\LibraryCategory.cs" />
     <Compile Include="Common\LogLevel.cs" />

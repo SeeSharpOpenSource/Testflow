@@ -4,7 +4,7 @@
     <ConfigItems Name="PlatformEncoding" Value="utf-8" Type="System.Text.Encoding" />
     <ConfigItems Name="PlatformLibDir" Value="lib\" Type="System.String" />
     <ConfigItems Name="DotNetVersion" Value="v4.0.30319" Type="System.String" />
-    <ConfigItems Name="LogLevel" Value="Info" Type="Testflow.Usr.LogLevel" />
+    <ConfigItems Name="LogLevel" Value="Debug" Type="Testflow.Usr.LogLevel" />
   </ModuleConfigData>
   <ModuleConfigData Name="EngineCore">
     <ConfigItems Name="TestGenReportInterval" Value="500" Type="System.Int32" />
@@ -27,7 +27,7 @@
   </ModuleConfigData>
   <ModuleConfigData Name="ResultManager" />
   <ModuleConfigData Name="SequenceInfo">
-    <ConfigItems Name="ModelVersion" Value="1.0.0.0" Type="System.String" />
+    <ConfigItems Name="ModelVersion" Value="1.0.1.0" Type="System.String" />
     <ConfigItems Name="FileEncoding" Value="System.Text.UTF8Encoding" Type="System.String" />
   </ModuleConfigData>
   <ModuleConfigData Name="ParameterCheck" />
