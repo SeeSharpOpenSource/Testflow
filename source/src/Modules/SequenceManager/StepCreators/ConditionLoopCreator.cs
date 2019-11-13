@@ -9,9 +9,9 @@ namespace Testflow.SequenceManager.StepCreators
         {
             SequenceStep step = new SequenceStep
             {
-                StepType = SequenceStepType.ConditionBlock,
+                StepType = SequenceStepType.ConditionLoop,
                 SubSteps = new SequenceStepCollection(),
-                Name = "ConditionBlock",
+                Name = "ConditionLoop",
                 LoopCounter = new LoopCounter()
                 {
                     CounterEnabled = true,
