@@ -27,7 +27,6 @@ namespace Testflow.SequenceManager.StepCreators
                 SubSteps = new SequenceStepCollection()
             };
             step.SubSteps.Add(finallyBlock);
-            step.SubSteps.Add(tryBlock);
             return step;
         }
     }
