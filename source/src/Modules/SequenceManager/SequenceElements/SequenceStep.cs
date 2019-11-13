@@ -144,7 +144,7 @@ namespace Testflow.SequenceManager.SequenceElements
                 InvokeErrorAction = this.InvokeErrorAction,
                 LoopCounter = this.LoopCounter?.Clone(),
                 RetryCounter = this.RetryCounter?.Clone(),
-                
+                Tag = this.Tag
             };
             return sequenceStep;
         }

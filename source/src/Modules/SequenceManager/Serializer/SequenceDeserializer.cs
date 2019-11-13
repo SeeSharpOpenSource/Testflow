@@ -176,18 +176,18 @@ namespace Testflow.SequenceManager.Serializer
 
         private static void SetParameterToSequenceData(ISequenceStep sequenecStep, ISequenceStepParameter parameter)
         {
+            if (null != sequenecStep.Function)
+            {
+                sequenecStep.Function.Parameters = parameter.Parameters;
+                sequenecStep.Function.Instance = parameter.Instance;
+                sequenecStep.Function.Return = parameter.Return;
+            }
             if (sequenecStep.HasSubSteps)
             {
                 for (int i = 0; i < sequenecStep.SubSteps.Count; i++)
                 {
                     SetParameterToSequenceData(sequenecStep.SubSteps[i], parameter.SubStepParameters[i]);
                 }
-            }
-            else if (null != sequenecStep.Function)
-            {
-                sequenecStep.Function.Parameters = parameter.Parameters;
-                sequenecStep.Function.Instance = parameter.Instance;
-                sequenecStep.Function.Return = parameter.Return;
             }
         }
 
@@ -221,14 +221,7 @@ namespace Testflow.SequenceManager.Serializer
 
         private static void ValidateTypeDatas(ISequenceStep sequenceStep, ITypeDataCollection typeDatas)
         {
-            if (sequenceStep.HasSubSteps)
-            {
-                foreach (ISequenceStep subStep in sequenceStep.SubSteps)
-                {
-                    ValidateTypeDatas(subStep, typeDatas);
-                }
-            }
-            else
+            if (null != sequenceStep.Function)
             {
                 FunctionData functionData = sequenceStep.Function as FunctionData;
                 if (null == functionData)
@@ -251,6 +244,13 @@ namespace Testflow.SequenceManager.Serializer
                     {
                         argument.Type = typeDatas[argument.TypeIndex];
                     }
+                }
+            }
+            if (sequenceStep.HasSubSteps)
+            {
+                foreach (ISequenceStep subStep in sequenceStep.SubSteps)
+                {
+                    ValidateTypeDatas(subStep, typeDatas);
                 }
             }
         }

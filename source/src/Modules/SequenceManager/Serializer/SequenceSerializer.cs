@@ -245,14 +245,7 @@ namespace Testflow.SequenceManager.Serializer
 
         private static void FillParameterDataToSequenceData(ISequenceStep sequenceStep, ISequenceStepParameter parameter)
         {
-            if (sequenceStep.HasSubSteps)
-            {
-                for (int i = 0; i < sequenceStep.SubSteps.Count; i++)
-                {
-                    FillParameterDataToSequenceData(sequenceStep.SubSteps[i], parameter.SubStepParameters[i]);
-                }
-            }
-            else if (null != sequenceStep.Function)
+            if (null != sequenceStep.Function)
             {
                 parameter.Instance = sequenceStep.Function.Instance;
                 parameter.Return = sequenceStep.Function.Return;
@@ -264,6 +257,13 @@ namespace Testflow.SequenceManager.Serializer
                         parameter.Parameters[i].ParameterType = parameterValues[i].ParameterType;
                         parameter.Parameters[i].Value = parameterValues[i].Value;
                     }
+                }
+            }
+            if (sequenceStep.HasSubSteps)
+            {
+                for (int i = 0; i < sequenceStep.SubSteps.Count; i++)
+                {
+                    FillParameterDataToSequenceData(sequenceStep.SubSteps[i], parameter.SubStepParameters[i]);
                 }
             }
         }
@@ -345,16 +345,16 @@ namespace Testflow.SequenceManager.Serializer
 
         private static void VerifyTypeIndexes(ITypeDataCollection typeDatas, ISequenceStep step)
         {
+            if (null != step.Function)
+            {
+                VerifyTypeIndexes(typeDatas, step.Function as FunctionData);
+            }
             if (step.HasSubSteps)
             {
                 foreach (ISequenceStep subStep in step.SubSteps)
                 {
                     VerifyTypeIndexes(typeDatas, subStep);
                 }
-            }
-            else
-            {
-                VerifyTypeIndexes(typeDatas, step.Function as FunctionData);
             }
         }
 

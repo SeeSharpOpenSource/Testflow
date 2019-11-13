@@ -86,19 +86,16 @@ namespace Testflow.MasterCore.CallBack
 
         private void StepFindCallBack(ISequenceStep step)
         {
+            if (step.Function.Type == FunctionType.CallBack)
+            {
+                IFunctionData function = step.Function;
+                string fullname = function.ClassType.Namespace + "." + function.ClassType.Name + "." + function.MethodName;
+                _callBackMethods.Add(fullname, _typeInvoker.GetMethod(function));
+                _callBackFunctions.Add(fullname, function);
+            }
             if (step.HasSubSteps)
             {
                 StepCollectionFindCallBack(step.SubSteps);
-            }
-            else
-            {
-                if (step.Function.Type == FunctionType.CallBack)
-                {
-                    IFunctionData function = step.Function;
-                    string fullname = function.ClassType.Namespace + "." + function.ClassType.Name + "." + function.MethodName;
-                    _callBackMethods.Add(fullname, _typeInvoker.GetMethod(function));
-                    _callBackFunctions.Add(fullname, function);
-                }
             }
         }
         #endregion

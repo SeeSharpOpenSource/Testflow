@@ -291,14 +291,7 @@ namespace Testflow.SequenceManager.Common
 
         private static void RefreshTypeIndex(ISequenceStep sequenceStep, ITypeDataCollection typeDataCollection)
         {
-            if (sequenceStep.HasSubSteps)
-            {
-                foreach (ISequenceStep subStep in sequenceStep.SubSteps)
-                {
-                    RefreshTypeIndex(subStep, typeDataCollection);
-                }
-            }
-            else
+            if (null != sequenceStep.Function)
             {
                 FunctionData functionData = sequenceStep.Function as FunctionData;
                 functionData.ClassTypeIndex = typeDataCollection.IndexOf(functionData.ClassType);
@@ -307,6 +300,13 @@ namespace Testflow.SequenceManager.Common
                     RefreshTypeIndex(argument, typeDataCollection);
                 }
                 RefreshTypeIndex(functionData.ReturnType, typeDataCollection);
+            }
+            if (sequenceStep.HasSubSteps)
+            {
+                foreach (ISequenceStep subStep in sequenceStep.SubSteps)
+                {
+                    RefreshTypeIndex(subStep, typeDataCollection);
+                }
             }
         }
 

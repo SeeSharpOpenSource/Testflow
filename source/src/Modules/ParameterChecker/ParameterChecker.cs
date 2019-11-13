@@ -286,15 +286,15 @@ namespace Testflow.ParameterChecker
             
             foreach (ISequenceStep step in stepCollection)
             {
+                // 校验step
+                if (null != step.Function)
+                {
+                    warningList = warningList.Concat(CheckStep(step, arr, overwriteType)).ToList();
+                }
                 //检查step是不是function，如果hasSubStep，去校验子substep
                 if (step.HasSubSteps == true)
                 {
                     warningList = warningList.Concat(CheckSteps(step.SubSteps, overwriteType, arr)).ToList();
-                }
-                // 校验step
-                else
-                {
-                    warningList = warningList.Concat(CheckStep(step, arr, overwriteType)).ToList();
                 }
             }
 

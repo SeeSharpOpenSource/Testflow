@@ -102,15 +102,7 @@ namespace Testflow.SequenceManager
                     variable.Type = typeData;
                 }
             }
-
-            if (sequenceStep.HasSubSteps)
-            {
-                foreach (ISequenceStep subStep in sequenceStep.SubSteps)
-                {
-                    VerifyVariableTypes(subStep, variableTree);
-                }
-            }
-            else if (null != sequenceStep.Function)
+            if (null != sequenceStep.Function)
             {
                 IFunctionData functionData = sequenceStep.Function;
                 if (!string.IsNullOrWhiteSpace(functionData.Instance))
@@ -124,7 +116,7 @@ namespace Testflow.SequenceManager
                 for (int i = 0; i < functionData.ParameterType.Count; i++)
                 {
                     IParameterData parameterValue = functionData.Parameters[i];
-                    if (parameterValue.ParameterType == ParameterType.Variable && 
+                    if (parameterValue.ParameterType == ParameterType.Variable &&
                         !string.IsNullOrWhiteSpace(parameterValue.Value))
                     {
                         SetVariableAndArgumentType(parameterValue.Value, functionData.ParameterType[i].Type, variableTree,
@@ -132,6 +124,14 @@ namespace Testflow.SequenceManager
                     }
                 }
             }
+            if (sequenceStep.HasSubSteps)
+            {
+                foreach (ISequenceStep subStep in sequenceStep.SubSteps)
+                {
+                    VerifyVariableTypes(subStep, variableTree);
+                }
+            }
+            
         }
 
         private void SetVariableAndArgumentType(string paramValue, ITypeData type, VariableTreeTable variableTree, 
@@ -233,18 +233,7 @@ namespace Testflow.SequenceManager
                 }
                 return true;
             }
-            if (sequenceStep.HasSubSteps)
-            {
-                foreach (ISequenceStep subStep in sequenceStep.SubSteps)
-                {
-                    bool verified = VerifyVariableInSequenceStep(subStep, variable, typeDatas);
-                    if (verified)
-                    {
-                        return true;
-                    }
-                }
-            }
-            else if (null != sequenceStep.Function)
+            if (null != sequenceStep.Function)
             {
                 IFunctionData functionData = sequenceStep.Function;
                 if (variable.Name.Equals(functionData.Instance))
@@ -263,6 +252,17 @@ namespace Testflow.SequenceManager
                 {
                     variable.Type = functionData.ParameterType[parameter.Index].Type;
                     return true;
+                }
+            }
+            if (sequenceStep.HasSubSteps)
+            {
+                foreach (ISequenceStep subStep in sequenceStep.SubSteps)
+                {
+                    bool verified = VerifyVariableInSequenceStep(subStep, variable, typeDatas);
+                    if (verified)
+                    {
+                        return true;
+                    }
                 }
             }
             return false;
@@ -344,16 +344,16 @@ namespace Testflow.SequenceManager
 
         private void AddSequenceStepTypeDatas(HashSet<ITypeData> typeDatas, ISequenceStep step)
         {
+            if (null != step.Function)
+            {
+                AddFunctionTypeDatas(typeDatas, step.Function);
+            }
             if (step.HasSubSteps)
             {
                 foreach (ISequenceStep subStep in step.SubSteps)
                 {
                     AddSequenceStepTypeDatas(typeDatas, subStep);
                 }
-            }
-            else if (null != step.Function)
-            {
-                AddFunctionTypeDatas(typeDatas, step.Function);
             }
         }
 
