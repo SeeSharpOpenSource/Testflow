@@ -72,18 +72,19 @@ namespace Testflow.CoreCommon.Common
             return varCollection.FirstOrDefault(item => item.Name.Equals(variableElement[variableElement.Length - 1]));
         }
 
+        // 获取序列可用的所有变量名称模式，会包含上级序列的变量模式
         public static string GetVariableNameRegex(ISequenceFlowContainer sequenceData, int session)
         {
             string regex;
             if (sequenceData is ITestProject || sequenceData is ISequenceGroup)
             {
-                const string rootRegexFormat = @"^{0}\{1}[^\{1}]+";
+                const string rootRegexFormat = @"^{0}\{1}[^\{1}]+$";
                 regex = string.Format(rootRegexFormat, session, VarNameDelim);
             }
             else if (sequenceData is ISequence)
             {
                 ISequence sequence = (ISequence) sequenceData;
-                const string sequenceVarRegexFormat = @"^{0}\{2}{1}\{2}[^\{2}]+";
+                const string sequenceVarRegexFormat = @"^{0}\{2}({1}\{2})?[^\{2}]+$";
                 regex = string.Format(sequenceVarRegexFormat, session, sequence.Index, VarNameDelim);
             }
             else
@@ -93,7 +94,35 @@ namespace Testflow.CoreCommon.Common
                     sequenceData = sequenceData.Parent;
                 } while (sequenceData is ISequenceStep);
                 ISequence sequence = (ISequence)sequenceData;
-                const string sequenceVarRegexFormat = @"^{0}\{2}{1}\{2}[^\{2}]+";
+                const string sequenceVarRegexFormat = @"^{0}\{2}({1}\{2})?[^\{2}]+$";
+                regex = string.Format(sequenceVarRegexFormat, session, sequence.Index, VarNameDelim);
+            }
+            return regex;
+        }
+
+        // 仅获取序列的变量名称模式，不包含上级序列的变量模式
+        public static string GetExactVariableNameRegex(ISequenceFlowContainer sequenceData, int session)
+        {
+            string regex;
+            if (sequenceData is ITestProject || sequenceData is ISequenceGroup)
+            {
+                const string rootRegexFormat = @"^{0}\{1}[^\{1}]+$";
+                regex = string.Format(rootRegexFormat, session, VarNameDelim);
+            }
+            else if (sequenceData is ISequence)
+            {
+                ISequence sequence = (ISequence)sequenceData;
+                const string sequenceVarRegexFormat = @"^{0}\{2}{1}\{2}[^\{2}]+$";
+                regex = string.Format(sequenceVarRegexFormat, session, sequence.Index, VarNameDelim);
+            }
+            else
+            {
+                do
+                {
+                    sequenceData = sequenceData.Parent;
+                } while (sequenceData is ISequenceStep);
+                ISequence sequence = (ISequence)sequenceData;
+                const string sequenceVarRegexFormat = @"^{0}\{2}{1}\{2}[^\{2}]+$";
                 regex = string.Format(sequenceVarRegexFormat, session, sequence.Index, VarNameDelim);
             }
             return regex;
@@ -130,7 +159,15 @@ namespace Testflow.CoreCommon.Common
         {
             string[] variableElement = runtimeVariable.Split(VarNameDelim.ToCharArray());
             IVariableCollection varCollection = sequence.Variables;
-            return varCollection.FirstOrDefault(item => item.Name.Equals(variableElement[variableElement.Length - 1]));
+            IVariable variable = varCollection.FirstOrDefault(item => item.Name.Equals(variableElement[variableElement.Length - 1]));
+            if (null == variable)
+            {
+                varCollection = sequence.Parent is ISequenceGroup
+                    ? ((ISequenceGroup) sequence.Parent).Variables
+                    : ((ITestProject) sequence.Parent).Variables;
+                variable = varCollection.FirstOrDefault(item => item.Name.Equals(variableElement[variableElement.Length - 1]));
+            }
+            return variable;
         }
 
         public static void SetMessageValue(SerializationInfo info, object target, Type type)

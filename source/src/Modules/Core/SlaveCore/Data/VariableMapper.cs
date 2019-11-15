@@ -154,7 +154,7 @@ namespace Testflow.SlaveCore.Data
         // 清空序列的变量
         public void ClearSequenceVariables(ISequenceFlowContainer sequence)
         {
-            string nameRegex = CoreUtils.GetVariableNameRegex(sequence, _context.SessionId);
+            string nameRegex = CoreUtils.GetExactVariableNameRegex(sequence, _context.SessionId);
             Regex varRegex = new Regex(nameRegex);
             List<string> variableNames = new List<string>(_variables.Keys);
             foreach (string variableName in variableNames)
