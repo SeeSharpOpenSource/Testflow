@@ -78,7 +78,7 @@ namespace Testflow.CoreCommon.Common
             string regex;
             if (sequenceData is ITestProject || sequenceData is ISequenceGroup)
             {
-                const string rootRegexFormat = @"^{0}\{1}[^\{1}]+$";
+                const string rootRegexFormat = @"^{0}\{1}[^\{1}]+";
                 regex = string.Format(rootRegexFormat, session, VarNameDelim);
             }
             else if (sequenceData is ISequence)
