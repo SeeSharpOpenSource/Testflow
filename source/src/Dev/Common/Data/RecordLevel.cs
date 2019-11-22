@@ -18,6 +18,11 @@
         /// <summary>
         /// 保存被变更的每个过程的值
         /// </summary>
-        Trace = 2
+        Trace = 2,
+
+        /// <summary>
+        /// 无论任何step返回状态，只要该变量可用则返回值
+        /// </summary>
+        FullTrace = 3
     }
 }
