@@ -7,6 +7,7 @@ using Testflow.CoreCommon.Data;
 using Testflow.CoreCommon.Messages;
 using Testflow.Data;
 using Testflow.Data.Sequence;
+using Testflow.FlowControl;
 using Testflow.Runtime;
 using Testflow.Runtime.Data;
 using Testflow.SlaveCore.Common;
@@ -294,11 +295,7 @@ namespace Testflow.SlaveCore.Runner.Model
                 this.Result = StepResult.Failed;
                 // 如果InvokeErrorAction不是Continue，则抛出异常
                 RecordInvocationError(ex, ex.FailedType);
-                // 如果失败行为是终止，则抛出异常
-                if (StepData.InvokeErrorAction == FailedAction.Terminate)
-                {
-                    throw;
-                }
+                HandleException(StepData.InvokeErrorAction, ex);
             }
             catch (TestflowAssertException ex)
             {
@@ -306,11 +303,7 @@ namespace Testflow.SlaveCore.Runner.Model
                 Actuator.EndTiming();
                 this.Result = StepResult.Failed;
                 RecordInvocationError(ex, FailedType.AssertionFailed);
-                // 如果失败行为是终止，则抛出异常
-                if (StepData.AssertFailedAction == FailedAction.Terminate)
-                {
-                    throw;
-                }
+                HandleException(StepData.AssertFailedAction, ex);
             }
             catch (TargetInvocationException ex)
             {
@@ -319,10 +312,10 @@ namespace Testflow.SlaveCore.Runner.Model
                 this.Result = StepResult.Error;
                 RecordInvocationError(ex.InnerException, FailedType.TargetError);
                 // 如果失败行为是终止，则抛出异常
-                if (StepData.InvokeErrorAction == FailedAction.Terminate)
-                {
-                    throw;
-                }
+                FailedAction failedAction = ex.InnerException is TestflowAssertException
+                    ? StepData.AssertFailedAction
+                    : StepData.InvokeErrorAction;
+                HandleException(failedAction, ex.InnerException);
             }
         }
 
@@ -394,11 +387,7 @@ namespace Testflow.SlaveCore.Runner.Model
                 Actuator.EndTiming();
                 this.Result = StepResult.Failed;
                 RecordInvocationError(ex, ex.FailedType);
-                // 如果失败行为是终止，则抛出异常
-                if (StepData.InvokeErrorAction == FailedAction.Terminate)
-                {
-                    throw;
-                }
+                HandleException(StepData.InvokeErrorAction, ex);
             }
             catch (TestflowAssertException ex)
             {
@@ -406,22 +395,17 @@ namespace Testflow.SlaveCore.Runner.Model
                 Actuator.EndTiming();
                 this.Result = StepResult.Failed;
                 RecordInvocationError(ex, FailedType.AssertionFailed);
-                // 如果失败行为是终止，则抛出异常
-                if (StepData.AssertFailedAction == FailedAction.Terminate)
-                {
-                    throw;
-                }
+                HandleException(StepData.AssertFailedAction, ex);
             }
             catch (TargetInvocationException ex)
             {
                 // 停止计时
                 Actuator.EndTiming();
                 RecordTargetInvocationError(ex);
-                // 如果失败行为是终止，则抛出异常
-                if (StepData.InvokeErrorAction == FailedAction.Terminate)
-                {
-                    throw;
-                }
+                FailedAction failedAction = ex.InnerException is TestflowAssertException
+                    ? StepData.AssertFailedAction
+                    : StepData.InvokeErrorAction;
+                HandleException(failedAction, ex.InnerException);
             }
         }
 
@@ -482,7 +466,29 @@ namespace Testflow.SlaveCore.Runner.Model
             Context.LogSession.Print(LogLevel.Warn, Context.SessionId, $"Sequence step <{this.GetStack()}> passed but force failed.");
             throw new TaskFailedException(SequenceIndex, FailedType.ForceFailed);
         }
-        
+
+        private void HandleException(FailedAction failedAction, Exception exception)
+        {
+            switch (failedAction)
+            {
+                // 如果失败行为是终止，则抛出异常
+                case FailedAction.Terminate:
+                    throw exception;
+                    break;
+                // 如果失败行为是继续，则不执行任何操作
+                case FailedAction.Continue:
+                    break;
+                // 如果失败行为是跳出循环，则抛出LoopBreakException
+                case FailedAction.BreakLoop:
+                    throw new TestflowLoopBreakException(true, exception);
+                    break;
+                // 如果失败行为是下一个循环，则抛出LoopBreakException
+                case FailedAction.NextLoop:
+                    throw new TestflowLoopBreakException(false, exception);
+                    break;
+            }
+        }
+
         #endregion
 
         private void RecordTargetInvocationError(TargetInvocationException ex)
@@ -509,9 +515,7 @@ namespace Testflow.SlaveCore.Runner.Model
         {
             SequenceStatusInfo statusInfo = new SequenceStatusInfo(SequenceIndex, this.GetStack(), StatusReportType.Record, Result)
             {
-                ExecutionTime = Actuator.ExecutionTime,
-                ExecutionTicks = Actuator.ExecutionTicks,
-                CoroutineId = this.CoroutineId
+                ExecutionTime = Actuator.ExecutionTime, ExecutionTicks = Actuator.ExecutionTicks, CoroutineId = this.CoroutineId
             };
             // 更新watch变量值
             statusInfo.WatchDatas = Context.VariableMapper.GetWatchDataValues(StepData);
@@ -521,13 +525,9 @@ namespace Testflow.SlaveCore.Runner.Model
         private void RecordInvocationError(Exception ex, FailedType failedType)
         {
             FailedInfo failedInfo = new FailedInfo(ex, failedType);
-            SequenceStatusInfo statusInfo = new SequenceStatusInfo(SequenceIndex, this.GetStack(),
-                StatusReportType.Record, Result, failedInfo)
+            SequenceStatusInfo statusInfo = new SequenceStatusInfo(SequenceIndex, this.GetStack(), StatusReportType.Record, Result, failedInfo)
             {
-                ExecutionTime = Actuator.ExecutionTime,
-                ExecutionTicks = Actuator.ExecutionTicks,
-                CoroutineId = this.CoroutineId,
-                WatchDatas = Context.VariableMapper.GetWatchDataValues(StepData)
+                ExecutionTime = Actuator.ExecutionTime, ExecutionTicks = Actuator.ExecutionTicks, CoroutineId = this.CoroutineId, WatchDatas = Context.VariableMapper.GetWatchDataValues(StepData)
             };
             // 一旦失败，需要记录WatchData
             Context.StatusQueue.Enqueue(statusInfo);

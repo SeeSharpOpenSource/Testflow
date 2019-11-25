@@ -6,6 +6,7 @@ using Testflow.Usr;
 using Testflow.CoreCommon.Data;
 using Testflow.CoreCommon.Messages;
 using Testflow.Data.Sequence;
+using Testflow.FlowControl;
 using Testflow.Runtime;
 using Testflow.Runtime.Data;
 using Testflow.SlaveCore.Common;
@@ -102,6 +103,18 @@ namespace Testflow.SlaveCore.Runner.Model
                 SetResultState(out lastStepResult, out finalReportType, out failedInfo);
             }
             catch (TargetInvocationException ex)
+            {
+                // 停止失败的step的计时
+                StepTaskEntityBase currentStep = StepTaskEntityBase.GetCurrentStep(Index, RootCoroutineId);
+                currentStep?.EndTiming();
+                FillFinalExceptionReportInfo(ex.InnerException, out finalReportType, out lastStepResult, out failedInfo);
+                // 如果抛出TargetInvokcationException到当前位置则说明内部没有发送错误事件
+                if (null != currentStep && currentStep.BreakIfFailed)
+                {
+                    currentStep.SetStatusAndSendErrorEvent(lastStepResult, failedInfo);
+                }
+            }
+            catch (TestflowLoopBreakException ex)
             {
                 // 停止失败的step的计时
                 StepTaskEntityBase currentStep = StepTaskEntityBase.GetCurrentStep(Index, RootCoroutineId);
