@@ -25,6 +25,11 @@
         /// </summary>
         public const int AssertionFailed = 4 | CommonErrorMask;
 
+        /// <summary>
+        /// 流程控制使用的异常，并非直接由错误触发
+        /// </summary>
+        public const int FlowControl = 5 | CommonErrorMask;
+
         #region 各模块异常码掩码定义
 
         /// <summary>
