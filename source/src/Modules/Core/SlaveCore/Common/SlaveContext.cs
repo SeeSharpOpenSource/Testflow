@@ -153,6 +153,8 @@ namespace Testflow.SlaveCore.Common
         {
             MessageTransceiver?.Dispose();
             TimingManager.Dispose();
+            CoroutineManager.Dispose();
+            DebugManager.Dispose();
         }
     }
 }

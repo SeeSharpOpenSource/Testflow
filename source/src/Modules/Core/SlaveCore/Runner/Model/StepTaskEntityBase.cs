@@ -502,14 +502,14 @@ namespace Testflow.SlaveCore.Runner.Model
 
         protected void OnPreListener()
         {
-            Coroutine.OnPreListener();
+            Coroutine.OnPreListener(this);
             PreListener?.Invoke(this);
         }
 
         protected void OnPostListener()
         {
             PostListener?.Invoke(this);
-            Coroutine.OnPostListener();
+            Coroutine.OnPostListener(this);
         }
 
         #endregion

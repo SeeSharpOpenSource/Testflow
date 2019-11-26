@@ -16,7 +16,6 @@ namespace Testflow.SlaveCore.Debugger
         private readonly SlaveContext _context;
 
         private Dictionary<string, StepTaskEntityBase> _breakPoints;
-        private Dictionary<string, StepTaskEntityBase> _pausePoints;
 
         private DebugWatchData _watchDatas;
 
@@ -24,6 +23,7 @@ namespace Testflow.SlaveCore.Debugger
         {
             _context = context;
             _watchDatas = new DebugWatchData();
+            _breakPoints = new Dictionary<string, StepTaskEntityBase>(Constants.DefaultRuntimeSize);
         }
 
         public void HandleDebugMessage(DebugMessage message)
@@ -36,26 +36,24 @@ namespace Testflow.SlaveCore.Debugger
                 case MessageNames.DelBreakPointName:
                     DelBreakPoints(message.BreakPoints);
                     break;
+                case MessageNames.PauseName:
+                    // TODO 暂时写死Coroutine为0
+                    Pause(0);
+                    break;
                 case MessageNames.StepOverName:
                     break;
-                case MessageNames.StepIntoName:
-                    break;
                 case MessageNames.ContinueName:
+                    // TODO 暂时写死Coroutine为0
+                    Continue(0);
                     break;
                 case MessageNames.RunToEndName:
                     break;
                 case MessageNames.RequestValueName:
                     break;
                 case MessageNames.RefreshWatchName:
-                    if (null != message.WatchData && null != message.WatchData.Names)
-                    {
-                        _watchDatas = message.WatchData;
-                    }
-                    else
-                    {
-                        _watchDatas.Names.Clear();
-                        _watchDatas.Values.Clear();
-                    }
+                    RefreshWatchData(message);
+                    break;
+                case MessageNames.StepIntoName:
                     break;
             }
 
@@ -98,33 +96,50 @@ namespace Testflow.SlaveCore.Debugger
             }
         }
 
-        private void Pause()
+        private void Pause(int coroutineId)
         {
+            CoroutineHandle coroutineHandle = _context.CoroutineManager.GetCoroutineHandle(coroutineId);
+            coroutineHandle.PostListener += DebugBlocked;
+        }
 
+        private void Continue(int coroutineId)
+        {
+            CoroutineHandle coroutineHandle = _context.CoroutineManager.GetCoroutineHandle(coroutineId);
+            coroutineHandle.PostListener -= DebugBlocked;
+            coroutineHandle.SetSignal();
         }
 
         private void StepInto()
         {
-
+            // TODO
         }
 
         private void StepOver()
         {
-
-        }
-
-        private void Continue()
-        {
-
+            // TODO
         }
 
         private void RunToEnd()
         {
+            // TODO
+        }
+
+        private void RefreshWatchData(DebugMessage message)
+        {
+            if (null != message.WatchData && null != message.WatchData.Names)
+            {
+                _watchDatas = message.WatchData;
+            }
+            else
+            {
+                _watchDatas.Names.Clear();
+                _watchDatas.Values.Clear();
+            }
         }
 
         #region 断点事件
 
-        public void DebugBlocked(StepTaskEntityBase stepTaskEntity)
+        private void DebugBlocked(StepTaskEntityBase stepTaskEntity)
         {
             CallStack breakPoint = stepTaskEntity.GetStack();
             _watchDatas.Values.Clear();
@@ -151,7 +166,6 @@ namespace Testflow.SlaveCore.Debugger
         public void Dispose()
         {
             _breakPoints.Clear();
-            _pausePoints.Clear();
         }
     }
 }

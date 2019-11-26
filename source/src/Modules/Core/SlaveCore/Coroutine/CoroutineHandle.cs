@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading;
 using Testflow.SlaveCore.Debugger;
+using Testflow.SlaveCore.Runner.Model;
 
 namespace Testflow.SlaveCore.Coroutine
 {
@@ -10,8 +11,8 @@ namespace Testflow.SlaveCore.Coroutine
         public int Id { get; }
         private readonly AutoResetEvent _blockEvent;
 
-        public event Action PreListener;
-        public event Action PostListener;
+        public event Action<StepTaskEntityBase> PreListener;
+        public event Action<StepTaskEntityBase> PostListener;
 
         public CoroutineHandle(int id)
         {
@@ -32,14 +33,14 @@ namespace Testflow.SlaveCore.Coroutine
             _blockEvent.Set();
         }
 
-        public void OnPreListener()
+        public void OnPreListener(StepTaskEntityBase stepEntity)
         {
-            PreListener?.Invoke();
+            PreListener?.Invoke(stepEntity);
         }
 
-        public void OnPostListener()
+        public void OnPostListener(StepTaskEntityBase stepEntity)
         {
-            PostListener?.Invoke();
+            PostListener?.Invoke(stepEntity);
         }
 
         public void Dispose()

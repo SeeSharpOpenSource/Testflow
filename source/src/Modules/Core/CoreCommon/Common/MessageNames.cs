@@ -16,6 +16,7 @@
         public const string RunToEndName = "RunToEnd";
         public const string RequestValueName = "RequestValue";
         public const string RefreshWatchName = "RefreshWatch";
+        public const string PauseName = "Pause";
 
         #endregion
 
