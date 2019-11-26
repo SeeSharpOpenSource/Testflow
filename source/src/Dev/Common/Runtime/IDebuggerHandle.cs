@@ -33,6 +33,11 @@ namespace Testflow.Runtime
         /// </summary>
         void RunToEnd();
 
+        /// <summary>
+        /// 当前Step执行结束后暂停
+        /// </summary>
+        void Pause();
+
         #endregion
 
 

@@ -200,6 +200,11 @@ namespace Testflow.MasterCore.Core
             SendRunDebugStepMessage(MessageNames.ContinueName);
         }
 
+        public void Pause()
+        {
+            SendRunDebugStepMessage(MessageNames.PauseName);
+        }
+
         private void SendRunDebugStepMessage(string messageName)
         {
             if (_debugHitSession == Constants.NoDebugHitSession)

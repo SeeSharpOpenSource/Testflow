@@ -30,5 +30,10 @@ namespace Testflow.MasterCore.EventData
         {
             _debugManager.RunToEnd();
         }
+
+        public void Pause()
+        {
+            _debugManager.Pause();
+        }
     }
 }
