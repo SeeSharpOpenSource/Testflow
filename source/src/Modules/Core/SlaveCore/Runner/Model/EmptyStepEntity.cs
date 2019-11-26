@@ -35,10 +35,16 @@ namespace Testflow.SlaveCore.Runner.Model
                 this.Result = StepResult.Abort;
                 return;
             }
+            // 调用前置监听
+            OnPreListener();
+
             this.Result = StepResult.Error;
             this.Result = Actuator.InvokeStep(forceInvoke);
             Context.LogSession.Print(LogLevel.Debug, Context.SessionId,
                 $"The empty step {GetStack()} invoked.");
+            // 调用后置监听
+            OnPostListener();
+
             if (null != StepData && StepData.HasSubSteps)
             {
                 StepTaskEntityBase subStepEntity = SubStepRoot;

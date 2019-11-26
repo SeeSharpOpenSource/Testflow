@@ -20,6 +20,8 @@ namespace Testflow.SlaveCore.Runner.Model
                 this.Result = StepResult.Abort;
                 return;
             }
+            // 调用前置监听
+            OnPreListener();
             this.Result = StepResult.Error;
             this.Result = Actuator.InvokeStep(forceInvoke);
 
@@ -28,7 +30,8 @@ namespace Testflow.SlaveCore.Runner.Model
             {
                 RecordRuntimeStatus();
             }
-
+            // 调用后置监听
+            OnPostListener();
             object returnValue = Actuator.Return;
             // 如果返回值不是bool类型或者返回值为false则不执行下级的Step集合
             if (!(returnValue is bool) || !(bool) returnValue)

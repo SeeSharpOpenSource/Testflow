@@ -20,6 +20,9 @@ namespace Testflow.SlaveCore.Runner.Model
                 this.Result = StepResult.Abort;
                 return;
             }
+            // 调用前置监听
+            OnPreListener();
+
             this.Result = StepResult.Error;
             this.Result = Actuator.InvokeStep(forceInvoke);
             // 如果当前step被标记为记录状态，则返回状态信息
@@ -27,6 +30,9 @@ namespace Testflow.SlaveCore.Runner.Model
             {
                 RecordRuntimeStatus();
             }
+            // 调用后置监听
+            OnPostListener();
+
             if (null != StepData && StepData.HasSubSteps)
             {
                 StepTaskEntityBase subStepEntity = SubStepRoot;

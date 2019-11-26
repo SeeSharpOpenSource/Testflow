@@ -44,6 +44,10 @@ namespace Testflow.SlaveCore.Runner.Model
                 this.Result = StepResult.Abort;
                 return;
             }
+
+            // 调用前置监听
+            OnPreListener();
+
             // 开始计时
             Actuator.StartTiming();
             // 停止计时
@@ -54,6 +58,10 @@ namespace Testflow.SlaveCore.Runner.Model
             {
                 RecordRuntimeStatus();
             }
+
+            // 调用后置监听
+            OnPostListener();
+
             if (null != StepData && StepData.HasSubSteps)
             {
                 StepTaskEntityBase subStepEntity = SubStepRoot;

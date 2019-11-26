@@ -20,13 +20,18 @@ namespace Testflow.SlaveCore.Runner.Model
                 this.Result = StepResult.Abort;
                 return;
             }
+            // 调用前置监听
+            OnPreListener();
+
             // 开始计时
             Actuator.StartTiming();
             // 停止计时
             Actuator.EndTiming();
             // 应为TryFinally块上级为空，默认为pass
             this.Result = StepResult.Pass;
-            
+            // 调用后置监听
+            OnPostListener();
+
             StepTaskEntityBase tryBlock = SubStepRoot;
             StepTaskEntityBase finallyBlock = tryBlock.NextStep;
 
