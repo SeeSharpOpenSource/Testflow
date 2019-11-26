@@ -2,18 +2,14 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Text.RegularExpressions;
 using Testflow.Usr;
-using Testflow.CoreCommon;
 using Testflow.CoreCommon.Common;
 using Testflow.CoreCommon.Data;
 using Testflow.CoreCommon.Messages;
 using Testflow.Data;
 using Testflow.Data.Sequence;
-using Testflow.Runtime;
 using Testflow.SlaveCore.Runner.Model;
-using Testflow.Utility.I18nUtil;
 
 namespace Testflow.SlaveCore.Common
 {
@@ -210,6 +206,16 @@ namespace Testflow.SlaveCore.Common
             ISequenceGroup sequenceGroup = (ISequenceGroup)sequence.Parent;
             variable = sequenceGroup.Variables.First(item => item.Name.Equals(variableName));
             return CoreUtils.GetRuntimeVariableName(session, variable);
+        }
+
+        public static StepTaskEntityBase GetStepEntity(SlaveContext context, CallStack stack)
+        {
+            if (stack.Session != context.SessionId)
+            {
+                return null;
+            }
+            SequenceTaskEntity sequenceTaskEntity = context.SessionTaskEntity.GetSequenceTaskEntity(stack.Sequence);
+            return sequenceTaskEntity.GetStepEntity(stack);
         }
     }
 }

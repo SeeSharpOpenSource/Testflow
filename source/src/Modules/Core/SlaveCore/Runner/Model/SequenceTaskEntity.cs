@@ -271,5 +271,33 @@ namespace Testflow.SlaveCore.Runner.Model
             message.SequenceStates.Add(this.State);
             message.Results.Add(StepResult.NotAvailable);
         }
+
+        public StepTaskEntityBase GetStepEntity(ICallStack stack)
+        {
+            // 当前当前StepRoot为null，则说明序列已经执行结束，返回null
+            if (null == _stepEntityRoot)
+            {
+                return null;
+            }
+            StepTaskEntityBase currentStep = _stepEntityRoot;
+            int currentLevel = 0;
+            int stepId = stack.StepStack[currentLevel];
+            for (int i = 0; i < stepId; i++)
+            {
+                currentStep = currentStep.NextStep;
+            }
+            currentLevel++;
+            while(currentLevel < stack.StepStack.Count && null != currentStep.SubStepRoot)
+            {
+                currentStep = currentStep.SubStepRoot;
+                stepId = stack.StepStack[currentLevel];
+                for (int i = 0; i < stepId; i++)
+                {
+                    currentStep = currentStep.NextStep;
+                }
+                currentLevel++;
+            }
+            return currentStep;
+        }
     }
 }

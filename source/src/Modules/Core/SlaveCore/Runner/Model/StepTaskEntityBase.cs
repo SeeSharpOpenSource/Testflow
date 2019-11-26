@@ -110,7 +110,7 @@ namespace Testflow.SlaveCore.Runner.Model
 
         protected readonly SlaveContext Context;
         protected readonly ISequenceStep StepData;
-        protected readonly StepTaskEntityBase SubStepRoot;
+        public readonly StepTaskEntityBase SubStepRoot;
         private Action<bool> _invokeStepAction;
         private bool _hasLoopCounter = false;
         protected readonly ActuatorBase Actuator;
@@ -120,9 +120,9 @@ namespace Testflow.SlaveCore.Runner.Model
         public object Return => Actuator?.Return ?? null;
 
         // 执行前监听器
-        public event Action PreListener;
+        public event Action<StepTaskEntityBase> PreListener;
         // 执行后监听器
-        public event Action PostListener;
+        public event Action<StepTaskEntityBase> PostListener;
 
         // Step执行的协程ID
         public int CoroutineId { get; private set; }
@@ -501,12 +501,12 @@ namespace Testflow.SlaveCore.Runner.Model
 
         protected void OnPreListener()
         {
-            PreListener?.Invoke();
+            PreListener?.Invoke(this);
         }
 
         protected void OnPostListener()
         {
-            PostListener?.Invoke();
+            PostListener?.Invoke(this);
         }
 
         #endregion

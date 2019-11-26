@@ -185,6 +185,20 @@ namespace Testflow.SlaveCore.Data
 
         private object GetParamValue(string paramValueStr, object varValue, ITypeData targetType)
         {
+            object paramValue = GetParamValue(varValue, paramValueStr);
+
+            Type dstType = _context.TypeInvoker.GetType(targetType);
+            // 如果Value不为null，并且value和targetType不匹配，则执行转换
+            if (null != paramValue && !dstType.IsInstanceOfType(paramValue) &&
+                _context.Convertor.IsValidCast(paramValue.GetType(), dstType))
+            {
+                paramValue = _context.Convertor.CastValue(targetType, paramValue);
+            }
+            return paramValue;
+        }
+
+        private static object GetParamValue(object varValue, string paramValueStr)
+        {
             object paramValue = varValue;
             // 如果ParamValue使用了类属性的定义，则需要按层取出真实属性的值
             if (paramValueStr.Contains(Constants.PropertyDelim))
@@ -197,18 +211,11 @@ namespace Testflow.SlaveCore.Data
                     if (null == propertyInfo)
                     {
                         I18N i18N = I18N.GetInstance(Constants.I18nName);
-                        throw new TestflowDataException(ModuleErrorCode.SequenceDataError, i18N.GetFStr("UnexistVariable", paramValueStr));
+                        throw new TestflowDataException(ModuleErrorCode.SequenceDataError,
+                            i18N.GetFStr("UnexistVariable", paramValueStr));
                     }
                     paramValue = propertyInfo.GetValue(paramValue);
                 }
-            }
-            
-            Type dstType = _context.TypeInvoker.GetType(targetType);
-            // 如果Value不为null，并且value和targetType不匹配，则执行转换
-            if (null != paramValue && !dstType.IsInstanceOfType(paramValue) &&
-                _context.Convertor.IsValidCast(paramValue.GetType(), dstType))
-            {
-                paramValue = _context.Convertor.CastValue(targetType, paramValue);
             }
             return paramValue;
         }
@@ -248,6 +255,16 @@ namespace Testflow.SlaveCore.Data
 
             Dictionary<string, string> watchData = GetKeyVariableValues(keyVarNames);
             return watchData;
+        }
+
+        public string GetWatchDataValue(string variable, string watchStr)
+        {
+            if (_variables.ContainsKey(variable))
+            {
+                return Constants.IllegalValue;
+            }
+            object paramValue = GetParamValue(variable, watchStr);
+            return JsonConvert.SerializeObject(paramValue);
         }
 
         private Dictionary<string, string> GetKeyVariableValues(List<string> keyVarNames)
