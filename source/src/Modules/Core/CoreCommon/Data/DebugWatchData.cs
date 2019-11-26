@@ -1,9 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Runtime.Serialization;
 using Testflow.CoreCommon.Common;
 
 namespace Testflow.CoreCommon.Data
 {
+    [Serializable]
     public class DebugWatchData : ISerializable
     {
         /// <summary>
