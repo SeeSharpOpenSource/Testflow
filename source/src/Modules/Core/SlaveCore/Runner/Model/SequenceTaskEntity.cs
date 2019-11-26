@@ -119,7 +119,7 @@ namespace Testflow.SlaveCore.Runner.Model
                 // 停止失败的step的计时
                 StepTaskEntityBase currentStep = StepTaskEntityBase.GetCurrentStep(Index, RootCoroutineId);
                 currentStep?.EndTiming();
-                FillFinalExceptionReportInfo(ex.InnerException, out finalReportType, out lastStepResult, out failedInfo);
+                FillFinalExceptionReportInfo(ex.InnerException ?? ex, out finalReportType, out lastStepResult, out failedInfo);
                 // 如果抛出TargetInvokcationException到当前位置则说明内部没有发送错误事件
                 if (null != currentStep && currentStep.BreakIfFailed)
                 {
