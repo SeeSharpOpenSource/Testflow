@@ -118,6 +118,12 @@ namespace Testflow.SlaveCore.Runner.Model
         public StepResult Result { get; protected set; }
         public int SequenceIndex { get; }
         public object Return => Actuator?.Return ?? null;
+
+        // 执行前监听器
+        public event Action PreListener;
+        // 执行后监听器
+        public event Action PostListener;
+
         // Step执行的协程ID
         public int CoroutineId { get; private set; }
         // 执行失败后是否直接终止运行
@@ -310,7 +316,7 @@ namespace Testflow.SlaveCore.Runner.Model
                 // 停止计时
                 Actuator.EndTiming();
                 this.Result = StepResult.Error;
-                RecordInvocationError(ex.InnerException, FailedType.TargetError);
+                RecordTargetInvocationError(ex);
                 // 如果失败行为是终止，则抛出异常
                 FailedAction failedAction = ex.InnerException is TestflowAssertException
                     ? StepData.AssertFailedAction
@@ -490,6 +496,21 @@ namespace Testflow.SlaveCore.Runner.Model
         }
 
         #endregion
+
+        #region 事件调用
+
+        protected void OnPreListener()
+        {
+            PreListener?.Invoke();
+        }
+
+        protected void OnPostListener()
+        {
+            PostListener?.Invoke();
+        }
+
+        #endregion
+
 
         private void RecordTargetInvocationError(TargetInvocationException ex)
         {
