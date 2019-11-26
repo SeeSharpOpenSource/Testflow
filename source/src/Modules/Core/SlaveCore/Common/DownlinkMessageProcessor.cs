@@ -109,36 +109,7 @@ namespace Testflow.SlaveCore.Common
 
         private void ProcessDebugMessage(DebugMessage message)
         {
-            switch (message.Name)
-            {
-                case MessageNames.AddBreakPointName:
-                    foreach (CallStack breakPoint in message.BreakPoints)
-                    {
-                        _context.BreakPoints.Add(breakPoint.ToString());
-                    }
-                    break;
-                case MessageNames.DelBreakPointName:
-                    foreach (CallStack breakPoint in message.BreakPoints)
-                    {
-                        _context.BreakPoints.Remove(breakPoint.ToString());
-                    }
-                    break;
-                case MessageNames.StepOverName:
-                    break;
-                case MessageNames.StepIntoName:
-                    break;
-                case MessageNames.ContinueName:
-                    break;
-                case MessageNames.RunToEndName:
-                    break;
-                case MessageNames.RequestValueName:
-                    break;
-                case MessageNames.RefreshWatchName:
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException();
-                    break;
-            }
+            _context.DebugManager.HandleDebugMessage(message);
         }
 
         private void ProcessSyncMessage(ResourceSyncMessage message)

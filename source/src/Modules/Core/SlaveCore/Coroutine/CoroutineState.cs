@@ -1,4 +1,4 @@
-﻿namespace Testflow.SlaveCore.Debugger
+﻿namespace Testflow.SlaveCore.Coroutine
 {
     /// <summary>
     /// 协程运行状态

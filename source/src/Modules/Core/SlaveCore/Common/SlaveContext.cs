@@ -9,7 +9,9 @@ using Testflow.Data;
 using Testflow.Data.Sequence;
 using Testflow.Logger;
 using Testflow.Runtime;
+using Testflow.SlaveCore.Coroutine;
 using Testflow.SlaveCore.Data;
+using Testflow.SlaveCore.Debugger;
 using Testflow.SlaveCore.Runner;
 using Testflow.SlaveCore.Runner.Model;
 using Testflow.SlaveCore.SlaveFlowControl;
@@ -46,10 +48,11 @@ namespace Testflow.SlaveCore.Common
             this.CtrlStartMessage = null;
             this.WatchDatas = new HashSet<string>();
             this.ReturnDatas = new HashSet<string>();
-            this.BreakPoints = new HashSet<string>();
             this.RuntimeType = GetProperty<RuntimeType>("RuntimeType");
             this.Cancellation = new CancellationTokenSource();
             this.TimingManager = new StopWatchManager(this);
+            this.CoroutineManager = new CoroutineManager(this);
+            this.DebugManager = new DebugManager(this);
             LogSession.Print(LogLevel.Debug, SessionId, "Slave context constructed.");
         }
 
@@ -85,6 +88,10 @@ namespace Testflow.SlaveCore.Common
 
         public StopWatchManager TimingManager { get; }
 
+        public CoroutineManager CoroutineManager { get; }
+
+        public DebugManager DebugManager { get; }
+
         /// <summary>
         /// 执行取消标志
         /// </summary>
@@ -99,11 +106,6 @@ namespace Testflow.SlaveCore.Common
         /// 控制开始消息，可以接收到多个
         /// </summary>
         public ControlMessage CtrlStartMessage { get; set; }
-
-        /// <summary>
-        /// 断点信息
-        /// </summary>
-        public HashSet<string> BreakPoints { get; }
 
         public RuntimeType RuntimeType { get; }
 

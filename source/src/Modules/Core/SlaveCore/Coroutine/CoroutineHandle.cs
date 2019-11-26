@@ -1,18 +1,22 @@
 ﻿using System;
 using System.Threading;
+using Testflow.SlaveCore.Debugger;
 
-namespace Testflow.SlaveCore.Debugger
+namespace Testflow.SlaveCore.Coroutine
 {
-    internal class CoroutineRuntimeHandle : IDisposable
+    internal class CoroutineHandle : IDisposable
     {
         public CoroutineState State { get; set; }
-        public int CoroutineId { get; }
+        public int Id { get; }
         private readonly AutoResetEvent _blockEvent;
 
-        public CoroutineRuntimeHandle(int coroutineId)
+        public event Action PreListener;
+        public event Action PostListener;
+
+        public CoroutineHandle(int id)
         {
             this.State = CoroutineState.Idle;
-            this.CoroutineId = coroutineId;
+            this.Id = id;
             this._blockEvent = new AutoResetEvent(false);
         }
 
@@ -26,6 +30,16 @@ namespace Testflow.SlaveCore.Debugger
         public void SetSignal()
         {
             _blockEvent.Set();
+        }
+
+        public void OnPreListener()
+        {
+            PreListener?.Invoke();
+        }
+
+        public void OnPostListener()
+        {
+            PostListener?.Invoke();
         }
 
         public void Dispose()

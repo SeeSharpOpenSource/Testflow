@@ -5,6 +5,7 @@ using Testflow.CoreCommon.Common;
 using Testflow.CoreCommon.Data;
 using Testflow.CoreCommon.Messages;
 using Testflow.SlaveCore.Common;
+using Testflow.SlaveCore.Coroutine;
 using Testflow.SlaveCore.Runner.Model;
 using Testflow.Usr;
 
@@ -16,8 +17,6 @@ namespace Testflow.SlaveCore.Debugger
 
         private Dictionary<string, StepTaskEntityBase> _breakPoints;
         private Dictionary<string, StepTaskEntityBase> _pausePoints;
-        // 协程ID到对应协程运行时句柄的映射
-        private Dictionary<int, CoroutineRuntimeHandle> _coroutineHandles;
 
         private DebugWatchData _watchDatas;
 
@@ -25,15 +24,6 @@ namespace Testflow.SlaveCore.Debugger
         {
             _context = context;
             _watchDatas = new DebugWatchData();
-        }
-
-        public void Initialize(IList<int> coroutineIds)
-        {
-            _coroutineHandles = new Dictionary<int, CoroutineRuntimeHandle>(coroutineIds.Count);
-            foreach (int coroutineId in coroutineIds)
-            {
-                _coroutineHandles.Add(coroutineId, new CoroutineRuntimeHandle(coroutineId));
-            }
         }
 
         public void HandleDebugMessage(DebugMessage message)
@@ -152,7 +142,7 @@ namespace Testflow.SlaveCore.Debugger
             _context.MessageTransceiver.SendMessage(debugMessage);
             _context.LogSession.Print(LogLevel.Debug, _context.SessionId, $"Breakpoint hitted:{breakPoint}");
 
-            _coroutineHandles[stepTaskEntity.CoroutineId].WaitSignal();
+            stepTaskEntity.Coroutine.WaitSignal();
         }
 
         #endregion
@@ -162,11 +152,6 @@ namespace Testflow.SlaveCore.Debugger
         {
             _breakPoints.Clear();
             _pausePoints.Clear();
-            foreach (CoroutineRuntimeHandle resetEvent in _coroutineHandles.Values)
-            {
-                resetEvent.Dispose();
-            }
-            _coroutineHandles.Clear();
         }
     }
 }

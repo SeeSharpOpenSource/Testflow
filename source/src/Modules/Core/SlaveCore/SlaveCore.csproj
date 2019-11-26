@@ -52,8 +52,9 @@
     <Compile Include="Common\UplinkMessageProcessor.cs" />
     <Compile Include="Common\ModuleUtils.cs" />
     <Compile Include="Common\TaskFailedException.cs" />
-    <Compile Include="Debugger\CoroutineRuntimeHandle.cs" />
-    <Compile Include="Debugger\CoroutineState.cs" />
+    <Compile Include="Coroutine\CoroutineManager.cs" />
+    <Compile Include="Coroutine\CoroutineHandle.cs" />
+    <Compile Include="Coroutine\CoroutineState.cs" />
     <Compile Include="Debugger\DebugManager.cs" />
     <Compile Include="Runner\Actuators\ActuatorBase.cs" />
     <Compile Include="Runner\Actuators\EmptyActuator.cs" />
