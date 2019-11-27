@@ -295,24 +295,24 @@ namespace Testflow.MasterCore.Common
             return string.Join(delim.ToString(), watchElem);
         }
 
-        private static IVariable GetVariableByNameAndSequence(ITestProject sequenceGroup, int sequenceIndex, string variableName)
+        private static IVariable GetVariableByNameAndSequence(ITestProject testProject, int sequenceIndex, string variableName)
         {
             IVariable variable = null;
             if (sequenceIndex == CommonConst.SetupIndex)
             {
-                variable = sequenceGroup.SetUp.Variables.FirstOrDefault(item => item.Name == variableName);
+                variable = testProject.SetUp.Variables.FirstOrDefault(item => item.Name == variableName);
             }
             else if (sequenceIndex == CommonConst.TeardownIndex)
             {
-                variable = sequenceGroup.TearDown.Variables.FirstOrDefault(item => item.Name == variableName);
+                variable = testProject.TearDown.Variables.FirstOrDefault(item => item.Name == variableName);
             }
-            return variable ?? sequenceGroup.Variables.FirstOrDefault(item => item.Name == variableName);
+            return variable ?? testProject.Variables.FirstOrDefault(item => item.Name == variableName);
         }
 
         private static IVariable GetVariableByNameAndSequence(ISequenceGroup sequenceGroup, int sequenceIndex, string variableName)
         {
             IVariable variable = null;
-            if (sequenceIndex != CoreConstants.UnverifiedSequenceIndex &&
+            if (sequenceIndex != CoreConstants.UnverifiedSequenceIndex && sequenceIndex < sequenceGroup.Sequences.Count &&
                 sequenceIndex != CommonConst.SetupIndex && sequenceIndex != CommonConst.TeardownIndex)
             {
                 variable = sequenceGroup.Sequences[sequenceIndex].Variables.FirstOrDefault(item => item.Name == variableName);

@@ -268,11 +268,11 @@ namespace Testflow.SlaveCore.Data
 
         public string GetWatchDataValue(string variable, string watchStr)
         {
-            if (_variables.ContainsKey(variable))
+            if (!_variables.ContainsKey(variable))
             {
                 return Constants.IllegalValue;
             }
-            object paramValue = GetParamValue(variable, watchStr);
+            object paramValue = GetParamValue(_variables[variable], watchStr);
             return JsonConvert.SerializeObject(paramValue);
         }
 

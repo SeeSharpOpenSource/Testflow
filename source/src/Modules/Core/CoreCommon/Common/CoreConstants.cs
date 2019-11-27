@@ -9,7 +9,7 @@
         public const int DefaultEventsQueueSize = 512;
         public const int MaxEventsQueueSize = 12800;
 
-        public const int UnverifiedSequenceIndex = -1;
+        public const int UnverifiedSequenceIndex = -3;
 
         public const int TestProjectIndex = -1;
 
