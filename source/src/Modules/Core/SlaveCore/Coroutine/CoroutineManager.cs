@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading;
 using Testflow.SlaveCore.Common;
+using Testflow.Usr;
 
 namespace Testflow.SlaveCore.Coroutine
 {
@@ -11,16 +12,17 @@ namespace Testflow.SlaveCore.Coroutine
         private Dictionary<int, CoroutineHandle> _coroutineHandles;
 
         private readonly SlaveContext _context;
-        private int _currentIndex = 0;
+        private int _currentIndex;
         public CoroutineManager(SlaveContext context)
         {
             this._context = context;
             _coroutineHandles = new Dictionary<int, CoroutineHandle>(Constants.DefaultRuntimeSize);
+            _currentIndex = -1*CommonConst.SequenceCoroutineCapacity;
         }
 
-        public CoroutineHandle GetNextCoroutine(int increment)
+        public CoroutineHandle GetNextCoroutine()
         {
-            int coroutineId = Interlocked.Add(ref _currentIndex, increment);
+            int coroutineId = Interlocked.Add(ref _currentIndex, CommonConst.SequenceCoroutineCapacity);
             CoroutineHandle coroutineHandle = new CoroutineHandle(coroutineId);
             _coroutineHandles.Add(coroutineId, coroutineHandle);
             return coroutineHandle;

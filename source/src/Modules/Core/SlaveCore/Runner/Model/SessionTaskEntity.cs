@@ -53,7 +53,7 @@ namespace Testflow.SlaveCore.Runner.Model
 
         public void Generate(ExecutionModel executionModel)
         {
-            CoroutineHandle defaultCoroutine = _context.CoroutineManager.GetNextCoroutine(CommonConst.SequenceCoroutineCapacity);
+            CoroutineHandle defaultCoroutine = _context.CoroutineManager.GetNextCoroutine();
             _context.TimingManager.RegisterStopWatch(defaultCoroutine.Id);
             _setUp.Generate(defaultCoroutine.Id);
             _tearDown.Generate(defaultCoroutine.Id);
@@ -66,7 +66,7 @@ namespace Testflow.SlaveCore.Runner.Model
                     }
                     break;
                 case ExecutionModel.ParallelExecution:
-                    CoroutineHandle coroutine = _context.CoroutineManager.GetNextCoroutine(CommonConst.SequenceCoroutineCapacity);
+                    CoroutineHandle coroutine = _context.CoroutineManager.GetNextCoroutine();
                     foreach (SequenceTaskEntity sequenceModel in _sequenceEntities)
                     {
                         _context.TimingManager.RegisterStopWatch(coroutine.Id);
