@@ -1,6 +1,7 @@
 ﻿using Testflow.CoreCommon;
 using Testflow.CoreCommon.Common;
 using Testflow.MasterCore.Common;
+using Testflow.MasterCore.Core;
 using Testflow.Usr;
 
 namespace Testflow.MasterCore
@@ -20,44 +21,22 @@ namespace Testflow.MasterCore
         {
             object infoValue = null;
             int session = 0;
-            int sequenceIndex;
             switch (infoName)
             {
                 case Constants.RuntimeStateInfo:
-                    if (extraParams.Length == 0)
-                    {
-                        infoValue = _globalInfo.StateMachine.State;
-                    }
-                    else if (extraParams.Length == 1)
-                    {
-                        session = (int)extraParams[0];
-                        infoValue = _engine.StatusManager[session].State;
-                    }
-                    else if (extraParams.Length == 2)
-                    {
-                        session = (int)extraParams[0];
-                        sequenceIndex = (int)extraParams[1];
-                        infoValue = _engine.StatusManager[session][sequenceIndex].State;
-                    }
+                    infoValue = GetRuntimeState(extraParams);
                     break;
                 case Constants.ElapsedTimeInfo:
-                    if (extraParams.Length == 1)
-                    {
-                        session = (int)extraParams[0];
-                        infoValue = _engine.StatusManager[session].ElapsedTime.TotalMilliseconds;
-                    }
-                    else if (extraParams.Length == 2)
-                    {
-                        session = (int)extraParams[0];
-                        sequenceIndex = (int)extraParams[1];
-                        infoValue = _engine.StatusManager[session][sequenceIndex].ElapsedTime.TotalMilliseconds;
-                    }
+                    infoValue = GetElapsedTime(extraParams);
                     break;
                 case Constants.RuntimeHashInfo:
-                    infoValue = _globalInfo.RuntimeHash;
+                    infoValue = GetRuntimeHash();
                     break;
                 case Constants.TestInstanceName:
-                    infoValue = _globalInfo.ConfigData.GetProperty<string>("TestName");
+                    infoValue = GetTestName();
+                    break;
+                case Constants.DebugHanle:
+                    infoValue = GetDebugHandle();
                     break;
                 default:
                     _globalInfo.LogService.Print(LogLevel.Warn, CommonConst.PlatformLogSession,
@@ -68,6 +47,61 @@ namespace Testflow.MasterCore
                     break;
             }
             return infoValue;
+        }
+
+        private object GetRuntimeState(object[] extraParams)
+        {
+            object infoValue = null;
+            int session;
+            if (extraParams.Length == 0)
+            {
+                infoValue = _globalInfo.StateMachine.State;
+            }
+            else if (extraParams.Length == 1)
+            {
+                session = (int) extraParams[0];
+                infoValue = _engine.StatusManager[session].State;
+            }
+            else if (extraParams.Length == 2)
+            {
+                session = (int) extraParams[0];
+                int sequenceIndex = (int) extraParams[1];
+                infoValue = _engine.StatusManager[session][sequenceIndex].State;
+            }
+            return infoValue;
+        }
+
+        private object GetElapsedTime(object[] extraParams)
+        {
+            object infoValue = null;
+            int session;
+            if (extraParams.Length == 1)
+            {
+                session = (int) extraParams[0];
+                infoValue = _engine.StatusManager[session].ElapsedTime.TotalMilliseconds;
+            }
+            else if (extraParams.Length == 2)
+            {
+                session = (int) extraParams[0];
+                int sequenceIndex = (int) extraParams[1];
+                infoValue = _engine.StatusManager[session][sequenceIndex].ElapsedTime.TotalMilliseconds;
+            }
+            return infoValue;
+        }
+
+        private object GetRuntimeHash()
+        {
+            return _globalInfo.RuntimeHash;
+        }
+
+        private object GetTestName()
+        {
+            return _globalInfo.ConfigData.GetProperty<string>("TestName");
+        }
+
+        private object GetDebugHandle()
+        {
+            return _globalInfo.DebugHandle;
         }
     }
 }
