@@ -26,7 +26,7 @@ namespace Testflow.Runtime
         /// <summary>
         /// 继续执行，直到下一个断点
         /// </summary>
-        void Continue();
+        void Continue(int session);
 
         /// <summary>
         /// 跳过当前序列的所有断点

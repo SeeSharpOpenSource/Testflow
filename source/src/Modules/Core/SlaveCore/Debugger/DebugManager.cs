@@ -17,6 +17,8 @@ namespace Testflow.SlaveCore.Debugger
 
         private Dictionary<string, StepTaskEntityBase> _breakPoints;
 
+        private List<CoroutineHandle> _blockedCoroutines;
+
         private DebugWatchData _watchDatas;
 
         public DebugManager(SlaveContext context)
@@ -24,6 +26,7 @@ namespace Testflow.SlaveCore.Debugger
             _context = context;
             _watchDatas = new DebugWatchData();
             _breakPoints = new Dictionary<string, StepTaskEntityBase>(Constants.DefaultRuntimeSize);
+            _blockedCoroutines = new List<CoroutineHandle>(Constants.DefaultRuntimeSize);
         }
 
         public void HandleDebugMessage(DebugMessage message)
@@ -99,13 +102,23 @@ namespace Testflow.SlaveCore.Debugger
         private void Pause(int coroutineId)
         {
             CoroutineHandle coroutineHandle = _context.CoroutineManager.GetCoroutineHandle(coroutineId);
+            if (_blockedCoroutines.Contains(coroutineHandle))
+            {
+                return;
+            }
+            _blockedCoroutines.Add(coroutineHandle);
             coroutineHandle.PostListener += DebugBlocked;
         }
 
         private void Continue(int coroutineId)
         {
             CoroutineHandle coroutineHandle = _context.CoroutineManager.GetCoroutineHandle(coroutineId);
+            if (!_blockedCoroutines.Contains(coroutineHandle))
+            {
+                return;
+            }
             coroutineHandle.PostListener -= DebugBlocked;
+            _blockedCoroutines.Remove(coroutineHandle);
             coroutineHandle.SetSignal();
         }
 
@@ -166,6 +179,16 @@ namespace Testflow.SlaveCore.Debugger
         public void Dispose()
         {
             _breakPoints.Clear();
+            foreach (StepTaskEntityBase stepTaskEntity in _breakPoints.Values)
+            {
+                stepTaskEntity.PostListener -= DebugBlocked;
+            }
+            _breakPoints.Clear();
+            foreach (CoroutineHandle blockedCoroutine in _blockedCoroutines)
+            {
+                blockedCoroutine.PostListener -= DebugBlocked;
+            }
+            _blockedCoroutines.Clear();
         }
     }
 }

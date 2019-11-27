@@ -91,6 +91,8 @@ namespace Testflow.SlaveCore.Common
                     break;
                 case MessageNames.CtrlAbort:
                     _context.Cancellation.Cancel();
+                    _context.DebugManager.Dispose();
+                    _context.CoroutineManager.Dispose();
                     // 如果线程还未结束，则等待
                     if (_context.FlowControlThread.IsAlive)
                     {

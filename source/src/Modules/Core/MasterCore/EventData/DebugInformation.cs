@@ -15,11 +15,18 @@ namespace Testflow.MasterCore.EventData
         public DebugInformation(DebugEventInfo eventInfo, ISequenceFlowContainer parentSequenceData)
         {
             this.BreakPoint = eventInfo.BreakPoint;
-            this.WatchDatas = new Dictionary<IVariable, string>(eventInfo.WatchData.Count);
-            for (int i = 0; i < eventInfo.WatchData.Count; i++)
+            if (null != eventInfo.WatchData)
             {
-                IVariable variable = CoreUtils.GetVariable(parentSequenceData, eventInfo.WatchData.Names[i]);
-                WatchDatas.Add(variable, eventInfo.WatchData.Values[i]);
+                this.WatchDatas = new Dictionary<IVariable, string>(eventInfo.WatchData.Count);
+                for (int i = 0; i < eventInfo.WatchData.Count; i++)
+                {
+                    IVariable variable = CoreUtils.GetVariable(parentSequenceData, eventInfo.WatchData.Names[i]);
+                    WatchDatas.Add(variable, eventInfo.WatchData.Values[i]);
+                }
+            }
+            else
+            {
+                this.WatchDatas = new Dictionary<IVariable, string>(0);
             }
         }
     }

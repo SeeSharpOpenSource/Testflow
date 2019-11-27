@@ -63,13 +63,13 @@ namespace Testflow.CoreCommon.Messages
         {
             base.GetObjectData(info, context);
             info.AddValue("IsRequst", IsRequst);
-            if (null != WatchData && 0 == WatchData.Count)
+            if (null != WatchData && WatchData.Count > 0)
             {
                 info.AddValue("WatchData", WatchData, typeof(DebugWatchData));
             }
-            if (null != BreakPoints && 0 == BreakPoints.Count)
+            if (null != BreakPoints && BreakPoints.Count > 0)
             {
-                info.AddValue("Params", BreakPoints, typeof(List<CallStack>));
+                info.AddValue("BreakPoints", BreakPoints, typeof(List<CallStack>));
             }
         }
     }

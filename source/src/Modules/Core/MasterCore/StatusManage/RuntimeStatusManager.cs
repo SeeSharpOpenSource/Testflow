@@ -200,7 +200,6 @@ namespace Testflow.MasterCore.StatusManage
                         _stateManageContext.TestResults);
                 }
             }
-
         }
 
         private void DebugEventProcess(EventInfoBase eventInfo)

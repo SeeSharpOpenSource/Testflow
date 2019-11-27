@@ -195,9 +195,10 @@ namespace Testflow.MasterCore.Core
             SendRunDebugStepMessage(MessageNames.RunToEndName);
         }
 
-        public void Continue()
+        public void Continue(int session)
         {
-            SendRunDebugStepMessage(MessageNames.ContinueName);
+//            SendRunDebugStepMessage(MessageNames.ContinueName);
+            SendCoroutineRelatedMessage(session, 0, MessageNames.ContinueName);
         }
 
         public void Pause(int session)

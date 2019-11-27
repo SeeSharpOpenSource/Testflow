@@ -37,6 +37,7 @@ namespace Testflow.SlaveCore.Coroutine
         {
             foreach (CoroutineHandle resetEvent in _coroutineHandles.Values)
             {
+                resetEvent.SetSignal();
                 resetEvent.Dispose();
             }
             _coroutineHandles.Clear();

@@ -21,9 +21,9 @@ namespace Testflow.MasterCore.EventData
             _debugManager.StepOver();
         }
 
-        public void Continue()
+        public void Continue(int session)
         {
-            _debugManager.Continue();
+            _debugManager.Continue(session);
         }
 
         public void RunToEnd()
