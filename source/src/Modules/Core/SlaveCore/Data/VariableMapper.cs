@@ -25,6 +25,7 @@ namespace Testflow.SlaveCore.Data
         private ReaderWriterLockSlim _syncVarLock;
         private readonly HashSet<string> _keyVariables;
         private readonly HashSet<string> _syncVariables;
+        private readonly List<string> _fullTraceVariables;
 
         public VariableMapper(SlaveContext context)
         {
@@ -33,6 +34,7 @@ namespace Testflow.SlaveCore.Data
             this._keyVariables = new HashSet<string>();
             this._syncVariables = new HashSet<string>();
             this._context = context;
+            _fullTraceVariables = new List<string>(Constants.DefaultRuntimeSize);
             if (context.SequenceType == RunnerType.TestProject)
             {
                 ITestProject testProject = (ITestProject)sequenceData;
@@ -73,7 +75,12 @@ namespace Testflow.SlaveCore.Data
                 this._variables.Add(variableName, value);
                 // 如果变量的OI报告级别配置为trace则添加变量到监控数据中
                 // 如果变量OI报告级别为最终结果或者报告级别不为None，则添加变量到返回数据
-                if (variable.OIRecordLevel == RecordLevel.Trace || variable.ReportRecordLevel == RecordLevel.Trace)
+                if (variable.OIRecordLevel == RecordLevel.FullTrace || variable.ReportRecordLevel == RecordLevel.FullTrace)
+                {
+                    _fullTraceVariables.Add(variableName);
+                    _context.ReturnDatas.Add(variableName);
+                }
+                else if (variable.OIRecordLevel == RecordLevel.Trace || variable.ReportRecordLevel == RecordLevel.Trace)
                 {
                     _context.WatchDatas.Add(variableName);
                     _context.ReturnDatas.Add(variableName);
@@ -235,6 +242,7 @@ namespace Testflow.SlaveCore.Data
                 case ExecutionModel.SequentialExecution:
                     // 如果序列串行执行，则直接清空所有关键变量，直接返回值
                     keyVarNames = new List<string>(_keyVariables);
+                    keyVarNames.AddRange(_fullTraceVariables);
                     _keyVariables.Clear();
                     break;
                 case ExecutionModel.ParallelExecution:
@@ -247,6 +255,7 @@ namespace Testflow.SlaveCore.Data
                     {
                         _keyVariables.Remove(keyVarName);
                     }
+                    keyVarNames.AddRange(_fullTraceVariables);
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
