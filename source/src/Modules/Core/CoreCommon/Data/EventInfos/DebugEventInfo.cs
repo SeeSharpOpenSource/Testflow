@@ -44,6 +44,11 @@ namespace Testflow.CoreCommon.Data.EventInfos
                     this.BreakPoint = message.BreakPoints[0];
                     this.WatchData = message.WatchData;
                     break;
+                case MessageNames.PauseName:
+                    this.IsDebugHit = false;
+                    this.BreakPoint = null;
+                    this.WatchData = null;
+                    break;
                 default:
                     throw new ArgumentOutOfRangeException();
                     break;

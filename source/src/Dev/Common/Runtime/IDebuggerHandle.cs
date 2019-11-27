@@ -36,7 +36,8 @@ namespace Testflow.Runtime
         /// <summary>
         /// 当前Step执行结束后暂停
         /// </summary>
-        void Pause();
+        /// <param name="session"></param>
+        void Pause(int session);
 
         #endregion
 

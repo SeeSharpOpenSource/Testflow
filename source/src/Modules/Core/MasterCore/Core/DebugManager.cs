@@ -200,9 +200,9 @@ namespace Testflow.MasterCore.Core
             SendRunDebugStepMessage(MessageNames.ContinueName);
         }
 
-        public void Pause()
+        public void Pause(int session)
         {
-            SendRunDebugStepMessage(MessageNames.PauseName);
+            SendCoroutineRelatedMessage(session, 0, MessageNames.PauseName);
         }
 
         private void SendRunDebugStepMessage(string messageName)
@@ -218,7 +218,13 @@ namespace Testflow.MasterCore.Core
             DebugEventInfo debugEvent = new DebugEventInfo(debugMessage);
             _globalInfo.EventQueue.Enqueue(debugEvent);
         }
-        
+
+        private void SendCoroutineRelatedMessage(int session, int coroutineId, string messageName)
+        {
+            DebugMessage debugMessage = new DebugMessage(messageName, session, true);
+            _globalInfo.MessageTransceiver.Send(debugMessage);
+        }
+
         #endregion
 
         public bool HandleMessage(MessageBase message)
