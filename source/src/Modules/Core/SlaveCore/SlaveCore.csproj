@@ -60,6 +60,7 @@
     <Compile Include="Runner\Actuators\EmptyActuator.cs" />
     <Compile Include="Runner\Convertors\CharConvertor.cs" />
     <Compile Include="Runner\Convertors\BoolConvertor.cs" />
+    <Compile Include="Runner\Convertors\DateTimeConvertor.cs" />
     <Compile Include="Runner\Convertors\DecimalConvertor.cs" />
     <Compile Include="Runner\Convertors\StringConvertor.cs" />
     <Compile Include="Runner\Convertors\ByteConvertor.cs" />
