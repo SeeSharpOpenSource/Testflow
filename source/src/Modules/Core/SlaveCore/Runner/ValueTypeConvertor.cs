@@ -32,7 +32,8 @@ namespace Testflow.SlaveCore.Runner
                 {typeof (char).Name, new CharConvertor()},
                 {typeof (byte).Name, new ByteConvertor()},
                 {typeof (bool).Name, new BoolConvertor()},
-                {typeof (string).Name, new StringConvertor()}
+                {typeof (string).Name, new StringConvertor()},
+                {typeof (DateTime).Name, new DateTimeConvertor()}
             };
             _strConvertor = _convertors[typeof (string).Name];
         }
@@ -86,7 +87,7 @@ namespace Testflow.SlaveCore.Runner
             {
                 return Enum.Parse(targetType, sourceValue);
             }
-            else if (targetType.IsValueType)
+            else if (targetType.IsValueType && _strConvertor.IsValidCastTarget(targetType))
             {
                 return _strConvertor.CastValue(targetType, sourceValue);
             }

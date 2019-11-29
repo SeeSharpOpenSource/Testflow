@@ -1,4 +1,7 @@
-﻿using Testflow.Data;
+﻿using System;
+using Testflow.CoreCommon;
+using Testflow.Data;
+using Testflow.Usr;
 
 namespace Testflow.SlaveCore.Runner.Convertors
 {
@@ -18,6 +21,17 @@ namespace Testflow.SlaveCore.Runner.Convertors
             ConvertFuncs.Add(typeof(char).Name, sourceValue => System.Convert.ToChar((string)sourceValue));
             ConvertFuncs.Add(typeof (byte).Name, sourceValue => System.Convert.ToByte((string)sourceValue));
             ConvertFuncs.Add(typeof(bool).Name, sourceValue => System.Convert.ToBoolean((string)sourceValue));
+            ConvertFuncs.Add(typeof(DateTime).Name, sourceValue =>
+            {
+                DateTime dateTime;
+                bool validCast = DateTime.TryParse((string) sourceValue, out dateTime);
+                if (!validCast)
+                {
+                    throw new TestflowDataException(ModuleErrorCode.UnsupportedTypeCast,
+                        "Illegal string for datetime cast.");
+                }
+                return dateTime;
+            });
 //            ConvertFuncs.Add(typeof(string).Name, sourceValue => sourceValue.ToString());
         }
 
