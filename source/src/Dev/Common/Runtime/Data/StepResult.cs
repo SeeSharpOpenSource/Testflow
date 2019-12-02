@@ -21,28 +21,33 @@
         Pass = 2,
 
         /// <summary>
+        /// Step重试执行失败，该失败状态不会影响最终的成功失败统计
+        /// </summary>
+        RetryFailed = 3,
+
+        /// <summary>
         /// Step执行失败
         /// </summary>
-        Failed = 3,
+        Failed = 4,
 
         /// <summary>
         /// 被终止
         /// </summary>
-        Abort = 4,
+        Abort = 5,
 
         /// <summary>
         /// 超时
         /// </summary>
-        Timeout = 5,
+        Timeout = 6,
 
         /// <summary>
         /// 序列结束
         /// </summary>
-        Over = 6,
+        Over = 7,
 
         /// <summary>
         /// 出现错误
         /// </summary>
-        Error = 7
+        Error = 8
     }
 }
