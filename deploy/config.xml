@@ -4,7 +4,7 @@
     <ConfigItems Name="PlatformEncoding" Value="utf-8" Type="System.Text.Encoding" />
     <ConfigItems Name="PlatformLibDir" Value="lib\" Type="System.String" />
     <ConfigItems Name="DotNetVersion" Value="v4.0.30319" Type="System.String" />
-    <ConfigItems Name="LogLevel" Value="Debug" Type="Testflow.Usr.LogLevel" />
+    <ConfigItems Name="LogLevel" Value="Info" Type="Testflow.Usr.LogLevel" />
   </ModuleConfigData>
   <ModuleConfigData Name="EngineCore">
     <ConfigItems Name="TestGenReportInterval" Value="500" Type="System.Int32" />
@@ -21,6 +21,7 @@
     <ConfigItems Name="AbortTimeout" Value="10000" Type="System.Int32" />
     <ConfigItems Name="MessengerType" Value="MSMQ" Type="Testflow.Utility.MessageUtil.MessengerType" />
     <ConfigItems Name="EnablePerformanceMonitor" Value="False" Type="System.Boolean" />
+    <ConfigItems Name="NumericFormat" Value="0.#####" Type="System.String" />
   </ModuleConfigData>
   <ModuleConfigData Name="DataMaintain">
     <ConfigItems Name="DatabaseName" Value="testflowData.db3" Type="System.String" />
