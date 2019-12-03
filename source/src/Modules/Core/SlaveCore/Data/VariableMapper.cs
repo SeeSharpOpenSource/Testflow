@@ -274,16 +274,17 @@ namespace Testflow.SlaveCore.Data
                 return Constants.IllegalValue;
             }
             object paramValue = GetParamValue(_variables[variable], watchStr);
-            return JsonConvert.SerializeObject(paramValue);
+            string paramStr;
+            GetVariableStringValue(paramValue, out paramStr);
+            return paramStr;
         }
 
         private Dictionary<string, string> GetKeyVariableValues(List<string> keyVarNames)
         {
             Dictionary<string, string> watchDataValues = new Dictionary<string, string>(keyVarNames.Count);
-            Type stringType = typeof(string);
-            ValueTypeConvertor convertor = _context.Convertor;
             int index = 0;
             string varName = "";
+            string varValueStr;
             while (index < keyVarNames.Count)
             {
                 try
@@ -292,33 +293,8 @@ namespace Testflow.SlaveCore.Data
                     {
                         varName = keyVarNames[index++];
                         object varValue = _variables[varName];
-                        if (null == varValue)
-                        {
-                            watchDataValues.Add(varName, CoreConstants.NullValue);
-                            continue;
-                        }
-                        Type varType = varValue.GetType();
-                        // 简单数据类型
-                        if (convertor.IsValidCast(varType, stringType))
-                        {
-                            watchDataValues.Add(varName, (string) convertor.CastValue(stringType, varValue));
-                        }
-                        // 枚举类型
-                        else if (varType.IsEnum)
-                        {
-                            watchDataValues.Add(varName, varValue.ToString());
-                        }
-                        // 类类型
-                        else if (varType.IsClass)
-                        {
-                            string varValueString = JsonConvert.SerializeObject(varValue);
-                            watchDataValues.Add(varName, (string) varValueString);
-                        }
-                        // 非简单类型的值类型(结构体)
-                        else if (varType.IsValueType)
-                        {
-                            // TODO 
-                        }
+                        GetVariableStringValue(varValue, out varValueStr);
+                        watchDataValues.Add(varName, varValueStr);
                     }
                 }
                 catch (Exception ex)
@@ -343,6 +319,7 @@ namespace Testflow.SlaveCore.Data
             string varName = "";
             HashSet<string>.Enumerator returnEnumerator = _context.ReturnDatas.GetEnumerator();
             bool hasNext = returnEnumerator.MoveNext();
+            string varValueStr;
             while (hasNext)
             {
                 try
@@ -352,25 +329,8 @@ namespace Testflow.SlaveCore.Data
                         varName = returnEnumerator.Current;
                         hasNext = returnEnumerator.MoveNext();
                         object varValue = _variables[varName];
-                        if (null == varValue)
-                        {
-                            returnDataValues.Add(varName, CoreConstants.NullValue);
-                            continue;
-                        }
-                        Type varType = varValue.GetType();
-                        if (varType.IsValueType || varType.IsEnum)
-                        {
-                            returnDataValues.Add(varName, varValue.ToString());
-                        }
-                        else if (varType == typeof (string))
-                        {
-                            returnDataValues.Add(varName, (string) varValue);
-                        }
-                        else if (varType.IsClass)
-                        {
-                            string varValueString = JsonConvert.SerializeObject(varValue);
-                            returnDataValues.Add(varName, (string) varValueString);
-                        }
+                        GetVariableStringValue(varValue, out varValueStr);
+                        returnDataValues.Add(varName, varValueStr);
                     }
                 }
                 catch (Exception ex)
@@ -397,6 +357,7 @@ namespace Testflow.SlaveCore.Data
             string varName = "";
             HashSet<string>.Enumerator returnEnumerator = _context.ReturnDatas.GetEnumerator();
             bool hasNext = returnEnumerator.MoveNext();
+            string varValueStr;
             while (hasNext)
             {
                 try
@@ -411,26 +372,8 @@ namespace Testflow.SlaveCore.Data
                             continue;
                         }
                         object varValue = _variables[varName];
-                        if (null == varValue)
-                        {
-                            returnDataValues.Add(varName, CoreConstants.NullValue);
-                            continue;
-                        }
-                        Type varType = varValue.GetType();
-                        if (varType.IsValueType || varType.IsEnum)
-                        {
-                            returnDataValues.Add(varName, varValue.ToString());
-                        }
-                        else if (varType == typeof(string))
-                        {
-                            returnDataValues.Add(varName, (string)varValue);
-                        }
-                        else if (varType.IsClass)
-                        {
-                            string varValueString = JsonConvert.SerializeObject(varValue);
-                            returnDataValues.Add(varName, (string)varValueString);
-                        }
-                        
+                        GetVariableStringValue(varValue, out varValueStr);
+                        returnDataValues.Add(varName, varValueStr);
                     }
                 }
                 catch (Exception ex)
@@ -449,6 +392,45 @@ namespace Testflow.SlaveCore.Data
             _keyVarLock.Exit();
 
             return returnDataValues;
+        }
+
+        private void GetVariableStringValue(object varValue, out string value)
+        {
+            if (null == varValue)
+            {
+                value =  CoreConstants.NullValue;
+                return;
+            }
+            Type varType = varValue.GetType();
+            // 简单数据类型
+            Type stringType = typeof(string);
+            if (varType == stringType)
+            {
+                value = (string)varValue;
+            }
+            else if (_context.Convertor.IsValidCast(varType, stringType))
+            {
+                value = (string)_context.Convertor.CastValue(stringType, varValue);
+            }
+            // 枚举类型
+            else if (varType.IsEnum)
+            {
+                value = varValue.ToString();
+            }
+            // 类类型
+            else if (varType.IsClass)
+            {
+                value = JsonConvert.SerializeObject(varValue);
+            }
+            // 非简单类型的值类型(结构体)
+            else if (varType.IsValueType)
+            {
+                value = JsonConvert.SerializeObject(varValue);
+            }
+            else
+            {
+                value = string.Empty;
+            }
         }
 
         public void Dispose()
