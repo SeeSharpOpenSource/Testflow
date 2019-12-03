@@ -3,6 +3,7 @@ using System.IO;
 using System.Messaging;
 using System.Text;
 using Newtonsoft.Json;
+using Testflow.Usr;
 
 namespace Testflow.Utility.MessageUtil
 {
@@ -21,7 +22,10 @@ namespace Testflow.Utility.MessageUtil
             this._option = option;
             _serializerSettings = new JsonSerializerSettings()
             {
-                NullValueHandling = NullValueHandling.Include
+                NullValueHandling = NullValueHandling.Include,
+                DateFormatHandling = DateFormatHandling.IsoDateFormat,
+                DateFormatString = CommonConst.GlobalTimeFormat,
+                DateParseHandling = DateParseHandling.None
             };
         }
         public bool CanRead(Message message)
