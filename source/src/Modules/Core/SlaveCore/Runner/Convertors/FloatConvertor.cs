@@ -4,6 +4,12 @@ namespace Testflow.SlaveCore.Runner.Convertors
 {
     internal class FloatConvertor : ValueConvertorBase
     {
+        private readonly string _format;
+        public FloatConvertor(string format)
+        {
+            this._format = format;
+        }
+
         protected override void InitializeConvertFuncs()
         {
             ConvertFuncs.Add(typeof(decimal).Name, sourceValue => System.Convert.ToDecimal((float)sourceValue));
@@ -18,7 +24,7 @@ namespace Testflow.SlaveCore.Runner.Convertors
             ConvertFuncs.Add(typeof(char).Name, sourceValue => System.Convert.ToChar((float)sourceValue));
             ConvertFuncs.Add(typeof(byte).Name, sourceValue => System.Convert.ToByte((float)sourceValue));
             ConvertFuncs.Add(typeof(bool).Name, sourceValue => (float)sourceValue > 0);
-            ConvertFuncs.Add(typeof(string).Name, sourceValue => sourceValue.ToString());
+            ConvertFuncs.Add(typeof(string).Name, sourceValue => ((float)sourceValue).ToString(_format));
         }
 
         public override object GetDefaultValue()

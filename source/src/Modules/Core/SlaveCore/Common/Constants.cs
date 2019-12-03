@@ -7,6 +7,10 @@
 
         public const string I18nName = "SlaveCore";
 
+        public const string DefaultNumericFormat = "0.######";
+
+        public const string StructTypeName = "Struct";
+
         public const string PropertyDelim = ".";
 
         public const int ThreadAbortJoinTime = 10000;

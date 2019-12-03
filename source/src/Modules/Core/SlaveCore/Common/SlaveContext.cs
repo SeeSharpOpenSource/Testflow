@@ -149,6 +149,15 @@ namespace Testflow.SlaveCore.Common
             return (TDataType) Convertor.CastConstantValue(dataType, _configData[propertyName]);
         }
 
+        public string GetPropertyString(string propertyName)
+        {
+            if (!_configData.ContainsKey(propertyName))
+            {
+                throw new ArgumentException($"unexist property {propertyName}");
+            }
+            return _configData[propertyName];
+        }
+
         public void Dispose()
         {
             MessageTransceiver?.Dispose();

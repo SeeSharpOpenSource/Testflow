@@ -64,6 +64,7 @@
     <Compile Include="Runner\Convertors\DecimalConvertor.cs" />
     <Compile Include="Runner\Convertors\StringConvertor.cs" />
     <Compile Include="Runner\Convertors\ByteConvertor.cs" />
+    <Compile Include="Runner\Convertors\StructConvertor.cs" />
     <Compile Include="Runner\Convertors\UShortConvertor.cs" />
     <Compile Include="Runner\Convertors\ShortConvertor.cs" />
     <Compile Include="Runner\Convertors\UIntConvertor.cs" />

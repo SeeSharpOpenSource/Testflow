@@ -2,6 +2,12 @@
 {
     internal class DecimalConvertor : ValueConvertorBase
     {
+        private readonly string _format;
+        public DecimalConvertor(string format)
+        {
+            this._format = format;
+        }
+
         protected override void InitializeConvertFuncs()
         {
 //            ConvertFuncs.Add(typeof(decimal).Name, sourceValue => System.Convert.ToDecimal((decimal)sourceValue));
@@ -16,7 +22,7 @@
             ConvertFuncs.Add(typeof(char).Name, sourceValue => System.Convert.ToChar((decimal)sourceValue));
             ConvertFuncs.Add(typeof(byte).Name, sourceValue => System.Convert.ToByte((decimal)sourceValue));
             ConvertFuncs.Add(typeof(bool).Name, sourceValue => (decimal)sourceValue > 0);
-            ConvertFuncs.Add(typeof(string).Name, sourceValue => sourceValue.ToString());
+            ConvertFuncs.Add(typeof(string).Name, sourceValue => ((decimal)sourceValue).ToString(_format));
         }
 
         public override object GetDefaultValue()

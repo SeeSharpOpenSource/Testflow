@@ -11,6 +11,7 @@ using Testflow.CoreCommon.Common;
 using Testflow.Data;
 using Testflow.Data.Sequence;
 using Testflow.SlaveCore.Common;
+using Testflow.SlaveCore.Runner;
 using Testflow.Utility.I18nUtil;
 
 namespace Testflow.SlaveCore.Data
@@ -279,6 +280,8 @@ namespace Testflow.SlaveCore.Data
         private Dictionary<string, string> GetKeyVariableValues(List<string> keyVarNames)
         {
             Dictionary<string, string> watchDataValues = new Dictionary<string, string>(keyVarNames.Count);
+            Type stringType = typeof(string);
+            ValueTypeConvertor convertor = _context.Convertor;
             int index = 0;
             string varName = "";
             while (index < keyVarNames.Count)
@@ -295,18 +298,26 @@ namespace Testflow.SlaveCore.Data
                             continue;
                         }
                         Type varType = varValue.GetType();
-                        if (varType.IsValueType || varType.IsEnum)
+                        // 简单数据类型
+                        if (convertor.IsValidCast(varType, stringType))
+                        {
+                            watchDataValues.Add(varName, (string) convertor.CastValue(stringType, varValue));
+                        }
+                        // 枚举类型
+                        else if (varType.IsEnum)
                         {
                             watchDataValues.Add(varName, varValue.ToString());
                         }
-                        else if (varType == typeof (string))
-                        {
-                            watchDataValues.Add(varName, (string) varValue);
-                        }
+                        // 类类型
                         else if (varType.IsClass)
                         {
                             string varValueString = JsonConvert.SerializeObject(varValue);
                             watchDataValues.Add(varName, (string) varValueString);
+                        }
+                        // 非简单类型的值类型(结构体)
+                        else if (varType.IsValueType)
+                        {
+                            // TODO 
                         }
                     }
                 }

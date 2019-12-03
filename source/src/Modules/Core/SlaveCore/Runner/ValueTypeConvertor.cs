@@ -18,11 +18,12 @@ namespace Testflow.SlaveCore.Runner
         public ValueTypeConvertor(SlaveContext context)
         {
             _context = context;
+            string numericFormat = context.GetPropertyString("NumericFormat");
             _convertors = new Dictionary<string, ValueConvertorBase>(20)
             {
-                {typeof (decimal).Name, new DecimalConvertor()},
-                {typeof (double).Name, new DoubleConvertor()},
-                {typeof (float).Name, new FloatConvertor()},
+                {typeof (decimal).Name, new DecimalConvertor(numericFormat)},
+                {typeof (double).Name, new DoubleConvertor(numericFormat)},
+                {typeof (float).Name, new FloatConvertor(numericFormat)},
                 {typeof (long).Name, new LongConvertor()},
                 {typeof (ulong).Name, new ULongConvertor()},
                 {typeof (int).Name, new IntConvertor()},
@@ -87,7 +88,7 @@ namespace Testflow.SlaveCore.Runner
             {
                 return Enum.Parse(targetType, sourceValue);
             }
-            else if (targetType.IsValueType && _strConvertor.IsValidCastTarget(targetType))
+            else if (_strConvertor.IsValidCastTarget(targetType))
             {
                 return _strConvertor.CastValue(targetType, sourceValue);
             }
