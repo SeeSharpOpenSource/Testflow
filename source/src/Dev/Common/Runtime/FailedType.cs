@@ -36,13 +36,18 @@
         SetUpFailed = 4,
 
         /// <summary>
+        /// 重试失败
+        /// </summary>
+        RetryFailed = 5,
+
+        /// <summary>
         /// 运行时异常
         /// </summary>
-        RuntimeError = 5,
+        RuntimeError = 6,
 
         /// <summary>
         /// 超时
         /// </summary>
-        TimeOut = 6
+        TimeOut = 7
     }
 }

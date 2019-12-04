@@ -19,6 +19,11 @@ namespace Testflow.Data.Sequence
         int MaxRetryTimes { get; set; }
 
         /// <summary>
+        /// 成功次数：达到指定成功次数时认定为成功
+        /// </summary>
+        int PassTimes { get; set; }
+
+        /// <summary>
         /// Retry功能是否使能
         /// </summary>
         bool RetryEnabled { get; set; }
@@ -27,5 +32,10 @@ namespace Testflow.Data.Sequence
         /// 记录当前的重试次数的变量
         /// </summary>
         string CounterVariable { get; set; }
+
+        /// <summary>
+        /// 记录当前的执行成功次数的变量
+        /// </summary>
+        string PassCountVariable { get; set; }
     }
 }
