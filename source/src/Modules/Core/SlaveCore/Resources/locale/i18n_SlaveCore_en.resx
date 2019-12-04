@@ -165,6 +165,9 @@
   <data name="LoadTypeFailed" xml:space="preserve">
     <value>Load type data failed.</value>
   </data>
+  <data name="MaxRetryFailed" xml:space="preserve">
+    <value>Retry step exceed maximum retry times.</value>
+  </data>
   <data name="OperationAborted" xml:space="preserve">
     <value>The operation is aborted.</value>
   </data>

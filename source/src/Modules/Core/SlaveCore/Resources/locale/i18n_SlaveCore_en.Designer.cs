@@ -205,6 +205,15 @@ namespace Testflow.SlaveCore.Resources.locale {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Retry step exceed maximum retry times..
+        /// </summary>
+        internal static string MaxRetryFailed {
+            get {
+                return ResourceManager.GetString("MaxRetryFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The operation is aborted..
         /// </summary>
         internal static string OperationAborted {

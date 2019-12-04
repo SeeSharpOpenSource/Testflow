@@ -165,6 +165,9 @@
   <data name="LoadTypeFailed" xml:space="preserve">
     <value>加载类型数据失败。</value>
   </data>
+  <data name="MaxRetryFailed" xml:space="preserve">
+    <value>序列步骤重试超过最大次数。</value>
+  </data>
   <data name="OperationAborted" xml:space="preserve">
     <value>操作被终止。</value>
   </data>

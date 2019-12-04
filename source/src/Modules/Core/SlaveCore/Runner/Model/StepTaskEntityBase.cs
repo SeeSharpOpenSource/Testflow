@@ -177,7 +177,7 @@ namespace Testflow.SlaveCore.Runner.Model
                 _invokeStepAction = InvokeStepSingleTime;
                 return;
             }
-            bool retryEnabled = null != StepData.RetryCounter && StepData.RetryCounter.MaxRetryTimes > 0 && StepData.RetryCounter.RetryEnabled;
+            bool retryEnabled = null != StepData.RetryCounter && StepData.RetryCounter.MaxRetryTimes > 1 && StepData.RetryCounter.RetryEnabled;
             
             switch (StepData.Behavior)
             {
@@ -330,13 +330,21 @@ namespace Testflow.SlaveCore.Runner.Model
         private void InvokeStepWithRetry(bool forceInvoke)
         {
             int maxRetry = StepData.RetryCounter.MaxRetryTimes;
+            int passTimes = StepData.RetryCounter.PassTimes;
             string retryVar = null;
+            string passCountVar = null;
             if (CoreUtils.IsValidVaraible(StepData.RetryCounter.CounterVariable))
             {
-                retryVar = ModuleUtils.GetVariableFullName(StepData.RetryCounter.CounterVariable, StepData, Context.SessionId);
+                retryVar = ModuleUtils.GetVariableFullName(StepData.RetryCounter.CounterVariable, StepData,
+                    Context.SessionId);
+            }
+            if (CoreUtils.IsValidVaraible(StepData.RetryCounter.PassCountVariable))
+            {
+                passCountVar = ModuleUtils.GetVariableFullName(StepData.RetryCounter.PassCountVariable, StepData,
+                    Context.SessionId);
             }
             int retryTimes = -1;
-            ApplicationException exception = null;
+            int passCount = 0;
             do
             {
                 retryTimes++;
@@ -347,37 +355,39 @@ namespace Testflow.SlaveCore.Runner.Model
                 try
                 {
                     InvokeStepSingleTime(forceInvoke);
-                    exception = null;
-                    // 成功执行一次后返回
-                    break;
+                    passCount++;
+                    if (null != passCountVar)
+                    {
+                        Context.VariableMapper.SetParamValue(passCountVar, StepData.RetryCounter.PassCountVariable,
+                            passCount);
+                    }
                 }
                 catch (TaskFailedException ex)
                 {
                     // 停止计时
                     Actuator.EndTiming();
-                    this.Result = StepResult.Failed;
-                    exception = ex;
+                    this.Result = StepResult.RetryFailed;
                     RecordInvocationError(ex, ex.FailedType);
                 }
                 catch (TestflowAssertException ex)
                 {
                     // 停止计时
                     Actuator.EndTiming();
-                    this.Result = StepResult.Failed;
-                    exception = ex;
+                    this.Result = StepResult.RetryFailed;
                     RecordInvocationError(ex, FailedType.AssertionFailed);
                 }
                 catch (TargetInvocationException ex)
                 {
                     // 停止计时
                     Actuator.EndTiming();
-                    exception = ex;
-                    RecordTargetInvocationError(ex);
+                    RecordRetryTargetInvocationError(ex);
                 }
-            } while (retryTimes < maxRetry);
-            if (null != exception)
+            } while (retryTimes < maxRetry && passCount < passTimes);
+            // 如果成功次数小于预订的成功次数，则抛出异常
+            if (passCount < passTimes)
             {
-                throw exception;
+                throw new TaskFailedException( SequenceIndex,Context.I18N.GetStr("MaxRetryFailed"), 
+                    FailedType.RetryFailed);
             }
         }
 
@@ -531,6 +541,26 @@ namespace Testflow.SlaveCore.Runner.Model
             else
             {
                 this.Result = StepResult.Error;
+                RecordInvocationError(innerException, FailedType.TargetError);
+            }
+        }
+
+        private void RecordRetryTargetInvocationError(TargetInvocationException ex)
+        {
+            Exception innerException = ex.InnerException;
+            if (innerException is TaskFailedException)
+            {
+                this.Result = StepResult.RetryFailed;
+                RecordInvocationError(innerException, ((TaskFailedException)innerException).FailedType);
+            }
+            else if (innerException is TestflowAssertException)
+            {
+                this.Result = StepResult.RetryFailed;
+                RecordInvocationError(innerException, FailedType.AssertionFailed);
+            }
+            else
+            {
+                this.Result = StepResult.RetryFailed;
                 RecordInvocationError(innerException, FailedType.TargetError);
             }
         }
