@@ -11,15 +11,34 @@ namespace Testflow.SequenceManager.SequenceElements
         public RetryCounter()
         {
             this.Name = string.Empty;
-            this.MaxRetryTimes = 0;
+            this._maxRetryTimes = 2;
+            this.PassTimes = 1;
             this.RetryEnabled = true;
             this.CounterVariable = string.Empty;
+            this.PassCountVariable = string.Empty;
         }
 
         public string Name { get; set; }
-        public int MaxRetryTimes { get; set; }
+
+        private int _maxRetryTimes;
+
+        public int MaxRetryTimes
+        {
+            get { return _maxRetryTimes; }
+            set { _maxRetryTimes = value < 2 ? 2 : value; }
+        }
+
+        private int _passTimes;
+
+        public int PassTimes
+        {
+            get { return _passTimes; }
+            set { _passTimes = value < 1 ? 1 : value; }
+        }
+
         public bool RetryEnabled { get; set; }
         public string CounterVariable { get; set; }
+        public string PassCountVariable { get; set; }
 
         public IRetryCounter Clone()
         {
