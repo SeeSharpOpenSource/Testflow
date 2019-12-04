@@ -46,8 +46,8 @@ namespace Testflow.SlaveCore.Common
             this.RmtGenMessage = null;
             this.CtrlStartMessage = null;
             this.CtrlStartMessage = null;
-            this.WatchDatas = new HashSet<string>();
-            this.ReturnDatas = new HashSet<string>();
+            this.TraceVariables = new HashSet<string>();
+            this.ReturnVariables = new HashSet<string>();
             this.RuntimeType = GetProperty<RuntimeType>("RuntimeType");
             this.Cancellation = new CancellationTokenSource();
             this.TimingManager = new StopWatchManager(this);
@@ -109,9 +109,9 @@ namespace Testflow.SlaveCore.Common
 
         public RuntimeType RuntimeType { get; }
 
-        public HashSet<string> WatchDatas { get; }
+        public HashSet<string> TraceVariables { get; }
 
-        public HashSet<string> ReturnDatas { get; }
+        public HashSet<string> ReturnVariables { get; }
 
         private long _msgIndex;
         public long MsgIndex => Interlocked.Increment(ref _msgIndex);

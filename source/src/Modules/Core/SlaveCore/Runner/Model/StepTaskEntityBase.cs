@@ -241,7 +241,7 @@ namespace Testflow.SlaveCore.Runner.Model
                 ExecutionTicks = Actuator.ExecutionTicks
             };
             // 更新watch变量值
-            statusInfo.WatchDatas = Context.VariableMapper.GetWatchDataValues(StepData);
+            statusInfo.WatchDatas = Context.VariableMapper.GetKeyVariablesValues(StepData);
             Context.StatusQueue.Enqueue(statusInfo);
         }
 
@@ -542,7 +542,7 @@ namespace Testflow.SlaveCore.Runner.Model
                 ExecutionTime = Actuator.ExecutionTime, ExecutionTicks = Actuator.ExecutionTicks, CoroutineId = this.Coroutine.Id
             };
             // 更新watch变量值
-            statusInfo.WatchDatas = Context.VariableMapper.GetWatchDataValues(StepData);
+            statusInfo.WatchDatas = Context.VariableMapper.GetKeyVariablesValues(StepData);
             Context.StatusQueue.Enqueue(statusInfo);
         }
 
@@ -551,7 +551,7 @@ namespace Testflow.SlaveCore.Runner.Model
             FailedInfo failedInfo = new FailedInfo(ex, failedType);
             SequenceStatusInfo statusInfo = new SequenceStatusInfo(SequenceIndex, this.GetStack(), StatusReportType.Record, Result, failedInfo)
             {
-                ExecutionTime = Actuator.ExecutionTime, ExecutionTicks = Actuator.ExecutionTicks, CoroutineId = this.Coroutine.Id, WatchDatas = Context.VariableMapper.GetWatchDataValues(StepData)
+                ExecutionTime = Actuator.ExecutionTime, ExecutionTicks = Actuator.ExecutionTicks, CoroutineId = this.Coroutine.Id, WatchDatas = Context.VariableMapper.GetKeyVariablesValues(StepData)
             };
             // 一旦失败，需要记录WatchData
             Context.StatusQueue.Enqueue(statusInfo);

@@ -15,18 +15,23 @@ namespace Testflow.SlaveCore.Debugger
     {
         private readonly SlaveContext _context;
 
-        private Dictionary<string, StepTaskEntityBase> _breakPoints;
-
-        private List<CoroutineHandle> _blockedCoroutines;
+        // 各个声明的断点从stack字符串到StepEntity的映射
+        private readonly Dictionary<string, StepTaskEntityBase> _breakPoints;
 
         private DebugWatchData _watchDatas;
+
+        // 各个当前命中的断点，从Coroutine id到StepEntity的映射
+        private readonly Dictionary<int, StepTaskEntityBase> _hitBreakPoints;
+
+        private readonly ReaderWriterLockSlim _hitBreakPointsLock;
 
         public DebugManager(SlaveContext context)
         {
             _context = context;
             _watchDatas = new DebugWatchData();
             _breakPoints = new Dictionary<string, StepTaskEntityBase>(Constants.DefaultRuntimeSize);
-            _blockedCoroutines = new List<CoroutineHandle>(Constants.DefaultRuntimeSize);
+            _hitBreakPoints = new Dictionary<int, StepTaskEntityBase>(20);
+            _hitBreakPointsLock = new ReaderWriterLockSlim();
         }
 
         public void HandleDebugMessage(DebugMessage message)
@@ -102,24 +107,34 @@ namespace Testflow.SlaveCore.Debugger
         private void Pause(int coroutineId)
         {
             CoroutineHandle coroutineHandle = _context.CoroutineManager.GetCoroutineHandle(coroutineId);
-            if (_blockedCoroutines.Contains(coroutineHandle))
+            _hitBreakPointsLock.EnterWriteLock();
+
+            if (_hitBreakPoints.ContainsKey(coroutineHandle.Id))
             {
+                _hitBreakPointsLock.ExitWriteLock();
                 return;
             }
-            _blockedCoroutines.Add(coroutineHandle);
+            _hitBreakPoints.Add(coroutineHandle.Id, null);
             coroutineHandle.PostListener += DebugBlocked;
+
+            _hitBreakPointsLock.ExitWriteLock();
         }
 
         private void Continue(int coroutineId)
         {
-            CoroutineHandle coroutineHandle = _context.CoroutineManager.GetCoroutineHandle(coroutineId);
-            if (!_blockedCoroutines.Contains(coroutineHandle))
+            _hitBreakPointsLock.EnterWriteLock();
+
+            if (!_hitBreakPoints.ContainsKey(coroutineId))
             {
+                _hitBreakPointsLock.ExitWriteLock();
                 return;
             }
+            CoroutineHandle coroutineHandle = _context.CoroutineManager.GetCoroutineHandle(coroutineId);
             coroutineHandle.PostListener -= DebugBlocked;
-            _blockedCoroutines.Remove(coroutineHandle);
+            _hitBreakPoints.Remove(coroutineHandle.Id);
+            // 释放阻塞的协程
             coroutineHandle.SetSignal();
+            _hitBreakPointsLock.ExitWriteLock();
         }
 
         private void StepInto()
@@ -139,9 +154,42 @@ namespace Testflow.SlaveCore.Debugger
 
         private void RefreshWatchData(DebugMessage message)
         {
-            if (null != message.WatchData && null != message.WatchData.Names)
+            if (message.WatchData?.Names != null)
             {
                 _watchDatas = message.WatchData;
+                _hitBreakPointsLock.EnterReadLock();
+                try
+                {
+                    // 如果存在Coroutine被阻塞，则在所有的断点上发送DebugMessage以更新当前节点的值
+                    if (_hitBreakPoints.Count > 0)
+                    {
+                        _watchDatas.Values.Clear();
+                        foreach (string watchData in _watchDatas.Names)
+                        {
+                            string variableName = ModuleUtils.GetVariableNameFromParamValue(watchData);
+                            _watchDatas.Values.Add(_context.VariableMapper.GetWatchDataValue(variableName, watchData));
+                        }
+                        foreach (StepTaskEntityBase blockStep in _hitBreakPoints.Values)
+                        {
+                            if (null == blockStep)
+                            {
+                               continue;
+                            }
+                            CallStack breakPoint = blockStep.GetStack();
+                            DebugMessage debugMessage = new DebugMessage(MessageNames.BreakPointHitName, _context.SessionId,
+                                breakPoint, false)
+                            {
+                                WatchData = _watchDatas
+                            };
+                            _context.MessageTransceiver.SendMessage(debugMessage);
+                        }
+                        _context.LogSession.Print(LogLevel.Debug, _context.SessionId, "Refresh Watch data values.");
+                    }
+                }
+                finally
+                {
+                    _hitBreakPointsLock.ExitReadLock();
+                }
             }
             else
             {
@@ -154,7 +202,23 @@ namespace Testflow.SlaveCore.Debugger
 
         private void DebugBlocked(StepTaskEntityBase stepTaskEntity)
         {
+            _hitBreakPointsLock.EnterWriteLock();
+
+            // 暂停的场景
+            CoroutineHandle coroutineHandle = stepTaskEntity.Coroutine;
+            if (_hitBreakPoints.ContainsKey(coroutineHandle.Id))
+            {
+                _hitBreakPoints[coroutineHandle.Id] = stepTaskEntity;
+            }
+            // 断点命中的场景
+            else
+            {
+                _hitBreakPoints.Add(coroutineHandle.Id, stepTaskEntity);
+            }
+            _hitBreakPointsLock.ExitWriteLock();
+
             CallStack breakPoint = stepTaskEntity.GetStack();
+
             _watchDatas.Values.Clear();
             foreach (string watchData in _watchDatas.Names)
             {
@@ -167,14 +231,14 @@ namespace Testflow.SlaveCore.Debugger
                 WatchData = _watchDatas
             };
 
+            // 发送断点命中消息
             _context.MessageTransceiver.SendMessage(debugMessage);
             _context.LogSession.Print(LogLevel.Debug, _context.SessionId, $"Breakpoint hitted:{breakPoint}");
 
-            stepTaskEntity.Coroutine.WaitSignal();
+            coroutineHandle.WaitSignal();
         }
-
+        
         #endregion
-
 
         public void Dispose()
         {
@@ -184,11 +248,17 @@ namespace Testflow.SlaveCore.Debugger
                 stepTaskEntity.PostListener -= DebugBlocked;
             }
             _breakPoints.Clear();
-            foreach (CoroutineHandle blockedCoroutine in _blockedCoroutines)
+
+            _hitBreakPointsLock.EnterWriteLock();
+
+            foreach (int id in _hitBreakPoints.Keys)
             {
-                blockedCoroutine.PostListener -= DebugBlocked;
+                _context.CoroutineManager.GetCoroutineHandle(id).PostListener -= DebugBlocked;
             }
-            _blockedCoroutines.Clear();
+
+            _hitBreakPointsLock.ExitWriteLock();
+
+            _hitBreakPointsLock.Dispose();
         }
     }
 }

@@ -79,17 +79,17 @@ namespace Testflow.SlaveCore.Data
                 if (variable.OIRecordLevel == RecordLevel.FullTrace || variable.ReportRecordLevel == RecordLevel.FullTrace)
                 {
                     _fullTraceVariables.Add(variableName);
-                    _context.ReturnDatas.Add(variableName);
+                    _context.ReturnVariables.Add(variableName);
                 }
                 else if (variable.OIRecordLevel == RecordLevel.Trace || variable.ReportRecordLevel == RecordLevel.Trace)
                 {
-                    _context.WatchDatas.Add(variableName);
-                    _context.ReturnDatas.Add(variableName);
+                    _context.TraceVariables.Add(variableName);
+                    _context.ReturnVariables.Add(variableName);
                 }
                 else if (variable.OIRecordLevel == RecordLevel.FinalResult ||
                          variable.ReportRecordLevel != RecordLevel.None)
                 {
-                    _context.ReturnDatas.Add(variableName);
+                    _context.ReturnVariables.Add(variableName);
                 }
                 if (addToSyncSet)
                 {
@@ -112,7 +112,7 @@ namespace Testflow.SlaveCore.Data
             }
 
             // 监视变量值如果被更新，则添加到值更新列表中，在状态上报时上传该值
-            if (_context.WatchDatas.Contains(variableName))
+            if (_context.TraceVariables.Contains(variableName))
             {
                 bool getlock = false;
                 _keyVarLock.Enter(ref getlock);
@@ -228,16 +228,19 @@ namespace Testflow.SlaveCore.Data
             return paramValue;
         }
 
-        public Dictionary<string, string> GetWatchDataValues(ISequenceFlowContainer sequence)
+        public Dictionary<string, string> GetKeyVariablesValues(ISequenceFlowContainer sequence)
         {
+            bool getlock = false;
+            _keyVarLock.Enter(ref getlock);
+
             if (_keyVariables.Count == 0 || null == sequence)
             {
+                _keyVarLock.Exit();
                 return null;
             }
             // 获取值已经变更的对象列表拷贝，并清空上个报告周期的值变更列表
-            bool getlock = false;
             List<string> keyVarNames = null;
-            _keyVarLock.Enter(ref getlock);
+            
             switch (_context.ExecutionModel)
             {
                 case ExecutionModel.SequentialExecution:
@@ -259,6 +262,7 @@ namespace Testflow.SlaveCore.Data
                     keyVarNames.AddRange(_fullTraceVariables);
                     break;
                 default:
+                    _keyVarLock.Exit();
                     throw new ArgumentOutOfRangeException();
             }
             _keyVarLock.Exit();
@@ -311,13 +315,13 @@ namespace Testflow.SlaveCore.Data
         {
             Dictionary<string, string> returnDataValues = new Dictionary<string, string>(_keyVariables.Count);
 
-            if (_context.ReturnDatas.Count == 0)
+            if (_context.ReturnVariables.Count == 0)
             {
                 return returnDataValues;
             }
 
             string varName = "";
-            HashSet<string>.Enumerator returnEnumerator = _context.ReturnDatas.GetEnumerator();
+            HashSet<string>.Enumerator returnEnumerator = _context.ReturnVariables.GetEnumerator();
             bool hasNext = returnEnumerator.MoveNext();
             string varValueStr;
             while (hasNext)
@@ -344,9 +348,9 @@ namespace Testflow.SlaveCore.Data
 
         public Dictionary<string, string> GetReturnDataValues(ISequenceFlowContainer sequence)
         {
-            Dictionary<string, string> returnDataValues = new Dictionary<string, string>(_context.ReturnDatas.Count);
+            Dictionary<string, string> returnDataValues = new Dictionary<string, string>(_context.ReturnVariables.Count);
 
-            if (_context.ReturnDatas.Count == 0)
+            if (_context.ReturnVariables.Count == 0)
             {
                 return returnDataValues;
             }
@@ -355,7 +359,7 @@ namespace Testflow.SlaveCore.Data
             Regex regex = new Regex(nameRegex);
 
             string varName = "";
-            HashSet<string>.Enumerator returnEnumerator = _context.ReturnDatas.GetEnumerator();
+            HashSet<string>.Enumerator returnEnumerator = _context.ReturnVariables.GetEnumerator();
             bool hasNext = returnEnumerator.MoveNext();
             string varValueStr;
             while (hasNext)
@@ -387,7 +391,7 @@ namespace Testflow.SlaveCore.Data
             _keyVarLock.Enter(ref getLock);
             foreach (string returnVar in returnDataValues.Keys)
             {
-                _context.ReturnDatas.Remove(returnVar);
+                _context.ReturnVariables.Remove(returnVar);
             }
             _keyVarLock.Exit();
 
