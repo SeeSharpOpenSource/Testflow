@@ -42,14 +42,16 @@ namespace Testflow.SequenceManager.SequenceElements
 
         public IRetryCounter Clone()
         {
-            RetryCounter loopCounter = new RetryCounter()
+            RetryCounter retryCounter = new RetryCounter()
             {
                 Name = this.Name + Constants.CopyPostfix,
                 MaxRetryTimes = this.MaxRetryTimes,
                 RetryEnabled = this.RetryEnabled,
-                CounterVariable = string.Empty
+                CounterVariable = this.CounterVariable,
+                PassTimes = this.PassTimes,
+                PassCountVariable = this.PassCountVariable,
             };
-            return loopCounter;
+            return retryCounter;
         }
 
         #region 序列化声明及反序列化构造
