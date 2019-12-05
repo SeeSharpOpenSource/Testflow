@@ -113,6 +113,8 @@ namespace Testflow.SlaveCore.Runner.Model
         protected readonly ISequenceStep StepData;
         public readonly StepTaskEntityBase SubStepRoot;
         private Action<bool> _invokeStepAction;
+        // 当前Step是否是Retry节点下的标志位
+        private bool _isUnderRetryStep;
         private bool _hasLoopCounter = false;
         protected readonly ActuatorBase Actuator;
         // step执行结果
@@ -157,8 +159,9 @@ namespace Testflow.SlaveCore.Runner.Model
             this.Coroutine = Context.CoroutineManager.GetCoroutineHandle(coroutineId);
             Actuator.Generate(coroutineId);
             // 只有在StepData的LoopCounter不为null，loop最大值大于1，并且Step类型不是ConditionLoop的情况下才会执行LoopCounter
-            _hasLoopCounter = (StepData?.LoopCounter != null && StepData.LoopCounter.MaxValue > 1 && 
+            this._hasLoopCounter = (StepData?.LoopCounter != null && StepData.LoopCounter.MaxValue > 1 && 
                 StepData.StepType != SequenceStepType.ConditionLoop);
+            this._isUnderRetryStep = IsUnderRetryBlock();
             if (StepData?.HasSubSteps ?? false)
             {
                 StepTaskEntityBase subStepEntity = SubStepRoot;
@@ -343,9 +346,10 @@ namespace Testflow.SlaveCore.Runner.Model
                 passCountVar = ModuleUtils.GetVariableFullName(StepData.RetryCounter.PassCountVariable, StepData,
                     Context.SessionId);
             }
-            int retryTimes = -1;
+            int retryTimes = 0;
             int passCount = 0;
-            do
+            TestflowLoopBreakException loopBreakException = null;
+            while (retryTimes < maxRetry && passCount < passTimes)
             {
                 retryTimes++;
                 if (null != retryVar)
@@ -376,18 +380,32 @@ namespace Testflow.SlaveCore.Runner.Model
                     this.Result = StepResult.RetryFailed;
                     RecordInvocationError(ex, FailedType.AssertionFailed);
                 }
+                catch (TestflowLoopBreakException ex)
+                {
+                    // 该异常已经在内部处理
+                    loopBreakException = ex;
+                }
                 catch (TargetInvocationException ex)
                 {
                     // 停止计时
                     Actuator.EndTiming();
                     RecordRetryTargetInvocationError(ex);
                 }
-            } while (retryTimes < maxRetry && passCount < passTimes);
+            }
             // 如果成功次数小于预订的成功次数，则抛出异常
             if (passCount < passTimes)
             {
-                throw new TaskFailedException( SequenceIndex,Context.I18N.GetStr("MaxRetryFailed"), 
-                    FailedType.RetryFailed);
+                // 如果期间未发生LoopBreakException，则直接抛出FailedException
+                if (null == loopBreakException)
+                {
+                    throw new TaskFailedException(SequenceIndex, Context.I18N.GetStr("MaxRetryFailed"),
+                        FailedType.RetryFailed);
+                }
+                else
+                {
+                    // 如果期间发生LoopBreakException，则直接抛出以备上层处理流程更新
+                    throw loopBreakException;
+                }
             }
         }
 
@@ -524,13 +542,12 @@ namespace Testflow.SlaveCore.Runner.Model
 
         #endregion
 
-
         private void RecordTargetInvocationError(TargetInvocationException ex)
         {
             Exception innerException = ex.InnerException;
             if (innerException is TaskFailedException)
             {
-                this.Result = StepResult.Failed;
+                this.Result = _isUnderRetryStep ? StepResult.RetryFailed : StepResult.Failed;
                 RecordInvocationError(innerException, ((TaskFailedException) innerException).FailedType);
             }
             else if (innerException is TestflowAssertException)
@@ -540,7 +557,7 @@ namespace Testflow.SlaveCore.Runner.Model
             }
             else
             {
-                this.Result = StepResult.Error;
+                this.Result = _isUnderRetryStep ? StepResult.RetryFailed : StepResult.Error;
                 RecordInvocationError(innerException, FailedType.TargetError);
             }
         }
@@ -586,6 +603,20 @@ namespace Testflow.SlaveCore.Runner.Model
             // 一旦失败，需要记录WatchData
             Context.StatusQueue.Enqueue(statusInfo);
             Context.LogSession.Print(LogLevel.Error, Context.SessionId, ex.Message);
+        }
+
+        // 获取当前Step是否是包含在Retry节点下
+        private bool IsUnderRetryBlock()
+        {
+            ISequenceStep step = StepData;
+            do
+            {
+                if (null != step.RetryCounter && step.RetryCounter.RetryEnabled)
+                {
+                    return true;
+                }
+            } while (null != (step = step.Parent as ISequenceStep));
+            return false;
         }
 //        protected abstract void InvokeStep(bool forceInvoke);
     }
