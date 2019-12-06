@@ -233,7 +233,7 @@ namespace Testflow.SlaveCore.Data
             bool getlock = false;
             _keyVarLock.Enter(ref getlock);
 
-            if (_keyVariables.Count == 0 || null == sequence)
+            if ((_keyVariables.Count == 0 || null == sequence) && _fullTraceVariables.Count == 0)
             {
                 _keyVarLock.Exit();
                 return null;
