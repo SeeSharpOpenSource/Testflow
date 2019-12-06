@@ -28,7 +28,7 @@ namespace Testflow.SlaveCore.Runner.Model
 
         protected override void InvokeStepSingleTime(bool forceInvoke)
         {
-            int index = -1;
+            int index = 0;
             while (true)
             {
                 try
