@@ -35,29 +35,34 @@ namespace Testflow.SlaveCore.SlaveFlowControl
 
             SessionTaskEntity sessionTaskEntity = Context.SessionTaskEntity;
 
-            sessionTaskEntity.InvokeSetUp();
-            RuntimeState setUpState = sessionTaskEntity.GetSequenceTaskState(CommonConst.SetupIndex);
-            // 如果SetUp执行失败，则执行TearDown，且配置所有序列为失败状态，并发送所有序列都失败的信息
-            if (setUpState > RuntimeState.Success)
+            try
             {
+                sessionTaskEntity.InvokeSetUp();
+                RuntimeState setUpState = sessionTaskEntity.GetSequenceTaskState(CommonConst.SetupIndex);
+                // 如果SetUp执行失败，则执行TearDown，且配置所有序列为失败状态，并发送所有序列都失败的信息
+                if (setUpState > RuntimeState.Success)
+                {
+                    // 打印状态日志
+                    Context.LogSession.Print(LogLevel.Error, Context.SessionId, "Run setup failed.");
+                    SendSetupFailedEvents(sessionTaskEntity);
+                }
+                else
+                {
+                    RunSequences(sessionTaskEntity);
+                }
+            }
+            finally
+            {
+                sessionTaskEntity.InvokeTearDown();
+
+                Context.State = RuntimeState.Over;
+                this.Next = null;
+
+                SendOverMessage();
+
                 // 打印状态日志
-                Context.LogSession.Print(LogLevel.Error, Context.SessionId, "Run setup failed.");
-                SendSetupFailedEvents(sessionTaskEntity);
+                Context.LogSession.Print(LogLevel.Info, Context.SessionId, "Test execution over.");
             }
-            else
-            {
-                RunSequences(sessionTaskEntity);
-            }
-
-            sessionTaskEntity.InvokeTearDown();
-
-            Context.State = RuntimeState.Over;
-            this.Next = null;
-
-            SendOverMessage();
-
-            // 打印状态日志
-            Context.LogSession.Print(LogLevel.Info, Context.SessionId, "Test execution over.");
         }
 
         private void SendSetupFailedEvents(SessionTaskEntity sessionTaskEntity)

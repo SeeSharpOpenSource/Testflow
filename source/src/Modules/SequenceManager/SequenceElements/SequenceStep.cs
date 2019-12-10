@@ -75,6 +75,12 @@ namespace Testflow.SequenceManager.SequenceElements
                     this.AssertFailedAction = FailedAction.Continue;
                     this.InvokeErrorAction = FailedAction.Continue;
                 }
+                else if (value && (AssertFailedAction != FailedAction.Terminate ||
+                    InvokeErrorAction != FailedAction.Terminate))
+                {
+                    this.AssertFailedAction = FailedAction.Terminate;
+                    this.InvokeErrorAction = FailedAction.Terminate;
+                }
             }
         }
         public bool RecordStatus { get; set; }
