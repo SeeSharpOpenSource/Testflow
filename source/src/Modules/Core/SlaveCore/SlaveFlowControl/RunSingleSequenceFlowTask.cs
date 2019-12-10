@@ -31,44 +31,49 @@ namespace Testflow.SlaveCore.SlaveFlowControl
 
             SessionTaskEntity sessionTaskEntity = Context.SessionTaskEntity;
 
-            sessionTaskEntity.InvokeSetUp();
-            RuntimeState setUpState = sessionTaskEntity.GetSequenceTaskState(CommonConst.SetupIndex);
-            // 如果SetUp执行失败，则执行TearDown，且配置所有序列为失败状态，并发送所有序列都失败的信息
-            if (setUpState > RuntimeState.Success)
+            try
             {
-                // 打印状态日志
-                Context.LogSession.Print(LogLevel.Error, Context.SessionId, "Run setup failed.");
-                for (int i = 0; i < sessionTaskEntity.SequenceCount; i++)
+                sessionTaskEntity.InvokeSetUp();
+                RuntimeState setUpState = sessionTaskEntity.GetSequenceTaskState(CommonConst.SetupIndex);
+                // 如果SetUp执行失败，则执行TearDown，且配置所有序列为失败状态，并发送所有序列都失败的信息
+                if (setUpState > RuntimeState.Success)
                 {
-                    SequenceTaskEntity sequenceTaskEntity = sessionTaskEntity.GetSequenceTaskEntity(i);
-                    sequenceTaskEntity.State = RuntimeState.Failed;
-
-                    FailedInfo failedInfo = new FailedInfo(Context.I18N.GetStr("SetUpFailed"), FailedType.SetUpFailed);
-                    CallStack sequenceStack = ModuleUtils.GetSequenceStack(i, sequenceTaskEntity.RootCoroutineId);
-                    SequenceStatusInfo statusInfo = new SequenceStatusInfo(i, sequenceStack, 
-                        StatusReportType.Failed, StepResult.NotAvailable, failedInfo)
+                    // 打印状态日志
+                    Context.LogSession.Print(LogLevel.Error, Context.SessionId, "Run setup failed.");
+                    for (int i = 0; i < sessionTaskEntity.SequenceCount; i++)
                     {
-                        ExecutionTime = DateTime.Now,
-                        ExecutionTicks = -1,
-                        CoroutineId = sequenceTaskEntity.RootCoroutineId
-                    };
-                    Context.StatusQueue.Enqueue(statusInfo);
+                        SequenceTaskEntity sequenceTaskEntity = sessionTaskEntity.GetSequenceTaskEntity(i);
+                        sequenceTaskEntity.State = RuntimeState.Failed;
+
+                        FailedInfo failedInfo = new FailedInfo(Context.I18N.GetStr("SetUpFailed"), FailedType.SetUpFailed);
+                        CallStack sequenceStack = ModuleUtils.GetSequenceStack(i, sequenceTaskEntity.RootCoroutineId);
+                        SequenceStatusInfo statusInfo = new SequenceStatusInfo(i, sequenceStack, 
+                            StatusReportType.Failed, StepResult.NotAvailable, failedInfo)
+                        {
+                            ExecutionTime = DateTime.Now,
+                            ExecutionTicks = -1,
+                            CoroutineId = sequenceTaskEntity.RootCoroutineId
+                        };
+                        Context.StatusQueue.Enqueue(statusInfo);
+                    }
+                }
+                else
+                {
+                    sessionTaskEntity.InvokeSequence(_sequenceIndex);
                 }
             }
-            else
+            finally
             {
-                sessionTaskEntity.InvokeSequence(_sequenceIndex);
+                sessionTaskEntity.InvokeTearDown();
+
+                Context.State = RuntimeState.Over;
+                this.Next = null;
+
+                SendOverMessage();
+
+                // 打印状态日志
+                Context.LogSession.Print(LogLevel.Info, Context.SessionId, "Run single sequence over.");
             }
-
-            sessionTaskEntity.InvokeTearDown();
-
-            Context.State = RuntimeState.Over;
-            this.Next = null;
-
-            SendOverMessage();
-
-            // 打印状态日志
-            Context.LogSession.Print(LogLevel.Info, Context.SessionId, "Run single sequence over.");
         }
 
         protected override void TaskErrorAction(Exception ex)
