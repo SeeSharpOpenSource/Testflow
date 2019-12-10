@@ -145,6 +145,7 @@ namespace Testflow.SlaveCore.Runner
         public object CastConstantValue(ITypeData type, string valueStr)
         {
             Type dataType = _typeDataMapping[ModuleUtils.GetTypeFullName(type)];
+            // 值或简单类型或使用Json到类或struct的转换
             return _context.Convertor.CastConstantValue(dataType, valueStr);
         }
 

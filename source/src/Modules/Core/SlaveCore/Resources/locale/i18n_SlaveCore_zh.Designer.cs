@@ -79,6 +79,15 @@ namespace Testflow.SlaveCore.Resources.locale {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to 不支持到接口或抽象类“{0}”的转换。.
+        /// </summary>
+        internal static string CastInterface {
+            get {
+                return ResourceManager.GetString("CastInterface", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to 不能将null值转换为类型”{0}“。.
         /// </summary>
         internal static string CastNullValue {

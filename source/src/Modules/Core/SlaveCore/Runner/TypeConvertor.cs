@@ -9,13 +9,15 @@ using Testflow.Usr;
 
 namespace Testflow.SlaveCore.Runner
 {
-    internal class ValueTypeConvertor
+    internal class TypeConvertor
     {
         private readonly SlaveContext _context;
         private readonly Dictionary<string, ValueConvertorBase> _convertors;
+        // 非值类型转换器，仅用于静态入参类型的转换
+        private readonly NonValueTypeConvertor _nonValueConvertor;
         private readonly ValueConvertorBase _strConvertor;
 
-        public ValueTypeConvertor(SlaveContext context)
+        public TypeConvertor(SlaveContext context)
         {
             _context = context;
             string numericFormat = context.GetPropertyString("NumericFormat");
@@ -37,6 +39,7 @@ namespace Testflow.SlaveCore.Runner
                 {typeof (DateTime).Name, new DateTimeConvertor()}
             };
             _strConvertor = _convertors[typeof (string).Name];
+            _nonValueConvertor = new NonValueTypeConvertor(_context);
         }
 
         public object CastValue(ITypeData targetType, object sourceValue)
@@ -92,6 +95,10 @@ namespace Testflow.SlaveCore.Runner
             {
                 return _strConvertor.CastValue(targetType, sourceValue);
             }
+            else if (_nonValueConvertor.IsNonValueTypeString(ref sourceValue))
+            {
+                return _nonValueConvertor.CastConstantValue(targetType, sourceValue);
+            }
             throw new TestflowDataException(ModuleErrorCode.UnsupportedTypeCast,
                 _context.I18N.GetFStr("InvalidTypeCast", targetType.Name));
         }
@@ -110,7 +117,7 @@ namespace Testflow.SlaveCore.Runner
         public bool IsValidCast(Type sourceType, Type targetType)
         {
             return _convertors.ContainsKey(sourceType.Name) &&
-                   _convertors[sourceType.Name].IsValidCastTarget(targetType);
+                    _convertors[sourceType.Name].IsValidCastTarget(targetType);
         }
     }
 }

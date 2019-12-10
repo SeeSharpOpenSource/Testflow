@@ -66,8 +66,8 @@ namespace Testflow.SlaveCore.Data
             {
                 string variableName = CoreUtils.GetRuntimeVariableName(sessionId, variable);
                 object value = null;
-                // 如果是值类型并且配置的值有效，则初始化变量值。如果是值类型但是未配置值则获取默认值
-                if (variable.VariableType == VariableType.Value && null != variable.Type)
+                // 如果变量已匹配类型并且配置的值有效，则初始化变量值。如果是值类型但是未配置值则获取默认值
+                if (variable.VariableType != VariableType.Undefined && null != variable.Type)
                 {
                     value = CoreUtils.IsValidVaraibleValue(variable)
                         ? _context.TypeInvoker.CastConstantValue(variable.Type, variable.Value)

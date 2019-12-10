@@ -30,7 +30,7 @@ namespace Testflow.SlaveCore.Common
             this._msgIndex = -1;
 
             this.I18N = I18N.GetInstance(Constants.I18nName);
-            this.Convertor = new ValueTypeConvertor(this);
+            this.Convertor = new TypeConvertor(this);
 
             SessionId = this.GetProperty<int>("Session");
             State = RuntimeState.NotAvailable;
@@ -84,7 +84,7 @@ namespace Testflow.SlaveCore.Common
 
         public CallBackEventManager CallBackEventManager { get; set; }
 
-        public ValueTypeConvertor Convertor { get; }
+        public TypeConvertor Convertor { get; }
 
         public StopWatchManager TimingManager { get; }
 

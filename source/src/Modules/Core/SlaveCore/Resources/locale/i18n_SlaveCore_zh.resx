@@ -123,6 +123,9 @@
   <data name="CannotSendWhenDeactive" xml:space="preserve">
     <value>信使处于非激活状态时不能执行消息发送。</value>
   </data>
+  <data name="CastInterface" xml:space="preserve">
+    <value>不支持到接口或抽象类“{0}”的转换。</value>
+  </data>
   <data name="CastNullValue" xml:space="preserve">
     <value>不能将null值转换为类型”{0}“。</value>
   </data>

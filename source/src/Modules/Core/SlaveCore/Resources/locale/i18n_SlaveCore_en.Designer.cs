@@ -79,6 +79,15 @@ namespace Testflow.SlaveCore.Resources.locale {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Unable to cast string to abstract class or interface &quot;{0}&quot;..
+        /// </summary>
+        internal static string CastInterface {
+            get {
+                return ResourceManager.GetString("CastInterface", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Cannot cast null value to type &lt;{0}&gt;..
         /// </summary>
         internal static string CastNullValue {
