@@ -201,7 +201,7 @@ namespace Testflow.ComInterfaceManager
             AddFieldSetterDescription(classType, classDescription);
             AddMethodDescription(classType, classDescription);
 
-            classDescription.IsStatic = classDescription.Functions.All(
+            classDescription.IsStatic = classKind == VariableType.Class && classDescription.Functions.All(
                 item => item.FuncType != FunctionType.Constructor && item.FuncType != FunctionType.InstanceFunction);
 
             comDescription.Classes.Add(classDescription);
