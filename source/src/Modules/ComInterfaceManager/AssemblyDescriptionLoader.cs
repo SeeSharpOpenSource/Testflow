@@ -196,8 +196,9 @@ namespace Testflow.ComInterfaceManager
                 Description = typeDescription.Description,
                 Name = GetTypeName(classType),
             };
-            AddConstructorDescription(classType, classDescription);
+            AddConstructorDescription(classType, classDescription, classKind);
             AddPropertySetterDescription(classType, classDescription);
+            AddFieldSetterDescription(classType, classDescription);
             AddMethodDescription(classType, classDescription);
 
             classDescription.IsStatic = classDescription.Functions.All(
@@ -211,7 +212,7 @@ namespace Testflow.ComInterfaceManager
                 comDescription.TypeDescriptions.Add(typeDescription);
             }
         }
-
+        
         private void AddPropertySetterDescription(Type classType, ClassInterfaceDescription classDescription)
         {
             List<IArgumentDescription> staticProperties = GetPropertyDescriptions(classType, BindingFlags.Static | BindingFlags.Public);
@@ -242,6 +243,43 @@ namespace Testflow.ComInterfaceManager
                     ComponentIndex = classDescription.ComponentIndex,
                     FuncType = FunctionType.InstancePropertySetter,
                     Signature = CommonConst.SetInstancePropertyFunc + "()",
+                    Return = null,
+                    IsGeneric = false
+                };
+                classDescription.Functions.Add(instanceSetterDesp);
+            }
+        }
+
+        private void AddFieldSetterDescription(Type classType, ClassInterfaceDescription classDescription)
+        {
+            List<IArgumentDescription> staticProperties = GetFieldDescriptions(classType, BindingFlags.Static | BindingFlags.Public);
+            if (null != staticProperties && staticProperties.Count > 0)
+            {
+                FunctionInterfaceDescription staticSetterDesp = new FunctionInterfaceDescription()
+                {
+                    Name = CommonConst.SetStaticFieldFunc,
+                    Arguments = staticProperties,
+                    ClassType = classDescription.ClassType,
+                    ComponentIndex = classDescription.ComponentIndex,
+                    FuncType = FunctionType.StaticFieldSetter,
+                    Signature = CommonConst.SetStaticFieldFunc + "()",
+                    Return = null,
+                    IsGeneric = false
+                };
+                classDescription.Functions.Add(staticSetterDesp);
+            }
+
+            List<IArgumentDescription> instanceProperties = GetFieldDescriptions(classType, BindingFlags.Instance | BindingFlags.Public);
+            if (null != instanceProperties && instanceProperties.Count > 0)
+            {
+                FunctionInterfaceDescription instanceSetterDesp = new FunctionInterfaceDescription()
+                {
+                    Name = CommonConst.SetInstanceFieldFunc,
+                    Arguments = instanceProperties,
+                    ClassType = classDescription.ClassType,
+                    ComponentIndex = classDescription.ComponentIndex,
+                    FuncType = FunctionType.InstanceFieldSetter,
+                    Signature = CommonConst.SetInstanceFieldFunc + "()",
                     Return = null,
                     IsGeneric = false
                 };
@@ -307,8 +345,12 @@ namespace Testflow.ComInterfaceManager
         }
 
         // 初始化构造方法的入参
-        private void AddConstructorDescription(Type classType, ClassInterfaceDescription classDescription)
+        private void AddConstructorDescription(Type classType, ClassInterfaceDescription classDescription, VariableType classKind)
         {
+            if (classKind == VariableType.Struct)
+            {
+                AddStructDefaultConstructor(classType, classDescription);
+            }
             ConstructorInfo[] constructors = classType.GetConstructors(BindingFlags.Instance | BindingFlags.Public);
             if (constructors.Length > 0)
             {
@@ -332,6 +374,24 @@ namespace Testflow.ComInterfaceManager
                     classDescription.Functions.Add(funcDescription);
                 }
             }
+        }
+
+        // 添加Struct默认构造函数
+        private static void AddStructDefaultConstructor(Type classType, ClassInterfaceDescription classDescription)
+        {
+            string descriptionStr = "Struct default constructor";
+            FunctionInterfaceDescription funcDescription = new FunctionInterfaceDescription()
+            {
+                Category = classDescription.ClassTypeDescription.Category,
+                Description = descriptionStr,
+                FuncType = FunctionType.StructConstructor,
+                IsGeneric = false,
+                Name = $"{classType.Name}_Constructor"
+            };
+            funcDescription.Arguments = new List<IArgumentDescription>(1);
+            funcDescription.Return = null;
+            funcDescription.Signature = ModuleUtils.GetSignature(classType.Name, funcDescription);
+            classDescription.Functions.Add(funcDescription);
         }
 
         private void InitConstructorParamDescription(ConstructorInfo constructor,
@@ -386,6 +446,41 @@ namespace Testflow.ComInterfaceManager
                 properties.Add(propertyDescription);
             }
             return properties;
+        }
+
+        // 构造属性描述
+        private List<IArgumentDescription> GetFieldDescriptions(Type classType, BindingFlags flags)
+        {
+            FieldInfo[] fieldInfos = classType.GetFields(flags);
+            List<IArgumentDescription> fields = new List<IArgumentDescription>(fieldInfos.Length);
+            foreach (FieldInfo fieldInfo in fieldInfos)
+            {
+                Type fieldType = fieldInfo.FieldType;
+                DescriptionAttribute descriptionAttribute = fieldInfo.GetCustomAttribute<DescriptionAttribute>();
+                string descriptionStr = (null == descriptionAttribute) ? string.Empty : descriptionAttribute.Description;
+
+                TypeDescription typeDescription = new TypeDescription()
+                {
+                    AssemblyName = fieldType.Assembly.GetName().Name,
+                    Category = string.Empty,
+                    Description = descriptionStr,
+                    Name = GetTypeName(fieldType),
+                    Namespace = GetNamespace(fieldType)
+                };
+
+                ArgumentDescription propertyDescription = new ArgumentDescription()
+                {
+                    Name = fieldInfo.Name,
+                    ArgumentType = GetKindOfType(fieldType),
+                    Description = descriptionStr,
+                    Modifier = ArgumentModifier.None,
+                    DefaultValue = string.Empty,
+                    TypeDescription = typeDescription,
+                    IsOptional = false
+                };
+                fields.Add(propertyDescription);
+            }
+            return fields;
         }
 
         // 构造方法入参描述信息
@@ -616,8 +711,8 @@ namespace Testflow.ComInterfaceManager
                 IsStatic = false,
                 Name = typeDescription.Name
             };
-
-            AddConstructorDescription(type, classDescription);
+            VariableType classType = GetKindOfType(type);
+            AddConstructorDescription(type, classDescription, classType);
             AddMethodDescription(type, classDescription);
 
             comDescription.Classes.Add(classDescription);
