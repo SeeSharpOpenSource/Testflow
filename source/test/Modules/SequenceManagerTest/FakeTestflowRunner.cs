@@ -71,6 +71,7 @@ namespace Testflow.SequenceManagerTest
             public IAssemblyInfo Assembly { get; set; }
             public IList<IClassInterfaceDescription> Classes { get; }
             public IList<ITypeData> VariableTypes { get; set; }
+            public IList<ITypeDescription> TypeDescriptions { get; set; }
             public string Category { get; set; }
             public IDictionary<string, string[]> Enumerations { get; set; }
         }
