@@ -101,39 +101,6 @@ namespace Testflow.MasterCore.CallBack
             return methodInfo;
         }
 
-        public ConstructorInfo GetConstructor(IFunctionData function)
-        {
-            BindingFlags bindingFlags = BindingFlags.Public;
-            ConstructorInfo constructor;
-            Type[] parameterTypes;
-            ParameterModifier[] modifiers = null;
-            Type classType = _typeDataMapping[ModuleUtils.GetTypeFullName(function.ClassType)];
-            switch (function.Type)
-            {
-                case FunctionType.Constructor:
-                    bindingFlags |= BindingFlags.Instance;
-                    parameterTypes = new Type[function.ParameterType.Count];
-                    if (function.ParameterType.Count > 0)
-                    {
-                        modifiers = new ParameterModifier[] { new ParameterModifier(function.ParameterType.Count) };
-                        for (int i = 0; i < parameterTypes.Length; i++)
-                        {
-                            parameterTypes[i] = _typeDataMapping[ModuleUtils.GetTypeFullName(function.ParameterType[i].Type)];
-                            if (function.ParameterType[i].Modifier != ArgumentModifier.None && !parameterTypes[i].IsByRef)
-                            {
-                                modifiers[0][i] = true;
-                                parameterTypes[i] = parameterTypes[i].MakeByRefType();
-                            }
-                        }
-                    }
-                    constructor = classType.GetConstructor(bindingFlags, null, parameterTypes, modifiers);
-                    break;
-                default:
-                    throw new InvalidOperationException();
-            }
-            return constructor;
-        }
-
         public object CastValue(ITypeData type, string valueStr)
         {
             object value = null;
