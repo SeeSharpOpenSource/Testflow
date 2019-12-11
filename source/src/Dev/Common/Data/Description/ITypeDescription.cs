@@ -28,6 +28,11 @@ namespace Testflow.Data.Description
         string Description { get; set; }
 
         /// <summary>
+        /// 类的种类
+        /// </summary>
+        VariableType Kind { get; set; }
+
+        /// <summary>
         /// 功能类别
         /// </summary>
         string Category { get; set; }

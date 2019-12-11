@@ -125,14 +125,14 @@ namespace Testflow.ComInterfaceManager
                     {
                         continue;
                     }
-                    
-                    if (typeInfo.IsEnum || typeInfo.IsValueType || typeInfo == typeof(string))
+                    VariableType classKind = GetKindOfType(typeInfo);
+                    if (classKind == VariableType.Enumeration || classKind == VariableType.Value)
                     {
-                        AddDataTypeDescription(descriptionData, typeInfo, assemblyName);
+                        AddDataTypeDescription(descriptionData, typeInfo, assemblyName, classKind);
                     }
-                    else if (typeInfo.IsClass)
+                    else if (classKind == VariableType.Class || classKind == VariableType.Struct)
                     {
-                        AddClassDescription(descriptionData, typeInfo, assemblyName);
+                        AddClassDescription(descriptionData, typeInfo, assemblyName, classKind);
                     }
                 }
                 return descriptionData;
@@ -145,7 +145,7 @@ namespace Testflow.ComInterfaceManager
             }
         }
 
-        private void AddDataTypeDescription(ComInterfaceDescription descriptionData, Type classType, string assemblyName)
+        private void AddDataTypeDescription(ComInterfaceDescription descriptionData, Type classType, string assemblyName, VariableType classKind)
         {
             TestflowCategoryAttribute category = classType.GetCustomAttribute<TestflowCategoryAttribute>();
             DescriptionAttribute descriptionAttr = classType.GetCustomAttribute<DescriptionAttribute>();
@@ -159,7 +159,8 @@ namespace Testflow.ComInterfaceManager
                 Category = typeCategory,
                 Description = classDescriptionStr,
                 Name = GetTypeName(classType),
-                Namespace = GetNamespace(classType)
+                Namespace = GetNamespace(classType),
+                Kind = classKind
             };
 
             // 枚举类型需要添加枚举值到类型信息中
@@ -171,7 +172,7 @@ namespace Testflow.ComInterfaceManager
             descriptionData.TypeDescriptions.Add(typeDescription);
         }
 
-        private void AddClassDescription(ComInterfaceDescription comDescription, Type classType, string assemblyName)
+        private void AddClassDescription(ComInterfaceDescription comDescription, Type classType, string assemblyName, VariableType classKind)
         {
             TestflowTypeAttribute testflowType = classType.GetCustomAttribute<TestflowTypeAttribute>();
             TestflowCategoryAttribute category = classType.GetCustomAttribute<TestflowCategoryAttribute>();
@@ -187,6 +188,7 @@ namespace Testflow.ComInterfaceManager
                 Name = GetTypeName(classType),
                 Namespace = GetNamespace(classType),
                 Description = classDescriptionStr,
+                Kind = classKind
             };
             ClassInterfaceDescription classDescription = new ClassInterfaceDescription()
             {
@@ -374,7 +376,7 @@ namespace Testflow.ComInterfaceManager
                 ArgumentDescription propertyDescription = new ArgumentDescription()
                 {
                     Name = propertyInfo.Name,
-                    ArgumentType = GetArgumentType(propertyType),
+                    ArgumentType = GetKindOfType(propertyType),
                     Description = descriptionStr,
                     Modifier = ArgumentModifier.None,
                     DefaultValue = string.Empty,
@@ -424,7 +426,7 @@ namespace Testflow.ComInterfaceManager
             ArgumentDescription paramDescription = new ArgumentDescription()
             {
                 Name = parameterInfo.Name,
-                ArgumentType = GetArgumentType(parameterType),
+                ArgumentType = GetKindOfType(parameterType),
                 Description = descriptionStr,
                 Modifier = modifier,
                 DefaultValue = string.Empty,
@@ -460,7 +462,7 @@ namespace Testflow.ComInterfaceManager
             ArgumentDescription paramDescription = new ArgumentDescription()
             {
                 Name = string.Empty,
-                ArgumentType = GetArgumentType(propertyType),
+                ArgumentType = GetKindOfType(propertyType),
                 Description = string.Empty,
                 Modifier = ArgumentModifier.None,
                 DefaultValue = string.Empty,
@@ -650,7 +652,8 @@ namespace Testflow.ComInterfaceManager
             return !typeName.Contains(refTypeSymbol) ? typeName : typeName.Replace(refTypeSymbol, "");
         }
 
-        private VariableType GetArgumentType(Type realType)
+        // 获取类型对应的种类
+        private VariableType GetKindOfType(Type realType)
         {
             VariableType argumentType = VariableType.Undefined;
             // 枚举类型
