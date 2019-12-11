@@ -27,6 +27,8 @@ namespace Testflow.SlaveCore.Runner.Actuators
 
         public ConstructorInfo Constructor { get; set; }
 
+        public Assembly StructAssembly { get; set; }
+
         public object[] Params { get; }
 
         public string InstanceVar { get; set; }
@@ -76,6 +78,10 @@ namespace Testflow.SlaveCore.Runner.Actuators
                         throw new TestflowRuntimeException(ModuleErrorCode.RuntimeError,
                             Context.I18N.GetFStr("LoadFunctionFailed", Function.MethodName));
                     }
+                    break;
+                case FunctionType.StructConstructor:
+                    Type classType = Context.TypeInvoker.GetType(Function.ClassType);
+                    StructAssembly = classType.Assembly;
                     break;
                 default:
                     throw new InvalidOperationException();
@@ -139,6 +145,18 @@ namespace Testflow.SlaveCore.Runner.Actuators
                     // 开始计时
                     StartTiming();
                     instance = Constructor.Invoke(Params);
+                    // 停止计时
+                    EndTiming();
+                    if (CoreUtils.IsValidVaraible(InstanceVar))
+                    {
+                        Context.VariableMapper.SetParamValue(InstanceVar, Function.Instance, instance);
+                        LogTraceVariable(Function.Instance, InstanceVar);
+                    }
+                    break;
+                case FunctionType.StructConstructor:
+                    // 开始计时
+                    StartTiming();
+                    instance = StructAssembly.CreateInstance(ModuleUtils.GetTypeFullName(Function.ClassType));
                     // 停止计时
                     EndTiming();
                     if (CoreUtils.IsValidVaraible(InstanceVar))

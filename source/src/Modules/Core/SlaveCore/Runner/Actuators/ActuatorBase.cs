@@ -17,6 +17,7 @@ namespace Testflow.SlaveCore.Runner.Actuators
             switch (stepData.Function.Type)
             {
                 case FunctionType.Constructor:
+                case FunctionType.StructConstructor:
                 case FunctionType.InstanceFunction:
                 case FunctionType.StaticFunction:
                     return new FunctionActuator(stepData, context, sequenceIndex);
@@ -30,6 +31,9 @@ namespace Testflow.SlaveCore.Runner.Actuators
                 case FunctionType.StaticPropertySetter:
                 case FunctionType.InstancePropertySetter:
                     return new PropertySetterActuator(stepData, context, sequenceIndex);
+                case FunctionType.StaticFieldSetter:
+                case FunctionType.InstanceFieldSetter:
+                    return new FieldSetterActuator(stepData, context, sequenceIndex);
                     break;
                 default:
                     throw new InvalidOperationException();

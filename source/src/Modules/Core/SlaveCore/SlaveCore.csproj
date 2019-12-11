@@ -58,6 +58,7 @@
     <Compile Include="Debugger\DebugManager.cs" />
     <Compile Include="Runner\Actuators\ActuatorBase.cs" />
     <Compile Include="Runner\Actuators\EmptyActuator.cs" />
+    <Compile Include="Runner\Actuators\FieldSetterActuator.cs" />
     <Compile Include="Runner\Convertors\CharConvertor.cs" />
     <Compile Include="Runner\Convertors\BoolConvertor.cs" />
     <Compile Include="Runner\Convertors\DateTimeConvertor.cs" />
