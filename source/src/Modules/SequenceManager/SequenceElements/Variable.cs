@@ -66,19 +66,6 @@ namespace Testflow.SequenceManager.SequenceElements
                 TypeIndex = Constants.UnverifiedTypeIndex,
                 VariableType = this.VariableType
             };
-            switch (variable.VariableType)
-            {
-                case VariableType.Undefined:
-                case VariableType.Value:
-                case VariableType.Struct:
-                case VariableType.Enumeration:
-                    variable.Value = this.Value;
-                    break;
-                case VariableType.Class:
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
             return variable;
         }
 
