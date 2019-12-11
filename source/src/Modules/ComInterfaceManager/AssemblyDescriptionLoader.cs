@@ -17,6 +17,8 @@ namespace Testflow.ComInterfaceManager
         private readonly HashSet<string> _ignoreMethod;
         private readonly HashSet<string> _ignoreClass;
         private readonly Dictionary<string, Assembly> _assemblies;
+
+        private readonly HashSet<string> _simpleValueType;
         public AssemblyDescriptionLoader()
         {
             _ignoreMethod = new HashSet<string>()
@@ -33,6 +35,21 @@ namespace Testflow.ComInterfaceManager
                 "Log"
             };
             _assemblies = new Dictionary<string, Assembly>(100);
+            _simpleValueType = new HashSet<string>();
+            _simpleValueType.Add(ModuleUtils.GetFullName(typeof (string)));
+            _simpleValueType.Add(ModuleUtils.GetFullName(typeof (long)));
+            _simpleValueType.Add(ModuleUtils.GetFullName(typeof (ulong)));
+            _simpleValueType.Add(ModuleUtils.GetFullName(typeof (int)));
+            _simpleValueType.Add(ModuleUtils.GetFullName(typeof (uint)));
+            _simpleValueType.Add(ModuleUtils.GetFullName(typeof (short)));
+            _simpleValueType.Add(ModuleUtils.GetFullName(typeof (ushort)));
+            _simpleValueType.Add(ModuleUtils.GetFullName(typeof (byte)));
+            _simpleValueType.Add(ModuleUtils.GetFullName(typeof (char)));
+            _simpleValueType.Add(ModuleUtils.GetFullName(typeof (decimal)));
+            _simpleValueType.Add(ModuleUtils.GetFullName(typeof (DateTime)));
+            _simpleValueType.Add(ModuleUtils.GetFullName(typeof (double)));
+            _simpleValueType.Add(ModuleUtils.GetFullName(typeof (float)));
+            _simpleValueType.Add(ModuleUtils.GetFullName(typeof (bool)));
         }
 
         public Exception Exception { get; private set; }
@@ -288,7 +305,7 @@ namespace Testflow.ComInterfaceManager
         }
 
         // 初始化构造方法的入参
-        private static void AddConstructorDescription(Type classType, ClassInterfaceDescription classDescription)
+        private void AddConstructorDescription(Type classType, ClassInterfaceDescription classDescription)
         {
             ConstructorInfo[] constructors = classType.GetConstructors(BindingFlags.Instance | BindingFlags.Public);
             if (constructors.Length > 0)
@@ -315,7 +332,7 @@ namespace Testflow.ComInterfaceManager
             }
         }
 
-        private static void InitConstructorParamDescription(ConstructorInfo constructor,
+        private void InitConstructorParamDescription(ConstructorInfo constructor,
             FunctionInterfaceDescription funcDescription)
         {
             ParameterInfo[] paramInfo = constructor.GetParameters();
@@ -329,7 +346,7 @@ namespace Testflow.ComInterfaceManager
         }
 
         // 构造属性描述
-        private static List<IArgumentDescription> GetPropertyDescriptions(Type classType, BindingFlags flags)
+        private List<IArgumentDescription> GetPropertyDescriptions(Type classType, BindingFlags flags)
         {
             PropertyInfo[] propertyInfos = classType.GetProperties(flags);
             List<IArgumentDescription> properties = new List<IArgumentDescription>(propertyInfos.Length);
@@ -340,20 +357,7 @@ namespace Testflow.ComInterfaceManager
                 {
                     continue;
                 }
-                VariableType argumentType = VariableType.Undefined;
                 Type propertyType = propertyInfo.PropertyType;
-                if (propertyType.IsEnum)
-                {
-                    argumentType = VariableType.Enumeration;
-                }
-                else if (propertyType.IsClass && propertyType != typeof(string))
-                {
-                    argumentType = VariableType.Class;
-                }
-                else if (propertyType.IsValueType || propertyType == typeof(string))
-                {
-                    argumentType = VariableType.Value;
-                }
 
                 DescriptionAttribute descriptionAttribute = propertyInfo.GetCustomAttribute<DescriptionAttribute>();
                 string descriptionStr = (null == descriptionAttribute) ? string.Empty : descriptionAttribute.Description;
@@ -370,7 +374,7 @@ namespace Testflow.ComInterfaceManager
                 ArgumentDescription propertyDescription = new ArgumentDescription()
                 {
                     Name = propertyInfo.Name,
-                    ArgumentType = argumentType,
+                    ArgumentType = GetArgumentType(propertyType),
                     Description = descriptionStr,
                     Modifier = ArgumentModifier.None,
                     DefaultValue = string.Empty,
@@ -383,7 +387,7 @@ namespace Testflow.ComInterfaceManager
         }
 
         // 构造方法入参描述信息
-        private static void InitMethodParamDescription(MethodInfo method, 
+        private void InitMethodParamDescription(MethodInfo method, 
             FunctionInterfaceDescription funcDescription)
         {
             ParameterInfo[] paramInfo = method.GetParameters();
@@ -397,23 +401,9 @@ namespace Testflow.ComInterfaceManager
         }
 
         // 构造参数信息
-        private static ArgumentDescription GetParameterInfo(ParameterInfo parameterInfo)
+        private ArgumentDescription GetParameterInfo(ParameterInfo parameterInfo)
         {
-            VariableType argumentType = VariableType.Undefined;
             Type parameterType = parameterInfo.ParameterType;
-            if (parameterType.IsEnum)
-            {
-                argumentType = VariableType.Enumeration;
-            }
-            else if (parameterType.IsClass && parameterType != typeof(string))
-            {
-                argumentType = VariableType.Class;
-            }
-            else if (parameterType.IsValueType || parameterType == typeof(string))
-            {
-                argumentType = VariableType.Value;
-            }
-
             DescriptionAttribute descriptionAttribute = parameterInfo.GetCustomAttribute<DescriptionAttribute>();
             string descriptionStr = (null == descriptionAttribute) ? string.Empty : descriptionAttribute.Description;
 
@@ -434,7 +424,7 @@ namespace Testflow.ComInterfaceManager
             ArgumentDescription paramDescription = new ArgumentDescription()
             {
                 Name = parameterInfo.Name,
-                ArgumentType = argumentType,
+                ArgumentType = GetArgumentType(parameterType),
                 Description = descriptionStr,
                 Modifier = modifier,
                 DefaultValue = string.Empty,
@@ -450,25 +440,12 @@ namespace Testflow.ComInterfaceManager
         }
 
         // 构造一个参数信息
-        private static ArgumentDescription GetReturnInfo(ParameterInfo parameterInfo)
+        private ArgumentDescription GetReturnInfo(ParameterInfo parameterInfo)
         {
-            VariableType argumentType = VariableType.Undefined;
             Type propertyType = parameterInfo.ParameterType;
             if ("Void".Equals(propertyType.Name))
             {
                 return null;
-            }
-            if (propertyType.IsEnum)
-            {
-                argumentType = VariableType.Enumeration;
-            }
-            else if (propertyType.IsClass && propertyType != typeof(string))
-            {
-                argumentType = VariableType.Class;
-            }
-            else if (propertyType.IsValueType || propertyType == typeof(string))
-            {
-                argumentType = VariableType.Value;
             }
 
             TypeDescription typeDescription = new TypeDescription()
@@ -483,7 +460,7 @@ namespace Testflow.ComInterfaceManager
             ArgumentDescription paramDescription = new ArgumentDescription()
             {
                 Name = string.Empty,
-                ArgumentType = argumentType,
+                ArgumentType = GetArgumentType(propertyType),
                 Description = string.Empty,
                 Modifier = ArgumentModifier.None,
                 DefaultValue = string.Empty,
@@ -671,6 +648,32 @@ namespace Testflow.ComInterfaceManager
             const string refTypeSymbol = "&";
             string typeName = GetTypeName(type);
             return !typeName.Contains(refTypeSymbol) ? typeName : typeName.Replace(refTypeSymbol, "");
+        }
+
+        private VariableType GetArgumentType(Type realType)
+        {
+            VariableType argumentType = VariableType.Undefined;
+            // 枚举类型
+            if (realType.IsEnum)
+            {
+                argumentType = VariableType.Enumeration;
+            }
+            // 简单值类型
+            else if (_simpleValueType.Contains(ModuleUtils.GetFullName(realType)))
+            {
+                argumentType = VariableType.Value;
+            }
+            // Class类型
+            else if (realType.IsClass || realType.IsInterface)
+            {
+                argumentType = VariableType.Class;
+            }
+            // 非简单类型的值类型被判定为Struct类型
+            else if (realType.IsValueType)
+            {
+                argumentType = VariableType.Struct;
+            }
+            return argumentType;
         }
 
         private static string GetNamespace(Type type)

@@ -120,6 +120,12 @@ namespace Testflow.ComInterfaceManager
             return string.Format(fullNameFormat, namespaceStr, name);
         }
 
+        public static string GetFullName(Type dataType)
+        {
+            const string fullNameFormat = "{0}.{1}";
+            return string.Format(fullNameFormat, dataType.Namespace, dataType.Name);
+        }
+
         public static string GetFullName(ITypeDescription typeDescription)
         {
             const string fullNameFormat = "{0}.{1}";
