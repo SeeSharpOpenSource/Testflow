@@ -64,7 +64,8 @@ namespace Testflow.SequenceManager.SequenceElements
                 Parent = null,
                 Type = this.Type,
                 TypeIndex = Constants.UnverifiedTypeIndex,
-                VariableType = this.VariableType
+                VariableType = this.VariableType,
+                Value = this.Value
             };
             return variable;
         }
