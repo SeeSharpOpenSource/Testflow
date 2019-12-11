@@ -106,6 +106,16 @@
         public const string SetStaticPropertyFunc = "SetStaticProperties";
 
         /// <summary>
+        /// 配置实例属性的方法
+        /// </summary>
+        public const string SetInstanceFieldFunc = "SetInstanceFields";
+
+        /// <summary>
+        /// 配置实例属性的方法
+        /// </summary>
+        public const string SetStaticFieldFunc = "SetStaticFields";
+
+        /// <summary>
         /// 全局通用的时间戳格式化字符串
         /// </summary>
         public const string GlobalTimeFormat = "yyyy-MM-ddTHH:mm:ss.fffffffK";

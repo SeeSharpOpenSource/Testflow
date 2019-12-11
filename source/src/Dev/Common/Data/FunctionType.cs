@@ -11,33 +11,48 @@
         Constructor = 0,
 
         /// <summary>
+        /// Struct类型的构造器
+        /// </summary>
+        StructConstructor = 1,
+
+        /// <summary>
         /// 实例函数
         /// </summary>
-        InstanceFunction = 1,
+        InstanceFunction = 2,
 
         /// <summary>
         /// 静态方法
         /// </summary>
-        StaticFunction = 2,
+        StaticFunction = 3,
 
         /// <summary>
         /// 实例属性配置方法
         /// </summary>
-        InstancePropertySetter = 3,
+        InstancePropertySetter = 4,
 
         /// <summary>
         /// 静态属性配置方法
         /// </summary>
-        StaticPropertySetter = 4,
+        StaticPropertySetter = 5,
+
+        /// <summary>
+        /// 实例属性配置方法
+        /// </summary>
+        InstanceFieldSetter = 6,
+
+        /// <summary>
+        /// 静态属性配置方法
+        /// </summary>
+        StaticFieldSetter = 7,
 
         /// <summary>
         /// 断言函数
         /// </summary>
-        Assertion = 5,
+        Assertion = 8,
 
         /// <summary>
         /// 回调函数
         /// </summary>
-        CallBack = 6
+        CallBack = 9
     }
 }
