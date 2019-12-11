@@ -171,6 +171,9 @@
   <data name="MaxRetryFailed" xml:space="preserve">
     <value>序列步骤重试超过最大次数。</value>
   </data>
+  <data name="NoDefaultConstructor" xml:space="preserve">
+    <value>常量转换值到类型{0} 失败，因为目标类型没有默认的构造方法。</value>
+  </data>
   <data name="OperationAborted" xml:space="preserve">
     <value>操作被终止。</value>
   </data>

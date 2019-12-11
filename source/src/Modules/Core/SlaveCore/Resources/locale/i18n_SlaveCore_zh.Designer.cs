@@ -223,6 +223,15 @@ namespace Testflow.SlaveCore.Resources.locale {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to 常量转换值到类型{0} 失败，因为目标类型没有默认的构造方法。.
+        /// </summary>
+        internal static string NoDefaultConstructor {
+            get {
+                return ResourceManager.GetString("NoDefaultConstructor", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to 操作被终止。.
         /// </summary>
         internal static string OperationAborted {

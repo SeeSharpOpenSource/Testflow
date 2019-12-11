@@ -50,7 +50,7 @@ namespace Testflow.SlaveCore.Runner
                 return null;
             }
             Type sourceType = sourceValue.GetType();
-            if (!IsValidCast(sourceType, targetType))
+            if (!IsValidValueCast(sourceType, targetType))
             {
                 _context.LogSession.Print(LogLevel.Error, _context.SessionId, 
                     $"Unsupported type cast from type <{sourceType.Name}> to type <{targetType.Name}>.");
@@ -68,7 +68,7 @@ namespace Testflow.SlaveCore.Runner
                 return null;
             }
             Type sourceType = sourceValue.GetType();
-            if (!IsValidCast(sourceType, targetType))
+            if (!IsValidValueCast(sourceType, targetType))
             {
                 _context.LogSession.Print(LogLevel.Error, _context.SessionId,
                     $"Unsupported type cast from type <{sourceType.Name}> to type <{targetType.Name}>.");
@@ -108,13 +108,13 @@ namespace Testflow.SlaveCore.Runner
             return _convertors.ContainsKey(type.Name) ? _convertors[type.Name].GetDefaultValue() : null;
         }
         
-        private bool IsValidCast(Type sourceType, ITypeData targetType)
+        private bool IsValidValueCast(Type sourceType, ITypeData targetType)
         {
             return _convertors.ContainsKey(sourceType.Name) &&
                    _convertors[sourceType.Name].IsValidCastTarget(targetType);
         }
 
-        public bool IsValidCast(Type sourceType, Type targetType)
+        public bool IsValidValueCast(Type sourceType, Type targetType)
         {
             return _convertors.ContainsKey(sourceType.Name) &&
                     _convertors[sourceType.Name].IsValidCastTarget(targetType);

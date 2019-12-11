@@ -223,6 +223,15 @@ namespace Testflow.SlaveCore.Resources.locale {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Cast value to type {0} failed since targe type has no default constructor..
+        /// </summary>
+        internal static string NoDefaultConstructor {
+            get {
+                return ResourceManager.GetString("NoDefaultConstructor", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The operation is aborted..
         /// </summary>
         internal static string OperationAborted {

@@ -171,6 +171,9 @@
   <data name="MaxRetryFailed" xml:space="preserve">
     <value>Retry step exceed maximum retry times.</value>
   </data>
+  <data name="NoDefaultConstructor" xml:space="preserve">
+    <value>Cast value to type {0} failed since targe type has no default constructor.</value>
+  </data>
   <data name="OperationAborted" xml:space="preserve">
     <value>The operation is aborted.</value>
   </data>
