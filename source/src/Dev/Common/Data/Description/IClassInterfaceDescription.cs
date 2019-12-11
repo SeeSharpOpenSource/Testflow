@@ -28,6 +28,11 @@ namespace Testflow.Data.Description
         bool IsStatic { get; set; }
 
         /// <summary>
+        /// 当前Class的种类
+        /// </summary>
+        VariableType Kind { get; set; }
+
+        /// <summary>
         /// 该类中包含的所有方法信息
         /// </summary>
         IList<IFuncInterfaceDescription> Functions { get; set; }

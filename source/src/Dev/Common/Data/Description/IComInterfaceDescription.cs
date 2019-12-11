@@ -34,6 +34,11 @@ namespace Testflow.Data.Description
         IList<ITypeData> VariableTypes { get; set; }
 
         /// <summary>
+        /// 该程序集支持对外开放的所有类型描述集合
+        /// </summary>
+        IList<ITypeDescription> TypeDescriptions { get; set; }
+
+        /// <summary>
         /// 库的类型
         /// </summary>
         string Category { get; set; }
