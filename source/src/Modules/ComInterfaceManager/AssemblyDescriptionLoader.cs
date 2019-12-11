@@ -195,6 +195,7 @@ namespace Testflow.ComInterfaceManager
                 ClassTypeDescription = typeDescription,
                 Description = typeDescription.Description,
                 Name = GetTypeName(classType),
+                Kind = classKind
             };
             AddConstructorDescription(classType, classDescription, classKind);
             AddPropertySetterDescription(classType, classDescription);
@@ -696,22 +697,25 @@ namespace Testflow.ComInterfaceManager
 
         private void LoadTypeDescriptionByType(Type type, ComInterfaceDescription comDescription, Assembly assembly)
         {
+            VariableType classType = GetKindOfType(type);
             TypeDescription typeDescription = new TypeDescription()
             {
                 AssemblyName = assembly.GetName().Name,
                 Category = LibraryCategory.Platform.ToString(),
                 Description = "",
                 Name = GetTypeName(type),
-                Namespace = GetNamespace(type)
+                Namespace = GetNamespace(type),
+                Kind = classType
             };
 
             ClassInterfaceDescription classDescription = new ClassInterfaceDescription()
             {
                 ClassTypeDescription = typeDescription,
                 IsStatic = false,
-                Name = typeDescription.Name
+                Name = typeDescription.Name,
+                Kind = classType
             };
-            VariableType classType = GetKindOfType(type);
+            
             AddConstructorDescription(type, classDescription, classType);
             AddMethodDescription(type, classDescription);
 

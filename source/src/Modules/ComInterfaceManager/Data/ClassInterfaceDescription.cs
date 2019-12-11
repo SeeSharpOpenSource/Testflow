@@ -11,6 +11,7 @@ namespace Testflow.ComInterfaceManager.Data
         public ClassInterfaceDescription()
         {
             this.Functions = new List<IFuncInterfaceDescription>(10);
+            this.Kind = VariableType.Undefined;
         }
         public string Name { get; set; }
         public string Description { get; set; }
@@ -18,6 +19,7 @@ namespace Testflow.ComInterfaceManager.Data
         public int ClassId { get; set; }
         public ITypeData ClassType { get; set; }
         public bool IsStatic { get; set; }
+        public VariableType Kind { get; set; }
         public ITypeDescription ClassTypeDescription { get; set; }
         public IList<IFuncInterfaceDescription> Functions { get; set; }
     }
