@@ -134,28 +134,47 @@ namespace Testflow.SlaveCore.Data
             for (int i = 1; i < paramElems.Length - 1; i++)
             {
                 PropertyInfo propertyInfo = parentType.GetProperty(paramElems[i], binding);
-                if (null == propertyInfo)
+                if (null != propertyInfo)
+                {
+                    parentType = propertyInfo.PropertyType;
+                    parentValue = propertyInfo.GetValue(parentValue);
+                    continue;
+                }
+                FieldInfo fieldInfo = parentType.GetField(paramElems[i], binding);
+                if (null != fieldInfo)
+                {
+                    parentType = fieldInfo.FieldType;
+                    parentValue = fieldInfo.GetValue(parentValue);
+                    continue;
+                }
+                I18N i18N = I18N.GetInstance(Constants.I18nName);
+                throw new TestflowDataException(ModuleErrorCode.SequenceDataError, i18N.GetFStr("UnexistVariable", paramValueStr));
+            }
+            PropertyInfo paramProperty = parentType.GetProperty(paramElems[paramElems.Length - 1], binding);
+            FieldInfo paramField = null;
+            Type propertyType;
+            if (null == paramProperty)
+            {
+                paramField = parentType.GetField(paramElems[paramElems.Length - 1], binding);
+                if (null == paramField)
                 {
                     I18N i18N = I18N.GetInstance(Constants.I18nName);
                     throw new TestflowDataException(ModuleErrorCode.SequenceDataError, i18N.GetFStr("UnexistVariable", paramValueStr));
                 }
-                parentType = propertyInfo.PropertyType;
-                parentValue = propertyInfo.GetValue(parentValue);
+                propertyType = paramField.FieldType;
             }
-            PropertyInfo paramProperty = parentType.GetProperty(paramElems[paramElems.Length - 1], binding);
-            if (null == paramProperty)
+            else
             {
-                I18N i18N = I18N.GetInstance(Constants.I18nName);
-                throw new TestflowDataException(ModuleErrorCode.SequenceDataError, i18N.GetFStr("UnexistVariable", paramValueStr));
+                propertyType = paramProperty.PropertyType;
             }
             // 如果变量值不为null，并且变量类型和待写入属性类型不匹配则执行类型转换
-            Type propertyType = paramProperty.PropertyType;
             if (null != paramValue && !propertyType.IsInstanceOfType(paramValue) &&
                 _context.Convertor.IsValidCast(paramValue.GetType(), propertyType))
             {
                 paramValue = _context.Convertor.CastValue(propertyType, paramValue);
             }
-            paramProperty.SetValue(parentValue, paramValue);
+            paramProperty?.SetValue(parentValue, paramValue);
+            paramField?.SetValue(parentValue, paramValue);
             return varValue;
         }
 
@@ -215,14 +234,22 @@ namespace Testflow.SlaveCore.Data
                 BindingFlags binding = BindingFlags.Public | BindingFlags.Instance;
                 for (int i = 1; i < paramElems.Length; i++)
                 {
-                    PropertyInfo propertyInfo = paramValue.GetType().GetProperty(paramElems[i], binding);
-                    if (null == propertyInfo)
+                    Type paramType = paramValue.GetType();
+                    PropertyInfo propertyInfo = paramType.GetProperty(paramElems[i], binding);
+                    if (null != propertyInfo)
                     {
-                        I18N i18N = I18N.GetInstance(Constants.I18nName);
-                        throw new TestflowDataException(ModuleErrorCode.SequenceDataError,
-                            i18N.GetFStr("UnexistVariable", paramValueStr));
+                        paramValue = propertyInfo.GetValue(paramValue);
+                        continue;
                     }
-                    paramValue = propertyInfo.GetValue(paramValue);
+                    FieldInfo fieldInfo = paramType.GetField(paramElems[i], binding);
+                    if (null != fieldInfo)
+                    {
+                        paramValue = fieldInfo.GetValue(paramValue);
+                        continue;
+                    }
+                    I18N i18N = I18N.GetInstance(Constants.I18nName);
+                    throw new TestflowDataException(ModuleErrorCode.SequenceDataError,
+                        i18N.GetFStr("UnexistVariable", paramValueStr));
                 }
             }
             return paramValue;
