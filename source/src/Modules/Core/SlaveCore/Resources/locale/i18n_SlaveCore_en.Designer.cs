@@ -97,6 +97,15 @@ namespace Testflow.SlaveCore.Resources.locale {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Cast value to type &quot;{0}&quot; failed..
+        /// </summary>
+        internal static string CastValueFailed {
+            get {
+                return ResourceManager.GetString("CastValueFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to ConditionBlock with function data exist in sequence datas..
         /// </summary>
         internal static string ConditionBlockHasFunc {

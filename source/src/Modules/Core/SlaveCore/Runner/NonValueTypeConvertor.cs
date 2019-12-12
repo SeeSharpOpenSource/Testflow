@@ -85,7 +85,7 @@ namespace Testflow.SlaveCore.Runner
             {
                 _context.LogSession.Print(LogLevel.Error, _context.SessionId, $"Cast value <{objStr}> failed: {ex.Message}");
                 throw new TestflowDataException(ModuleErrorCode.UnsupportedTypeCast,
-                    _context.I18N.GetFStr("CastInterface", targetType.Name), ex);
+                    _context.I18N.GetFStr("CastValueFailed", targetType.Name), ex);
             }
             return castedObject;
         }

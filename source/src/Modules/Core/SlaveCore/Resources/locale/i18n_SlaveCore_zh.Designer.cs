@@ -97,6 +97,15 @@ namespace Testflow.SlaveCore.Resources.locale {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to 到类型“{0}”的转换失败。.
+        /// </summary>
+        internal static string CastValueFailed {
+            get {
+                return ResourceManager.GetString("CastValueFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to 序列中存在Function不为空的条件分支块。.
         /// </summary>
         internal static string ConditionBlockHasFunc {

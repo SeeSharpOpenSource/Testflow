@@ -129,6 +129,9 @@
   <data name="CastNullValue" xml:space="preserve">
     <value>Cannot cast null value to type &lt;{0}&gt;.</value>
   </data>
+  <data name="CastValueFailed" xml:space="preserve">
+    <value>Cast value to type "{0}" failed.</value>
+  </data>
   <data name="ConditionBlockHasFunc" xml:space="preserve">
     <value>ConditionBlock with function data exist in sequence datas.</value>
   </data>

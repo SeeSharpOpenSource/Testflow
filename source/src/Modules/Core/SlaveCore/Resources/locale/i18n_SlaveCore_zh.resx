@@ -129,6 +129,9 @@
   <data name="CastNullValue" xml:space="preserve">
     <value>不能将null值转换为类型”{0}“。</value>
   </data>
+  <data name="CastValueFailed" xml:space="preserve">
+    <value>到类型“{0}”的转换失败。</value>
+  </data>
   <data name="ConditionBlockHasFunc" xml:space="preserve">
     <value>序列中存在Function不为空的条件分支块。</value>
   </data>
