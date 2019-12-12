@@ -506,12 +506,20 @@ namespace Testflow.MasterCore.StatusManage
             {
                 varValues = new Dictionary<IVariable, string>(1);
             }
-            if (message.FailedInfo != null && message.FailedInfo.Count > 0)
+            Dictionary<ICallStack, StepResult> stepResults = null;
+            if (null != message.Results && message.Results.Count > 0)
             {
-
+                stepResults = new Dictionary<ICallStack, StepResult>(message.Results.Count);
+                List<CallStack> callStacks = message.Stacks;
+                List<StepResult> results = message.Results;
+                for (int i = 0; i < results.Count; i++)
+                {
+                    stepResults.Add(callStacks[i], results[i]);
+                }
             }
             ulong dataStatusIndex = (ulong) _stateManageContext.EventStatusIndex;
-            return new RuntimeStatusInfo(this, dataStatusIndex, message.FailedInfo, varValues, message.Performance);
+            return new RuntimeStatusInfo(this, dataStatusIndex, message.FailedInfo, varValues, 
+                message.Performance, stepResults);
         }
 
         #endregion

@@ -14,8 +14,9 @@ namespace Testflow.MasterCore.EventData
 {
     internal class RuntimeStatusInfo : IRuntimeStatusInfo
     {
-        public RuntimeStatusInfo(SessionStateHandle stateHandle, ulong statusIndex, Dictionary<int, string> failedInfos, IDictionary<IVariable, string> watchDatas, 
-            PerformanceData performance)
+        public RuntimeStatusInfo(SessionStateHandle stateHandle, ulong statusIndex, Dictionary<int, string> failedInfos, 
+            IDictionary<IVariable, string> watchDatas, PerformanceData performance, 
+            Dictionary<ICallStack, StepResult> stepResults)
         {
             this.Properties = new SerializableMap<string, object>(Constants.DefaultRuntimeSize);
             this.SessionId = stateHandle.Session;
@@ -50,6 +51,7 @@ namespace Testflow.MasterCore.EventData
                     this.FailedInfos.Add(keyValuePair.Key, new FailedInfo(keyValuePair.Value));
                 }
             }
+            StepResults = stepResults;
             this.WatchDatas = watchDatas;
         }
 
@@ -67,6 +69,7 @@ namespace Testflow.MasterCore.EventData
         public IList<ICallStack> CallStacks { get; }
         public IList<RuntimeState> SequenceState { get; }
         public IDictionary<int, IFailedInfo> FailedInfos { get; set; }
+        public IDictionary<ICallStack, StepResult> StepResults { get; set; }
         public IDictionary<IVariable, string> WatchDatas { get; set; }
 
         public void InitExtendProperties()
