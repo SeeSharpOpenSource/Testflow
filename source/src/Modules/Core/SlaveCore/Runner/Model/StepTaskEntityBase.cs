@@ -608,10 +608,14 @@ namespace Testflow.SlaveCore.Runner.Model
         // 获取当前Step是否是包含在Retry节点下
         private bool IsUnderRetryBlock()
         {
+            if (null == StepData)
+            {
+                return false;
+            }
             ISequenceStep step = StepData;
             do
             {
-                if (null != step.RetryCounter && step.RetryCounter.RetryEnabled)
+                if (step.RetryCounter != null && step.RetryCounter.RetryEnabled)
                 {
                     return true;
                 }

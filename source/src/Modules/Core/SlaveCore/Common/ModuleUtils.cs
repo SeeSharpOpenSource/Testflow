@@ -54,6 +54,11 @@ namespace Testflow.SlaveCore.Common
             return $"{typeData.Namespace}.{typeData.Name}";
         }
 
+        public static string GetTypeFullName(Type typeData)
+        {
+            return $"{typeData.Namespace}.{typeData.Name}";
+        }
+
         public static string GetTypeFullName(string namespaceStr, string typeName)
         {
             return $"{namespaceStr}.{typeName}";
