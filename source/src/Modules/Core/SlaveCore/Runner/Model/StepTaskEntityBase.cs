@@ -395,11 +395,14 @@ namespace Testflow.SlaveCore.Runner.Model
             // 如果成功次数小于预订的成功次数，则抛出异常
             if (passCount < passTimes)
             {
+                TaskFailedException retryFailedException = new TaskFailedException(SequenceIndex,
+                        Context.I18N.GetStr("MaxRetryFailed"), FailedType.RetryFailed);
+                this.Result = StepResult.Failed;
+                RecordInvocationError(retryFailedException, retryFailedException.FailedType);
                 // 如果期间未发生LoopBreakException，则直接抛出FailedException
                 if (null == loopBreakException)
                 {
-                    throw new TaskFailedException(SequenceIndex, Context.I18N.GetStr("MaxRetryFailed"),
-                        FailedType.RetryFailed);
+                    throw retryFailedException;
                 }
                 else
                 {
@@ -420,7 +423,7 @@ namespace Testflow.SlaveCore.Runner.Model
             {
                 // 停止计时
                 Actuator.EndTiming();
-                this.Result = StepResult.Failed;
+                this.Result = _isUnderRetryStep ? StepResult.RetryFailed : StepResult.Failed;
                 RecordInvocationError(ex, ex.FailedType);
                 HandleException(StepData.InvokeErrorAction, ex);
             }
@@ -428,7 +431,7 @@ namespace Testflow.SlaveCore.Runner.Model
             {
                 // 停止计时
                 Actuator.EndTiming();
-                this.Result = StepResult.Failed;
+                this.Result = _isUnderRetryStep ?StepResult.RetryFailed : StepResult.Failed;
                 RecordInvocationError(ex, FailedType.AssertionFailed);
                 HandleException(StepData.AssertFailedAction, ex);
             }
@@ -504,6 +507,10 @@ namespace Testflow.SlaveCore.Runner.Model
 
         private void HandleException(FailedAction failedAction, Exception exception)
         {
+            if (exception is TestflowLoopBreakException)
+            {
+                throw exception;
+            }
             switch (failedAction)
             {
                 // 如果失败行为是终止，则抛出异常
@@ -552,7 +559,7 @@ namespace Testflow.SlaveCore.Runner.Model
             }
             else if (innerException is TestflowAssertException)
             {
-                this.Result = StepResult.Failed;
+                this.Result = _isUnderRetryStep ? StepResult.RetryFailed : StepResult.Failed;
                 RecordInvocationError(innerException, FailedType.AssertionFailed);
             }
             else
