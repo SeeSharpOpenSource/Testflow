@@ -9,6 +9,7 @@ using Testflow.CoreCommon.Data;
 using Testflow.CoreCommon.Messages;
 using Testflow.Data;
 using Testflow.Data.Sequence;
+using Testflow.Runtime.Data;
 using Testflow.SlaveCore.Runner.Model;
 
 namespace Testflow.SlaveCore.Common
@@ -221,6 +222,11 @@ namespace Testflow.SlaveCore.Common
             }
             SequenceTaskEntity sequenceTaskEntity = context.SessionTaskEntity.GetSequenceTaskEntity(stack.Sequence);
             return sequenceTaskEntity.GetStepEntity(stack);
+        }
+
+        public static bool IsStepFailed(StepResult result)
+        {
+            return result > StepResult.Pass;
         }
     }
 }
