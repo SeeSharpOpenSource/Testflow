@@ -609,6 +609,7 @@ namespace Testflow.SlaveCore.Runner.Model
             Exception innerException = ex.InnerException;
             if (innerException is TestflowLoopBreakException)
             {
+                this.Result = StepResult.Pass;
                 throw innerException;
             }
             if (innerException is TaskFailedException)
@@ -634,6 +635,7 @@ namespace Testflow.SlaveCore.Runner.Model
             // 如果是流程控制异常，则直接抛出
             if (innerException is TestflowLoopBreakException)
             {
+                this.Result = StepResult.Pass;
                 throw ex;
             }
             if (innerException is TaskFailedException)
