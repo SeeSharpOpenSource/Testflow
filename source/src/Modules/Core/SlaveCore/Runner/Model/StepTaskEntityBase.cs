@@ -327,6 +327,14 @@ namespace Testflow.SlaveCore.Runner.Model
                     : StepData.InvokeErrorAction;
                 HandleException(failedAction, ex.InnerException);
             }
+            catch (TargetException ex)
+            {
+                // 停止计时
+                Actuator.EndTiming();
+                this.Result = StepResult.Error;
+                RecordInvocationError(ex, FailedType.TargetError);
+                HandleException(StepData.InvokeErrorAction, ex);
+            }
         }
 
         // 使能retry调用step
@@ -395,6 +403,12 @@ namespace Testflow.SlaveCore.Runner.Model
                     Actuator.EndTiming();
                     RecordRetryTargetInvocationError(ex);
                 }
+                catch (TargetException ex)
+                {
+                    // 停止计时
+                    Actuator.EndTiming();
+                    RecordInvocationError(ex, FailedType.TargetError);
+                }
             }
             // 如果成功次数小于预订的成功次数，则抛出异常
             if (passCount < passTimes)
@@ -453,6 +467,14 @@ namespace Testflow.SlaveCore.Runner.Model
                     : StepData.InvokeErrorAction;
                 HandleException(failedAction, ex.InnerException);
             }
+            catch (TargetException ex)
+            {
+                // 停止计时
+                Actuator.EndTiming();
+                this.Result = StepResult.Error;
+                RecordInvocationError(ex, FailedType.TargetError);
+                HandleException(StepData.InvokeErrorAction, ex);
+            }
         }
 
         // 跳过step
@@ -501,6 +523,15 @@ namespace Testflow.SlaveCore.Runner.Model
                 this.Result = StepResult.Pass;
                 Context.LogSession.Print(LogLevel.Warn, Context.SessionId, $"Sequence step <{this.GetStack()}> failed but force pass.");
                 RecordInvocationError(ex.InnerException, FailedType.TargetError);
+            }
+            catch (TargetException ex)
+            {
+                // 停止计时
+                Actuator.EndTiming();
+                this.Result = StepResult.Error;
+                Context.LogSession.Print(LogLevel.Error, Context.SessionId, $"Sequence step <{this.GetStack()}> failed but force pass.");
+                RecordInvocationError(ex, FailedType.TargetError);
+                HandleException(StepData.InvokeErrorAction, ex);
             }
         }
 
