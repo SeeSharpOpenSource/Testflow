@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Reflection;
+using System.Threading;
 using Testflow.CoreCommon;
 using Testflow.CoreCommon.Common;
 using Testflow.CoreCommon.Data;
@@ -237,7 +238,7 @@ namespace Testflow.SlaveCore.Runner.Model
         {
             this.Result = result;
             // 如果发生错误，无论该步骤是否被配置为recordStatus，都需要发送状态信息
-            SequenceStatusInfo statusInfo = new SequenceStatusInfo(SequenceIndex, this.GetStack(), StatusReportType.Record, Result, failedInfo)
+            SequenceStatusInfo statusInfo = new SequenceStatusInfo(SequenceIndex, this.GetStack(), StatusReportType.Record, RuntimeState.Running, Result, failedInfo)
             {
                 ExecutionTime = Actuator.ExecutionTime,
                 CoroutineId = Coroutine.Id,
@@ -453,7 +454,7 @@ namespace Testflow.SlaveCore.Runner.Model
             {
                 // 停止计时
                 Actuator.EndTiming();
-                this.Result = _isUnderRetryStep ?StepResult.RetryFailed : StepResult.Failed;
+                this.Result = _isUnderRetryStep ? StepResult.RetryFailed : StepResult.Failed;
                 RecordInvocationError(ex, FailedType.AssertionFailed);
                 HandleException(StepData.AssertFailedAction, ex);
             }
@@ -466,6 +467,21 @@ namespace Testflow.SlaveCore.Runner.Model
                     ? StepData.AssertFailedAction
                     : StepData.InvokeErrorAction;
                 HandleException(failedAction, ex.InnerException);
+            }
+            catch (TestflowLoopBreakException ex)
+            {
+                // 停止计时
+                Actuator.EndTiming();
+                if (null != ex.InnerException)
+                {
+                    FailedType failedType = GetFailedType(ex.InnerException);
+                    RecordInvocationError(ex, failedType);
+                    HandleException(StepData.AssertFailedAction, ex);
+                }
+                else
+                {
+                    throw;
+                }
             }
             catch (TargetException ex)
             {
@@ -591,6 +607,10 @@ namespace Testflow.SlaveCore.Runner.Model
         private void RecordTargetInvocationError(TargetInvocationException ex)
         {
             Exception innerException = ex.InnerException;
+            if (innerException is TestflowLoopBreakException)
+            {
+                throw innerException;
+            }
             if (innerException is TaskFailedException)
             {
                 this.Result = _isUnderRetryStep ? StepResult.RetryFailed : StepResult.Failed;
@@ -611,6 +631,11 @@ namespace Testflow.SlaveCore.Runner.Model
         private void RecordRetryTargetInvocationError(TargetInvocationException ex)
         {
             Exception innerException = ex.InnerException;
+            // 如果是流程控制异常，则直接抛出
+            if (innerException is TestflowLoopBreakException)
+            {
+                throw ex;
+            }
             if (innerException is TaskFailedException)
             {
                 this.Result = StepResult.RetryFailed;
@@ -630,7 +655,7 @@ namespace Testflow.SlaveCore.Runner.Model
 
         protected void RecordRuntimeStatus()
         {
-            SequenceStatusInfo statusInfo = new SequenceStatusInfo(SequenceIndex, this.GetStack(), StatusReportType.Record, Result)
+            SequenceStatusInfo statusInfo = new SequenceStatusInfo(SequenceIndex, this.GetStack(), StatusReportType.Record, RuntimeState.Running, Result)
             {
                 ExecutionTime = Actuator.ExecutionTime, ExecutionTicks = Actuator.ExecutionTicks, CoroutineId = this.Coroutine.Id
             };
@@ -642,7 +667,7 @@ namespace Testflow.SlaveCore.Runner.Model
         private void RecordInvocationError(Exception ex, FailedType failedType)
         {
             FailedInfo failedInfo = new FailedInfo(ex, failedType);
-            SequenceStatusInfo statusInfo = new SequenceStatusInfo(SequenceIndex, this.GetStack(), StatusReportType.Record, Result, failedInfo)
+            SequenceStatusInfo statusInfo = new SequenceStatusInfo(SequenceIndex, this.GetStack(), StatusReportType.Record, RuntimeState.Running, Result, failedInfo)
             {
                 ExecutionTime = Actuator.ExecutionTime, ExecutionTicks = Actuator.ExecutionTicks, CoroutineId = this.Coroutine.Id, WatchDatas = Context.VariableMapper.GetKeyVariablesValues(StepData)
             };
@@ -667,6 +692,23 @@ namespace Testflow.SlaveCore.Runner.Model
                 }
             } while (null != (step = step.Parent as ISequenceStep));
             return false;
+        }
+
+        private FailedType GetFailedType(Exception ex)
+        {
+            if (ex is TestflowAssertException)
+            {
+                return FailedType.AssertionFailed;
+            }
+            else if (ex is TargetException)
+            {
+                return FailedType.TargetError;
+            }
+            else if (ex is ThreadAbortException)
+            {
+                return FailedType.Abort;
+            }
+            return FailedType.RuntimeError;
         }
         
 //        protected abstract void InvokeStep(bool forceInvoke);
