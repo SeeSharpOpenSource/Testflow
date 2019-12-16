@@ -224,6 +224,25 @@ namespace Testflow.SlaveCore.Common
             return sequenceTaskEntity.GetStepEntity(stack);
         }
 
+        public static bool IsSubStepPassed(StepTaskEntityBase stepEntry)
+        {
+            if (null == stepEntry)
+            {
+                return true;
+            }
+            StepTaskEntityBase subStep = stepEntry;
+            while (null != subStep)
+            {
+                StepResult stepResult = subStep.Result;
+                if (ModuleUtils.IsStepFailed(stepResult) || !IsSubStepPassed(subStep.SubStepRoot))
+                {
+                    return false;
+                }
+                subStep = subStep.NextStep;
+            }
+            return true;
+        }
+
         public static bool IsStepFailed(StepResult result)
         {
             return result > StepResult.Pass;

@@ -368,7 +368,7 @@ namespace Testflow.SlaveCore.Runner.Model
                 {
                     InvokeStepSingleTime(forceInvoke);
                     // 如果当前节点和所有子节点都执行成功，则成功计数加一
-                    if (!ModuleUtils.IsStepFailed(this.Result) && IsSubStepPassed())
+                    if (!ModuleUtils.IsStepFailed(this.Result) && ModuleUtils.IsSubStepPassed(SubStepRoot))
                     {
                         passCount++;
                     }
@@ -668,28 +668,7 @@ namespace Testflow.SlaveCore.Runner.Model
             } while (null != (step = step.Parent as ISequenceStep));
             return false;
         }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public bool IsSubStepPassed()
-        {
-            if (null == this.SubStepRoot)
-            {
-                return true;
-            }
-            StepTaskEntityBase subStep = SubStepRoot;
-            while (null != subStep)
-            {
-                StepResult stepResult = subStep.Result;
-                if (ModuleUtils.IsStepFailed(stepResult) || !subStep.IsSubStepPassed())
-                {
-                    return false;
-                }
-                subStep = subStep.SubStepRoot;
-            }
-            return true;
-        }
+        
 //        protected abstract void InvokeStep(bool forceInvoke);
     }
 }
