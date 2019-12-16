@@ -9,6 +9,7 @@ using Testflow.CoreCommon.Data;
 using Testflow.CoreCommon.Messages;
 using Testflow.Data;
 using Testflow.Data.Sequence;
+using Testflow.Runtime;
 using Testflow.Runtime.Data;
 using Testflow.SlaveCore.Runner.Model;
 
@@ -241,6 +242,72 @@ namespace Testflow.SlaveCore.Common
                 subStep = subStep.NextStep;
             }
             return true;
+        }
+
+        /// <summary>
+        /// 获取Sequence执行结果
+        /// </summary>
+        public static RuntimeState GetSequenceState(StepTaskEntityBase stepEntry)
+        {
+            if (null == stepEntry || stepEntry.Result == StepResult.NotAvailable)
+            {
+                return RuntimeState.NotAvailable;
+            }
+            bool isTimeout = false;
+            bool isError = false;
+            bool isAbort = false;
+            bool isFailed = false;
+            GetStepsResultFlag(stepEntry, ref isTimeout, ref isError, ref isAbort, ref isFailed);
+            if (isAbort)
+            {
+                return RuntimeState.Abort;
+            }
+            if (isTimeout)
+            {
+                return RuntimeState.Timeout;
+            }
+            if (isError)
+            {
+                return RuntimeState.Error;
+            }
+            return isFailed ? RuntimeState.Failed : RuntimeState.Success;
+        }
+
+        /// <summary>
+        /// 获取子节点执行结果的状态
+        /// </summary>
+        private static void GetStepsResultFlag(StepTaskEntityBase stepEntry, ref bool isTimeout, ref bool isError,
+            ref bool isAbort, ref bool isFailed)
+        {
+            if (null == stepEntry)
+            {
+                return;
+            }
+            StepTaskEntityBase subStep = stepEntry;
+            while (null != subStep)
+            {
+                StepResult result = subStep.Result;
+                switch (result)
+                {
+                    case StepResult.Failed:
+                        isFailed = true;
+                        break;
+                    case StepResult.Abort:
+                        isAbort = true;
+                        break;
+                    case StepResult.Timeout:
+                        isTimeout = true;
+                        break;
+                    case StepResult.Error:
+                        isError = true;
+                        break;
+                    default:
+                        // ignore
+                        break;
+                }
+                GetStepsResultFlag(subStep.SubStepRoot, ref isTimeout, ref isError, ref isAbort, ref isFailed);
+                subStep = subStep.NextStep;
+            }
         }
 
         public static bool IsStepFailed(StepResult result)

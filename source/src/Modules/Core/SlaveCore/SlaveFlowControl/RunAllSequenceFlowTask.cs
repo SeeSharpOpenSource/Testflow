@@ -44,7 +44,7 @@ namespace Testflow.SlaveCore.SlaveFlowControl
                 {
                     // 打印状态日志
                     Context.LogSession.Print(LogLevel.Error, Context.SessionId, "Run setup failed.");
-                    SendSetupFailedEvents(sessionTaskEntity);
+                    SendSetupFailedEvents(sessionTaskEntity, setUpState);
                 }
                 else
                 {
@@ -65,7 +65,7 @@ namespace Testflow.SlaveCore.SlaveFlowControl
             }
         }
 
-        private void SendSetupFailedEvents(SessionTaskEntity sessionTaskEntity)
+        private void SendSetupFailedEvents(SessionTaskEntity sessionTaskEntity, RuntimeState sequenceState)
         {
             for (int i = 0; i < sessionTaskEntity.SequenceCount; i++)
             {
@@ -76,7 +76,7 @@ namespace Testflow.SlaveCore.SlaveFlowControl
                     FailedType.SetUpFailed);
                 CallStack sequenceStack = ModuleUtils.GetSequenceStack(i, sequenceTaskEntity.RootCoroutineId);
                 SequenceStatusInfo statusInfo = new SequenceStatusInfo(i, sequenceStack,
-                    StatusReportType.Failed, StepResult.NotAvailable,
+                    StatusReportType.Failed, sequenceState, StepResult.NotAvailable,
                     failedInfo)
                 {
                     ExecutionTime = DateTime.Now,

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Testflow.CoreCommon.Data;
 using Testflow.Data.Sequence;
+using Testflow.Runtime;
 using Testflow.Runtime.Data;
 
 namespace Testflow.SlaveCore.Data
@@ -10,6 +11,7 @@ namespace Testflow.SlaveCore.Data
     {
         public int Sequence { get; }
         public CallStack Stack { get; }
+        public RuntimeState SequenceState { get; }
         public StepResult Result { get; }
         public StatusReportType ReportType { get; }
         public FailedInfo FailedInfo { get; }
@@ -19,9 +21,9 @@ namespace Testflow.SlaveCore.Data
         public DateTime Time { get; }
         public Dictionary<string, string> WatchDatas { get; set; }
 
-        public SequenceStatusInfo(int sequence, CallStack stack, StatusReportType type, StepResult result, 
-            FailedInfo failedInfo = null)
+        public SequenceStatusInfo(int sequence, CallStack stack, StatusReportType type, RuntimeState sequenceState, StepResult result, FailedInfo failedInfo = null)
         {
+            this.SequenceState = sequenceState;
             this.Sequence = sequence;
             this.Stack = stack;
             this.ReportType = type;

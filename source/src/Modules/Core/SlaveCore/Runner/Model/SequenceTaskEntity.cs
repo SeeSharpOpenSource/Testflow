@@ -85,7 +85,7 @@ namespace Testflow.SlaveCore.Runner.Model
             {
                 this.State = RuntimeState.Running;
                 SequenceStatusInfo startStatusInfo = new SequenceStatusInfo(Index, _stepEntityRoot.GetStack(),
-                    StatusReportType.Start, StepResult.NotAvailable)
+                    StatusReportType.Start, RuntimeState.Running, StepResult.NotAvailable)
                 {
                     ExecutionTime = DateTime.Now,
                     ExecutionTicks = -1,
@@ -119,11 +119,20 @@ namespace Testflow.SlaveCore.Runner.Model
                 // 停止失败的step的计时
                 StepTaskEntityBase currentStep = StepTaskEntityBase.GetCurrentStep(Index, RootCoroutineId);
                 currentStep?.EndTiming();
-                FillFinalExceptionReportInfo(ex.InnerException ?? ex, out finalReportType, out lastStepResult, out failedInfo);
-                // 如果抛出TargetInvokcationException到当前位置则说明内部没有发送错误事件
-                if (null != currentStep && currentStep.BreakIfFailed)
+                // 如果包含内部异常，则说明发生了运行时错误，记录错误信息。
+                if (null != ex.InnerException)
                 {
-                    currentStep.SetStatusAndSendErrorEvent(lastStepResult, failedInfo);
+                    FillFinalExceptionReportInfo(ex.InnerException, out finalReportType, out lastStepResult, out failedInfo);
+                    // 如果抛出TargetInvokcationException到当前位置则说明内部没有发送错误事件
+                    if (null != currentStep && currentStep.BreakIfFailed)
+                    {
+                        currentStep.SetStatusAndSendErrorEvent(lastStepResult, failedInfo);
+                    }
+                }
+                // 只是流程控制，记录结果信息后退出
+                else
+                {
+                    SetResultState(out lastStepResult, out finalReportType, out failedInfo);
                 }
             }
             catch (Exception ex)
@@ -143,7 +152,7 @@ namespace Testflow.SlaveCore.Runner.Model
                 StepTaskEntityBase currentStep = StepTaskEntityBase.GetCurrentStep(Index, RootCoroutineId);
                 // 发送结束事件，包括所有的ReturnData信息
                 SequenceStatusInfo overStatusInfo = new SequenceStatusInfo(Index, currentStep.GetStack(),
-                    finalReportType, StepResult.Over, failedInfo)
+                    finalReportType, this.State, StepResult.Over, failedInfo)
                 {
                     ExecutionTime = DateTime.Now,
                     CoroutineId = RootCoroutineId,
@@ -218,33 +227,28 @@ namespace Testflow.SlaveCore.Runner.Model
             StepTaskEntityBase lastStep = StepTaskEntityBase.GetCurrentStep(this.Index, RootCoroutineId);
             lastStepResult = lastStep.Result;
             failedInfo = null;
-            switch (lastStepResult)
+            this.State = ModuleUtils.GetSequenceState(this._stepEntityRoot);
+            switch (this.State)
             {
-                case StepResult.Skip:
-                case StepResult.Pass:
-                    this.State = RuntimeState.Success;
+                case RuntimeState.Over:
+                case RuntimeState.Success:
                     finalReportType = StatusReportType.Over;
                     break;
-                case StepResult.Failed:
-                    this.State = RuntimeState.Failed;
+                case RuntimeState.Failed:
                     finalReportType = StatusReportType.Failed;
                     break;
-                case StepResult.Abort:
-                    this.State = RuntimeState.Abort;
+                case RuntimeState.Timeout:
+                case RuntimeState.Error:
+                    finalReportType = StatusReportType.Error;
+                    break;
+                case RuntimeState.Abort:
                     finalReportType = StatusReportType.Error;
                     failedInfo = new FailedInfo("Sequence aborted", FailedType.Abort);
                     _context.LogSession.Print(LogLevel.Warn, Index, $"Sequence {Index} execution aborted");
                     break;
-                case StepResult.Timeout:
-                    this.State = RuntimeState.Timeout;
-                    finalReportType = StatusReportType.Error;
-                    break;
-                case StepResult.Error:
-                    this.State = RuntimeState.Error;
-                    finalReportType = StatusReportType.Error;
-                    break;
                 default:
-                    throw new ArgumentOutOfRangeException();
+                    finalReportType = StatusReportType.Over;
+                    break;
             }
         }
 
@@ -287,7 +291,7 @@ namespace Testflow.SlaveCore.Runner.Model
                 currentStep = currentStep.NextStep;
             }
             currentLevel++;
-            while(currentLevel < stack.StepStack.Count && null != currentStep.SubStepRoot)
+            while (currentLevel < stack.StepStack.Count && null != currentStep.SubStepRoot)
             {
                 currentStep = currentStep.SubStepRoot;
                 stepId = stack.StepStack[currentLevel];
