@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
 using Testflow.Modules;
 using Testflow.Runtime;
@@ -43,10 +44,11 @@ namespace Testflow.DataMaintainerTest
             Properties.Add("TestGenTimeout", 1200000);
             Properties.Add("AbortTimeout", 20000);
 
-            Properties.Add("TestflowHome", Environment.GetEnvironmentVariable("TESTFLOW_HOME"));
+            string testflowHome = Environment.GetEnvironmentVariable("TESTFLOW_HOME");
+            Properties.Add("TestflowHome", testflowHome);
             Properties.Add("WorkspaceDir", new string[] { Environment.GetEnvironmentVariable("TESTFLOW_WORKSPACE") });
             Properties.Add("EnablePerformanceMonitor", false.ToString());
-            Properties.Add("DatabaseName", "testflowData.db3");
+            Properties.Add("DatabaseName", $"{testflowHome}{Path.DirectorySeparatorChar}data{Path.DirectorySeparatorChar}testflowData.db3");
 
 
             this.Version = "3.5.6";
