@@ -42,7 +42,7 @@ namespace Testflow.DataMaintainer
             this.ConfigData = configData;
         }
 
-        public int GetTestInstanceCount(string fileterString)
+        public long GetTestInstanceCount(string fileterString)
         {
             return _databaseProxy.GetTestInstanceCount(fileterString);
         }
@@ -156,6 +156,16 @@ namespace Testflow.DataMaintainer
         public RuntimeStatusData GetRuntimeStatusByIndex(string runtimeHash, long index)
         {
             return _databaseProxy.GetRuntimeStatusByIndex(runtimeHash, index);
+        }
+
+        public IList<RuntimeStatusData> GetRuntimeStatusInRange(string runtimeHash, int session, long startIndex, long count)
+        {
+            return _databaseProxy.GetRuntimeStatusInRange(runtimeHash, session, startIndex, count);
+        }
+
+        public long GetRuntimeStatusCount(string runtimeHash, int session, int sequenceIndex)
+        {
+            return _databaseProxy.GetRuntimeStatusCount(runtimeHash, session, sequenceIndex);
         }
 
         public bool ExistFailedStep(string runtimeHash, int session, int sequence)

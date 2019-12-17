@@ -10,7 +10,7 @@ namespace Testflow.DataMaintainer
         {
         }
 
-        public override int GetTestInstanceCount(string filterString)
+        public override long GetTestInstanceCount(string filterString)
         {
             throw new System.InvalidOperationException();
         }

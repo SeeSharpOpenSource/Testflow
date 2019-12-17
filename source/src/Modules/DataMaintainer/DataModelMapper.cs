@@ -117,6 +117,7 @@ namespace Testflow.DataMaintainer
             this._rawDataToValueConvertor.Add(typeof(DateTime).Name, new Func<object, object>((rawValue) => DateTime.Parse((string)rawValue)));
         }
 
+        // 效率较低，后期通过ORM优化
         public TDataType ReadToObject<TDataType>(DbDataReader reader, TDataType dataObj) where TDataType : class
         {
             Type type = dataObj.GetType();

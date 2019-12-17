@@ -63,15 +63,15 @@ namespace Testflow.DataMaintainer
             DataModelMapper = new DataModelMapper();
         }
 
-        public virtual int GetTestInstanceCount(string filterString)
+        public virtual long GetTestInstanceCount(string filterString)
         {
             string cmd = SqlCommandFactory.CreateCalcCountCmd(filterString, DataBaseItemNames.InstanceTableName);
             using (DbDataReader dataReader = ExecuteReadCommand(cmd))
             {
-                int count = 0;
+                long count = 0;
                 if (dataReader.Read() && !dataReader.IsDBNull(0))
                 {
-                    count = dataReader.GetInt32(0);
+                    count = dataReader.GetInt64(0);
                 }
                 return count;
             }
@@ -467,6 +467,45 @@ namespace Testflow.DataMaintainer
                 }
             }
             return statusData;
+        }
+
+        public IList<RuntimeStatusData> GetRuntimeStatusInRange(string runtimeHash, int session, long startIndex, long count)
+        {
+            string filter =
+                $"{DataBaseItemNames.RuntimeIdColumn}='{runtimeHash}' AND {DataBaseItemNames.SessionIdColumn}={session} AND {DataBaseItemNames.StatusIndexColumn} >= {startIndex}";
+            string cmd = SqlCommandFactory.CreateQueryCmdWithOrder(filter, DataBaseItemNames.StatusTableName, DataBaseItemNames.StatusIndexColumn);
+            if (count > 0)
+            {
+                cmd += $"LIMIT {count}";
+            }
+            List<RuntimeStatusData> statusDatas = new List<RuntimeStatusData>(500);
+            using (DbDataReader dataReader = ExecuteReadCommand(cmd))
+            {
+                while (dataReader.Read())
+                {
+                    RuntimeStatusData runtimeStatusData = new RuntimeStatusData();
+                    DataModelMapper.ReadToObject(dataReader, runtimeStatusData);
+                    statusDatas.Add(runtimeStatusData);
+                }
+            }
+            statusDatas.TrimExcess();
+            return statusDatas;
+        }
+
+        public long GetRuntimeStatusCount(string runtimeHash, int session, int sequenceIndex)
+        {
+            string filter =
+                $"{DataBaseItemNames.RuntimeIdColumn}='{runtimeHash}' AND {DataBaseItemNames.SessionIdColumn}={session} AND {DataBaseItemNames.SequenceIndexColumn}={sequenceIndex}";
+            string cmd = SqlCommandFactory.CreateCalcCountCmd(filter, DataBaseItemNames.StatusTableName);
+            using (DbDataReader dataReader = ExecuteReadCommand(cmd))
+            {
+                long count = 0;
+                if (dataReader.Read() && !dataReader.IsDBNull(0))
+                {
+                    count = dataReader.GetInt64(0);
+                }
+                return count;
+            }
         }
 
         public bool ExistFailedStep(string runtimeHash, int session, int sequence)
