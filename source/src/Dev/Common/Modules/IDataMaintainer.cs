@@ -17,7 +17,7 @@ namespace Testflow.Modules
         /// <summary>
         /// 返回所有符合过滤字符串的TestInstance的条目数
         /// </summary>
-        int GetTestInstanceCount(string fileterString);
+        long GetTestInstanceCount(string fileterString);
 
         /// <summary>
         /// 获取指定运行时Hash的TestInstance数据
@@ -138,6 +138,25 @@ namespace Testflow.Modules
         /// 获取某个会话某个索引的运行时信息
         /// </summary>
         RuntimeStatusData GetRuntimeStatusByIndex(string runtimeHash, long index);
+
+        /// <summary>
+        /// 获取某个会话从某个起始位置开始，固定长度的RuntimeStatus数据
+        /// </summary>
+        /// <param name="runtimeHash">运行时哈希值</param>
+        /// <param name="session">会话记录</param>
+        /// <param name="startIndex">起始索引</param>
+        /// <param name="count">读取的记录条目数，小于等于0时读取剩余的所有记录</param>
+        /// <returns></returns>
+        IList<RuntimeStatusData> GetRuntimeStatusInRange(string runtimeHash, int session, long startIndex, long count);
+
+        /// <summary>
+        /// 读取获取某个RuntimeHash下某个会话
+        /// </summary>
+        /// <param name="runtimeHash">运行时哈希值</param>
+        /// <param name="session"></param>
+        /// <param name="sequenceIndex"></param>
+        /// <returns></returns>
+        long GetRuntimeStatusCount(string runtimeHash, int session, int sequenceIndex);
 
         /// <summary>
         /// 获取某个序列执行过程中是否存在失败的step
