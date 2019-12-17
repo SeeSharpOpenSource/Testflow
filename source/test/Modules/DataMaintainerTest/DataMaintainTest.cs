@@ -146,7 +146,7 @@ namespace Testflow.DataMaintainerTest
         public void ReadInstanceCount()
         {
             _dataMaintainer.DesigntimeInitialize();
-            int testInstanceCount = _dataMaintainer.GetTestInstanceCount(null);
+            long testInstanceCount = _dataMaintainer.GetTestInstanceCount(null);
             Assert.AreEqual(2, testInstanceCount);
         }
 
