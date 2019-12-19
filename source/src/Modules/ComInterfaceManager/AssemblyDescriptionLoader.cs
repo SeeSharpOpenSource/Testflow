@@ -440,7 +440,7 @@ namespace Testflow.ComInterfaceManager
                     ArgumentType = GetKindOfType(propertyType),
                     Description = descriptionStr,
                     Modifier = ArgumentModifier.None,
-                    DefaultValue = string.Empty,
+                    DefaultValue = null,
                     TypeDescription = typeDescription,
                     IsOptional = false
                 };
@@ -475,7 +475,7 @@ namespace Testflow.ComInterfaceManager
                     ArgumentType = GetKindOfType(fieldType),
                     Description = descriptionStr,
                     Modifier = ArgumentModifier.None,
-                    DefaultValue = string.Empty,
+                    DefaultValue = null,
                     TypeDescription = typeDescription,
                     IsOptional = false
                 };
@@ -525,14 +525,13 @@ namespace Testflow.ComInterfaceManager
                 ArgumentType = GetKindOfType(parameterType),
                 Description = descriptionStr,
                 Modifier = modifier,
-                DefaultValue = string.Empty,
+                DefaultValue = null,
                 TypeDescription = typeDescription,
                 IsOptional = parameterInfo.IsOptional
             };
-            if (parameterInfo.HasDefaultValue && null != parameterInfo.DefaultValue &&
-                paramDescription.ArgumentType == VariableType.Value)
+            if (parameterInfo.HasDefaultValue)
             {
-                paramDescription.DefaultValue = parameterInfo.DefaultValue.ToString();
+                paramDescription.DefaultValue = parameterInfo.DefaultValue?.ToString() ?? CommonConst.NullValue;
             }
             return paramDescription;
         }
@@ -561,7 +560,7 @@ namespace Testflow.ComInterfaceManager
                 ArgumentType = GetKindOfType(propertyType),
                 Description = string.Empty,
                 Modifier = ArgumentModifier.None,
-                DefaultValue = string.Empty,
+                DefaultValue = null,
                 TypeDescription = typeDescription,
                 IsOptional = false,
             };
