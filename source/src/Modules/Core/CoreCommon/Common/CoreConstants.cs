@@ -21,8 +21,6 @@
         public const string UpLinkMQName = @".\Private$\TestflowUpLinkQueue";
         public const string DownLinkMQName = @".\Private$\TestflowDownLinkQueue";
 
-        public const string NullValue = "NULL";
-
         public const string ErrorVarValue = "InvalidValue";
 
         public const int EmptyStepIndex = 0;

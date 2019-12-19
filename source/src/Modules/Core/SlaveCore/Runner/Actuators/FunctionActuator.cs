@@ -259,7 +259,7 @@ namespace Testflow.SlaveCore.Runner.Actuators
             }
             else
             {
-                varValueStr = CoreConstants.NullValue;
+                varValueStr = CommonConst.NullValue;
             }
             string printStr = string.Format(variableLogFormat, variable.Name, stackStr, varValueStr);
             Context.LogSession.Print(LogLevel.Info, Context.SessionId, printStr);

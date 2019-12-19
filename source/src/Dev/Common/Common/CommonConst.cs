@@ -124,5 +124,11 @@
         /// 单个序列能支持的协程上限数量
         /// </summary>
         public const int SequenceCoroutineCapacity = 1000;
+
+        /// <summary>
+        /// 空值对应的字符串
+        /// </summary>
+        public const string NullValue = "NULL";
+
     }
 }

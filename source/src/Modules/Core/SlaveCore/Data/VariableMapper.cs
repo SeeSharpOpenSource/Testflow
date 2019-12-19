@@ -429,7 +429,7 @@ namespace Testflow.SlaveCore.Data
         {
             if (null == varValue)
             {
-                value =  CoreConstants.NullValue;
+                value =  CommonConst.NullValue;
                 return;
             }
             Type varType = varValue.GetType();
