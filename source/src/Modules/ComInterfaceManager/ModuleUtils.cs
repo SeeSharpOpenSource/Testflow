@@ -138,6 +138,9 @@ namespace Testflow.ComInterfaceManager
             return string.Format(fullNameFormat, typeData.Namespace, typeData.Name);
         }
 
+        /// <summary>
+        /// 获取普通函数方法签名
+        /// </summary>
         public static string GetSignature(string className, FunctionInterfaceDescription funcDescription)
         {
             const string signatureFormat = "{0}.{1}({2})";
@@ -152,6 +155,14 @@ namespace Testflow.ComInterfaceManager
                 paramStr.Remove(paramStr.Length - 1, 1);
             }
             return string.Format(signatureFormat, className, funcDescription.Name, paramStr);
+        }
+
+        /// <summary>
+        /// 获取不显示入参签名的方法签名
+        /// </summary>
+        public static string GetSignature(string className, string functionName)
+        {
+            return $"{className}.{functionName}()";
         }
 
         public static void SetComponentId(ComInterfaceDescription comDescription, int index)
