@@ -226,7 +226,7 @@ namespace Testflow.ComInterfaceManager
                     ClassType = classDescription.ClassType,
                     ComponentIndex = classDescription.ComponentIndex,
                     FuncType = FunctionType.StaticPropertySetter,
-                    Signature = CommonConst.SetStaticPropertyFunc + "()",
+                    Signature = ModuleUtils.GetSignature(classType.Name, CommonConst.SetStaticPropertyFunc),
                     Return = null,
                     IsGeneric = false
                 };
@@ -243,7 +243,7 @@ namespace Testflow.ComInterfaceManager
                     ClassType = classDescription.ClassType,
                     ComponentIndex = classDescription.ComponentIndex,
                     FuncType = FunctionType.InstancePropertySetter,
-                    Signature = CommonConst.SetInstancePropertyFunc + "()",
+                    Signature = ModuleUtils.GetSignature(classType.Name, CommonConst.SetInstancePropertyFunc),
                     Return = null,
                     IsGeneric = false
                 };
@@ -263,7 +263,7 @@ namespace Testflow.ComInterfaceManager
                     ClassType = classDescription.ClassType,
                     ComponentIndex = classDescription.ComponentIndex,
                     FuncType = FunctionType.StaticFieldSetter,
-                    Signature = CommonConst.SetStaticFieldFunc + "()",
+                    Signature = ModuleUtils.GetSignature(classType.Name, CommonConst.SetStaticFieldFunc),
                     Return = null,
                     IsGeneric = false
                 };
@@ -280,7 +280,7 @@ namespace Testflow.ComInterfaceManager
                     ClassType = classDescription.ClassType,
                     ComponentIndex = classDescription.ComponentIndex,
                     FuncType = FunctionType.InstanceFieldSetter,
-                    Signature = CommonConst.SetInstanceFieldFunc + "()",
+                    Signature = ModuleUtils.GetSignature(classType.Name, CommonConst.SetInstanceFieldFunc),
                     Return = null,
                     IsGeneric = false
                 };
