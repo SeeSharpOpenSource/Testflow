@@ -101,7 +101,13 @@ namespace Testflow.SequenceManager.SequenceElements
             ParameterDataCollection parameters = new ParameterDataCollection();
             foreach (IArgumentDescription argumentDescription in funcInterface.Arguments)
             {
-                parameters.Add(new ParameterData());
+                ParameterData parameterData = new ParameterData();
+                if (null != argumentDescription.DefaultValue)
+                {
+                    parameterData.Value = argumentDescription.DefaultValue;
+                    parameterData.ParameterType = Data.Sequence.ParameterType.Value;
+                }
+                parameters.Add(parameterData);
             }
 
             Type = funcInterface.FuncType;
