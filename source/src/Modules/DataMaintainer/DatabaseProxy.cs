@@ -476,7 +476,7 @@ namespace Testflow.DataMaintainer
             string cmd = SqlCommandFactory.CreateQueryCmdWithOrder(filter, DataBaseItemNames.StatusTableName, DataBaseItemNames.StatusIndexColumn);
             if (count > 0)
             {
-                cmd += $"LIMIT {count}";
+                cmd += $" LIMIT {count}";
             }
             List<RuntimeStatusData> statusDatas = new List<RuntimeStatusData>(500);
             using (DbDataReader dataReader = ExecuteReadCommand(cmd))
