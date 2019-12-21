@@ -11,7 +11,9 @@ namespace Testflow.ComInterfaceManager
 {
     internal class DescriptionDataTable : IDisposable
     {
+        // 类型完整名称到类型数据的映射
         private Dictionary<string, ITypeData> _typeMapping;
+        // 程序集名称到程序及描述信息的映射
         private IDictionary<string, ComInterfaceDescription> _descriptions;
         private ReaderWriterLockSlim _lock;
         private int _nextComIndex;

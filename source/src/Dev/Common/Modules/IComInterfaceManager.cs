@@ -91,10 +91,8 @@ namespace Testflow.Modules
         /// 获取数据类型的接口描述
         /// </summary>
         /// <param name="typeData">类型描述信息</param>
-        /// <param name="path"></param>
-        /// <param name="version"></param>
-        /// <returns></returns>
-        IClassInterfaceDescription GetClassDescriptionByType(ITypeData typeData, out string path, out string version);
+        /// <param name="assemblyInfo">程序集描述信息</param>
+        IClassInterfaceDescription GetClassDescriptionByType(ITypeData typeData, out IAssemblyInfo assemblyInfo);
 
         /// <summary>
         /// 获取所有接口描述信息的列表

@@ -145,7 +145,7 @@ namespace Testflow.ComInterfaceManager
             return _loaderManager.GetEnumItemsByType(typeData);
         }
 
-        public IClassInterfaceDescription GetClassDescriptionByType(ITypeData typeData, out string path, out string version)
+        public IClassInterfaceDescription GetClassDescriptionByType(ITypeData typeData, out IAssemblyInfo assemblyInfo)
         {
             ComInterfaceDescription interfaceDescription = _descriptionData.GetComDescription(typeData.Name);
             IClassInterfaceDescription classDescription = null;
@@ -153,11 +153,25 @@ namespace Testflow.ComInterfaceManager
             if (interfaceDescription != null &&
                 null != (classDescription = interfaceDescription.Classes.FirstOrDefault(item => item.ClassType.Equals(typeData))))
             {
-                path = interfaceDescription?.Assembly.Path ?? string.Empty;
-                version = interfaceDescription?.Assembly.Version ?? Constants.DefaultVersion;
+                assemblyInfo = interfaceDescription.Assembly;
                 return classDescription;
             }
-            return _loaderManager.GetClassDescription(typeData, out path, out version);
+            string path, version;
+            classDescription = _loaderManager.GetClassDescription(typeData, out path, out version);
+            TestflowRunner testflowRunner = TestflowRunner.GetInstance();
+            if (null != testflowRunner)
+            {
+                assemblyInfo = testflowRunner.SequenceManager.CreateAssemblyInfo();
+                assemblyInfo.Path = path;
+                assemblyInfo.Version = version;
+                assemblyInfo.AssemblyName = typeData.AssemblyName;
+                assemblyInfo.Available = true;
+            }
+            else
+            {
+                assemblyInfo = null;
+            }
+            return classDescription;
         }
 
         public IList<IComInterfaceDescription> GetComponentDescriptions()
