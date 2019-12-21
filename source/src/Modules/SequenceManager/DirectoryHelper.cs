@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using System.Text.RegularExpressions;
 using Testflow.Data;
 using Testflow.Data.Description;
 using Testflow.Data.Sequence;
@@ -16,6 +17,7 @@ namespace Testflow.SequenceManager
     {
         private List<string> availableDirs;
         private readonly StringBuilder _pathCache;
+        private readonly Regex _absolutePathRegex;
 
         public DirectoryHelper(IModuleConfigData configData)
         {
@@ -23,6 +25,17 @@ namespace Testflow.SequenceManager
             string dotNetRootDir = configData.GetProperty<string>("DotNetRootDir");
             string platformLibDir = configData.GetProperty<string>("PlatformLibDir");
             string[] workspaceDirs = configData.GetProperty<string[]>("WorkspaceDir");
+
+            // 本来用上面就可以确定，因为前期版本里对相对路径前加了\，导致相对路径在第一条下会被判定为绝对路径，所以在此做当前处理
+            // 暂未考虑Linux的问题，后续版本会去除这里的判断
+//            string relativePathFormat = @"^([a-zA-Z]:)?{0}";
+            string relativePathFormat = @"^[a-zA-Z]:{0}";
+            char dirDelim = Path.DirectorySeparatorChar;
+            // \在正则表达式中需要转义
+            string relativePathRegexStr = dirDelim.Equals('\\')
+                ? string.Format(relativePathFormat, @"\\")
+                : string.Format(relativePathFormat, dirDelim);
+            _absolutePathRegex = new Regex(relativePathRegexStr);
 
             availableDirs = new List<string>(workspaceDirs.Length + 2);
             availableDirs.AddRange(workspaceDirs);
@@ -63,8 +76,8 @@ namespace Testflow.SequenceManager
                     if (assemblyInfo.Path.StartsWith(availableDir, StringComparison.OrdinalIgnoreCase))
                     {
                         // 将绝对路径截取为相对路径
-                        assemblyInfo.Path = assemblyInfo.Path.Substring(availableDir.Length - 1,
-                            assemblyInfo.Path.Length - availableDir.Length + 1);
+                        assemblyInfo.Path = assemblyInfo.Path.Substring(availableDir.Length,
+                            assemblyInfo.Path.Length - availableDir.Length);
                         break;
                     }
                 }
@@ -123,7 +136,6 @@ namespace Testflow.SequenceManager
                 _pathCache.Clear();
                 string availableDir = availableDirs[i];
                 _pathCache.Append(availableDir);
-                _pathCache.Remove(availableDir.Length - 1, 1);
                 _pathCache.Append(path);
                 // 如果库存在则配置为绝对路径，然后返回
                 if (File.Exists(_pathCache.ToString()))
@@ -152,7 +164,7 @@ namespace Testflow.SequenceManager
                     continue;
                 }
                 // 将绝对路径截取为相对路径
-                return availableDir.Substring(availableDir.Length - 1, path.Length - availableDir.Length + 1);
+                return availableDir.Substring(availableDir.Length, path.Length - availableDir.Length);
             }
             return path;
         }
@@ -178,7 +190,7 @@ namespace Testflow.SequenceManager
 
         private bool IsRelativePath(string path)
         {
-            return path.StartsWith(Path.DirectorySeparatorChar.ToString());
+            return !_absolutePathRegex.IsMatch(path);
         }
     }
 }
