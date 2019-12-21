@@ -129,7 +129,11 @@ namespace Testflow.ConfigurationManager
             string dotNetVersion = configData.GetConfigValue<string>(Constants.GlobalConfig, "DotNetVersion");
             string runtimeDirectory = GetDotNetDir(dotNetVersion);
             configData.AddConfigItem(Constants.GlobalConfig, "DotNetLibDir", runtimeDirectory);
-            
+
+            // 更新.NET安装根目录
+            string dotNetRootDir = GetDotNetRootDir();
+            configData.AddConfigItem(Constants.GlobalConfig, "DotNetRootDir", dotNetRootDir);
+
             // 更新Testflow平台默认库目录
             string platformDir = configData.GetConfigValue<string>(Constants.GlobalConfig, "PlatformLibDir");
             configData.SetConfigItem(Constants.GlobalConfig, "PlatformLibDir", $"{homeDir}{platformDir}");
@@ -192,6 +196,27 @@ namespace Testflow.ConfigurationManager
                 throw new TestflowRuntimeException(ModuleErrorCode.InvalidEnvDir, i18N.GetStr("InvalidDotNetDir"));
             }
             return frameworkDir;
+        }
+
+        private static string GetDotNetRootDir()
+        {
+            string windDir = Environment.GetEnvironmentVariable(Constants.WindirVar);
+            if (string.IsNullOrWhiteSpace(windDir))
+            {
+                I18N i18N = I18N.GetInstance(Constants.I18nName);
+                throw new TestflowRuntimeException(ModuleErrorCode.InvalidEnvDir, i18N.GetStr("InvalidDotNetDir"));
+            }
+            if (!windDir.EndsWith(Path.DirectorySeparatorChar.ToString()))
+            {
+                windDir += Path.DirectorySeparatorChar;
+            }
+            string dotNetRootDir = string.Format(Constants.DotNetRootDirFormat, windDir);
+            if (!Directory.Exists(dotNetRootDir))
+            {
+                I18N i18N = I18N.GetInstance(Constants.I18nName);
+                throw new TestflowRuntimeException(ModuleErrorCode.InvalidEnvDir, i18N.GetStr("InvalidDotNetDir"));
+            }
+            return dotNetRootDir;
         }
 
         private static string GetFullName(Type type)

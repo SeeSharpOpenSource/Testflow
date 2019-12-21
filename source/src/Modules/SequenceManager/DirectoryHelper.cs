@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using Testflow.Data;
@@ -19,6 +20,7 @@ namespace Testflow.SequenceManager
         public DirectoryHelper(IModuleConfigData configData)
         {
             string dotNetLibDir = configData.GetProperty<string>("DotNetLibDir");
+            string dotNetRootDir = configData.GetProperty<string>("DotNetRootDir");
             string platformLibDir = configData.GetProperty<string>("PlatformLibDir");
             string[] workspaceDirs = configData.GetProperty<string[]>("WorkspaceDir");
 
@@ -26,6 +28,7 @@ namespace Testflow.SequenceManager
             availableDirs.AddRange(workspaceDirs);
             availableDirs.Add(platformLibDir);
             availableDirs.Add(dotNetLibDir);
+            availableDirs.Add(dotNetRootDir);
 
             _pathCache = new StringBuilder(200);
         }
@@ -57,7 +60,7 @@ namespace Testflow.SequenceManager
                 // 如果包含在可用路径内则替换为相对路径
                 foreach (string availableDir in availableDirs)
                 {
-                    if (assemblyInfo.Path.StartsWith(availableDir))
+                    if (assemblyInfo.Path.StartsWith(availableDir, StringComparison.OrdinalIgnoreCase))
                     {
                         // 将绝对路径截取为相对路径
                         assemblyInfo.Path = assemblyInfo.Path.Substring(availableDir.Length - 1,

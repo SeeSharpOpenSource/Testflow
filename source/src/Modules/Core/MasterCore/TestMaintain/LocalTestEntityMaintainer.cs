@@ -205,6 +205,7 @@ namespace Testflow.MasterCore.TestMaintain
             configData.Add("SessionName", sessionName);
             configData.Add("InstanceName", _globalInfo.ConfigData.GetProperty<string>("TestName"));
             configData.Add("DotNetLibDir", "");
+            configData.Add("DotNetRootDir", "");
             configData.Add("PlatformLibDir", "");
             configData.Add("InstanceLibDir", "");
             configData.Add("EnablePerformanceMonitor", _globalInfo.ConfigData.GetProperty<bool>("EnablePerformanceMonitor").ToString());

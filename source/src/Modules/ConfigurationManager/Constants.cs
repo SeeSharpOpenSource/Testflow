@@ -29,5 +29,14 @@
 
         #endregion
 
+        #region 路径相关常量
+
+        public const string WindirVar = "windir";
+        public const string DotNetRootDirFormat = @"{0}Microsoft.NET\assembly\";
+
+
+        #endregion
+
+
     }
 }
