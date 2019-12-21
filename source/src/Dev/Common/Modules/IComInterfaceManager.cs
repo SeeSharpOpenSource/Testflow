@@ -42,7 +42,7 @@ namespace Testflow.Modules
         /// <param name="assemblyInfo">程序集描述信息</param>
         /// <returns>该组件的接口描述信息</returns>
         IComInterfaceDescription GetComponentInterface(IAssemblyInfo assemblyInfo);
-
+        
         /// <summary>
         /// 从指定路径加载多个个组件的接口描述信息
         /// </summary>
@@ -79,6 +79,22 @@ namespace Testflow.Modules
         /// <param name="propertyType">过滤的Type全名，包括命名空间。如果不指定可以配置为null</param>
         /// <returns></returns>
         IList<string> GetTypeProperties(ITypeData type, ITypeData propertyType = null);
+
+        /// <summary>
+        /// 获取枚举类型的子项信息
+        /// </summary>
+        /// <param name="typeData">类型描述信息</param>
+        /// <returns></returns>
+        string[] GetEnumItems(ITypeData typeData);
+
+        /// <summary>
+        /// 获取数据类型的接口描述
+        /// </summary>
+        /// <param name="typeData">类型描述信息</param>
+        /// <param name="path"></param>
+        /// <param name="version"></param>
+        /// <returns></returns>
+        IClassInterfaceDescription GetClassDescriptionByType(ITypeData typeData, out string path, out string version);
 
         /// <summary>
         /// 获取所有接口描述信息的列表
