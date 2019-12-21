@@ -122,6 +122,11 @@ namespace Testflow.ComInterfaceManager
             return descriptions;
         }
 
+        public IAssemblyInfo GetAssemblyInfo(string assemblyName)
+        {
+            return _descriptionData.GetAssemblyInfo(assemblyName);
+        }
+
         public ITypeData GetPropertyType(ITypeData variableType, string propertyName)
         {
             return _loaderManager.GetPropertyType(variableType, propertyName, _descriptionData);
@@ -158,18 +163,17 @@ namespace Testflow.ComInterfaceManager
             }
             string path, version;
             classDescription = _loaderManager.GetClassDescription(typeData, out path, out version);
-            TestflowRunner testflowRunner = TestflowRunner.GetInstance();
-            if (null != testflowRunner)
+
+            assemblyInfo = GetAssemblyInfo(typeData.AssemblyName);
+            TestflowRunner testflowRunner;
+            if (null == assemblyInfo && null != (testflowRunner = TestflowRunner.GetInstance()))
             {
                 assemblyInfo = testflowRunner.SequenceManager.CreateAssemblyInfo();
                 assemblyInfo.Path = path;
                 assemblyInfo.Version = version;
                 assemblyInfo.AssemblyName = typeData.AssemblyName;
                 assemblyInfo.Available = true;
-            }
-            else
-            {
-                assemblyInfo = null;
+                _descriptionData.Add(assemblyInfo);
             }
             return classDescription;
         }

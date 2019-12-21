@@ -65,6 +65,12 @@ namespace Testflow.Modules
         IList<IComInterfaceDescription> GetComponentInterfaces(string directory);
 
         /// <summary>
+        /// 获取某个程序集的描述信息
+        /// </summary>
+        /// <param name="assemblyName">程序集名称</param>
+        IAssemblyInfo GetAssemblyInfo(string assemblyName);
+
+        /// <summary>
         /// 获取某个变量属性的类型信息
         /// </summary>
         /// <param name="variableType">变量的variableType</param>

@@ -13,8 +13,11 @@ namespace Testflow.ComInterfaceManager
     {
         // 类型完整名称到类型数据的映射
         private Dictionary<string, ITypeData> _typeMapping;
-        // 程序集名称到程序及描述信息的映射
+        // 程序集名称到程序集描述信息的映射
         private IDictionary<string, ComInterfaceDescription> _descriptions;
+        // 引用程序集名称到程序集信息对象的映射。这部分程序集是因为包含加载程序集使用类型时被动引入的。
+        // 这里的值在调用GetClassDescrition方法时才会被更新
+        private IDictionary<string, IAssemblyInfo> _refAssemblyInfos;
         private ReaderWriterLockSlim _lock;
         private int _nextComIndex;
 
@@ -22,6 +25,7 @@ namespace Testflow.ComInterfaceManager
         {
             this._descriptions = new Dictionary<string, ComInterfaceDescription>(200);
             this._typeMapping = new Dictionary<string, ITypeData>(1000);
+            _refAssemblyInfos = new Dictionary<string, IAssemblyInfo>(100);
             _lock = new ReaderWriterLockSlim();
             _nextComIndex = 0;
         }
@@ -36,11 +40,26 @@ namespace Testflow.ComInterfaceManager
                 _descriptions.Add(description.Assembly.AssemblyName, description);
                 addSuccess = true;
             }
+            if (_refAssemblyInfos.ContainsKey(description.Assembly.AssemblyName))
+            {
+                _refAssemblyInfos.Remove(description.Assembly.AssemblyName);
+            }
             _lock.ExitWriteLock();
             
             ModuleUtils.SetComponentId(description, NextComId);
 
             return addSuccess;
+        }
+
+        public void Add(IAssemblyInfo assemblyInfo)
+        {
+            _lock.EnterWriteLock();
+            if (!_descriptions.ContainsKey(assemblyInfo.AssemblyName) &&
+                !_refAssemblyInfos.ContainsKey(assemblyInfo.AssemblyName))
+            {
+                _refAssemblyInfos.Add(assemblyInfo.AssemblyName, assemblyInfo);
+            }
+            _lock.ExitWriteLock();
         }
         
         public bool Contains(string assemblyName)
@@ -93,6 +112,23 @@ namespace Testflow.ComInterfaceManager
             return description;
         }
 
+        public IAssemblyInfo GetAssemblyInfo(string assemblyName)
+        {
+            IAssemblyInfo assemblyInfo = null;
+            _lock.EnterReadLock();
+
+            if (_descriptions.ContainsKey(assemblyName))
+            {
+                assemblyInfo = _descriptions[assemblyName].Assembly;
+            }
+            else if (_refAssemblyInfos.ContainsKey(assemblyName))
+            {
+                assemblyInfo = _refAssemblyInfos[assemblyName];
+            }
+            _lock.ExitReadLock();
+            return assemblyInfo;
+        }
+
         public ComInterfaceDescription GetComDescription(int componentId)
         {
             _lock.EnterReadLock();
@@ -125,6 +161,10 @@ namespace Testflow.ComInterfaceManager
                 foreach (IClassInterfaceDescription classDescription in description.Classes)
                 {
                     _typeMapping.Remove(ModuleUtils.GetFullName(classDescription.ClassType));
+                }
+                if (!_refAssemblyInfos.ContainsKey(assemblyName))
+                {
+                    _refAssemblyInfos.Add(assemblyName, description.Assembly);
                 }
             }
             _lock.ExitWriteLock();
