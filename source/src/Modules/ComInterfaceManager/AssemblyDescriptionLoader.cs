@@ -421,6 +421,7 @@ namespace Testflow.ComInterfaceManager
                     continue;
                 }
                 Type propertyType = propertyInfo.PropertyType;
+                AddToAssemblyMapping(propertyType);
 
                 DescriptionAttribute descriptionAttribute = propertyInfo.GetCustomAttribute<DescriptionAttribute>();
                 string descriptionStr = (null == descriptionAttribute) ? string.Empty : descriptionAttribute.Description;
@@ -457,6 +458,7 @@ namespace Testflow.ComInterfaceManager
             foreach (FieldInfo fieldInfo in fieldInfos)
             {
                 Type fieldType = fieldInfo.FieldType;
+                AddToAssemblyMapping(fieldType);
                 DescriptionAttribute descriptionAttribute = fieldInfo.GetCustomAttribute<DescriptionAttribute>();
                 string descriptionStr = (null == descriptionAttribute) ? string.Empty : descriptionAttribute.Description;
 
@@ -502,6 +504,7 @@ namespace Testflow.ComInterfaceManager
         private ArgumentDescription GetParameterInfo(ParameterInfo parameterInfo)
         {
             Type parameterType = parameterInfo.ParameterType;
+            AddToAssemblyMapping(parameterType);
             DescriptionAttribute descriptionAttribute = parameterInfo.GetCustomAttribute<DescriptionAttribute>();
             string descriptionStr = (null == descriptionAttribute) ? string.Empty : descriptionAttribute.Description;
 
@@ -544,7 +547,7 @@ namespace Testflow.ComInterfaceManager
             {
                 return null;
             }
-
+            AddToAssemblyMapping(propertyType);
             TypeDescription typeDescription = new TypeDescription()
             {
                 AssemblyName = propertyType.Assembly.GetName().Name,
@@ -631,6 +634,7 @@ namespace Testflow.ComInterfaceManager
                         return null;
                     }
                     dataType = propertyInfo.PropertyType;
+                    AddToAssemblyMapping(dataType);
                 }
 
                 TestflowCategoryAttribute categoryAttribute = dataType.GetCustomAttribute<TestflowCategoryAttribute>();
@@ -648,6 +652,96 @@ namespace Testflow.ComInterfaceManager
                     Namespace = GetNamespace(dataType)
                 };
                 return typeDescription;
+            }
+            catch (Exception ex)
+            {
+                this.ErrorCode = ModuleErrorCode.LibraryLoadError;
+                this.Exception = ex;
+                return null;
+            }
+        }
+
+        public IClassInterfaceDescription GetClassDescription(string assemblyName, string typeFullName, out string path,
+            out string version)
+        {
+            Exception = null;
+            ErrorCode = 0;
+            path = string.Empty;
+            version = Constants.DefaultVersion;
+            if (!_assemblies.ContainsKey(assemblyName))
+            {
+                ErrorCode = ModuleErrorCode.AssemblyNotLoad;
+                return null;
+            }
+            try
+            {
+                Assembly assembly = _assemblies[assemblyName];
+                path = assembly.Location;
+                version = assembly.GetName().Version.ToString();
+                Type classType = assembly.GetType(typeFullName);
+                if (null == classType)
+                {
+                    ErrorCode = ModuleErrorCode.TypeCannotLoad;
+                    return null;
+                }
+                VariableType classKind = GetKindOfType(classType);
+                TestflowCategoryAttribute categoryAttr = classType.GetCustomAttribute<TestflowCategoryAttribute>();
+                DescriptionAttribute descriptionAttr = classType.GetCustomAttribute<DescriptionAttribute>();
+                string typeCategory = null != categoryAttr ? categoryAttr.CategoryString : string.Empty;
+                string classDescriptionStr = null != descriptionAttr ? descriptionAttr.Description : string.Empty;
+                TypeDescription typeDescription = new TypeDescription
+                {
+                    AssemblyName = assemblyName,
+                    Category = typeCategory,
+                    Name = GetTypeName(classType),
+                    Namespace = GetNamespace(classType),
+                    Description = classDescriptionStr,
+                    Kind = classKind
+                };
+                ClassInterfaceDescription classDescription = new ClassInterfaceDescription
+                {
+                    ClassTypeDescription = typeDescription,
+                    Description = typeDescription.Description,
+                    Name = GetTypeName(classType),
+                    Kind = classKind
+                };
+                classDescription.IsStatic = classKind == VariableType.Class && classDescription.Functions.All(
+                    item => item.FuncType != FunctionType.Constructor && item.FuncType != FunctionType.InstanceFunction);
+                if (classKind == VariableType.Class || classKind == VariableType.Struct)
+                {
+                    AddConstructorDescription(classType, classDescription, classKind);
+                    AddPropertySetterDescription(classType, classDescription);
+                    AddFieldSetterDescription(classType, classDescription);
+                    AddMethodDescription(classType, classDescription);
+                }
+                return classDescription;
+            }
+            catch (Exception ex)
+            {
+                ErrorCode = ModuleErrorCode.LibraryLoadError;
+                Exception = ex;
+                return null;
+            }
+        }
+
+        public string[] GetEnumItems(string assemblyName, string typeFullName)
+        {
+            Exception = null;
+            ErrorCode = 0;
+            if (!_assemblies.ContainsKey(assemblyName))
+            {
+                this.ErrorCode = ModuleErrorCode.AssemblyNotLoad;
+                return null;
+            }
+            try
+            {
+                Type classType = _assemblies[assemblyName].GetType(typeFullName);
+                if (null == classType)
+                {
+                    ErrorCode = ModuleErrorCode.TypeCannotLoad;
+                    return null;
+                }
+                return classType.IsEnum ? Enum.GetNames(classType) : new string[0];
             }
             catch (Exception ex)
             {
@@ -750,6 +844,17 @@ namespace Testflow.ComInterfaceManager
             return !typeName.Contains(refTypeSymbol) ? typeName : typeName.Replace(refTypeSymbol, "");
         }
 
+        // 在遍历任何元素后都去添加类型程序集映射
+        private void AddToAssemblyMapping(Type dataType)
+        {
+            Assembly assembly = dataType.Assembly;
+            string assemblyName = assembly.GetName().Name;
+            if (!_assemblies.ContainsKey(assemblyName))
+            {
+                _assemblies.Add(assemblyName, assembly);
+            }
+        }
+
         // 获取类型对应的种类
         private VariableType GetKindOfType(Type realType)
         {
@@ -791,5 +896,6 @@ namespace Testflow.ComInterfaceManager
 //            }
 //            return $"{nestedType.Namespace}.{nestedType.Name}";
         }
+
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using Testflow.ComInterfaceManager.Data;
 using Testflow.Data;
 using Testflow.Data.Description;
@@ -129,6 +130,34 @@ namespace Testflow.ComInterfaceManager
         public IList<string> GetTypeProperties(ITypeData type, ITypeData propertyType = null)
         {
             throw new System.NotImplementedException();
+        }
+
+        public string[] GetEnumItems(ITypeData typeData)
+        {
+            ComInterfaceDescription interfaceDescription = _descriptionData.GetComDescription(typeData.Name);
+            string fullName = ModuleUtils.GetFullName(typeData);
+            if (null != interfaceDescription)
+            {
+                return interfaceDescription.Enumerations.ContainsKey(fullName)
+                    ? interfaceDescription.Enumerations[fullName]
+                    : new string[0];
+            }
+            return _loaderManager.GetEnumItemsByType(typeData);
+        }
+
+        public IClassInterfaceDescription GetClassDescriptionByType(ITypeData typeData, out string path, out string version)
+        {
+            ComInterfaceDescription interfaceDescription = _descriptionData.GetComDescription(typeData.Name);
+            IClassInterfaceDescription classDescription = null;
+            // 如果该类型描述已存在则直接返回
+            if (interfaceDescription != null &&
+                null != (classDescription = interfaceDescription.Classes.FirstOrDefault(item => item.ClassType.Equals(typeData))))
+            {
+                path = interfaceDescription?.Assembly.Path ?? string.Empty;
+                version = interfaceDescription?.Assembly.Version ?? Constants.DefaultVersion;
+                return classDescription;
+            }
+            return _loaderManager.GetClassDescription(typeData, out path, out version);
         }
 
         public IList<IComInterfaceDescription> GetComponentDescriptions()

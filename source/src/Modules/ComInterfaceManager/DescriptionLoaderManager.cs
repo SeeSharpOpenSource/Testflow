@@ -139,37 +139,161 @@ namespace Testflow.ComInterfaceManager
             return propertyType;
         }
 
+        public string[] GetEnumItemsByType(ITypeData typeData)
+        {
+            string typeFullName = ModuleUtils.GetFullName(typeData);
+            string[] enumItems = _loader.GetEnumItems(typeData.AssemblyName, typeFullName);
+            CheckEnumItems(enumItems, typeData);
+            return enumItems;
+        }
+
+        public IClassInterfaceDescription GetClassDescription(ITypeData typeData, out string path, out string version)
+        {
+            string typeFullName = ModuleUtils.GetFullName(typeData);
+            IClassInterfaceDescription classDescription = _loader.GetClassDescription(typeData.AssemblyName,
+                typeFullName, out path, out version);
+            CheckClassDescription(classDescription, typeData.AssemblyName, typeFullName);
+            return classDescription;
+        }
+
+        #region AppDomain返回值校验
+
+        private void CheckEnumItems(string[] enumItems, ITypeData typeData)
+        {
+            if (null != enumItems)
+            {
+                return;
+            }
+            I18N i18N = I18N.GetInstance(Constants.I18nName);
+            ILogService logService = TestflowRunner.GetInstance().LogService;
+            switch (_loader.ErrorCode)
+            {
+                case ModuleErrorCode.LibraryLoadError:
+                    logService.Print(LogLevel.Error, CommonConst.PlatformLogSession, _loader.Exception,
+                        $"Assembly '{typeData.AssemblyName}' load error.");
+                    throw new TestflowRuntimeException(ModuleErrorCode.LibraryLoadError,
+                        i18N.GetStr("RuntimeError"));
+                    break;
+                case ModuleErrorCode.TypeCannotLoad:
+                    logService.Print(LogLevel.Error, CommonConst.PlatformLogSession, _loader.Exception,
+                        $"Type '{typeData.Name}' does not exist.");
+                    throw new TestflowRuntimeException(ModuleErrorCode.TypeCannotLoad,
+                        i18N.GetFStr("TypeNotFound", typeData.Name));
+                    break;
+                case ModuleErrorCode.AssemblyNotLoad:
+                    logService.Print(LogLevel.Error, CommonConst.PlatformLogSession, _loader.Exception,
+                        $"Assemly '{typeData.AssemblyName}' does not exist.");
+                    throw new TestflowRuntimeException(ModuleErrorCode.AssemblyNotLoad,
+                        i18N.GetFStr("AssemblyNotLoad", typeData.AssemblyName));
+                    break;
+                default:
+                    break;
+            }
+        }
+
         private void CheckPropertyDescription(ITypeData typeData, string property)
         {
             if (null != _loader.Exception)
             {
-                throw new TestflowRuntimeException(ModuleErrorCode.LibraryLoadError, _loader.Exception.Message,
-                    _loader.Exception);
+                return;
             }
-            else
+            I18N i18N = I18N.GetInstance(Constants.I18nName);
+            ILogService logService = TestflowRunner.GetInstance().LogService;
+            switch (_loader.ErrorCode)
             {
-                I18N i18N = I18N.GetInstance(Constants.I18nName);
-                switch (_loader.ErrorCode)
-                {
-                    case ModuleErrorCode.LibraryLoadError:
+                case ModuleErrorCode.LibraryLoadError:
+                    logService.Print(LogLevel.Error, CommonConst.PlatformLogSession, _loader.Exception,
+                        $"Assembly '{typeData.AssemblyName}' load error.");
+                    throw new TestflowRuntimeException(ModuleErrorCode.LibraryLoadError,
+                        i18N.GetStr("RuntimeError"));
+                    break;
+                case ModuleErrorCode.PropertyNotFound:
+                    logService.Print(LogLevel.Error, CommonConst.PlatformLogSession, _loader.Exception,
+                        $"Property '{property}' of type '{typeData.Name}' does not exist.");
+                    throw new TestflowRuntimeException(ModuleErrorCode.PropertyNotFound,
+                        i18N.GetFStr("PropertyNotFound", typeData.Name, property));
+                    break;
+                case ModuleErrorCode.TypeCannotLoad:
+                    logService.Print(LogLevel.Error, CommonConst.PlatformLogSession, _loader.Exception,
+                        $"Type '{typeData.Name}' does not exist.");
+                    throw new TestflowRuntimeException(ModuleErrorCode.TypeCannotLoad,
+                        i18N.GetFStr("TypeNotFound", typeData.Name));
+                    break;
+                case ModuleErrorCode.AssemblyNotLoad:
+                    logService.Print(LogLevel.Error, CommonConst.PlatformLogSession, _loader.Exception,
+                        $"Assemly '{typeData.AssemblyName}' does not exist.");
+                    throw new TestflowRuntimeException(ModuleErrorCode.AssemblyNotLoad,
+                        i18N.GetFStr("AssemblyNotLoad", typeData.AssemblyName));
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        private void CheckClassDescription(IClassInterfaceDescription description, string assemblyName, string fullName)
+        {
+            if (null != description && _loader.Exception == null && _loader.ErrorCode == 0)
+            {
+                return;
+            }
+            I18N i18N = I18N.GetInstance(Constants.I18nName);
+            ILogService logService = TestflowRunner.GetInstance().LogService;
+            string assembly = assemblyName;
+            switch (_loader.ErrorCode)
+            {
+                case ModuleErrorCode.HighVersion:
+                    logService.Print(LogLevel.Warn, CommonConst.PlatformLogSession,
+                        $"The version of assembly '{assembly}' is higher than version defined in data.");
+                    break;
+                case ModuleErrorCode.LowVersion:
+                    logService.Print(LogLevel.Error, CommonConst.PlatformLogSession,
+                        $"The version of assembly '{assembly}' is lower than version defined in data.");
+                    throw new TestflowRuntimeException(ModuleErrorCode.LowVersion,
+                        i18N.GetFStr("LowAssemblyVersion", assembly));
+                    break;
+                case ModuleErrorCode.LibraryLoadError:
+                    if (null != _loader.Exception)
+                    {
+                        logService.Print(LogLevel.Error, CommonConst.PlatformLogSession, _loader.Exception,
+                            $"Assembly '{assembly}' load error.");
+                        throw new TestflowRuntimeException(ModuleErrorCode.LibraryLoadError,
+                            i18N.GetFStr(_loader.Exception.Message), _loader.Exception);
+                    }
+                    else
+                    {
+                        logService.Print(LogLevel.Error, CommonConst.PlatformLogSession,
+                            $"Assembly '{assembly}' load error.");
                         throw new TestflowRuntimeException(ModuleErrorCode.LibraryLoadError,
                             i18N.GetStr("RuntimeError"));
-                        break;
-                    case ModuleErrorCode.PropertyNotFound:
-                        throw new TestflowRuntimeException(ModuleErrorCode.PropertyNotFound,
-                            i18N.GetFStr("PropertyNotFound", typeData.Name, property));
-                        break;
-                    case ModuleErrorCode.TypeCannotLoad:
-                        throw new TestflowRuntimeException(ModuleErrorCode.TypeCannotLoad,
-                            i18N.GetFStr("TypeNotFound", typeData.Name));
-                        break;
-                    case ModuleErrorCode.AssemblyNotLoad:
-                        throw new TestflowRuntimeException(ModuleErrorCode.AssemblyNotLoad, 
-                            i18N.GetFStr("AssemblyNotLoad", typeData.AssemblyName));
-                        break;
-                    default:
-                        break;
-                }
+                    }
+                case ModuleErrorCode.TypeCannotLoad:
+                    logService.Print(LogLevel.Error, CommonConst.PlatformLogSession, _loader.Exception,
+                        $"Type '{fullName}' does not exist.");
+                    throw new TestflowRuntimeException(ModuleErrorCode.TypeCannotLoad,
+                        i18N.GetFStr("TypeNotFound", fullName));
+                case ModuleErrorCode.LibraryNotFound:
+                    logService.Print(LogLevel.Error, CommonConst.PlatformLogSession,
+                        $"Assembly '{assembly}' has not been loaded.");
+                    throw new TestflowRuntimeException(ModuleErrorCode.LibraryNotFound,
+                        i18N.GetFStr("LibNotFound", assembly));
+                case ModuleErrorCode.AssemblyNotLoad:
+                    logService.Print(LogLevel.Error, CommonConst.PlatformLogSession, _loader.Exception,
+                        $"Assemly '{assemblyName}' does not exist.");
+                    throw new TestflowRuntimeException(ModuleErrorCode.AssemblyNotLoad,
+                        i18N.GetFStr("AssemblyNotLoad", assemblyName));
+                    break;
+                default:
+                    if (null != _loader.Exception)
+                    {
+                        throw new TestflowRuntimeException(ModuleErrorCode.LibraryLoadError,
+                            i18N.GetFStr("RuntimeError", _loader.Exception.Message), _loader.Exception);
+                    }
+                    if (null == description)
+                    {
+                        throw new TestflowRuntimeException(ModuleErrorCode.LibraryLoadError,
+                            i18N.GetStr("RuntimeError"));
+                    }
+                    break;
             }
         }
 
@@ -208,13 +332,14 @@ namespace Testflow.ComInterfaceManager
                     }
                     else
                     {
-                        logService.Print(LogLevel.Error, CommonConst.PlatformLogSession, 
+                        logService.Print(LogLevel.Error, CommonConst.PlatformLogSession,
                             $"Assembly '{assembly}' load error.");
-                        throw new TestflowRuntimeException(ModuleErrorCode.LibraryLoadError, 
+                        throw new TestflowRuntimeException(ModuleErrorCode.LibraryLoadError,
                             i18N.GetStr("RuntimeError"));
                     }
                 case ModuleErrorCode.LibraryNotFound:
-                    throw new TestflowRuntimeException(ModuleErrorCode.LibraryNotFound, i18N.GetFStr("LibNotFound", assembly));
+                    throw new TestflowRuntimeException(ModuleErrorCode.LibraryNotFound,
+                        i18N.GetFStr("LibNotFound", assembly));
                 default:
                     if (null != _loader.Exception)
                     {
@@ -223,16 +348,20 @@ namespace Testflow.ComInterfaceManager
                     }
                     if (null == description)
                     {
-                        throw new TestflowRuntimeException(ModuleErrorCode.LibraryLoadError, 
+                        throw new TestflowRuntimeException(ModuleErrorCode.LibraryLoadError,
                             i18N.GetStr("RuntimeError"));
                     }
                     break;
             }
         }
 
+        #endregion
+
+
         public void Dispose()
         {
             AppDomain.Unload(_loaderDomain);
         }
+
     }
 }

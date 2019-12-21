@@ -15,5 +15,7 @@ namespace Testflow.ComInterfaceManager
         public const string SetPrefix = "set_";
         public const string GetPrefix = "get_";
 
+        public const string DefaultVersion = "0.0.0.0";
+
     }
 }
