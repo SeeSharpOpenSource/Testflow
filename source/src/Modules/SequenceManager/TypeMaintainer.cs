@@ -404,7 +404,7 @@ namespace Testflow.SequenceManager
                 {
                     continue;
                 }
-                assemblyInfo = _comInterfaceManager.GetComInterfaceByName(assemblyName)?.Assembly;
+                assemblyInfo = _comInterfaceManager.GetAssemblyInfo(assemblyName);
                 if (null == assemblyInfo)
                 {
                     ILogService logService = TestflowRunner.GetInstance().LogService;
