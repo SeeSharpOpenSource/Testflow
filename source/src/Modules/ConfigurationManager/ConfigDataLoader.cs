@@ -136,7 +136,12 @@ namespace Testflow.ConfigurationManager
 
             // 更新Testflow平台默认库目录
             string platformDir = configData.GetConfigValue<string>(Constants.GlobalConfig, "PlatformLibDir");
-            configData.SetConfigItem(Constants.GlobalConfig, "PlatformLibDir", $"{homeDir}{platformDir}");
+            string libDir = $"{homeDir}{platformDir}";
+            if (libDir.EndsWith(Path.DirectorySeparatorChar.ToString()))
+            {
+                libDir += Path.DirectorySeparatorChar;
+            }
+            configData.SetConfigItem(Constants.GlobalConfig, "PlatformLibDir", libDir);
 
             // 更新Testflow工作空间目录
             string workspaceDirs = Environment.GetEnvironmentVariable(CommonConst.WorkspaceVariable);
@@ -190,6 +195,10 @@ namespace Testflow.ConfigurationManager
                 throw new TestflowRuntimeException(ModuleErrorCode.InvalidEnvDir, i18N.GetStr("InvalidDotNetDir"));
             }
             string frameworkDir = $"{frameworkRoot}{dotNetVersion}{Path.DirectorySeparatorChar}";
+            if (!frameworkDir.EndsWith(Path.DirectorySeparatorChar.ToString()))
+            {
+                frameworkDir += Path.DirectorySeparatorChar;
+            }
             if (!Directory.Exists(frameworkDir))
             {
                 I18N i18N = I18N.GetInstance(Constants.I18nName);

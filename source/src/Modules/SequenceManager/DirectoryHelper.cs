@@ -130,13 +130,17 @@ namespace Testflow.SequenceManager
         private string InternalGetAbosolutePath(string path)
         {
             string abosolutePath = null;
+            // 如果文件名前面有分隔符则去掉
+            while (path.StartsWith(Path.DirectorySeparatorChar.ToString()))
+            {
+                path = path.Substring(1, path.Length - 1);
+            }
             // 转换为绝对路径时反向寻找，先.net库再平台库再用户库
             for (int i = availableDirs.Count - 1; i >= 0; i--)
             {
                 _pathCache.Clear();
                 string availableDir = availableDirs[i];
-                _pathCache.Append(availableDir);
-                _pathCache.Append(path);
+                _pathCache.Append(availableDir).Append(path);
                 // 如果库存在则配置为绝对路径，然后返回
                 if (File.Exists(_pathCache.ToString()))
                 {
