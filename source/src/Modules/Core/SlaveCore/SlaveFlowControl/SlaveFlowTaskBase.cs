@@ -54,8 +54,6 @@ namespace Testflow.SlaveCore.SlaveFlowControl
 
                 // 打印状态日志
                 Context.LogSession.Print(LogLevel.Debug, Context.SessionId, $"{this.GetType().Name} task action over.");
-                
-                Next?.DoFlowTask();
             }
             catch (ThreadAbortException ex)
             {

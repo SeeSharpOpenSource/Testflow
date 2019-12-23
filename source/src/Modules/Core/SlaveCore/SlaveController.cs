@@ -75,8 +75,12 @@ namespace Testflow.SlaveCore
         {
             try
             {
-                SlaveFlowTaskBase taskEntrance = SlaveFlowTaskBase.GetFlowTaskEntrance(_context);
-                taskEntrance.DoFlowTask();
+                SlaveFlowTaskBase flowTask = SlaveFlowTaskBase.GetFlowTaskEntrance(_context);
+                while (null != flowTask && !_context.Cancellation.IsCancellationRequested)
+                {
+                    flowTask.DoFlowTask();
+                    flowTask = flowTask.Next;
+                }
             }
             finally
             {
