@@ -38,7 +38,7 @@ namespace Testflow.SlaveCore.Runner.Model
             // 调用前置监听
             OnPreListener();
 
-            this.Result = StepResult.Error;
+            this.Result = StepResult.NotAvailable;
             this.Result = Actuator.InvokeStep(forceInvoke);
             Context.LogSession.Print(LogLevel.Debug, Context.SessionId,
                 $"The empty step {GetStack()} invoked.");

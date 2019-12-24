@@ -22,7 +22,7 @@ namespace Testflow.SlaveCore.Runner.Model
             }
             // 调用前置监听
             OnPreListener();
-            this.Result = StepResult.Error;
+            this.Result = StepResult.NotAvailable;
             this.Result = Actuator.InvokeStep(forceInvoke);
 
             // 如果当前step被标记为记录状态，则返回状态信息
