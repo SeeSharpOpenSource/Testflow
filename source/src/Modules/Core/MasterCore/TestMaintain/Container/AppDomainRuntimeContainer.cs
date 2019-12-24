@@ -60,7 +60,8 @@ namespace Testflow.MasterCore.TestMaintain.Container
 
         public override void Dispose()
         {
-            if (_testThd.IsAlive && !_testThd.Join(1000))
+            int timeout = GlobalInfo.ConfigData.GetProperty<int>("AbortTimeout")*2;
+            if (_testThd.IsAlive && !_testThd.Join(timeout))
             {
                 _testThd.Abort();
             }
