@@ -95,27 +95,34 @@ namespace Testflow.SlaveCore.Runner.Actuators
             for (int i = 0; i < argumentInfos.Count; i++)
             {
                 string paramValue = parameters[i].Value;
-                if (parameters[i].ParameterType == ParameterType.Value)
+                switch (parameters[i].ParameterType)
                 {
-                    Params[i] = Context.TypeInvoker.CastConstantValue(argumentInfos[i].Type, paramValue);
-                }
-                else
-                {
-                    // 如果是变量，则先获取对应的Varaible变量，真正的值在运行时才更新获取
-                    string variableName = ModuleUtils.GetVariableNameFromParamValue(paramValue);
-                    IVariable variable = ModuleUtils.GetVaraibleByRawVarName(variableName, StepData);
-                    if (null == variable)
-                    {
-                        Context.LogSession.Print(LogLevel.Error, SequenceIndex,
-                            $"Unexist variable '{variableName}' in sequence data.");
-                        throw new TestflowDataException(ModuleErrorCode.SequenceDataError,
-                            Context.I18N.GetFStr("UnexistVariable", variableName));
+                    case ParameterType.Value:
+                        Params[i] = Context.TypeInvoker.CastConstantValue(argumentInfos[i].Type, paramValue);
+                        break;
+                    case ParameterType.Variable:
+                        // 如果是变量，则先获取对应的Varaible变量，真正的值在运行时才更新获取
+                        string variableName = ModuleUtils.GetVariableNameFromParamValue(paramValue);
+                        IVariable variable = ModuleUtils.GetVaraibleByRawVarName(variableName, StepData);
+                        if (null == variable)
+                        {
+                            Context.LogSession.Print(LogLevel.Error, Context.SessionId,
+                                $"Unexist variable '{variableName}' in sequence data.");
+                            throw new TestflowDataException(ModuleErrorCode.SequenceDataError,
+                                Context.I18N.GetFStr("UnexistVariable", variableName));
 
-                    }
-                    // 将变量的值保存到Parameter中
-                    string varFullName = CoreUtils.GetRuntimeVariableName(Context.SessionId, variable);
-                    parameters[i].Value = ModuleUtils.GetFullParameterVariableName(varFullName, parameters[i].Value);
-                    Params[i] = null;
+                        }
+                        // 将变量的值保存到Parameter中
+                        string varFullName = CoreUtils.GetRuntimeVariableName(Context.SessionId, variable);
+                        parameters[i].Value = ModuleUtils.GetFullParameterVariableName(varFullName, parameters[i].Value);
+                        Params[i] = null;
+                        break;
+                    default:
+                        Context.LogSession.Print(LogLevel.Error, Context.SessionId,
+                                $"The value of parameter '{argumentInfos[i].Name}' is not configured");
+                        throw new TestflowDataException(ModuleErrorCode.SequenceDataError,
+                                Context.I18N.GetStr("InvalidParamVar"));
+                        break;
                 }
             }
             if (null != Function.ReturnType && CoreUtils.IsValidVaraible(Function.Return))
