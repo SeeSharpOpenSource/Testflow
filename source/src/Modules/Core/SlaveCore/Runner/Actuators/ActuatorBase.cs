@@ -1,8 +1,11 @@
 ﻿using System;
+using Testflow.CoreCommon;
+using Testflow.CoreCommon.Data;
 using Testflow.Data;
 using Testflow.Data.Sequence;
 using Testflow.Runtime.Data;
 using Testflow.SlaveCore.Common;
+using Testflow.Usr;
 
 namespace Testflow.SlaveCore.Runner.Actuators
 {
@@ -71,6 +74,8 @@ namespace Testflow.SlaveCore.Runner.Actuators
         /// </summary>
         private int _coroutineId;
 
+        #region 测试生成相关接口
+
         /// <summary>
         /// 生成调用信息
         /// </summary>
@@ -82,6 +87,29 @@ namespace Testflow.SlaveCore.Runner.Actuators
         protected abstract void InitializeParamsValues();
 
         /// <summary>
+        /// 序列参数公共检查方法
+        /// </summary>
+        /// <param name="instanceVar"></param>
+        protected void CommonStepDataCheck(string instanceVar)
+        {
+            // 判断实例方法的实例是否配置
+            if (StepData?.Function != null)
+            {
+                FunctionType functionType = StepData.Function.Type;
+                if (string.IsNullOrWhiteSpace(instanceVar) && (functionType == FunctionType.InstanceFunction ||
+                                                               functionType == FunctionType.InstancePropertySetter ||
+                                                               functionType == FunctionType.InstanceFieldSetter))
+                {
+                    string currentStack = CallStack.GetStack(Context.SessionId, StepData).ToString();
+                    Context.LogSession.Print(LogLevel.Error, Context.SessionId,
+                        $"The instance variable of step <{currentStack}> is empty.");
+                    throw new TestflowDataException(ModuleErrorCode.SequenceDataError,
+                        Context.I18N.GetStr("InvalidParamVar"));
+                }
+            }
+        }
+
+        /// <summary>
         /// 生成运行器
         /// </summary>
         public void Generate(int coroutineId)
@@ -90,6 +118,11 @@ namespace Testflow.SlaveCore.Runner.Actuators
             this.GenerateInvokeInfo();
             this.InitializeParamsValues();
         }
+
+        #endregion
+
+
+        #region 运行相关接口
 
         /// <summary>
         /// 开启运行计时
@@ -126,5 +159,8 @@ namespace Testflow.SlaveCore.Runner.Actuators
         /// 调用序列的执行代码
         /// </summary>
         public abstract StepResult InvokeStep(bool forceInvoke);
+
+        #endregion
+
     }
 }

@@ -178,6 +178,15 @@ namespace Testflow.SlaveCore.Resources.locale {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Invalid parameter configuration exist in current sequence..
+        /// </summary>
+        internal static string InvalidParamVar {
+            get {
+                return ResourceManager.GetString("InvalidParamVar", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Unsupported cast to type &apos;{0}&apos;..
         /// </summary>
         internal static string InvalidTypeCast {

@@ -156,6 +156,9 @@
   <data name="InvalidMessageReceived" xml:space="preserve">
     <value>Invalid message "{0}" received.</value>
   </data>
+  <data name="InvalidParamVar" xml:space="preserve">
+    <value>Invalid parameter configuration exist in current sequence.</value>
+  </data>
   <data name="InvalidTypeCast" xml:space="preserve">
     <value>Unsupported cast to type '{0}'.</value>
   </data>

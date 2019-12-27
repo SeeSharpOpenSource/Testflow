@@ -39,9 +39,10 @@ namespace Testflow.SlaveCore.Runner.Actuators
 
         protected override void InitializeParamsValues()
         {
+            string instanceVarName = null;
             if (!string.IsNullOrWhiteSpace(Function.Instance))
             {
-                string instanceVarName = ModuleUtils.GetVariableNameFromParamValue(Function.Instance);
+                instanceVarName = ModuleUtils.GetVariableNameFromParamValue(Function.Instance);
                 _instanceVar = ModuleUtils.GetVariableFullName(instanceVarName, StepData, Context.SessionId);
             }
             IParameterDataCollection parameters = Function.Parameters;
@@ -75,6 +76,7 @@ namespace Testflow.SlaveCore.Runner.Actuators
                         throw new ArgumentOutOfRangeException();
                 }
             }
+            CommonStepDataCheck(instanceVarName);
         }
 
         private readonly List<PropertyInfo> _properties;

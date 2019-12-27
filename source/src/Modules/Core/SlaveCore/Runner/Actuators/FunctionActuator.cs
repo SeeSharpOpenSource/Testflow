@@ -132,6 +132,7 @@ namespace Testflow.SlaveCore.Runner.Actuators
                 }
                 ReturnVar = CoreUtils.GetRuntimeVariableName(Context.SessionId, variable);
             }
+            CommonStepDataCheck(InstanceVar);
         }
 
         public override StepResult InvokeStep(bool forceInvoke)

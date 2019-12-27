@@ -178,6 +178,15 @@ namespace Testflow.SlaveCore.Resources.locale {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to 序列中存在参数配置错误的步骤。.
+        /// </summary>
+        internal static string InvalidParamVar {
+            get {
+                return ResourceManager.GetString("InvalidParamVar", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to 不支持到类型‘{0}’的转换。.
         /// </summary>
         internal static string InvalidTypeCast {
