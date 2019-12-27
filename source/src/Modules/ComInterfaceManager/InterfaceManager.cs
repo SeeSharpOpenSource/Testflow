@@ -152,7 +152,7 @@ namespace Testflow.ComInterfaceManager
 
         public IClassInterfaceDescription GetClassDescriptionByType(ITypeData typeData, out IAssemblyInfo assemblyInfo)
         {
-            ComInterfaceDescription interfaceDescription = _descriptionData.GetComDescription(typeData.Name);
+            ComInterfaceDescription interfaceDescription = _descriptionData.GetComDescription(typeData.AssemblyName);
             IClassInterfaceDescription classDescription = null;
             // 如果该类型描述已存在则直接返回
             if (interfaceDescription != null &&
@@ -162,7 +162,7 @@ namespace Testflow.ComInterfaceManager
                 return classDescription;
             }
             string path, version;
-            classDescription = _loaderManager.GetClassDescription(typeData, out path, out version);
+            classDescription = _loaderManager.GetClassDescription(typeData, _descriptionData, out path, out version);
 
             assemblyInfo = GetAssemblyInfo(typeData.AssemblyName);
             TestflowRunner testflowRunner;

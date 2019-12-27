@@ -68,7 +68,7 @@ namespace Testflow.ComInterfaceManager
             }
         }
 
-        private static ITypeData GetTypeDataByDescription(ISequenceManager sequenceManager,
+        public static ITypeData GetTypeDataByDescription(ISequenceManager sequenceManager,
             DescriptionDataTable descriptionCollection, ITypeDescription typeDescription)
         {
             string classFullName = GetFullName(typeDescription);

@@ -661,7 +661,7 @@ namespace Testflow.ComInterfaceManager
             }
         }
 
-        public IClassInterfaceDescription GetClassDescription(string assemblyName, string typeFullName, out string path,
+        public ClassInterfaceDescription GetClassDescription(string assemblyName, string typeFullName, out string path,
             out string version)
         {
             Exception = null;
