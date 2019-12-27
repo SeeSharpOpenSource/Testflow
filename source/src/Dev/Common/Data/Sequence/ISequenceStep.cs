@@ -27,7 +27,7 @@ namespace Testflow.Data.Sequence
         /// <summary>
         /// 步骤的类型
         /// </summary>
-        SequenceStepType StepType { get; }
+        SequenceStepType StepType { get; set; }
 
         /// <summary>
         /// 标签属性
