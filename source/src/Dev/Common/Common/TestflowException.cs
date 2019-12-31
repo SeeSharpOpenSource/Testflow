@@ -22,6 +22,7 @@ namespace Testflow.Usr
         public TestflowException(int errorCode, string message) : base(message)
         {
             this.ErrorCode = errorCode;
+            this.HResult = errorCode;
         }
 
         /// <summary>
@@ -33,17 +34,20 @@ namespace Testflow.Usr
         public TestflowException(int errorCode, string message, Exception innerException) : base(message, innerException)
         {
             this.ErrorCode = errorCode;
+            this.HResult = errorCode;
         }
 
         public TestflowException(SerializationInfo info, StreamingContext context) : base(info, context)
         {
             this.ErrorCode = info.GetInt32("ErrorCode");
+            this.HResult = info.GetInt32("ErrorCode");
         }
 
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
             base.GetObjectData(info, context);
             info.AddValue("ErrorCode", ErrorCode);
+            info.AddValue("HResult", HResult);
         }
     }
 }
