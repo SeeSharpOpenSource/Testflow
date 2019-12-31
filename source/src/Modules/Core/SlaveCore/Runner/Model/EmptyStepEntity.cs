@@ -42,6 +42,11 @@ namespace Testflow.SlaveCore.Runner.Model
             this.Result = Actuator.InvokeStep(forceInvoke);
             Context.LogSession.Print(LogLevel.Debug, Context.SessionId,
                 $"The empty step {GetStack()} invoked.");
+            // 如果当前step被标记为记录状态，则返回状态信息
+            if (null != StepData && StepData.RecordStatus)
+            {
+                RecordRuntimeStatus();
+            }
             // 调用后置监听
             OnPostListener();
 
