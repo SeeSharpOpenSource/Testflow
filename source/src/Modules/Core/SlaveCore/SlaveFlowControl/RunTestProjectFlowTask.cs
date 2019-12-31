@@ -38,7 +38,7 @@ namespace Testflow.SlaveCore.SlaveFlowControl
             sessionTaskEntity.InvokeSetUp();
             RuntimeState setUpState = sessionTaskEntity.GetSequenceTaskState(CommonConst.SetupIndex);
             // 如果SetUp执行失败，则执行TearDown，且配置所有序列为失败状态，并发送所有序列都失败的信息
-            if (setUpState > RuntimeState.Success)
+            if (CoreUtils.IsFailed(setUpState))
             {
                 // 打印状态日志
                 Context.LogSession.Print(LogLevel.Error, Context.SessionId, "Run testproject setup failed.");

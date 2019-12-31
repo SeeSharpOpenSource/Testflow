@@ -203,5 +203,10 @@ namespace Testflow.CoreCommon.Common
             const string stringTypeName = "String";
             return !string.IsNullOrWhiteSpace(variable.Value) || (null != variable.Type && stringTypeName.Equals(variable.Type.Name));
         }
+
+        public static bool IsFailed(RuntimeState state)
+        {
+            return state != RuntimeState.Success && state != RuntimeState.Over;
+        }
     }
 }
