@@ -249,28 +249,30 @@ namespace Testflow.SlaveCore.Common
         /// </summary>
         public static RuntimeState GetSequenceState(StepTaskEntityBase stepEntry)
         {
-            if (null == stepEntry || stepEntry.Result == StepResult.NotAvailable)
-            {
-                return RuntimeState.NotAvailable;
-            }
-            bool isTimeout = false;
-            bool isError = false;
-            bool isAbort = false;
-            bool isFailed = false;
-            GetStepsResultFlag(stepEntry, ref isTimeout, ref isError, ref isAbort, ref isFailed);
-            if (isAbort)
-            {
-                return RuntimeState.Abort;
-            }
-            if (isTimeout)
-            {
-                return RuntimeState.Timeout;
-            }
-            if (isError)
-            {
-                return RuntimeState.Error;
-            }
-            return isFailed ? RuntimeState.Failed : RuntimeState.Success;
+            // 因为Step中可能存在循环的情况，中间运行是否成功失败不确定，所以该处判断可能是无效的。直接返回Over，成功失败由Master来计算
+            return RuntimeState.Over;
+//            if (null == stepEntry || stepEntry.Result == StepResult.NotAvailable)
+//            {
+//                return RuntimeState.NotAvailable;
+//            }
+//            bool isTimeout = false;
+//            bool isError = false;
+//            bool isAbort = false;
+//            bool isFailed = false;
+//            GetStepsResultFlag(stepEntry, ref isTimeout, ref isError, ref isAbort, ref isFailed);
+//            if (isAbort)
+//            {
+//                return RuntimeState.Abort;
+//            }
+//            if (isTimeout)
+//            {
+//                return RuntimeState.Timeout;
+//            }
+//            if (isError)
+//            {
+//                return RuntimeState.Error;
+//            }
+//            return isFailed ? RuntimeState.Failed : RuntimeState.Success;
         }
 
         /// <summary>

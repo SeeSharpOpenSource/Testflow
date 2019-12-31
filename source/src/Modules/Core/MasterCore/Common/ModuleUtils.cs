@@ -254,7 +254,7 @@ namespace Testflow.MasterCore.Common
 
         public static bool IsOver(RuntimeState state)
         {
-            return state > RuntimeState.AbortRequested;
+            return state > RuntimeState.Skipped;
         }
 
         public static bool IsNotStart(RuntimeState state)
