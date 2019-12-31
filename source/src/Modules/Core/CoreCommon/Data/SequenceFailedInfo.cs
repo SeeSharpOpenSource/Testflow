@@ -2,6 +2,7 @@
 using System.Runtime.Serialization;
 using System.Text;
 using System.Threading;
+using Testflow.CoreCommon.Common;
 using Testflow.Runtime;
 using Testflow.Runtime.Data;
 
@@ -11,8 +12,7 @@ namespace Testflow.CoreCommon.Data
     public class FailedInfo : IFailedInfo, ISerializable
     {
         private const string Delim = "$#_#$";
-
-        public static string GetFailedStr(Exception exception, FailedType failedType)
+        public static string GetFailedStr(Exception exception, FailedType failedType, string errorCodeProperty)
         {
             StringBuilder failedStr = new StringBuilder(400);
             string stackTrace = exception.StackTrace;
@@ -22,7 +22,7 @@ namespace Testflow.CoreCommon.Data
             }
             return failedStr.Append(failedType).Append(Delim).Append(exception.Message).Append(Delim)
                 .Append(exception.Source).Append(Delim).Append(stackTrace).Append(Delim)
-                .Append(exception.GetType().Name).ToString();
+                .Append(exception.GetType().Name).Append(Delim).Append(exception.HResult).ToString();
         }
 
         public static string GetFailedStr(string message, FailedType failedType)
@@ -30,7 +30,7 @@ namespace Testflow.CoreCommon.Data
             StringBuilder failedStr = new StringBuilder(400);
             return failedStr.Append(failedType).Append(Delim).Append(message).Append(Delim)
                 .Append(string.Empty).Append(Delim).Append(string.Empty).Append(Delim)
-                .Append(string.Empty).ToString();
+                .Append(string.Empty).Append(Delim).Append(0).ToString();
         }
 
         public FailedType Type { get; set; }
@@ -38,6 +38,7 @@ namespace Testflow.CoreCommon.Data
         public string Source { get; set; }
         public string StackTrace { get; set; }
         public string ExceptionType { get; set; }
+        public int ErrorCode { get; set; }
 
         public FailedInfo(string failedInfo, FailedType type)
         {
@@ -46,6 +47,7 @@ namespace Testflow.CoreCommon.Data
             this.Source = string.Empty;
             this.StackTrace = string.Empty;
             this.ExceptionType = string.Empty;
+            this.ErrorCode = 0;
         }
 
         public FailedInfo(Exception exception, FailedType failedType)
@@ -61,6 +63,7 @@ namespace Testflow.CoreCommon.Data
             this.StackTrace = stackTrace;
             Type exceptionType = typeof(Exception);
             this.ExceptionType = $"{exceptionType.Namespace}.{exceptionType.Name}";
+            this.ErrorCode = exception.HResult;
         }
         
         public FailedInfo(string failedStr)
@@ -82,13 +85,17 @@ namespace Testflow.CoreCommon.Data
             this.StackTrace = stackTrace;
             index += step;
             this.ExceptionType = failedInfoElems[index];
+            index += step;
+            // 为了兼容原来不存在ErrorCode字段时的场景
+            this.ErrorCode = index < failedInfoElems.Length ? int.Parse(failedInfoElems[index]) : 0;
         }
 
         public override string ToString()
         {
             StringBuilder failedStr = new StringBuilder(1000);
             return failedStr.Append(Type).Append(Delim).Append(Message).Append(Delim).Append(Source)
-                .Append(Delim).Append(StackTrace).Append(Delim).Append(ExceptionType).ToString();
+                .Append(Delim).Append(StackTrace).Append(Delim).Append(ExceptionType).Append(Delim)
+                .Append(ErrorCode).ToString();
         }
 
         public FailedInfo(SerializationInfo info, StreamingContext context)
@@ -98,6 +105,7 @@ namespace Testflow.CoreCommon.Data
             this.ExceptionType = (string)info.GetValue("ExceptionType", typeof(string));
             this.StackTrace = (string)info.GetValue("StackTrace", typeof(string));
             this.Source = (string)info.GetValue("Source", typeof(string));
+            this.ErrorCode = info.GetInt32("ErrorCode");
         }
 
         public void GetObjectData(SerializationInfo info, StreamingContext context)
@@ -107,6 +115,7 @@ namespace Testflow.CoreCommon.Data
             info.AddValue("ExceptionType", ExceptionType);
             info.AddValue("StackTrace", StackTrace);
             info.AddValue("Source", Source);
+            info.AddValue("ErrorCode", ErrorCode);
         }
     }
 }

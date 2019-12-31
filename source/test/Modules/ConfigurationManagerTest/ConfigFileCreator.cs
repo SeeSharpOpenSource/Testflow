@@ -40,6 +40,7 @@ namespace Testflow.ConfigurationManagerTest
             globalConfigData.AddConfigItem("EngineCore", "AbortTimeout", 10000);
             globalConfigData.AddConfigItem("EngineCore", "MessengerType", MessengerType.MSMQ);
             globalConfigData.AddConfigItem("EngineCore", "EnablePerformanceMonitor", false);
+            globalConfigData.AddConfigItem("EngineCore", "NumericFormat", "0.#####");
 
             globalConfigData.AddConfigRoot("DataMaintain");
             globalConfigData.AddConfigItem("DataMaintain", "DatabaseName", "testflowData.db3");

@@ -31,5 +31,10 @@ namespace Testflow.Runtime.Data
         /// 异常类型，FailedType为UnHandledException和RuntimeError有效
         /// </summary>
         string ExceptionType { get; set; }
+
+        /// <summary>
+        /// 异常码，如果异常没有该值则配置为0
+        /// </summary>
+        int ErrorCode { get; set; }
     }
 }
