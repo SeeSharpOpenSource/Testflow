@@ -102,6 +102,39 @@ namespace Testflow.SlaveCore.Runner.Model
                 } while (null != (stepEntity = stepEntity.NextStep) && notCancelled);
                 SetResultState(out lastStepResult, out finalReportType, out failedInfo);
             }
+            catch (TaskFailedException ex)
+            {
+                // 停止失败的step的计时
+                StepTaskEntityBase currentStep = StepTaskEntityBase.GetCurrentStep(Index, RootCoroutineId);
+                currentStep?.EndTiming();
+                FillFinalExceptionReportInfo(ex, out finalReportType, out lastStepResult, out failedInfo);
+                // 如果抛出TargetInvokcationException到当前位置则说明内部没有发送错误事件
+                if (null != currentStep && currentStep.BreakIfFailed)
+                {
+                    currentStep.SetStatusAndSendErrorEvent(lastStepResult, failedInfo);
+                }
+            }
+            catch (TestflowAssertException ex)
+            {
+                // 停止失败的step的计时
+                StepTaskEntityBase currentStep = StepTaskEntityBase.GetCurrentStep(Index, RootCoroutineId);
+                currentStep?.EndTiming();
+                FillFinalExceptionReportInfo(ex, out finalReportType, out lastStepResult, out failedInfo);
+                // 如果抛出TargetInvokcationException到当前位置则说明内部没有发送错误事件
+                if (null != currentStep && currentStep.BreakIfFailed)
+                {
+                    currentStep.SetStatusAndSendErrorEvent(lastStepResult, failedInfo);
+                }
+            }
+            catch (ThreadAbortException ex)
+            {
+                // 停止失败的step的计时
+                StepTaskEntityBase currentStep = StepTaskEntityBase.GetCurrentStep(Index, RootCoroutineId);
+                currentStep?.EndTiming();
+                FillFinalExceptionReportInfo(ex, out finalReportType, out lastStepResult, out failedInfo);
+                // Abort异常不会在内部处理，需要在外部强制抛出
+                currentStep?.SetStatusAndSendErrorEvent(lastStepResult, failedInfo);
+            }
             catch (TargetInvocationException ex)
             {
                 // 停止失败的step的计时
@@ -122,7 +155,8 @@ namespace Testflow.SlaveCore.Runner.Model
                 // 如果包含内部异常，则说明发生了运行时错误，记录错误信息。
                 if (null != ex.InnerException)
                 {
-                    FillFinalExceptionReportInfo(ex.InnerException, out finalReportType, out lastStepResult, out failedInfo);
+                    FillFinalExceptionReportInfo(ex.InnerException, out finalReportType, out lastStepResult,
+                        out failedInfo);
                     // 如果抛出TargetInvokcationException到当前位置则说明内部没有发送错误事件
                     if (null != currentStep && currentStep.BreakIfFailed)
                     {
