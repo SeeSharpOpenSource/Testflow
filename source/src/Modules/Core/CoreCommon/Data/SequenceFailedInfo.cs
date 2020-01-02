@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Runtime.Serialization;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using Testflow.CoreCommon.Common;
 using Testflow.Runtime;
@@ -68,26 +69,29 @@ namespace Testflow.CoreCommon.Data
         
         public FailedInfo(string failedStr)
         {
-            string[] failedInfoElems = failedStr.Split(Delim.ToCharArray());
+            const string delimPattern = @"\$#_#\$";
+            string[] failedInfoElems = Regex.Split(failedStr, delimPattern, RegexOptions.IgnoreCase);
             int index = 0;
-            int step = Delim.Length;
             Type = (FailedType)Enum.Parse(typeof(FailedType), failedInfoElems[index]);
-            index += step;
+            index++;
             this.Message = failedInfoElems[index];
-            index += step;
+            index++;
             this.Source = failedInfoElems[index];
-            index += step;
+            index++;
             string stackTrace = failedInfoElems[index];
             if (!string.IsNullOrWhiteSpace(stackTrace) && stackTrace.Contains("'"))
             {
                 stackTrace = stackTrace.Replace("'", "*");
             }
             this.StackTrace = stackTrace;
-            index += step;
+            index++;
             this.ExceptionType = failedInfoElems[index];
-            index += step;
+            index++;
             // 为了兼容原来不存在ErrorCode字段时的场景
-            this.ErrorCode = index < failedInfoElems.Length ? int.Parse(failedInfoElems[index]) : 0;
+            int errorCode;
+            this.ErrorCode = index < failedInfoElems.Length && int.TryParse(failedInfoElems[index], out errorCode)
+                ? errorCode
+                : 0;
         }
 
         public override string ToString()
