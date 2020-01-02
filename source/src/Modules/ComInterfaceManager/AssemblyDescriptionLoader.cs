@@ -865,7 +865,7 @@ namespace Testflow.ComInterfaceManager
                 argumentType = VariableType.Enumeration;
             }
             // 简单值类型
-            else if (_simpleValueType.Contains(ModuleUtils.GetFullName(realType)))
+            else if (_simpleValueType.Contains(GetParamTypeName(realType)))
             {
                 argumentType = VariableType.Value;
             }
