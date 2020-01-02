@@ -844,6 +844,15 @@ namespace Testflow.ComInterfaceManager
             return !typeName.Contains(refTypeSymbol) ? typeName : typeName.Replace(refTypeSymbol, "");
         }
 
+        // 部分类型支持原生的ref类型type，这在slave端会导致识别的困难，需要将其替换为非ref类型。例如所有基础类型和数组都有原生的ref类型
+        private static string GetParamTypeFullName(Type type)
+        {
+            const string refTypeSymbol = "&";
+            string typeName = GetTypeName(type);
+            string typeFullName = ModuleUtils.GetFullName(type.Namespace, typeName);
+            return !typeFullName.Contains(refTypeSymbol) ? typeFullName : typeFullName.Replace(refTypeSymbol, "");
+        }
+
         // 在遍历任何元素后都去添加类型程序集映射
         private void AddToAssemblyMapping(Type dataType)
         {
@@ -865,7 +874,7 @@ namespace Testflow.ComInterfaceManager
                 argumentType = VariableType.Enumeration;
             }
             // 简单值类型
-            else if (_simpleValueType.Contains(GetParamTypeName(realType)))
+            else if (_simpleValueType.Contains(GetParamTypeFullName(realType)))
             {
                 argumentType = VariableType.Value;
             }
