@@ -96,7 +96,7 @@ namespace Testflow.SlaveCore.Common
                     // 如果线程还未结束，则等待
                     if (_context.FlowControlThread.IsAlive)
                     {
-                        if (_context.FlowControlThread.Join(Constants.ThreadAbortJoinTime))
+                        if (_context.FlowControlThread.Join(_context.GetProperty<int>("AbortTimeout")))
                         {
                             SlaveFlowTaskBase.CurrentFlowTask?.TaskAbortAction();
                         }
