@@ -55,6 +55,8 @@
     <Compile Include="Coroutine\CoroutineManager.cs" />
     <Compile Include="Coroutine\CoroutineHandle.cs" />
     <Compile Include="Coroutine\CoroutineState.cs" />
+    <Compile Include="Data\ExecutionTrack.cs" />
+    <Compile Include="Data\StepExecutionInfo.cs" />
     <Compile Include="Debugger\DebugManager.cs" />
     <Compile Include="Runner\Actuators\ActuatorBase.cs" />
     <Compile Include="Runner\Actuators\EmptyActuator.cs" />

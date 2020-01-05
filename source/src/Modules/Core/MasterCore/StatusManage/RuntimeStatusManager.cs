@@ -189,7 +189,7 @@ namespace Testflow.MasterCore.StatusManage
             {
                 _sessionStateHandles[abortEventInfo.Session].AbortEventProcess(abortEventInfo);
                 // 如果都已经Abort结束，则执行结束操作
-                if (_sessionStateHandles.Values.All(item => item.State > RuntimeState.AbortRequested))
+                if (_sessionStateHandles.Values.All(item => ModuleUtils.IsOver(item.State)))
                 {
                     _globalInfo.StateMachine.State = RuntimeState.Abort;
 

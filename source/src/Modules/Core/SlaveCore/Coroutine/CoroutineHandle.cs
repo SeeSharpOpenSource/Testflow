@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Threading;
+using Testflow.SlaveCore.Common;
+using Testflow.SlaveCore.Data;
 using Testflow.SlaveCore.Debugger;
 using Testflow.SlaveCore.Runner.Model;
 
@@ -11,6 +13,8 @@ namespace Testflow.SlaveCore.Coroutine
         public int Id { get; }
         private readonly AutoResetEvent _blockEvent;
 
+        public ExecutionTrack ExecutionTracker { get; }
+
         public event Action<StepTaskEntityBase> PreListener;
         public event Action<StepTaskEntityBase> PostListener;
 
@@ -19,6 +23,7 @@ namespace Testflow.SlaveCore.Coroutine
             this.State = CoroutineState.Idle;
             this.Id = id;
             this._blockEvent = new AutoResetEvent(false);
+//            this.ExecutionTracker = new ExecutionTrack(Constants.ExecutionTrackerSize);
         }
 
         public void WaitSignal()
@@ -46,6 +51,7 @@ namespace Testflow.SlaveCore.Coroutine
         public void Dispose()
         {
             _blockEvent.Dispose();
+            ExecutionTracker.Dispose();
         }
     }
 }

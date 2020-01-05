@@ -57,6 +57,7 @@
     <Compile Include="Data\EventInfos\ExceptionEventInfo.cs" />
     <Compile Include="Data\HostInfo.cs" />
     <Compile Include="Data\EventInfos\EventInfoBase.cs" />
+    <Compile Include="Data\OverLapBuffer.cs" />
     <Compile Include="Data\PerformanceData.cs" />
     <Compile Include="Data\SequenceFailedInfo.cs" />
     <Compile Include="Data\SyncResourceInfo.cs" />

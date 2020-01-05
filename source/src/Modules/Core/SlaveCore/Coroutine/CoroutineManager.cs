@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading;
 using Testflow.SlaveCore.Common;
+using Testflow.SlaveCore.Data;
 using Testflow.Usr;
 
 namespace Testflow.SlaveCore.Coroutine
@@ -31,6 +32,18 @@ namespace Testflow.SlaveCore.Coroutine
         public CoroutineHandle GetCoroutineHandle(int coroutineId)
         {
             return _coroutineHandles[coroutineId];
+        }
+
+        // 获取最后一个执行的Step
+        public StepExecutionInfo GetLastStepInfo(int coroutineId)
+        {
+            return _coroutineHandles[coroutineId].ExecutionTracker.GetLastStep(1);
+        }
+
+        // 获取最后一个没有成功执行的Step
+        public StepExecutionInfo GetLastNAtepInfo(int coroutineId)
+        {
+            return _coroutineHandles[coroutineId].ExecutionTracker.GetLastNotAvailableStep();
         }
 
         public void Dispose()
