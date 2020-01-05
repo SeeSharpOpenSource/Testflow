@@ -47,6 +47,7 @@ namespace Testflow.SlaveCore.Runner.Model
                         if (!forceInvoke && Context.Cancellation.IsCancellationRequested)
                         {
                             this.Result = StepResult.Abort;
+                            RecordRuntimeStatus();
                             return;
                         }
                         // 调用前置监听
