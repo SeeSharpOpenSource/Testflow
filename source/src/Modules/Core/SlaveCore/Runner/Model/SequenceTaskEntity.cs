@@ -109,7 +109,7 @@ namespace Testflow.SlaveCore.Runner.Model
                 currentStep?.EndTiming();
                 FillFinalExceptionReportInfo(ex, out finalReportType, out lastStepResult, out failedInfo);
                 // 如果抛出TargetInvokcationException到当前位置则说明内部没有发送错误事件
-                if (null != currentStep && currentStep.BreakIfFailed)
+                if (null != currentStep && currentStep.Result == StepResult.NotAvailable)
                 {
                     currentStep.SetStatusAndSendErrorEvent(lastStepResult, failedInfo);
                 }
@@ -121,7 +121,7 @@ namespace Testflow.SlaveCore.Runner.Model
                 currentStep?.EndTiming();
                 FillFinalExceptionReportInfo(ex, out finalReportType, out lastStepResult, out failedInfo);
                 // 如果抛出TargetInvokcationException到当前位置则说明内部没有发送错误事件
-                if (null != currentStep && currentStep.BreakIfFailed)
+                if (null != currentStep && currentStep.Result == StepResult.NotAvailable)
                 {
                     currentStep.SetStatusAndSendErrorEvent(lastStepResult, failedInfo);
                 }
@@ -142,7 +142,7 @@ namespace Testflow.SlaveCore.Runner.Model
                 currentStep?.EndTiming();
                 FillFinalExceptionReportInfo(ex.InnerException, out finalReportType, out lastStepResult, out failedInfo);
                 // 如果抛出TargetInvokcationException到当前位置则说明内部没有发送错误事件
-                if (null != currentStep && currentStep.BreakIfFailed)
+                if (null != currentStep && currentStep.Result == StepResult.NotAvailable)
                 {
                     currentStep.SetStatusAndSendErrorEvent(lastStepResult, failedInfo);
                 }
