@@ -11,6 +11,7 @@ using Testflow.Data;
 using Testflow.Data.Sequence;
 using Testflow.Runtime;
 using Testflow.Runtime.Data;
+using Testflow.SlaveCore.Data;
 using Testflow.SlaveCore.Runner.Model;
 
 namespace Testflow.SlaveCore.Common
@@ -314,6 +315,95 @@ namespace Testflow.SlaveCore.Common
         public static bool IsStepFailed(StepResult result)
         {
             return result > StepResult.Pass;
+        }
+
+
+        public static RuntimeState GetRuntimeState(FailedType failedType)
+        {
+            RuntimeState state;
+            switch (failedType)
+            {
+                case FailedType.AssertionFailed:
+                case FailedType.ForceFailed:
+                    state = RuntimeState.Failed;
+                    break;
+                case FailedType.TestGenFailed:
+                case FailedType.TargetError:
+                case FailedType.SetUpFailed:
+                case FailedType.RetryFailed:
+                case FailedType.RuntimeError:
+                case FailedType.TimeOut:
+                    state = RuntimeState.Error;
+                    break;
+                case FailedType.Abort:
+                    state = RuntimeState.Abort;
+                    break;
+                default:
+                    state = RuntimeState.Error;
+                    break;
+            }
+            return state;
+        }
+
+        public static StepResult GetStepResult(FailedType failedType)
+        {
+            StepResult result;
+            switch (failedType)
+            {
+                case FailedType.AssertionFailed:
+                case FailedType.ForceFailed:
+                    result = StepResult.Failed;
+                    break;
+                case FailedType.TestGenFailed:
+                case FailedType.TargetError:
+                case FailedType.SetUpFailed:
+                case FailedType.RetryFailed:
+                case FailedType.RuntimeError:
+                    result = StepResult.Error;
+                    break;
+                case FailedType.TimeOut:
+                    result = StepResult.Timeout;
+                    break;
+                case FailedType.Abort:
+                    result = StepResult.Abort;
+                    break;
+                default:
+                    result = StepResult.Error;
+                    break;
+            }
+            return result;
+        }
+
+        public static StatusReportType GetReportType(FailedType failedType)
+        {
+            StatusReportType reportType;
+            switch (failedType)
+            {
+                case FailedType.AssertionFailed:
+                case FailedType.ForceFailed:
+                    reportType = StatusReportType.Failed;
+                    break;
+                case FailedType.TestGenFailed:
+                case FailedType.TargetError:
+                case FailedType.SetUpFailed:
+                case FailedType.RetryFailed:
+                case FailedType.RuntimeError:
+                case FailedType.TimeOut:
+                case FailedType.Abort:
+                    reportType = StatusReportType.Error;
+                    break;
+                default:
+                    reportType = StatusReportType.Error;
+                    break;
+            }
+            return reportType;
+        }
+
+        public static bool IsErrorCanBeHandled(FailedType failedType)
+        {
+            return failedType == FailedType.AssertionFailed || failedType == FailedType.ForceFailed ||
+                   failedType == FailedType.TargetError ||
+                   failedType == FailedType.RetryFailed;
         }
     }
 }

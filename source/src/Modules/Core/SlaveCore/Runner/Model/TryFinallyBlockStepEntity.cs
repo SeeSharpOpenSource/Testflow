@@ -14,13 +14,6 @@ namespace Testflow.SlaveCore.Runner.Model
         {
             // 重置计时
             Actuator.ResetTiming();
-            // 如果是取消状态并且不是强制执行则返回
-            if (!forceInvoke && Context.Cancellation.IsCancellationRequested)
-            {
-                this.Result = StepResult.Abort;
-                RecordRuntimeStatus();
-                return;
-            }
             // 调用前置监听
             OnPreListener();
 

@@ -267,6 +267,11 @@ namespace Testflow.SlaveCore.Runner.Model
                 bool notCancelled = true;
                 do
                 {
+                    // 如果是取消状态并且不是强制执行则返回
+                    if (!forceInvoke && Context.Cancellation.IsCancellationRequested)
+                    {
+                        BreakAndReportAbortMessage();
+                    }
                     if (null != variableFullName)
                     {
                         Context.VariableMapper.SetParamValue(variableFullName, StepData.LoopCounter.CounterVariable, currentIndex);
@@ -278,8 +283,25 @@ namespace Testflow.SlaveCore.Runner.Model
             }
             else
             {
+                // 如果是取消状态并且不是强制执行则返回
+                if (!forceInvoke && Context.Cancellation.IsCancellationRequested)
+                {
+                    BreakAndReportAbortMessage();
+                }
                 _invokeStepAction.Invoke(forceInvoke);
             }
+        }
+
+        // 用户Abort后执行，配置结果为Abort，重置计时，记录失败信息，抛出失败异常
+        protected void BreakAndReportAbortMessage()
+        {
+            this.Result = StepResult.Abort;
+            // 重置计时时间
+            Actuator.ResetTiming();
+            // 记录失败信息
+            RecordRuntimeStatus();
+            // 抛出异常信息
+            throw new TaskFailedException(SequenceIndex, Context.I18N.GetStr("OperationAborted"), FailedType.Abort);
         }
 
         public void EndTiming()
@@ -301,9 +323,14 @@ namespace Testflow.SlaveCore.Runner.Model
             }
             catch (TaskFailedException ex)
             {
+                // 如果该失败类型不能被处理，则直接抛出
+                if (!ModuleUtils.IsErrorCanBeHandled(ex.FailedType))
+                {
+                    throw;
+                }
                 // 停止计时
                 Actuator.EndTiming();
-                this.Result = StepResult.Failed;
+                this.Result = ModuleUtils.GetStepResult(ex.FailedType);
                 // 如果InvokeErrorAction不是Continue，则抛出异常
                 RecordInvocationError(ex, ex.FailedType);
                 HandleException(StepData.InvokeErrorAction, ex);
@@ -381,6 +408,11 @@ namespace Testflow.SlaveCore.Runner.Model
                 }
                 catch (TaskFailedException ex)
                 {
+                    // 如果该失败类型不能被处理，则直接向上抛出
+                    if (!ModuleUtils.IsErrorCanBeHandled(ex.FailedType))
+                    {
+                        throw;
+                    }
                     // 停止计时
                     Actuator.EndTiming();
                     this.Result = StepResult.RetryFailed;
@@ -444,6 +476,11 @@ namespace Testflow.SlaveCore.Runner.Model
             }
             catch (TaskFailedException ex)
             {
+                // 如果该失败类型不能被处理，则直接抛出
+                if (!ModuleUtils.IsErrorCanBeHandled(ex.FailedType))
+                {
+                    throw;
+                }
                 // 停止计时
                 Actuator.EndTiming();
                 this.Result = _isUnderRetryStep ? StepResult.RetryFailed : StepResult.Failed;
@@ -518,6 +555,11 @@ namespace Testflow.SlaveCore.Runner.Model
             }
             catch (TaskFailedException ex)
             {
+                // 如果该失败类型不能被处理，则直接抛出
+                if (!ModuleUtils.IsErrorCanBeHandled(ex.FailedType))
+                {
+                    throw;
+                }
                 // 停止计时
                 Actuator.EndTiming();
                 this.Result = StepResult.Pass;

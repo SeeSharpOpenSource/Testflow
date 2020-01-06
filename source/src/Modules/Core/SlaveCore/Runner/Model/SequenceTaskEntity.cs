@@ -94,12 +94,10 @@ namespace Testflow.SlaveCore.Runner.Model
                 _context.StatusQueue.Enqueue(startStatusInfo);
 
                 StepTaskEntityBase stepEntity = _stepEntityRoot;
-                bool notCancelled = true;
                 do
                 {
                     stepEntity.Invoke(forceInvoke);
-                    notCancelled = forceInvoke || !_context.Cancellation.IsCancellationRequested;
-                } while (null != (stepEntity = stepEntity.NextStep) && notCancelled);
+                } while (null != (stepEntity = stepEntity.NextStep));
                 SetResultState(out lastStepResult, out finalReportType, out failedInfo);
             }
             catch (TaskFailedException ex)
@@ -207,10 +205,12 @@ namespace Testflow.SlaveCore.Runner.Model
         {
             if (ex is TaskFailedException)
             {
-                this.State = RuntimeState.Failed;
-                finalReportType = StatusReportType.Failed;
-                lastStepResult = StepResult.Failed;
-                failedInfo = new FailedInfo(ex, ((TaskFailedException) ex).FailedType);
+                TaskFailedException failedException = (TaskFailedException) ex;
+                FailedType failedType = failedException.FailedType;
+                this.State = ModuleUtils.GetRuntimeState(failedType);
+                finalReportType = ModuleUtils.GetReportType(failedType);
+                lastStepResult = ModuleUtils.GetStepResult(failedType);
+                failedInfo = new FailedInfo(ex, failedType);
                 _context.LogSession.Print(LogLevel.Info, Index, "Step force failed.");
             }
             else if (ex is TestflowAssertException)
@@ -285,6 +285,7 @@ namespace Testflow.SlaveCore.Runner.Model
                     break;
             }
         }
+
 
         public void FillStatusInfo(StatusMessage message)
         {

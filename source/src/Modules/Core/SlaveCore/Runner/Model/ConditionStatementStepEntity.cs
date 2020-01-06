@@ -14,13 +14,6 @@ namespace Testflow.SlaveCore.Runner.Model
         {
             // 重置计时时间
             Actuator.ResetTiming();
-            // 如果是取消状态并且不是强制执行则返回
-            if (!forceInvoke && Context.Cancellation.IsCancellationRequested)
-            {
-                this.Result = StepResult.Abort;
-                RecordRuntimeStatus();
-                return;
-            }
             // 调用前置监听
             OnPreListener();
             this.Result = StepResult.NotAvailable;
@@ -34,27 +27,23 @@ namespace Testflow.SlaveCore.Runner.Model
             // 调用后置监听
             OnPostListener();
             object returnValue = Actuator.Return;
-            // 如果返回值不是bool类型或者返回值为false则不执行下级的Step集合
-            if (!(returnValue is bool) || !(bool) returnValue)
+            // 如果执行结果不是bool类型或者为False，或者没有下级节点，则退出当前循环
+            bool conditionFail = !(returnValue is bool) || !(bool) returnValue;
+            if (conditionFail || null == StepData || !StepData.HasSubSteps)
             {
                 return;
             }
             // 执行下级的所有Step
-            if (null != StepData && StepData.HasSubSteps)
+            StepTaskEntityBase subStepEntity = SubStepRoot;
+            do
             {
-                StepTaskEntityBase subStepEntity = SubStepRoot;
-                bool notCancelled = true;
-                do
+                if (!forceInvoke && Context.Cancellation.IsCancellationRequested)
                 {
-                    if (!forceInvoke && Context.Cancellation.IsCancellationRequested)
-                    {
-                        this.Result = StepResult.Abort;
-                        return;
-                    }
-                    subStepEntity.Invoke(forceInvoke);
-                    notCancelled = forceInvoke || !Context.Cancellation.IsCancellationRequested;
-                } while (null != (subStepEntity = subStepEntity.NextStep) && notCancelled);
-            }
+                    this.Result = StepResult.Abort;
+                    return;
+                }
+                subStepEntity.Invoke(forceInvoke);
+            } while (null != (subStepEntity = subStepEntity.NextStep));
         }
     }
 }

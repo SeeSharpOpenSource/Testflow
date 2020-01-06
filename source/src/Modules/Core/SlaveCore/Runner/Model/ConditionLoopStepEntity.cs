@@ -41,15 +41,13 @@ namespace Testflow.SlaveCore.Runner.Model
                             Context.VariableMapper.SetParamValue(_loopVariable, StepData.LoopCounter.CounterVariable,
                                 index++);
                         }
-                        // 重置计时时间
-                        Actuator.ResetTiming();
-                        // 如果是取消状态并且不是强制执行则返回
+                        // 如果是取消状态并且不是强制执行则返回。因为ConditionLoop内部有循环，所以需要在内部也做判断
                         if (!forceInvoke && Context.Cancellation.IsCancellationRequested)
                         {
-                            this.Result = StepResult.Abort;
-                            RecordRuntimeStatus();
-                            return;
+                            BreakAndReportAbortMessage();
                         }
+                        // 重置计时时间
+                        Actuator.ResetTiming();
                         // 调用前置监听
                         OnPreListener();
 
@@ -64,28 +62,24 @@ namespace Testflow.SlaveCore.Runner.Model
 
                         // 调用后置监听
                         OnPostListener();
-                        // 如果执行结果不是bool类型或者为False，则退出当前循环
+                        // 如果执行结果不是bool类型或者为False，或者没有下级节点，则退出当前循环
                         object returnValue = Actuator.Return;
-                        if (!(returnValue is bool) || !(bool) returnValue)
+                        bool conditionFail = !(returnValue is bool) || !(bool) returnValue;
+                        if (conditionFail || null == StepData || !StepData.HasSubSteps)
                         {
                             return;
                         }
                         // 执行所有的下级Step
-                        if (null != StepData && StepData.HasSubSteps)
+                        StepTaskEntityBase subStepEntity = SubStepRoot;
+                        do
                         {
-                            StepTaskEntityBase subStepEntity = SubStepRoot;
-                            bool notCancelled = true;
-                            do
+                            if (!forceInvoke && Context.Cancellation.IsCancellationRequested)
                             {
-                                if (!forceInvoke && Context.Cancellation.IsCancellationRequested)
-                                {
-                                    this.Result = StepResult.Abort;
-                                    return;
-                                }
-                                subStepEntity.Invoke(forceInvoke);
-                                notCancelled = forceInvoke || !Context.Cancellation.IsCancellationRequested;
-                            } while (null != (subStepEntity = subStepEntity.NextStep) && notCancelled);
-                        }
+                                this.Result = StepResult.Abort;
+                                return;
+                            }
+                            subStepEntity.Invoke(forceInvoke);
+                        } while (null != (subStepEntity = subStepEntity.NextStep));
                     }
                 }
                 catch (TestflowLoopBreakException ex)

@@ -29,13 +29,6 @@ namespace Testflow.SlaveCore.Runner.Model
         {
             // 重置计时时间
             Actuator.ResetTiming();
-            // 如果是取消状态并且不是强制执行则返回
-            if (!forceInvoke && Context.Cancellation.IsCancellationRequested)
-            {
-                this.Result = StepResult.Abort;
-                RecordRuntimeStatus();
-                return;
-            }
             // 调用前置监听
             OnPreListener();
 
@@ -54,7 +47,6 @@ namespace Testflow.SlaveCore.Runner.Model
             if (null != StepData && StepData.HasSubSteps)
             {
                 StepTaskEntityBase subStepEntity = SubStepRoot;
-                bool notCancelled = true;
                 do
                 {
                     if (!forceInvoke && Context.Cancellation.IsCancellationRequested)
@@ -62,8 +54,7 @@ namespace Testflow.SlaveCore.Runner.Model
                         return;
                     }
                     subStepEntity.Invoke(forceInvoke);
-                    notCancelled = forceInvoke || !Context.Cancellation.IsCancellationRequested;
-                } while (null != (subStepEntity = subStepEntity.NextStep) && notCancelled);
+                } while (null != (subStepEntity = subStepEntity.NextStep));
             }
         }
 
