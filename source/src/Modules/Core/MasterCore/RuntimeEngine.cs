@@ -1,9 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using Testflow.Usr;
-using Testflow.CoreCommon;
 using Testflow.CoreCommon.Common;
-using Testflow.CoreCommon.Data;
 using Testflow.Data.Sequence;
 using Testflow.MasterCore.Common;
 using Testflow.MasterCore.Core;
@@ -196,9 +196,26 @@ namespace Testflow.MasterCore
             }
         }
 
-        public void AbortRuntime(int session)
+        public void AbortRuntime(int sessionId)
         {
-            _controller.Abort(session);
+            // 如果全局状态不能Abort则返回
+            if (!ModuleUtils.CanBeAborted(_globalInfo.StateMachine.State))
+            {
+                return;
+            }
+            if (sessionId == CommonConst.TestGroupSession || sessionId == CommonConst.BroadcastSession)
+            {
+                this._globalInfo.StateMachine.State = RuntimeState.AbortRequested;
+                List<int> sessionIds = new List<int>(_controller.TestMaintainer.TestContainers.Keys);
+                foreach (int session in sessionIds.Where(session => ModuleUtils.CanBeAborted(_statusManager[session].State)))
+                {
+                    _controller.Abort(session);
+                }
+            }
+            else if (ModuleUtils.CanBeAborted(_statusManager[sessionId].State))
+            {
+                _controller.Abort(sessionId);
+            }
         }
 
         private int _stopFlag = 0;

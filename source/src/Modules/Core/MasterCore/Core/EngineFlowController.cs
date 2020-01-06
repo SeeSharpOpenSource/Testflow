@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Threading;
 using Testflow.CoreCommon;
 using Testflow.Usr;
@@ -37,8 +36,6 @@ namespace Testflow.MasterCore.Core
             _testsMaintainer = new LocalTestEntityMaintainer(_globalInfo, _blockHandle);
             
         }
-
-        
 
         public ITestEntityMaintainer TestMaintainer => _testsMaintainer;
 
@@ -255,40 +252,27 @@ namespace Testflow.MasterCore.Core
 
         public void Abort(int sessionId)
         {
-            this._globalInfo.StateMachine.State = RuntimeState.AbortRequested;
-            if (sessionId == CommonConst.TestGroupSession || sessionId == CommonConst.BroadcastSession)
+            ControlMessage abortMessage = new ControlMessage(MessageNames.CtrlAbort, CommonConst.BroadcastSession);
+            abortMessage.AddParam("IsRequest", true.ToString());
+            abortMessage.Id = sessionId;
+            _globalInfo.MessageTransceiver.Send(abortMessage);
+
+            AbortEventInfo abortEventInfo = new AbortEventInfo(sessionId, true, false);
+            _globalInfo.EventQueue.Enqueue(abortEventInfo);
+
+            if (null == _abortBlocker)
             {
-                List<int> sessionIds = new List<int>(_testsMaintainer.TestContainers.Keys);
-                foreach (int session in sessionIds)
-                {
-                    Abort(session);
-                }
+                _abortBlocker = new BlockHandle();
             }
-            else
+            // 目前使用同步Abort，每次只能释放一个
+            _abortBlocker.Timeout = _globalInfo.ConfigData.GetProperty<int>("AbortTimeout");
+            bool isNotTimeout = _abortBlocker.Wait(Constants.AbortState);
+            if (!isNotTimeout)
             {
-                ControlMessage abortMessage = new ControlMessage(MessageNames.CtrlAbort, CommonConst.BroadcastSession);
-                abortMessage.AddParam("IsRequest", true.ToString());
-                abortMessage.Id = sessionId;
-                _globalInfo.MessageTransceiver.Send(abortMessage);
-
-                AbortEventInfo abortEventInfo = new AbortEventInfo(sessionId, true, false);
-                _globalInfo.EventQueue.Enqueue(abortEventInfo);
-
-                if (null == _abortBlocker)
-                {
-                    _abortBlocker = new BlockHandle();
-                }
-                // 目前使用同步Abort，每次只能释放一个
-                _abortBlocker.Timeout = _globalInfo.ConfigData.GetProperty<int>("AbortTimeout");
-                bool isNotTimeout = _abortBlocker.Wait(Constants.AbortState);
-                if (!isNotTimeout)
-                {
-                    _globalInfo.LogService.Print(LogLevel.Warn, CommonConst.PlatformLogSession, 
-                        $"Session {sessionId} abort timeout.");
-                }
+                _globalInfo.LogService.Print(LogLevel.Warn, CommonConst.PlatformLogSession,
+                    $"Session {sessionId} abort timeout.");
             }
         }
-
 
         public void WaitForTaskOver()
         {

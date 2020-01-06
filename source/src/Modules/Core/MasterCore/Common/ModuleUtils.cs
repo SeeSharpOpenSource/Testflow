@@ -327,5 +327,10 @@ namespace Testflow.MasterCore.Common
             }
             return variable ?? sequenceGroup.Variables.FirstOrDefault(item => item.Name == variableName);
         }
+
+        public static bool CanBeAborted(RuntimeState state)
+        {
+            return state < RuntimeState.AbortRequested;
+        }
     }
 }
