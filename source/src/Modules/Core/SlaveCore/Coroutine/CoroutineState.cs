@@ -8,21 +8,21 @@
         /// <summary>
         /// 空闲
         /// </summary>
-        Idle,
+        Idle = 0,
 
         /// <summary>
         /// 运行中
         /// </summary>
-        Running,
+        Running = 1,
 
         /// <summary>
         /// 阻塞
         /// </summary>
-        Blocked,
+        Blocked = 2,
 
         /// <summary>
         /// 结束
         /// </summary>
-        Over
+        Over = 3
     }
 }

@@ -34,6 +34,26 @@ namespace Testflow.SlaveCore.Coroutine
             return _coroutineHandles[coroutineId];
         }
 
+        public void StartCoroutine(int coroutineId)
+        {
+            _coroutineHandles[coroutineId].Start();
+        }
+
+        public void PauseCoroutine(int coroutineId)
+        {
+            _coroutineHandles[coroutineId].Pause();
+        }
+
+        public void ContinueCoroutine(int coroutineId)
+        {
+            _coroutineHandles[coroutineId].Continue();
+        }
+
+        public void StopCoroutine(int coroutineId)
+        {
+            _coroutineHandles[coroutineId].Stop();
+        }
+
         // 获取最后一个执行的Step
         public StepExecutionInfo GetLastStepInfo(int coroutineId)
         {
