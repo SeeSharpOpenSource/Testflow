@@ -65,6 +65,8 @@
     <Compile Include="Data\ReportType.cs" />
     <Compile Include="Data\Sequence\IArgumentCollection.cs" />
     <Compile Include="Data\Sequence\IArgument.cs" />
+    <Compile Include="Data\Sequence\IExpressionData.cs" />
+    <Compile Include="Data\Sequence\IExpressionElement.cs" />
     <Compile Include="Data\Sequence\IFunctionData.cs" />
     <Compile Include="Data\Sequence\IParameterData.cs" />
     <Compile Include="Data\Sequence\IParameterDataCollection.cs" />

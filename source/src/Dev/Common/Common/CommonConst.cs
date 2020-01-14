@@ -130,5 +130,10 @@
         /// </summary>
         public const string NullValue = "NULL";
 
+        /// <summary>
+        /// 无效操作符，表达式默认值
+        /// </summary>
+        public const string NAOperator = "";
+
     }
 }

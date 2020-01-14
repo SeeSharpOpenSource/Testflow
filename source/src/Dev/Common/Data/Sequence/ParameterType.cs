@@ -5,7 +5,6 @@
     /// </summary>
     public enum ParameterType
     {
-
         /// <summary>
         /// 不可用
         /// </summary>
@@ -19,6 +18,11 @@
         /// <summary>
         /// 参数是传的变量
         /// </summary>
-        Variable = 1
+        Variable = 1,
+
+        /// <summary>
+        /// 表达式类型
+        /// </summary>
+        Expression = 2
     }
 }

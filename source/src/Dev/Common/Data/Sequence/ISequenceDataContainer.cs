@@ -11,6 +11,6 @@ namespace Testflow.Data.Sequence
         /// <summary>
         /// 使用所属序列对象初始化
         /// </summary>
-        void Initialize(ISequenceFlowContainer flowContainer);
+        void Initialize(ISequenceFlowContainer parent);
     }
 }
