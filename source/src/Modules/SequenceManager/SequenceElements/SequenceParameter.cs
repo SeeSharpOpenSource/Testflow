@@ -23,9 +23,9 @@ namespace Testflow.SequenceManager.SequenceElements
         [RuntimeType(typeof(VariableInitValueCollection))]
         public IList<IVariableInitValue> VariableValues { get; set; }
 
-        public void Initialize(ISequenceFlowContainer flowContainer)
+        public void Initialize(ISequenceFlowContainer parent)
         {
-            ISequence sequence = flowContainer as ISequence;
+            ISequence sequence = parent as ISequence;
             this.Index = sequence.Index;
 
             this.StepParameters = new SequenceStepParameterCollection();

@@ -686,31 +686,92 @@ namespace Testflow.SequenceManager.Common
             }
         }
 
-//
-//        public static void FillCollectionDeserializationInfo(SerializationInfo info, object obj, Type type)
-//        {
-//            const string addMethodName = "Add";
-//            Type[] arguments = type.GetGenericArguments();
-//            if (0 == arguments.Length)
-//            {
-//                throw new InvalidOperationException();
-//            }
-//            Type elementType = arguments[0];
-//            Type realElementType = arguments[0];
-//            GenericCollectionAttribute genericAttribute;
-//            if (null != (genericAttribute = elementType.GetCustomAttribute<GenericCollectionAttribute>()))
-//            {
-//                realElementType = genericAttribute.GenericType;
-//            }
-//            MethodInfo addMethod = type.GetMethod(addMethodName, BindingFlags.Instance | BindingFlags.Public, null,
-//                CallingConventions.Standard, new Type[] { elementType }, new ParameterModifier[0]);
-//
-//            SerializationInfoEnumerator enumerator = info.GetEnumerator();
-//            while (enumerator.MoveNext())
-//            {
-//                info.get
-//            }
-//        }
+        //
+        //        public static void FillCollectionDeserializationInfo(SerializationInfo info, object obj, Type type)
+        //        {
+        //            const string addMethodName = "Add";
+        //            Type[] arguments = type.GetGenericArguments();
+        //            if (0 == arguments.Length)
+        //            {
+        //                throw new InvalidOperationException();
+        //            }
+        //            Type elementType = arguments[0];
+        //            Type realElementType = arguments[0];
+        //            GenericCollectionAttribute genericAttribute;
+        //            if (null != (genericAttribute = elementType.GetCustomAttribute<GenericCollectionAttribute>()))
+        //            {
+        //                realElementType = genericAttribute.GenericType;
+        //            }
+        //            MethodInfo addMethod = type.GetMethod(addMethodName, BindingFlags.Instance | BindingFlags.Public, null,
+        //                CallingConventions.Standard, new Type[] { elementType }, new ParameterModifier[0]);
+        //
+        //            SerializationInfoEnumerator enumerator = info.GetEnumerator();
+        //            while (enumerator.MoveNext())
+        //            {
+        //                info.get
+        //            }
+        //        }
+
+        #endregion
+
+        #region 表达式相关
+
+        // 变量名和属性的分隔符
+        const char VariableDelim = '.';
+
+        /// <summary>
+        /// 变量名称是否有效
+        /// </summary>
+        public static bool IsValidVariable(string value)
+        {
+            return !string.IsNullOrWhiteSpace(value) && !value.StartsWith(VariableDelim.ToString());
+        }
+
+        public static bool IsAccessableVariable(ISequenceFlowContainer parent, string variable)
+        {
+            if (null == parent || !IsValidVariable(variable))
+            {
+                return false;
+            }
+            variable = variable.Trim();
+            // 如果存在取属性操作，则获取变量的名字
+            if (variable.Contains(VariableDelim))
+            {
+                string[] elems = variable.Split(VariableDelim);
+                variable = elems[0];
+            }
+            return HasVariableInSequence(parent, variable);
+        }
+
+        private static bool HasVariableInSequence(ISequenceFlowContainer sequenceData, string variable)
+        {
+            if (null == sequenceData)
+            {
+                return false;
+            }
+            if (sequenceData is ISequence)
+            {
+                ISequence sequence = sequenceData as ISequence;
+                // 如果存在则返回true
+                if (sequence.Variables.Any(item => item.Name.Equals(variable)))
+                {
+                    return true;
+                }
+                // 不存在时向上级查找
+                return HasVariableInSequence(sequence.Parent, variable);
+            }
+            else if (sequenceData is ISequenceGroup)
+            {
+                ISequenceGroup sequenceGroup = sequenceData as ISequenceGroup;
+                return sequenceGroup.Variables.Any(item => item.Name.Equals(variable));
+            }
+            else if (sequenceData is ITestProject)
+            {
+                ITestProject testProject = sequenceData as ITestProject;
+                return testProject.Variables.Any(item => item.Name.Equals(variable));
+            }
+            return false;
+        }
 
         #endregion
 

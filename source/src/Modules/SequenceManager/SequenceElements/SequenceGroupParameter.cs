@@ -80,9 +80,9 @@ namespace Testflow.SequenceManager.SequenceElements
             return parameter;
         }
 
-        public void Initialize(ISequenceFlowContainer flowContainer)
+        public void Initialize(ISequenceFlowContainer parent)
         {
-            ISequenceGroup sequenceGroup = flowContainer as ISequenceGroup;
+            ISequenceGroup sequenceGroup = parent as ISequenceGroup;
 
             this.Info.Hash = sequenceGroup.Info.Hash;
             this.Info.Modified = true;

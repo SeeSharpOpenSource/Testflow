@@ -65,6 +65,8 @@
     <Compile Include="Common\ModuleUtils.cs" />
     <Compile Include="Common\Constants.cs" />
     <Compile Include="DirectoryHelper.cs" />
+    <Compile Include="Expression\ExpressionOperatorItem.cs" />
+    <Compile Include="Expression\ExpressionElement.cs" />
     <Compile Include="Resources\locale\i18n_sequence_zh.Designer.cs">
       <DependentUpon>i18n_sequence_zh.resx</DependentUpon>
       <AutoGen>True</AutoGen>
@@ -80,6 +82,7 @@
     <Compile Include="SequenceElements\ArgumentCollection.cs" />
     <Compile Include="SequenceElements\AssemblyInfo.cs" />
     <Compile Include="SequenceElements\AssemblyInfoCollection.cs" />
+    <Compile Include="Expression\ExpressionData.cs" />
     <Compile Include="SequenceElements\FunctionData.cs" />
     <Compile Include="SequenceElements\LoopCounter.cs" />
     <Compile Include="SequenceElements\ParameterData.cs" />
