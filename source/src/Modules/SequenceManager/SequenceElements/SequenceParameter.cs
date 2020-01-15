@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 using System.Xml.Serialization;
+using Testflow.Data.Expression;
 using Testflow.Data.Sequence;
 using Testflow.SequenceManager.Common;
 
@@ -15,6 +16,7 @@ namespace Testflow.SequenceManager.SequenceElements
             this.Index = Constants.UnverifiedIndex;
             this.StepParameters = null;
             this.VariableValues = null;
+            this.Expressions = null;
         }
 
         public int Index { get; set; }
@@ -22,12 +24,13 @@ namespace Testflow.SequenceManager.SequenceElements
         public IList<ISequenceStepParameter> StepParameters { get; set; }
         [RuntimeType(typeof(VariableInitValueCollection))]
         public IList<IVariableInitValue> VariableValues { get; set; }
+        [RuntimeType(typeof(ExpressionCollection))]
+        public IExpressionCollection Expressions { get; set; }
 
         public void Initialize(ISequenceFlowContainer parent)
         {
             ISequence sequence = parent as ISequence;
             this.Index = sequence.Index;
-
             this.StepParameters = new SequenceStepParameterCollection();
             foreach (ISequenceStep sequenceStep in sequence.Steps)
             {
@@ -35,7 +38,6 @@ namespace Testflow.SequenceManager.SequenceElements
                 stepParameter.Initialize(sequenceStep);
                 this.StepParameters.Add(stepParameter);
             }
-
             this.VariableValues = new VariableInitValueCollection();
             foreach (IVariable variable in sequence.Variables)
             {
@@ -46,6 +48,7 @@ namespace Testflow.SequenceManager.SequenceElements
                 initValue.Initialize(variable);
                 this.VariableValues.Add(initValue);
             }
+            this.Expressions = sequence.Expressions;
         }
 
         public ISequenceDataContainer Clone()

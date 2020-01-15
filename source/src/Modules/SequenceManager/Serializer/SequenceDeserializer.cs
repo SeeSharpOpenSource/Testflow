@@ -167,7 +167,7 @@ namespace Testflow.SequenceManager.Serializer
                 }
                 variable.Value = parameter.VariableValues[i].Value;
             }
-
+            sequenece.Expressions = parameter.Expressions;
             for (int i = 0; i < sequenece.Steps.Count; i++)
             {
                 SetParameterToSequenceData(sequenece.Steps[i], parameter.StepParameters[i]);

@@ -2,6 +2,7 @@
 using System.Runtime.Serialization;
 using Testflow.Data.Expression;
 using Testflow.Data.Sequence;
+using Testflow.SequenceManager.Common;
 using Testflow.SequenceManager.SequenceElements;
 using Testflow.Usr;
 
@@ -11,7 +12,7 @@ namespace Testflow.SequenceManager.Expression
     /// 表达式数据
     /// </summary>
     [Serializable]
-    public class Expression : IExpression
+    public class ExpressionData : IExpressionData
     {
         /// <summary>
         /// 表达式的名称
@@ -59,7 +60,7 @@ namespace Testflow.SequenceManager.Expression
 
         private ISequenceFlowContainer _parent;
 
-        public Expression()
+        public ExpressionData()
         {
             this.Name = string.Empty;
             this.Source = new ExpressionElement();
@@ -79,7 +80,7 @@ namespace Testflow.SequenceManager.Expression
             return true;
         }
 
-        public Expression(SerializationInfo info, StreamingContext context)
+        public ExpressionData(SerializationInfo info, StreamingContext context)
         {
             info.AddValue("Name", Name, typeof(string));
             info.AddValue("Source", Source, typeof(ExpressionElement));
@@ -97,7 +98,7 @@ namespace Testflow.SequenceManager.Expression
 
         public ISequenceDataContainer Clone()
         {
-            Expression data = new Expression()
+            ExpressionData data = new ExpressionData()
             {
                 Name = string.Empty,
                 Operation = this.Operation,
@@ -110,8 +111,12 @@ namespace Testflow.SequenceManager.Expression
         public void Initialize(ISequenceFlowContainer parent)
         {
             this._parent = parent;
-            this.Source?.Initialize(_parent);
-            this.Target?.Initialize(_parent);
+            ISequence sequence = parent as ISequence;
+            if (null != sequence)
+            {
+                this.Source?.Initialize(_parent);
+                this.Target?.Initialize(_parent);
+            }
         }
     }
 }

@@ -82,7 +82,7 @@
     <Compile Include="SequenceElements\ArgumentCollection.cs" />
     <Compile Include="SequenceElements\AssemblyInfo.cs" />
     <Compile Include="SequenceElements\AssemblyInfoCollection.cs" />
-    <Compile Include="Expression\Expression.cs" />
+    <Compile Include="Expression\ExpressionData.cs" />
     <Compile Include="SequenceElements\FunctionData.cs" />
     <Compile Include="SequenceElements\LoopCounter.cs" />
     <Compile Include="SequenceElements\ParameterData.cs" />
@@ -108,6 +108,7 @@
     <Compile Include="SequenceElements\TypeData.cs" />
     <Compile Include="SequenceElements\TypeDataCollection.cs" />
     <Compile Include="SequenceElements\Variable.cs" />
+    <Compile Include="SequenceElements\ExpressionCollection.cs" />
     <Compile Include="SequenceElements\VariableCollection.cs" />
     <Compile Include="SequenceElements\VariableInitValue.cs" />
     <Compile Include="SequenceElements\VariableInitValueCollection.cs" />

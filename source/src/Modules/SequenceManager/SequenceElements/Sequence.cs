@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Xml.Serialization;
+using Testflow.Data.Expression;
 using Testflow.Usr;
 using Testflow.Data.Sequence;
 using Testflow.SequenceManager.Common;
@@ -18,6 +19,7 @@ namespace Testflow.SequenceManager.SequenceElements
             this.Parent = null;
             this.Index = Constants.UnverifiedIndex;
             this.Variables = new VariableCollection();
+            this.Expressions = new ExpressionCollection();
             this.Steps = new SequenceStepCollection();
             this.Behavior = RunBehavior.Normal;
         }
@@ -37,6 +39,11 @@ namespace Testflow.SequenceManager.SequenceElements
 
         [RuntimeType(typeof(VariableCollection))]
         public IVariableCollection Variables { get; set; }
+
+        [XmlIgnore]
+        [SerializationIgnore]
+        [RuntimeType(typeof(ExpressionCollection))]
+        public IExpressionCollection Expressions { get; set; }
 
         [RuntimeType(typeof(SequenceStepCollection))]
         public ISequenceStepCollection Steps { get; set; }

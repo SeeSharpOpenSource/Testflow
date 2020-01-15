@@ -55,11 +55,11 @@ namespace Testflow.SequenceManager.Expression
             }
         }
 
-        private IExpression _expression;
+        private IExpressionData _expression;
         /// <summary>
         /// 表达式元素的值，仅在Type为Expression时生效
         /// </summary>
-        public IExpression Expression
+        public IExpressionData Expression
         {
             get { return _expression; }
             set
@@ -129,7 +129,7 @@ namespace Testflow.SequenceManager.Expression
                     info.AddValue("Value", Value);
                     break;
                 case ParameterType.Expression:
-                    info.AddValue("Expression", Expression, typeof(Expression));
+                    info.AddValue("Expression", Expression, typeof(ExpressionData));
                     break;
                 default:
                     break;
@@ -157,7 +157,7 @@ namespace Testflow.SequenceManager.Expression
                     this.Value = info.GetString("Value");
                     break;
                 case ParameterType.Expression:
-                    this.Expression = (Expression) info.GetValue("Expression", typeof (Expression));
+                    this.Expression = (ExpressionData) info.GetValue("Expression", typeof (ExpressionData));
                     break;
                 default:
                     break;
