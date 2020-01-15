@@ -1,4 +1,6 @@
-﻿namespace Testflow.Data.Sequence
+﻿using Testflow.Data.Sequence;
+
+namespace Testflow.Data.Expression
 {
     /// <summary>
     /// 表达式数据

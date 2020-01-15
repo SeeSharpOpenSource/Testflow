@@ -1,6 +1,6 @@
-﻿using Testflow.Usr;
+﻿using Testflow.Data.Sequence;
 
-namespace Testflow.Data.Sequence
+namespace Testflow.Data.Expression
 {
     /// <summary>
     /// 表达式元素
