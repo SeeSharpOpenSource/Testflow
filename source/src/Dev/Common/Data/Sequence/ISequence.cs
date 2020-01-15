@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Xml.Serialization;
+using Testflow.Data.Expression;
 
 namespace Testflow.Data.Sequence
 {
@@ -18,6 +19,11 @@ namespace Testflow.Data.Sequence
         /// 序列的变量集合
         /// </summary>
         IVariableCollection Variables { get; set; }
+
+        /// <summary>
+        /// 表达式集合
+        /// </summary>
+        IExpressionCollection Expressions { get; set; }
 
         /// <summary>
         /// 测试的步骤集合
