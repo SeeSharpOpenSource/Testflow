@@ -11,7 +11,7 @@ namespace Testflow.SequenceManager.Expression
     /// 表达式数据
     /// </summary>
     [Serializable]
-    public class ExpressionData : IExpressionData
+    public class Expression : IExpression
     {
         /// <summary>
         /// 表达式的名称
@@ -59,7 +59,7 @@ namespace Testflow.SequenceManager.Expression
 
         private ISequenceFlowContainer _parent;
 
-        public ExpressionData()
+        public Expression()
         {
             this.Name = string.Empty;
             this.Source = new ExpressionElement();
@@ -79,7 +79,7 @@ namespace Testflow.SequenceManager.Expression
             return true;
         }
 
-        public ExpressionData(SerializationInfo info, StreamingContext context)
+        public Expression(SerializationInfo info, StreamingContext context)
         {
             info.AddValue("Name", Name, typeof(string));
             info.AddValue("Source", Source, typeof(ExpressionElement));
@@ -97,7 +97,7 @@ namespace Testflow.SequenceManager.Expression
 
         public ISequenceDataContainer Clone()
         {
-            ExpressionData data = new ExpressionData()
+            Expression data = new Expression()
             {
                 Name = string.Empty,
                 Operation = this.Operation,

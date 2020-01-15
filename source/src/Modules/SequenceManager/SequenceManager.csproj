@@ -82,7 +82,7 @@
     <Compile Include="SequenceElements\ArgumentCollection.cs" />
     <Compile Include="SequenceElements\AssemblyInfo.cs" />
     <Compile Include="SequenceElements\AssemblyInfoCollection.cs" />
-    <Compile Include="Expression\ExpressionData.cs" />
+    <Compile Include="Expression\Expression.cs" />
     <Compile Include="SequenceElements\FunctionData.cs" />
     <Compile Include="SequenceElements\LoopCounter.cs" />
     <Compile Include="SequenceElements\ParameterData.cs" />
