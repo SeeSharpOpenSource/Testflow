@@ -20,7 +20,7 @@ namespace Testflow.Data.Expression
         /// <summary>
         /// 表达式元素的值，仅在Type为Expression时生效
         /// </summary>
-        IExpression Expression { get; set; }
+        IExpressionData Expression { get; set; }
 
         /// <summary>
         /// 返回当前表达式元素是否可操作

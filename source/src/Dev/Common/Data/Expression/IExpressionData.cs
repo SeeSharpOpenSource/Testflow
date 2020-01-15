@@ -5,7 +5,7 @@ namespace Testflow.Data.Expression
     /// <summary>
     /// 表达式数据
     /// </summary>
-    public interface IExpression : ISequenceDataContainer
+    public interface IExpressionData : ISequenceDataContainer
     {
         /// <summary>
         /// 表达式的名称
