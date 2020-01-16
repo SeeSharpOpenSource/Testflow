@@ -120,6 +120,9 @@
   <data name="CannotLoadType" xml:space="preserve">
     <value>Cannot load type '{0}'.</value>
   </data>
+  <data name="InvalidCalculator" xml:space="preserve">
+    <value>Calculator class '{0}' is not a IExpressionCalculator.</value>
+  </data>
   <data name="InvalidDotNetDir" xml:space="preserve">
     <value>Invalid .net framework directory.</value>
   </data>

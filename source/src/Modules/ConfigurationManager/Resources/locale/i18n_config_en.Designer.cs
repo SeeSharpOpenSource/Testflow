@@ -70,6 +70,15 @@ namespace Testflow.ConfigurationManager.Resources.locale {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Calculator class &apos;{0}&apos; is not a IExpressionCalculator..
+        /// </summary>
+        internal static string InvalidCalculator {
+            get {
+                return ResourceManager.GetString("InvalidCalculator", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Invalid .net framework directory..
         /// </summary>
         internal static string InvalidDotNetDir {

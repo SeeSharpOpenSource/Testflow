@@ -120,6 +120,9 @@
   <data name="CannotLoadType" xml:space="preserve">
     <value>加载类型“{0}”失败。</value>
   </data>
+  <data name="InvalidCalculator" xml:space="preserve">
+    <value>表达式计算类 “{0}”未继承自表达式计算基类： IExpressionCalculator。</value>
+  </data>
   <data name="InvalidDotNetDir" xml:space="preserve">
     <value>无效的.NET根目录。</value>
   </data>

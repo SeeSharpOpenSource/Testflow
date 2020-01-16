@@ -7,6 +7,7 @@ using System.Xml;
 using System.Xml.Serialization;
 using Microsoft.Win32;
 using Testflow.ConfigurationManager.Data;
+using Testflow.Data.Expression;
 using Testflow.Modules;
 using Testflow.Runtime;
 using Testflow.Usr;
@@ -168,6 +169,19 @@ namespace Testflow.ConfigurationManager
                 workspaceDirList.Add(dirPath);
             }
             configData.SetConfigItem(Constants.GlobalConfig, "WorkspaceDir", workspaceDirList.ToArray());
+        }
+
+        // 获取表达式描述信息
+        public ExpressionOperatorCollection LoadExpressionTokens(string filePath)
+        {
+            ExpressionOperatorCollection expressionTokens;
+            using (FileStream fileStream = new FileStream(filePath, FileMode.Open))
+            {
+                XmlSerializer xmlSerializer = new XmlSerializer(typeof(ExpressionOperatorCollection),
+                    new Type[] { typeof(ExpressionOperatorInfo)});
+                expressionTokens = xmlSerializer.Deserialize(fileStream) as ExpressionOperatorCollection;
+            }
+            return expressionTokens;
         }
 
         private void AddExtraDataMaintainConfigData(GlobalConfigData globalConfigData)

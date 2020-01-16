@@ -70,6 +70,15 @@ namespace Testflow.ConfigurationManager.Resources.locale {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to 表达式计算类 “{0}”未继承自表达式计算基类： IExpressionCalculator。.
+        /// </summary>
+        internal static string InvalidCalculator {
+            get {
+                return ResourceManager.GetString("InvalidCalculator", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to 无效的.NET根目录。.
         /// </summary>
         internal static string InvalidDotNetDir {

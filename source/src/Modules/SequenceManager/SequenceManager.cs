@@ -3,9 +3,11 @@ using System.Threading;
 using Testflow.Usr;
 using Testflow.Data;
 using Testflow.Data.Description;
+using Testflow.Data.Expression;
 using Testflow.Data.Sequence;
 using Testflow.Modules;
 using Testflow.SequenceManager.Common;
+using Testflow.SequenceManager.Expression;
 using Testflow.SequenceManager.SequenceElements;
 using Testflow.SequenceManager.Serializer;
 using Testflow.SequenceManager.StepCreators;
@@ -162,6 +164,16 @@ namespace Testflow.SequenceManager
         public IVariable CreateVarialbe()
         {
             return new Variable();
+        }
+
+        public IExpressionData CreateExpression()
+        {
+            return new ExpressionData();
+        }
+
+        public IExpressionCalculator GetExpressionFunction(string functionOperator)
+        {
+            throw new NotImplementedException();
         }
 
         public IAssemblyInfo CreateAssemblyInfo()
