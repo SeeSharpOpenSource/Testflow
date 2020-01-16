@@ -3,7 +3,7 @@
     /// <summary>
     /// 表达式函数接口
     /// </summary>
-    public interface IExpressionFunction
+    public interface IExpressionCalculator
     {
         /// <summary>
         /// 表达式描述符

@@ -61,6 +61,11 @@
         public const string DataDir = "data";
 
         /// <summary>
+        /// testflow系统库目录
+        /// </summary>
+        public const string LibraryDir = "lib";
+
+        /// <summary>
         /// 部署文件目录
         /// </summary>
         public const string DeployDir = "deploy";

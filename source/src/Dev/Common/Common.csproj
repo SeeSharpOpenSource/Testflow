@@ -49,7 +49,7 @@
     <Compile Include="Data\Expression\ExpressionOperatorCollection.cs" />
     <Compile Include="Data\Expression\ExpressionOperatorInfo.cs" />
     <Compile Include="Data\Expression\IExpressionCollection.cs" />
-    <Compile Include="Data\Expression\IExpressionFunction.cs" />
+    <Compile Include="Data\Expression\IExpressionCalculator.cs" />
     <Compile Include="Data\FailedAction.cs" />
     <Compile Include="Data\IResultPrinter.cs" />
     <Compile Include="Data\LibraryCategory.cs" />

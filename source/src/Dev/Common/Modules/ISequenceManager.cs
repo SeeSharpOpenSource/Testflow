@@ -119,7 +119,7 @@ namespace Testflow.Modules
         /// </summary>
         /// <param name="functionOperator"></param>
         /// <returns></returns>
-        IExpressionFunction GetExpressionFunction(string functionOperator);
+        IExpressionCalculator GetExpressionFunction(string functionOperator);
 
         /// <summary>
         /// 创建空白的AssemblyInfo

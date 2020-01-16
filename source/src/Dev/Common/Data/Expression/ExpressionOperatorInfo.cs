@@ -21,6 +21,11 @@
         public string Symbol { get; set; }
 
         /// <summary>
+        /// 操作符格式化字符串，0对应Source，1对应Target
+        /// </summary>
+        public string FormatString { get; set; }
+
+        /// <summary>
         /// 运算符计算所在的程序集
         /// </summary>
         public string Assembly { get; set; }
@@ -28,11 +33,16 @@
         /// <summary>
         /// 运算符所在的命名空间
         /// </summary>
-        public string Namespace { get; set; }
+        public string ClassName { get; set; }
 
         /// <summary>
         /// 运算法的计算类，该类必须继承自Testflow.Usr.Expression.IExpressionFunction
         /// </summary>
         public string CalculateClass { get; set; }
+
+        /// <summary>
+        /// 计算的方法
+        /// </summary>
+        public IExpressionCalculator CalculationClass { get; set; }
     }
 }
