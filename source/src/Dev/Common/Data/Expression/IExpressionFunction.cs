@@ -1,10 +1,15 @@
-﻿namespace Testflow.Usr.Expression
+﻿namespace Testflow.Data.Expression
 {
     /// <summary>
     /// 表达式函数接口
     /// </summary>
     public interface IExpressionFunction
     {
+        /// <summary>
+        /// 表达式描述符
+        /// </summary>
+        ExpressionOperatorInfo OperationInfo { get; }
+
         /// <summary>
         /// 获取表达式的显示方式
         /// </summary>

@@ -1,6 +1,7 @@
 ﻿using Testflow.Usr;
 using Testflow.Data;
 using Testflow.Data.Description;
+using Testflow.Data.Expression;
 using Testflow.Data.Sequence;
 
 namespace Testflow.Modules
@@ -107,6 +108,18 @@ namespace Testflow.Modules
         /// </summary>
         /// <returns></returns>
         IVariable CreateVarialbe();
+
+        /// <summary>
+        /// 创建空白的Expression数据
+        /// </summary>
+        IExpressionData CreateExpression();
+
+        /// <summary>
+        /// 使用表达式函数的操作符获取表达式
+        /// </summary>
+        /// <param name="functionOperator"></param>
+        /// <returns></returns>
+        IExpressionFunction GetExpressionFunction(string functionOperator);
 
         /// <summary>
         /// 创建空白的AssemblyInfo

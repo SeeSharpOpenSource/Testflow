@@ -1,9 +1,9 @@
-﻿namespace Testflow.SequenceManager.Expression
+﻿namespace Testflow.Data.Expression
 {
     /// <summary>
     /// 表达式操作符配置项
     /// </summary>
-    public class ExpressionOperatorItem
+    public class ExpressionOperatorInfo
     {
         /// <summary>
         /// 操作符名称
