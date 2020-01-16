@@ -46,7 +46,6 @@
     <Compile Include="Common\DescriptionAttribute.cs" />
     <Compile Include="Common\TestflowCategoryAttribute.cs" />
     <Compile Include="Constants.cs" />
-    <Compile Include="Expression\IExpressionFunction.cs" />
     <Compile Include="LibTypeNames.cs" />
     <Compile Include="Resources\locale\i18n_userlib_en.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -87,6 +86,7 @@
       <Name>Utility</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
