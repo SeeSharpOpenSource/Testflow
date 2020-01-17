@@ -1,4 +1,5 @@
-﻿using System.Xml.Serialization;
+﻿using System;
+using System.Xml.Serialization;
 
 namespace Testflow.Data.Expression
 {
@@ -28,14 +29,19 @@ namespace Testflow.Data.Expression
         string FormatString { get; }
 
         /// <summary>
-        /// 运算符计算所在的程序集
-        /// </summary>
-        string Assembly { get; }
-
-        /// <summary>
         /// 运算法的计算类，该类必须继承自Testflow.Usr.Expression.IExpressionFunction
         /// </summary>
         string ClassName { get; }
+
+        /// <summary>
+        /// 目标数据类型名称
+        /// </summary>
+        string SourceClassName { get; set; }
+
+        /// <summary>
+        /// 源数据类型
+        /// </summary>
+        Type SourceClassType { get; set; }
 
         /// <summary>
         /// 计算的方法

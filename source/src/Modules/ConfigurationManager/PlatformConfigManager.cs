@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
+using System.Text;
 using System.Xml;
 using Testflow.ConfigurationManager.Data;
 using Testflow.Data.Expression;
@@ -93,13 +94,18 @@ namespace Testflow.ConfigurationManager
             string expressionConfigFile = $"{testflowHome}{CommonConst.DeployDir}{Path.DirectorySeparatorChar}expressionconfig.xml";
             ExpressionTokenCollection expressionTokens = dataLoader.LoadExpressionTokens(expressionConfigFile);
             // 有效化ExpressTokens
-            ValidateExpressionTokens(testflowHome, expressionTokens);
+            ValidateExpressionTokens(globalConfigData, expressionTokens);
             return new ExpressionOperatorCollection(expressionTokens);
         }
 
-        private void ValidateExpressionTokens(string testflowHome, ExpressionTokenCollection expressionTokens)
+        private void ValidateExpressionTokens(GlobalConfigData configData, ExpressionTokenCollection expressionTokens)
         {
-            string libraryDir = $"{testflowHome}{CommonConst.LibraryDir}{Path.DirectorySeparatorChar}";
+            List<string> availableDirs = new List<string>(5);
+            availableDirs.AddRange(configData.GetConfigValue<string[]>(Constants.GlobalConfig, "WorkspaceDir"));
+            availableDirs.Add(configData.GetConfigValue<string>(Constants.GlobalConfig, "PlatformLibDir"));
+            availableDirs.Add(configData.GetConfigValue<string>(Constants.GlobalConfig, "DotNetLibDir"));
+            availableDirs.Add(configData.GetConfigValue<string>(Constants.GlobalConfig, "DotNetRootDir"));
+
             Type calculatorBaseType = typeof(IExpressionCalculator);
             string calculatorName = string.Empty;
             try
@@ -107,18 +113,14 @@ namespace Testflow.ConfigurationManager
                 foreach (ExpressionOperatorInfo expressionToken in expressionTokens)
                 {
                     calculatorName = expressionToken.Name;
-                    string assemblyDir = libraryDir + expressionToken.Assembly;
-                    Assembly assembly = Assembly.LoadFrom(assemblyDir);
-                    Type calculatorType = assembly.GetType(expressionToken.ClassName);
-                    if (!calculatorType.IsSubclassOf(calculatorBaseType))
-                    {
-                        TestflowRunner.GetInstance().LogService.Print(LogLevel.Fatal, CommonConst.PlatformLogSession,
-                            $"Invalid expression calculator:{expressionToken.ClassName}.");
-                        I18N i18N = I18N.GetInstance(Constants.I18nName);
-                        throw new TestflowRuntimeException(ModuleErrorCode.ConfigDataError,
-                            i18N.GetFStr("InvalidCalculator", expressionToken.ClassName));
-                    }
+                    // 获取表达式计算类的对象
+                    string assemblyDir = GetAssemblyPath(expressionToken.Assembly, availableDirs);
+                    Type calculatorType = GetTargetType(assemblyDir, expressionToken.ClassName, calculatorBaseType);
                     expressionToken.CalculationClass = (IExpressionCalculator) Activator.CreateInstance(calculatorType);
+                    // 获取表达式源数据对象
+                    assemblyDir = GetAssemblyPath(expressionToken.SourceAssembly, availableDirs);
+                    Type sourceDataType = GetTargetType(assemblyDir, expressionToken.SourceClassName, null);
+                    expressionToken.SourceClassType = sourceDataType;
                 }
             }
             catch (TestflowException)
@@ -132,6 +134,48 @@ namespace Testflow.ConfigurationManager
                 throw new TestflowRuntimeException(ModuleErrorCode.ConfigDataError,
                     ex.Message, ex);
             }
+        }
+
+        private static Type GetTargetType(string assemblyDir, string className, Type baseType)
+        {
+            Assembly assembly = Assembly.LoadFrom(assemblyDir);
+            Type targetType = assembly.GetType(className);
+            if (null == targetType || (null != baseType && !targetType.IsSubclassOf(baseType)))
+            {
+                TestflowRunner.GetInstance().LogService.Print(LogLevel.Fatal, CommonConst.PlatformLogSession,
+                    $"Invalid expression calculator:{className}.");
+                I18N i18N = I18N.GetInstance(Constants.I18nName);
+                throw new TestflowRuntimeException(ModuleErrorCode.ConfigDataError,
+                    i18N.GetFStr("InvalidCalculator", className));
+            }
+            return targetType;
+        }
+
+        private string GetAssemblyPath(string assemblyPath, List<string> availableDirs)
+        {
+            
+            string path = assemblyPath;
+            StringBuilder pathCache = new StringBuilder(200);
+            string abosolutePath = null;
+            // 如果文件名前面有分隔符则去掉
+            while (path.StartsWith(Path.DirectorySeparatorChar.ToString()))
+            {
+                path = path.Substring(1, path.Length - 1);
+            }
+            // 转换为绝对路径时反向寻找，先.net库再平台库再用户库
+            for (int i = availableDirs.Count - 1; i >= 0; i--)
+            {
+                pathCache.Clear();
+                string availableDir = availableDirs[i];
+                pathCache.Append(availableDir).Append(path);
+                // 如果库存在则配置为绝对路径，然后返回
+                if (File.Exists(pathCache.ToString()))
+                {
+                    abosolutePath = pathCache.ToString();
+                    break;
+                }
+            }
+            return abosolutePath;
         }
 
         public void ApplyConfig(IModuleConfigData configData)
