@@ -117,9 +117,7 @@ namespace Testflow.Modules
         /// <summary>
         /// 使用表达式函数的操作符获取表达式
         /// </summary>
-        /// <param name="functionOperator"></param>
-        /// <returns></returns>
-        IExpressionCalculator GetExpressionFunction(string functionOperator);
+        IExpressionOperatorInfo GetOperatorInfo(string functionOperator);
 
         /// <summary>
         /// 返回表达式是否有效

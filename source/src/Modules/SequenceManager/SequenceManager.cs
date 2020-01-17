@@ -167,14 +167,17 @@ namespace Testflow.SequenceManager
             return new Variable();
         }
 
+        #region 表达式相关
+
         public IExpressionData CreateExpression()
         {
             return new ExpressionData();
         }
 
-        public IExpressionCalculator GetExpressionFunction(string functionOperator)
+        public IExpressionOperatorInfo GetOperatorInfo(string functionOperator)
         {
-            throw new NotImplementedException();
+            return ConfigData.GetProperty<IExpressionOperatorCollection>("ExpressionTokens")
+                    .GetOperatorInfo(functionOperator);
         }
 
         public bool IsValidExpression(IExpressionData expression)
@@ -184,7 +187,8 @@ namespace Testflow.SequenceManager
             return IsExpressionCalculable(expression, expression.Parent, expressionTokens);
         }
 
-        private bool IsExpressionCalculable(IExpressionData expression, ISequence parent, IExpressionOperatorCollection expressionTokens)
+        private bool IsExpressionCalculable(IExpressionData expression, ISequence parent,
+            IExpressionOperatorCollection expressionTokens)
         {
             if (expression?.Parent == null)
             {
@@ -233,6 +237,9 @@ namespace Testflow.SequenceManager
                     return false;
             }
         }
+
+        #endregion
+
 
         public bool GetExpressionSignature(IExpressionData expression)
         {
