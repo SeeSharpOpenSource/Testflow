@@ -138,6 +138,14 @@ namespace Testflow.ConfigurationManager
 
         private static Type GetTargetType(string assemblyDir, string className, Type baseType)
         {
+            if (!File.Exists(assemblyDir))
+            {
+                TestflowRunner.GetInstance().LogService.Print(LogLevel.Fatal, CommonConst.PlatformLogSession,
+                    $"Assembly of type:{className} cannot be located.");
+                I18N i18N = I18N.GetInstance(Constants.I18nName);
+                throw new TestflowRuntimeException(ModuleErrorCode.ConfigDataError,
+                    i18N.GetFStr("InvalidCalculator", className));
+            }
             Assembly assembly = Assembly.LoadFrom(assemblyDir);
             Type targetType = assembly.GetType(className);
             if (null == targetType || (null != baseType && !targetType.IsSubclassOf(baseType)))

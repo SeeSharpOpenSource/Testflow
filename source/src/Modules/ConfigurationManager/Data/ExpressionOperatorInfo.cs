@@ -49,18 +49,19 @@ namespace Testflow.ConfigurationManager.Data
         /// <summary>
         /// 运算符计算所在的程序集
         /// </summary>
-        [XmlElement(Order = 3)]
+        [XmlElement(Order = 5)]
         public string SourceAssembly { get; set; }
 
         /// <summary>
         /// 运算法的计算类，该类必须继承自Testflow.Usr.Expression.IExpressionFunction
         /// </summary>
-        [XmlElement(Order = 4)]
+        [XmlElement(Order = 6)]
         public string SourceClassName { get; set; }
 
         /// <summary>
         /// 源数据类型
         /// </summary>
+        [XmlIgnore]
         public Type SourceClassType { get; set; }
 
         /// <summary>

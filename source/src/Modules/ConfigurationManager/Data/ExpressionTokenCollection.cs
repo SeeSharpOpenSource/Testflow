@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.Serialization;
+using System.Xml.Serialization;
 using Testflow.Data.Expression;
 
 namespace Testflow.ConfigurationManager.Data
@@ -10,6 +12,7 @@ namespace Testflow.ConfigurationManager.Data
     [Serializable]
     public class ExpressionTokenCollection : List<ExpressionOperatorInfo>
     {
+
         /// <summary>
         /// 构建空的ExpressionOperatorInfo集合
         /// </summary>

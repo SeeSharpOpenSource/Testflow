@@ -63,5 +63,31 @@ namespace Testflow.ConfigurationManagerTest
             xmlSerializer.Serialize(fileStream, configData);
         }
 
+        [TestMethod]
+        public void CreateExpressionConfigFile()
+        {
+            ExpressionTokenCollection tokenCollection = new ExpressionTokenCollection(10);
+            tokenCollection.Add(new ExpressionOperatorInfo()
+            {
+                Name = "GetArrayElement",
+                Description = "Get the element in specified subscript.",
+                Symbol = "[]",
+                FormatString = "{0}[{1}]",
+                Assembly = "ExpressionFuncs.dll",
+                ClassName = "Testflow.ExpressionFunctions.ArrayElementAcquirer",
+                SourceAssembly = "mscorlib.dll",
+                SourceClassName = "System.Array"
+            });
+            ExpressionOperatorConfiguration configData = new ExpressionOperatorConfiguration()
+            {
+                Version = "1.0.1.0",
+                ExpressionOperators = tokenCollection
+            };
+
+            FileStream fileStream = new FileStream("expressionconfig.xml", FileMode.Create);
+            XmlSerializer xmlSerializer = new XmlSerializer(typeof(ExpressionOperatorConfiguration),
+                new Type[] { typeof(ExpressionOperatorInfo), typeof(ExpressionTokenCollection) });
+            xmlSerializer.Serialize(fileStream, configData);
+        }
     }
 }
