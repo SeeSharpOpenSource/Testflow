@@ -1,32 +1,33 @@
 ﻿using System;
 using System.Collections.Generic;
+using Testflow.Data.Expression;
 
-namespace Testflow.Data.Expression
+namespace Testflow.ConfigurationManager.Data
 {
     /// <summary>
     /// 表达式描述信息集合
     /// </summary>
     [Serializable]
-    public class ExpressionOperatorCollection : List<ExpressionOperatorInfo>
+    public class ExpressionTokenCollection : List<ExpressionOperatorInfo>
     {
         /// <summary>
         /// 构建空的ExpressionOperatorInfo集合
         /// </summary>
-        public ExpressionOperatorCollection() : base()
+        public ExpressionTokenCollection() : base()
         {
         }
 
         /// <summary>
         /// 构建空的ExpressionOperatorInfo集合
         /// </summary>
-        public ExpressionOperatorCollection(int capacity) : base(capacity)
+        public ExpressionTokenCollection(int capacity) : base(capacity)
         {
         }
 
         /// <summary>
         /// 使用可遍历对象构建ExpressionOperatorInfo集合
         /// </summary>
-        public ExpressionOperatorCollection(IEnumerable<ExpressionOperatorInfo> items) : base(items)
+        public ExpressionTokenCollection(IEnumerable<ExpressionOperatorInfo> items) : base(items)
         {
         }
     }

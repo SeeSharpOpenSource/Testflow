@@ -19,6 +19,8 @@ namespace Testflow.SequenceManager.Expression
         /// </summary>
         public string Name { get; set; }
 
+        public ISequence Parent { get; set; }
+
         private IExpressionElement _source;
         /// <summary>
         /// 表达式中的源
@@ -29,9 +31,9 @@ namespace Testflow.SequenceManager.Expression
             set
             {
                 this._source = value;
-                if (null != _parent && null != _source)
+                if (null != Parent && null != _source)
                 {
-                    this._source.Initialize(_parent);
+                    this._source.Initialize(Parent);
                 }
             }
         }
@@ -46,9 +48,9 @@ namespace Testflow.SequenceManager.Expression
             set
             {
                 this._target = value;
-                if (null != _parent && null == _source)
+                if (null != Parent && null == _source)
                 {
-                    _target.Initialize(_parent);
+                    _target.Initialize(Parent);
                 }
             }
         }
@@ -58,26 +60,13 @@ namespace Testflow.SequenceManager.Expression
         /// </summary>
         public string Operation { get; set; }
 
-        private ISequenceFlowContainer _parent;
-
         public ExpressionData()
         {
             this.Name = string.Empty;
             this.Source = new ExpressionElement();
             this.Target = new ExpressionElement();
             this.Operation = CommonConst.NAOperator;
-            this._parent = null;
-        }
-
-        public bool IsCalculable()
-        {
-            if (null == _parent || null == _source || null == _target || _source.IsOperational(_parent) ||
-                _target.IsOperational(_parent))
-            {
-                return false;
-            }
-            // 剩余符号检查
-            return true;
+            this.Parent = null;
         }
 
         public ExpressionData(SerializationInfo info, StreamingContext context)
@@ -110,12 +99,11 @@ namespace Testflow.SequenceManager.Expression
 
         public void Initialize(ISequenceFlowContainer parent)
         {
-            this._parent = parent;
-            ISequence sequence = parent as ISequence;
-            if (null != sequence)
+            this.Parent = (ISequence) parent;
+            if (null != parent)
             {
-                this.Source?.Initialize(_parent);
-                this.Target?.Initialize(_parent);
+                this.Source?.Initialize(Parent);
+                this.Target?.Initialize(Parent);
             }
         }
     }

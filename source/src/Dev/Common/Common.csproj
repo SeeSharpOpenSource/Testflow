@@ -46,8 +46,8 @@
     <Compile Include="Common\IEntityComponent.cs" />
     <Compile Include="Common\IPropertyExtendable.cs" />
     <Compile Include="Data\CallBackType.cs" />
-    <Compile Include="Data\Expression\ExpressionOperatorCollection.cs" />
-    <Compile Include="Data\Expression\ExpressionOperatorInfo.cs" />
+    <Compile Include="Data\Expression\IExpressionOperatorCollection.cs" />
+    <Compile Include="Data\Expression\IExpressionOperatorInfo.cs" />
     <Compile Include="Data\Expression\IExpressionCollection.cs" />
     <Compile Include="Data\Expression\IExpressionCalculator.cs" />
     <Compile Include="Data\FailedAction.cs" />

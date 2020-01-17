@@ -73,31 +73,6 @@ namespace Testflow.SequenceManager.Expression
 
         private ISequenceFlowContainer _parent;
 
-        /// <summary>
-        /// 返回当前表达式元素是否是可以计算的
-        /// </summary>
-        public bool IsOperational(ISequenceFlowContainer parent)
-        {
-            switch (Type)
-            {
-                case ParameterType.NotAvailable:
-                    return false;
-                    break;
-                case ParameterType.Value:
-                    // 暂时对数据类型不做检查
-                    return null != Value;
-                    break;
-                case ParameterType.Variable:
-                    return ModuleUtils.IsAccessableVariable(_parent, Value);
-                    break;
-                case ParameterType.Expression:
-                    return Expression?.IsCalculable() ?? false;
-                    break;
-                default:
-                    return false;
-            }
-        }
-
         public ISequenceDataContainer Clone()
         {
             ExpressionElement element = new ExpressionElement()

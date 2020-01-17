@@ -1,9 +1,12 @@
-﻿namespace Testflow.Data.Expression
+﻿using System.Xml.Serialization;
+using Testflow.Data.Expression;
+
+namespace Testflow.ConfigurationManager.Data
 {
     /// <summary>
     /// 表达式操作符配置项
     /// </summary>
-    public class ExpressionOperatorInfo
+    public class ExpressionOperatorInfo : IExpressionOperatorInfo
     {
         /// <summary>
         /// 操作符名称
@@ -31,18 +34,14 @@
         public string Assembly { get; set; }
 
         /// <summary>
-        /// 运算符所在的命名空间
+        /// 运算法的计算类，该类必须继承自Testflow.Usr.Expression.IExpressionFunction
         /// </summary>
         public string ClassName { get; set; }
 
         /// <summary>
-        /// 运算法的计算类，该类必须继承自Testflow.Usr.Expression.IExpressionFunction
-        /// </summary>
-        public string CalculateClass { get; set; }
-
-        /// <summary>
         /// 计算的方法
         /// </summary>
+        [XmlIgnore]
         public IExpressionCalculator CalculationClass { get; set; }
     }
 }

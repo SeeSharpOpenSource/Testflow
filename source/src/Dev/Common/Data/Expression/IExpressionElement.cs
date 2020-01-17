@@ -21,10 +21,5 @@ namespace Testflow.Data.Expression
         /// 表达式元素的值，仅在Type为Expression时生效
         /// </summary>
         IExpressionData Expression { get; set; }
-
-        /// <summary>
-        /// 返回当前表达式元素是否可操作
-        /// </summary>
-        bool IsOperational(ISequenceFlowContainer parent);
     }
 }

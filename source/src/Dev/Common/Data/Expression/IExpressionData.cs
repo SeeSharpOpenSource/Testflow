@@ -13,6 +13,11 @@ namespace Testflow.Data.Expression
         string Name { get; set; }
 
         /// <summary>
+        /// 表达式的上级节点
+        /// </summary>
+        ISequence Parent { get; set; }
+
+        /// <summary>
         /// 表达式中的源
         /// </summary>
         IExpressionElement Source { get; set; }
@@ -26,10 +31,5 @@ namespace Testflow.Data.Expression
         /// 表达式的名称
         /// </summary>
         string Operation { get; set; }
-
-        /// <summary>
-        /// 返回当前表达式是否是可以计算的
-        /// </summary>
-        bool IsCalculable();
     }
 }

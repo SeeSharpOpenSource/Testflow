@@ -8,7 +8,7 @@
         /// <summary>
         /// 表达式描述符
         /// </summary>
-        ExpressionOperatorInfo OperationInfo { get; }
+        IExpressionOperatorInfo OperationInfo { get; }
 
         /// <summary>
         /// 获取表达式的显示方式

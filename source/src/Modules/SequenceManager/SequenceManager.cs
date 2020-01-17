@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Threading;
 using Testflow.Usr;
 using Testflow.Data;
@@ -172,6 +173,68 @@ namespace Testflow.SequenceManager
         }
 
         public IExpressionCalculator GetExpressionFunction(string functionOperator)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool IsValidExpression(IExpressionData expression)
+        {
+            IExpressionOperatorCollection expressionTokens =
+                ConfigData.GetProperty<IExpressionOperatorCollection>("ExpressionTokens");
+            return IsExpressionCalculable(expression, expression.Parent, expressionTokens);
+        }
+
+        private bool IsExpressionCalculable(IExpressionData expression, ISequence parent, IExpressionOperatorCollection expressionTokens)
+        {
+            if (expression?.Parent == null)
+            {
+                return false;
+            }
+            IExpressionElement source = expression.Source;
+            IExpressionElement target = expression.Target;
+            return null != source && null != target &&
+                   IsOperatorAvailable(expression.Operation, expressionTokens) &&
+                   IsElementAvailable(source, parent, expressionTokens) &&
+                   IsElementAvailable(target, parent, expressionTokens);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        private bool IsOperatorAvailable(string operation, IExpressionOperatorCollection expressionTokens)
+        {
+            IExpressionOperatorInfo operatorInfo;
+            return null != (operatorInfo = expressionTokens.FirstOrDefault(item => item.Symbol.Equals(operation))) &&
+                   null != operatorInfo.CalculationClass;
+        }
+
+        /// <summary>
+        /// 返回当前表达式元素是否是可以计算的
+        /// </summary>
+        private bool IsElementAvailable(IExpressionElement element, ISequence parent,
+            IExpressionOperatorCollection expressionTokens)
+        {
+            switch (element.Type)
+            {
+                case ParameterType.NotAvailable:
+                    return false;
+                    break;
+                case ParameterType.Value:
+                    // 暂时对数据类型不做检查
+                    return null != element.Value;
+                    break;
+                case ParameterType.Variable:
+                    return ModuleUtils.IsAccessableVariable(parent, element.Value);
+                    break;
+                case ParameterType.Expression:
+                    return IsExpressionCalculable(element.Expression, parent, expressionTokens);
+                    break;
+                default:
+                    return false;
+            }
+        }
+
+        public bool GetExpressionSignature(IExpressionData expression)
         {
             throw new NotImplementedException();
         }

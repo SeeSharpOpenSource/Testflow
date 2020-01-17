@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using System.Xml;
+using Testflow.ConfigurationManager.Data;
 using Testflow.Data.Expression;
 using Testflow.Modules;
 using Testflow.Runtime;
@@ -79,24 +80,24 @@ namespace Testflow.ConfigurationManager
                 globalConfigData = dataLoader.Load(ConfigData.GetProperty<string>(Constants.ConfigFile));
 
                 // 获取表达式符号信息并添加到SequenceManager和EngineCore的配置信息中
-                ExpressionOperatorCollection expressionTokens = GetExpressionTokens(globalConfigData, dataLoader);
+                IExpressionOperatorCollection expressionTokens = GetExpressionTokens(globalConfigData, dataLoader);
                 globalConfigData.AddConfigItem(Constants.SequenceManage, "ExpressionTokens", expressionTokens);
                 globalConfigData.AddConfigItem(Constants.EngineConfig, "ExpressionTokens", expressionTokens);
             }
             return globalConfigData;
         }
 
-        private ExpressionOperatorCollection GetExpressionTokens(GlobalConfigData globalConfigData, ConfigDataLoader dataLoader)
+        private IExpressionOperatorCollection GetExpressionTokens(GlobalConfigData globalConfigData, ConfigDataLoader dataLoader)
         {
             string testflowHome = globalConfigData.GetConfigValue<string>(Constants.GlobalConfig, "TestflowHome");
             string expressionConfigFile = $"{testflowHome}{CommonConst.DeployDir}{Path.DirectorySeparatorChar}expressionconfig.xml";
-            ExpressionOperatorCollection expressionTokens = dataLoader.LoadExpressionTokens(expressionConfigFile);
+            ExpressionTokenCollection expressionTokens = dataLoader.LoadExpressionTokens(expressionConfigFile);
             // 有效化ExpressTokens
             ValidateExpressionTokens(testflowHome, expressionTokens);
-            return expressionTokens;
+            return new ExpressionOperatorCollection(expressionTokens);
         }
 
-        private void ValidateExpressionTokens(string testflowHome, ExpressionOperatorCollection expressionTokens)
+        private void ValidateExpressionTokens(string testflowHome, ExpressionTokenCollection expressionTokens)
         {
             string libraryDir = $"{testflowHome}{CommonConst.LibraryDir}{Path.DirectorySeparatorChar}";
             Type calculatorBaseType = typeof(IExpressionCalculator);

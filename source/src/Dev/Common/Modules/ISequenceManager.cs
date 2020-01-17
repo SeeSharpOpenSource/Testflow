@@ -122,6 +122,16 @@ namespace Testflow.Modules
         IExpressionCalculator GetExpressionFunction(string functionOperator);
 
         /// <summary>
+        /// 返回表达式是否有效
+        /// </summary>
+        bool IsValidExpression(IExpressionData expression);
+
+        /// <summary>
+        /// 获取表达式的签名信息
+        /// </summary>
+        bool GetExpressionSignature(IExpressionData expression);
+
+        /// <summary>
         /// 创建空白的AssemblyInfo
         /// </summary>
         /// <returns></returns>
