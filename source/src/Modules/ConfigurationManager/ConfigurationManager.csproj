@@ -45,10 +45,7 @@
     <Compile Include="Data\ConfigData.cs" />
     <Compile Include="Data\ConfigItem.cs" />
     <Compile Include="Constants.cs" />
-    <Compile Include="Data\ExpressionOperatorCollection.cs" />
     <Compile Include="Data\ExpressionOperatorConfiguration.cs" />
-    <Compile Include="Data\ExpressionTokenCollection.cs" />
-    <Compile Include="Data\ExpressionOperatorInfo.cs" />
     <Compile Include="GlobalConfigData.cs" />
     <Compile Include="ModuleConfigData.cs" />
     <Compile Include="ModuleErrorCode.cs" />

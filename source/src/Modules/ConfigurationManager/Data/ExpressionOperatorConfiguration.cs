@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Xml.Serialization;
+using Testflow.Data.Expression;
 
 namespace Testflow.ConfigurationManager.Data
 {
@@ -11,6 +13,10 @@ namespace Testflow.ConfigurationManager.Data
 
         [XmlArrayItem("ExpressionOperator")]
         [XmlArray("ExpressionOperators")]
-        public ExpressionTokenCollection ExpressionOperators { get; set; }
+        public List<ExpressionOperatorInfo> Operators { get; set; }
+
+        [XmlArrayItem("ExpressionCalculatorInfo")]
+        [XmlArray("ExpressionCalculators")]
+        public List<ExpressionCalculatorInfo> Calculators { get; set; }
     }
 }

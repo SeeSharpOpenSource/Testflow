@@ -172,16 +172,17 @@ namespace Testflow.ConfigurationManager
         }
 
         // 获取表达式描述信息
-        public ExpressionTokenCollection LoadExpressionTokens(string filePath)
+        public ExpressionOperatorConfiguration LoadExpressionTokens(string filePath)
         {
             ExpressionOperatorConfiguration expressionTokens;
             using (FileStream fileStream = new FileStream(filePath, FileMode.Open))
             {
-                XmlSerializer xmlSerializer = new XmlSerializer(typeof(ExpressionOperatorConfiguration),
-                    new Type[] { typeof(ExpressionTokenCollection), typeof(ExpressionOperatorInfo)});
+                XmlSerializer xmlSerializer = new XmlSerializer(typeof (ExpressionOperatorConfiguration),
+                    new Type[]{typeof (ExpressionOperatorInfo), typeof (ExpressionCalculatorInfo),
+                        typeof (ExpressionTypeData)});
                 expressionTokens = xmlSerializer.Deserialize(fileStream) as ExpressionOperatorConfiguration;
             }
-            return expressionTokens.ExpressionOperators;
+            return expressionTokens;
         }
 
         private void AddExtraDataMaintainConfigData(GlobalConfigData globalConfigData)

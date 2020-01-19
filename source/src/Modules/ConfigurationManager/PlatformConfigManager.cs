@@ -79,27 +79,41 @@ namespace Testflow.ConfigurationManager
             using (ConfigDataLoader dataLoader = new ConfigDataLoader())
             {
                 globalConfigData = dataLoader.Load(ConfigData.GetProperty<string>(Constants.ConfigFile));
-
-                // 获取表达式符号信息并添加到SequenceManager和EngineCore的配置信息中
-                IExpressionOperatorCollection expressionTokens = GetExpressionTokens(globalConfigData, dataLoader);
-                globalConfigData.AddConfigItem(Constants.SequenceManage, "ExpressionTokens", expressionTokens);
-                globalConfigData.AddConfigItem(Constants.InterfaceLoad, "ExpressionTokens", expressionTokens);
-                globalConfigData.AddConfigItem(Constants.EngineConfig, "ExpressionTokens", expressionTokens);
+                InitializeExpressionInfos(globalConfigData, dataLoader);
             }
             return globalConfigData;
         }
 
-        private IExpressionOperatorCollection GetExpressionTokens(GlobalConfigData globalConfigData, ConfigDataLoader dataLoader)
+        private void InitializeExpressionInfos(GlobalConfigData globalConfigData, ConfigDataLoader dataLoader)
+        {
+            // 获取表达式符号信息并添加到SequenceManager和EngineCore的配置信息中
+            ExpressionOperatorConfiguration expressionTokens = GetExpressionTokens(globalConfigData, dataLoader);
+            // 添加操作符到操作符信息的映射
+            Dictionary<string, ExpressionOperatorInfo> operatorInfos = new Dictionary<string, ExpressionOperatorInfo>(expressionTokens.Operators.Count);
+            foreach (ExpressionOperatorInfo operatorInfo in expressionTokens.Operators)
+            {
+                operatorInfos.Add(operatorInfo.Symbol, operatorInfo);
+            }
+            globalConfigData.AddConfigItem(Constants.SequenceManage, "ExpressionOperators", operatorInfos);
+            globalConfigData.AddConfigItem(Constants.EngineConfig, "ExpressionOperators", operatorInfos);
+            globalConfigData.AddConfigItem(Constants.ParamCheck, "ExpressionOperators", operatorInfos);
+            // 添加计算类的信息
+            globalConfigData.AddConfigItem(Constants.SequenceManage, "ExpressionCalculators", expressionTokens.Calculators);
+            globalConfigData.AddConfigItem(Constants.EngineConfig, "ExpressionCalculators", expressionTokens.Calculators);
+            globalConfigData.AddConfigItem(Constants.ParamCheck, "ExpressionCalculators", expressionTokens.Calculators);
+        }
+
+        private ExpressionOperatorConfiguration GetExpressionTokens(GlobalConfigData globalConfigData, ConfigDataLoader dataLoader)
         {
             string testflowHome = globalConfigData.GetConfigValue<string>(Constants.GlobalConfig, "TestflowHome");
             string expressionConfigFile = $"{testflowHome}{CommonConst.DeployDir}{Path.DirectorySeparatorChar}expressionconfig.xml";
-            ExpressionTokenCollection expressionTokens = dataLoader.LoadExpressionTokens(expressionConfigFile);
+            ExpressionOperatorConfiguration expressionTokens = dataLoader.LoadExpressionTokens(expressionConfigFile);
             // 有效化ExpressTokens
             ValidateExpressionTokens(globalConfigData, expressionTokens);
-            return new ExpressionOperatorCollection(expressionTokens);
+            return expressionTokens;
         }
 
-        private void ValidateExpressionTokens(GlobalConfigData configData, ExpressionTokenCollection expressionTokens)
+        private void ValidateExpressionTokens(GlobalConfigData configData, ExpressionOperatorConfiguration expressionTokens)
         {
             List<string> availableDirs = new List<string>(5);
             availableDirs.AddRange(configData.GetConfigValue<string[]>(Constants.GlobalConfig, "WorkspaceDir"));
@@ -107,20 +121,21 @@ namespace Testflow.ConfigurationManager
             availableDirs.Add(configData.GetConfigValue<string>(Constants.GlobalConfig, "DotNetLibDir"));
             availableDirs.Add(configData.GetConfigValue<string>(Constants.GlobalConfig, "DotNetRootDir"));
 
-            Type calculatorBaseType = typeof(IExpressionCalculator);
             string calculatorName = string.Empty;
             try
             {
-                foreach (ExpressionOperatorInfo expressionToken in expressionTokens)
+                foreach (ExpressionCalculatorInfo calculatorInfo in expressionTokens.Calculators)
                 {
-                    calculatorName = expressionToken.Name;
                     // 获取表达式计算类的对象
-                    string assemblyDir = GetAssemblyPath(expressionToken.Assembly, availableDirs);
-                    Type calculatorType = GetTargetType(assemblyDir, expressionToken.ClassName, calculatorBaseType);
-                    expressionToken.CalculationClass = (IExpressionCalculator) Activator.CreateInstance(calculatorType);
-                    // 获取表达式源数据对象
-                    assemblyDir = GetAssemblyPath(expressionToken.SourceAssembly, availableDirs);
-                    Type sourceDataType = GetTargetType(assemblyDir, expressionToken.SourceClassName, null);
+                    SetAssemblyAbsolutePath(calculatorInfo.CalculatorClass, availableDirs);
+                    SetAssemblyAbsolutePath(calculatorInfo.SourceType, availableDirs);
+                    if (null != calculatorInfo.ArgumentsType)
+                    {
+                        foreach (ExpressionTypeData argumentTypeInfo in calculatorInfo.ArgumentsType)
+                        {
+                            SetAssemblyAbsolutePath(argumentTypeInfo, availableDirs);
+                        }
+                    }
                 }
             }
             catch (TestflowException)
@@ -159,12 +174,10 @@ namespace Testflow.ConfigurationManager
             return targetType;
         }
 
-        private string GetAssemblyPath(string assemblyPath, List<string> availableDirs)
+        private void SetAssemblyAbsolutePath(ExpressionTypeData typeData, List<string> availableDirs)
         {
-            
-            string path = assemblyPath;
+            string path = typeData.AssemblyPath;
             StringBuilder pathCache = new StringBuilder(200);
-            string abosolutePath = null;
             // 如果文件名前面有分隔符则去掉
             while (path.StartsWith(Path.DirectorySeparatorChar.ToString()))
             {
@@ -179,11 +192,15 @@ namespace Testflow.ConfigurationManager
                 // 如果库存在则配置为绝对路径，然后返回
                 if (File.Exists(pathCache.ToString()))
                 {
-                    abosolutePath = pathCache.ToString();
-                    break;
+                    typeData.AssemblyPath = pathCache.ToString();
+                    return;
                 }
             }
-            return abosolutePath;
+            TestflowRunner.GetInstance().LogService.Print(LogLevel.Fatal, CommonConst.PlatformLogSession,
+                    $"Assembly of type:{typeData.ClassName} cannot be located.");
+            I18N i18N = I18N.GetInstance(Constants.I18nName);
+            throw new TestflowRuntimeException(ModuleErrorCode.ConfigDataError,
+                i18N.GetFStr("InvalidCalculator", typeData.ClassName));
         }
 
         public void ApplyConfig(IModuleConfigData configData)
