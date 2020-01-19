@@ -5,7 +5,6 @@ using System.Linq;
 using Testflow.ComInterfaceManager.Data;
 using Testflow.Data;
 using Testflow.Data.Description;
-using Testflow.Data.Expression;
 using Testflow.Modules;
 using Testflow.Usr;
 using Testflow.Utility.I18nUtil;
@@ -47,16 +46,6 @@ namespace Testflow.ComInterfaceManager
         public void ApplyConfig(IModuleConfigData configData)
         {
             this._configData = configData;
-            LoadExpressionTypes();
-        }
-
-        private void LoadExpressionTypes()
-        {
-            IExpressionOperatorCollection operatorTokens =
-                this._configData.GetProperty<IExpressionOperatorCollection>("ExpressionTokens");
-            foreach (IExpressionOperatorInfo operatorInfo in operatorTokens)
-            {
-            }
         }
 
         public IComInterfaceDescription GetComInterfaceByName(string assemblyName)
