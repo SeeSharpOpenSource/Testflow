@@ -107,7 +107,6 @@
     <Compile Include="SequenceElements\TypeData.cs" />
     <Compile Include="SequenceElements\TypeDataCollection.cs" />
     <Compile Include="SequenceElements\Variable.cs" />
-    <Compile Include="SequenceElements\ExpressionCollection.cs" />
     <Compile Include="SequenceElements\VariableCollection.cs" />
     <Compile Include="SequenceElements\VariableInitValue.cs" />
     <Compile Include="SequenceElements\VariableInitValueCollection.cs" />

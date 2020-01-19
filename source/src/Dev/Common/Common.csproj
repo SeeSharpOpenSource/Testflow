@@ -48,7 +48,6 @@
     <Compile Include="Data\CallBackType.cs" />
     <Compile Include="Data\Expression\IExpressionOperatorCollection.cs" />
     <Compile Include="Data\Expression\IExpressionOperatorInfo.cs" />
-    <Compile Include="Data\Expression\IExpressionCollection.cs" />
     <Compile Include="Data\Expression\IExpressionCalculator.cs" />
     <Compile Include="Data\FailedAction.cs" />
     <Compile Include="Data\IResultPrinter.cs" />

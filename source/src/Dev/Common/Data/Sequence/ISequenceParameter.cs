@@ -22,11 +22,6 @@ namespace Testflow.Data.Sequence
         /// 序列内的变量值
         /// </summary>
         IList<IVariableInitValue> VariableValues { get; set; }
-
-        /// <summary>
-        /// 序列中的表达式列表
-        /// </summary>
-        IExpressionCollection Expressions { get; set; }
     }
     
 }

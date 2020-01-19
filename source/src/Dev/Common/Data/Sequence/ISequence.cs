@@ -21,11 +21,6 @@ namespace Testflow.Data.Sequence
         IVariableCollection Variables { get; set; }
 
         /// <summary>
-        /// 表达式集合
-        /// </summary>
-        IExpressionCollection Expressions { get; set; }
-
-        /// <summary>
         /// 测试的步骤集合
         /// </summary>
         ISequenceStepCollection Steps { get; set; }
