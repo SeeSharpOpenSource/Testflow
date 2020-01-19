@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Xml.Serialization;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Testflow.ConfigurationManager;
 using Testflow.ConfigurationManager.Data;
+using Testflow.Data.Expression;
 using Testflow.Runtime;
 using Testflow.Usr;
 using Testflow.Utility.MessageUtil;
@@ -66,27 +68,54 @@ namespace Testflow.ConfigurationManagerTest
         [TestMethod]
         public void CreateExpressionConfigFile()
         {
-            ExpressionTokenCollection tokenCollection = new ExpressionTokenCollection(10);
+            List<ExpressionOperatorInfo> tokenCollection = new List<ExpressionOperatorInfo>(10);
             tokenCollection.Add(new ExpressionOperatorInfo()
             {
-                Name = "GetArrayElement",
+                Name = "GetElement",
                 Description = "Get the element in specified subscript.",
                 Symbol = "[]",
                 FormatString = "{0}[{1}]",
-                Assembly = "ExpressionFuncs.dll",
-                ClassName = "Testflow.ExpressionFunctions.ArrayElementAcquirer",
-                SourceAssembly = "mscorlib.dll",
-                SourceClassName = "System.Array"
+                Priority = 10,
+                ArgumentsCount = 1
             });
+
+
+            List<ExpressionCalculatorInfo> calculatorInfos = new List<ExpressionCalculatorInfo>(10);
+            ExpressionCalculatorInfo getArrayElemCalculator = new ExpressionCalculatorInfo()
+            {
+                Name = "GetArrayElement",
+                OperatorName = "GetElement",
+                Description = "Get the array data element in specified subscript.",
+                CalculatorClass = new ExpressionTypeData()
+                {
+                    AssemblyPath = "ExpressionCalculators.dll",
+                    ClassName = "Testflow.ExpressionCalculators.ArrayElementAcquirer"
+                },
+                SourceType = new ExpressionTypeData()
+                {
+                    AssemblyPath = "mscorlib.dll",
+                    ClassName = "System.Array"
+                },
+                ArgumentsType = new List<ExpressionTypeData>()
+            };
+            getArrayElemCalculator.ArgumentsType.Add(new ExpressionTypeData()
+            {
+                AssemblyPath = "mscorlib.dll",
+                ClassName = "System.Int32"
+            });
+            calculatorInfos.Add(getArrayElemCalculator);
+
             ExpressionOperatorConfiguration configData = new ExpressionOperatorConfiguration()
             {
                 Version = "1.0.1.0",
-                ExpressionOperators = tokenCollection
+                Operators = tokenCollection,
+                Calculators = calculatorInfos
             };
 
             FileStream fileStream = new FileStream("expressionconfig.xml", FileMode.Create);
             XmlSerializer xmlSerializer = new XmlSerializer(typeof(ExpressionOperatorConfiguration),
-                new Type[] { typeof(ExpressionOperatorInfo), typeof(ExpressionTokenCollection) });
+                    new Type[]{typeof (ExpressionOperatorInfo), typeof (ExpressionCalculatorInfo),
+                        typeof (ExpressionTypeData)});
             xmlSerializer.Serialize(fileStream, configData);
         }
     }
