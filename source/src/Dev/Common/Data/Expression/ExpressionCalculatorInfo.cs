@@ -14,36 +14,37 @@ namespace Testflow.Data.Expression
         /// 计算类名称
         /// </summary>
         [XmlAttribute]
-        string Name { get; }
-
-        /// <summary>
-        /// 操作符名称
-        /// </summary>
-        [XmlElement(Order = 1)]
-        string OperatorName { get; }
+        public string Name { get; set; }
 
         /// <summary>
         /// 操作符描述信息
         /// </summary>
-        [XmlElement(Order = 2)]
-        string Description { get; }
+        [XmlAttribute]
+        public string Description { get; set; }
+
+        /// <summary>
+        /// 操作符名称
+        /// </summary>
+        [XmlElement]
+        public string OperatorName { get; set; }
 
         /// <summary>
         /// 表达式计算类的类型信息
         /// </summary>
-        [XmlElement(Order = 3)]
-        ExpressionTypeData CalculatorClass { get; set; }
+        [XmlElement]
+        public ExpressionTypeData CalculatorClass { get; set; }
 
         /// <summary>
         /// 源数据类型
         /// </summary>
-        [XmlElement(Order = 4)]
-        List<ExpressionTypeData> SourceType { get; set; }
+        [XmlElement]
+        public ExpressionTypeData SourceType { get; set; }
 
         /// <summary>
         /// 参数数据类型
         /// </summary>
-        [XmlElement(Order = 5)]
-        List<ExpressionTypeData> ArgumentsType { get; set; }
+        [XmlArrayItem("ArgumentType")]
+        [XmlArray("ArgumentTypes")]
+        public List<ExpressionTypeData> ArgumentsType { get; set; }
     }
 }

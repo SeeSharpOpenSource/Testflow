@@ -36,12 +36,12 @@ namespace Testflow.Data.Expression
         /// 运算的优先级，数值越大优先级越高
         /// </summary>
         [XmlElement(Order = 3)]
-        public int Priority { get; }
+        public int Priority { get; set; }
 
         /// <summary>
         /// 参数的个数
         /// </summary>
         [XmlElement(Order = 4)]
-        public int ArgumentsCount { get; }
+        public int ArgumentsCount { get; set; }
     }
 }

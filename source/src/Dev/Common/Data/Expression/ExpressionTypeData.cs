@@ -9,7 +9,7 @@ namespace Testflow.Data.Expression
     [Serializable]
     public class ExpressionTypeData
     {
-        [XmlElement]
+        [XmlAttribute]
         public string AssemblyPath { get; set; }
 
         [XmlAttribute]

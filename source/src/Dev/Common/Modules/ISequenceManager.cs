@@ -108,32 +108,19 @@ namespace Testflow.Modules
         /// </summary>
         /// <returns></returns>
         IVariable CreateVarialbe();
-
-        /// <summary>
-        /// 创建空白的Expression数据
-        /// </summary>
-        IExpressionData CreateExpression();
-
-        /// <summary>
-        /// 使用表达式名称获取表达式
-        /// </summary>
-        IExpressionOperatorInfo GetOperatorInfo(string operatorName);
-
-        /// <summary>
-        /// 返回表达式是否有效
-        /// </summary>
-        bool IsValidExpression(IExpressionData expression);
-
-        /// <summary>
-        /// 获取表达式的签名信息
-        /// </summary>
-        bool GetExpressionSignature(IExpressionData expression);
-
+        
         /// <summary>
         /// 创建空白的AssemblyInfo
         /// </summary>
         /// <returns></returns>
         IAssemblyInfo CreateAssemblyInfo();
+
+        /// <summary>
+        /// 使用字符串获取表达式数据结构
+        /// </summary>
+        /// <param name="expressionValue"></param>
+        /// <returns></returns>
+        IExpressionData GetExpressionData(string expressionValue);
         
         #endregion
 
