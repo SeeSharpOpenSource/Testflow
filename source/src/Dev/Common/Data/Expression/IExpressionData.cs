@@ -28,7 +28,7 @@ namespace Testflow.Data.Expression
         IExpressionElement Target { get; set; }
 
         /// <summary>
-        /// 表达式的名称
+        /// 表达式操作的名称
         /// </summary>
         string Operation { get; set; }
     }

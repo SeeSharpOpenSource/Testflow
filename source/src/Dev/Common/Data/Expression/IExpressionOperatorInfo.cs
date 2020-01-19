@@ -29,9 +29,19 @@ namespace Testflow.Data.Expression
         string FormatString { get; }
 
         /// <summary>
+        /// 运算符计算所在的程序集
+        /// </summary>
+        string Assembly { get; set; }
+
+        /// <summary>
         /// 运算法的计算类，该类必须继承自Testflow.Usr.Expression.IExpressionFunction
         /// </summary>
         string ClassName { get; }
+
+        /// <summary>
+        /// 运算符计算所在的程序集
+        /// </summary>
+        string SourceAssembly { get; set; }
 
         /// <summary>
         /// 目标数据类型名称
@@ -41,7 +51,7 @@ namespace Testflow.Data.Expression
         /// <summary>
         /// 源数据类型
         /// </summary>
-        Type SourceClassType { get; set; }
+        ITypeData SourceClassType { get; set; }
 
         /// <summary>
         /// 计算的方法

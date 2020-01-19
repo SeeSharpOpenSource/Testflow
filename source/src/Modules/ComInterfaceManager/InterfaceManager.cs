@@ -5,6 +5,7 @@ using System.Linq;
 using Testflow.ComInterfaceManager.Data;
 using Testflow.Data;
 using Testflow.Data.Description;
+using Testflow.Data.Expression;
 using Testflow.Modules;
 using Testflow.Usr;
 using Testflow.Utility.I18nUtil;
@@ -46,6 +47,16 @@ namespace Testflow.ComInterfaceManager
         public void ApplyConfig(IModuleConfigData configData)
         {
             this._configData = configData;
+            LoadExpressionTypes();
+        }
+
+        private void LoadExpressionTypes()
+        {
+            IExpressionOperatorCollection operatorTokens =
+                this._configData.GetProperty<IExpressionOperatorCollection>("ExpressionTokens");
+            foreach (IExpressionOperatorInfo operatorInfo in operatorTokens)
+            {
+            }
         }
 
         public IComInterfaceDescription GetComInterfaceByName(string assemblyName)
@@ -152,7 +163,8 @@ namespace Testflow.ComInterfaceManager
 
         public IClassInterfaceDescription GetClassDescriptionByType(ITypeData typeData, out IAssemblyInfo assemblyInfo)
         {
-            ComInterfaceDescription interfaceDescription = _descriptionData.GetComDescription(typeData.AssemblyName);
+            string assemblyName = typeData.AssemblyName;
+            ComInterfaceDescription interfaceDescription = _descriptionData.GetComDescription(assemblyName);
             IClassInterfaceDescription classDescription = null;
             // 如果该类型描述已存在则直接返回
             if (interfaceDescription != null &&
@@ -164,14 +176,14 @@ namespace Testflow.ComInterfaceManager
             string path, version;
             classDescription = _loaderManager.GetClassDescription(typeData, _descriptionData, out path, out version);
 
-            assemblyInfo = GetAssemblyInfo(typeData.AssemblyName);
+            assemblyInfo = GetAssemblyInfo(assemblyName);
             TestflowRunner testflowRunner;
             if (null == assemblyInfo && null != (testflowRunner = TestflowRunner.GetInstance()))
             {
                 assemblyInfo = testflowRunner.SequenceManager.CreateAssemblyInfo();
                 assemblyInfo.Path = path;
                 assemblyInfo.Version = version;
-                assemblyInfo.AssemblyName = typeData.AssemblyName;
+                assemblyInfo.AssemblyName = assemblyName;
                 assemblyInfo.Available = true;
                 _descriptionData.Add(assemblyInfo);
             }

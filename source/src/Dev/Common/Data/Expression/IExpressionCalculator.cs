@@ -1,4 +1,6 @@
-﻿namespace Testflow.Data.Expression
+﻿using Testflow.Modules;
+
+namespace Testflow.Data.Expression
 {
     /// <summary>
     /// 表达式函数接口
@@ -21,12 +23,13 @@
         /// <summary>
         /// 判断source的值是否合法
         /// </summary>
-        bool IsValidSource(object sourceValue);
+        bool IsValidSource(IComInterfaceManager interfaceManager, ITypeData sourceType);
 
         /// <summary>
-        /// 判断target的值是否合法
+        /// 判断source的值是否合法
         /// </summary>
-        bool IsValidTarget(object targetValue);
+        bool IsValidSource(IComInterfaceManager interfaceManager, object sourceValue);
+
 
         /// <summary>
         /// 计算表达式结果

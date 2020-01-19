@@ -83,6 +83,7 @@ namespace Testflow.ConfigurationManager
                 // 获取表达式符号信息并添加到SequenceManager和EngineCore的配置信息中
                 IExpressionOperatorCollection expressionTokens = GetExpressionTokens(globalConfigData, dataLoader);
                 globalConfigData.AddConfigItem(Constants.SequenceManage, "ExpressionTokens", expressionTokens);
+                globalConfigData.AddConfigItem(Constants.InterfaceLoad, "ExpressionTokens", expressionTokens);
                 globalConfigData.AddConfigItem(Constants.EngineConfig, "ExpressionTokens", expressionTokens);
             }
             return globalConfigData;
@@ -120,7 +121,6 @@ namespace Testflow.ConfigurationManager
                     // 获取表达式源数据对象
                     assemblyDir = GetAssemblyPath(expressionToken.SourceAssembly, availableDirs);
                     Type sourceDataType = GetTargetType(assemblyDir, expressionToken.SourceClassName, null);
-                    expressionToken.SourceClassType = sourceDataType;
                 }
             }
             catch (TestflowException)

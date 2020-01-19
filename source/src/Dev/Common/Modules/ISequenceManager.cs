@@ -115,9 +115,9 @@ namespace Testflow.Modules
         IExpressionData CreateExpression();
 
         /// <summary>
-        /// 使用表达式函数的操作符获取表达式
+        /// 使用表达式名称获取表达式
         /// </summary>
-        IExpressionOperatorInfo GetOperatorInfo(string functionOperator);
+        IExpressionOperatorInfo GetOperatorInfo(string operatorName);
 
         /// <summary>
         /// 返回表达式是否有效

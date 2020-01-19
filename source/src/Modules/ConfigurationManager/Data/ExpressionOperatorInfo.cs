@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Xml;
 using System.Xml.Serialization;
+using Testflow.Data;
 using Testflow.Data.Expression;
 
 namespace Testflow.ConfigurationManager.Data
@@ -62,7 +63,7 @@ namespace Testflow.ConfigurationManager.Data
         /// 源数据类型
         /// </summary>
         [XmlIgnore]
-        public Type SourceClassType { get; set; }
+        public ITypeData SourceClassType { get; set; }
 
         /// <summary>
         /// 计算的方法

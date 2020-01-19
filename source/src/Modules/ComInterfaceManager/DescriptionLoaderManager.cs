@@ -151,7 +151,14 @@ namespace Testflow.ComInterfaceManager
             out string path, out string version)
         {
             string typeFullName = ModuleUtils.GetFullName(typeData);
-            ClassInterfaceDescription classDescription = _loader.GetClassDescription(typeData.AssemblyName,
+            string assemblyName = typeData.AssemblyName;
+            return GetClassDescription(descriptionDatas, assemblyName, typeFullName, out path, out version);
+        }
+
+        public ClassInterfaceDescription GetClassDescription(DescriptionDataTable descriptionDatas, string assemblyName,
+            string typeFullName, out string path, out string version)
+        {
+            ClassInterfaceDescription classDescription = _loader.GetClassDescription(assemblyName,
                 typeFullName, out path, out version);
             // 初始化TypeData
             ITypeData classType = ModuleUtils.GetTypeDataByDescription(_sequenceManager, descriptionDatas,
@@ -162,7 +169,7 @@ namespace Testflow.ComInterfaceManager
             {
                 funcDescription.ClassType = classType;
             }
-            CheckClassDescription(classDescription, typeData.AssemblyName, typeFullName);
+            CheckClassDescription(classDescription, assemblyName, typeFullName);
             return classDescription;
         }
 

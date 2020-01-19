@@ -174,10 +174,10 @@ namespace Testflow.SequenceManager
             return new ExpressionData();
         }
 
-        public IExpressionOperatorInfo GetOperatorInfo(string functionOperator)
+        public IExpressionOperatorInfo GetOperatorInfo(string operatorName)
         {
             return ConfigData.GetProperty<IExpressionOperatorCollection>("ExpressionTokens")
-                    .GetOperatorInfo(functionOperator);
+                    .GetOperatorInfo(operatorName);
         }
 
         public bool IsValidExpression(IExpressionData expression)
