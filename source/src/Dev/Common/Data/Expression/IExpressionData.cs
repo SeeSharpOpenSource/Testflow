@@ -1,11 +1,13 @@
-﻿using Testflow.Data.Sequence;
+﻿using System.Collections.Generic;
+using Testflow.Data.Sequence;
+using Testflow.Usr;
 
 namespace Testflow.Data.Expression
 {
     /// <summary>
     /// 表达式数据
     /// </summary>
-    public interface IExpressionData : ISequenceDataContainer
+    public interface IExpressionData : ICloneableClass<IExpressionData>
     {
         /// <summary>
         /// 表达式的名称
@@ -25,11 +27,16 @@ namespace Testflow.Data.Expression
         /// <summary>
         /// 表达式中的目标
         /// </summary>
-        IExpressionElement Target { get; set; }
+        IList<IExpressionElement> Arguments { get; set; }
 
         /// <summary>
         /// 表达式操作的名称
         /// </summary>
         string Operation { get; set; }
+
+        /// <summary>
+        /// 使用所属序列对象初始化
+        /// </summary>
+        void Initialize(ISequenceFlowContainer parent);
     }
 }
