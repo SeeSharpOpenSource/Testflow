@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<ExpressionOperatorConfiguration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" Version="1.0.1.0">
+  <ExpressionOperators>
+    <ExpressionOperator Name="GetArrayElement" Description="Get the element in specified subscript.">
+      <Symbol>[]</Symbol>
+      <FormatString>{0}[{1}]</FormatString>
+      <Assembly>ExpressionFuncs.dll</Assembly>
+      <ClassName>Testflow.ExpressionFunctions.ArrayElementAcquirer</ClassName>
+      <SourceAssembly>mscorlib.dll</SourceAssembly>
+      <SourceClassName>System.Array</SourceClassName>
+    </ExpressionOperator>
+  </ExpressionOperators>
+</ExpressionOperatorConfiguration>
