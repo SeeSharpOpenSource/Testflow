@@ -123,6 +123,9 @@
   <data name="FileCannotFound" xml:space="preserve">
     <value>The file in directory '{0}' cannot be found.</value>
   </data>
+  <data name="IllegalExpression" xml:space="preserve">
+    <value>Illegal expression value: {0}.</value>
+  </data>
   <data name="IllegalFileData" xml:space="preserve">
     <value>Illegal data exist in sequence/parameter file.</value>
   </data>

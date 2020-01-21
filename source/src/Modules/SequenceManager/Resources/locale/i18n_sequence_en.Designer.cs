@@ -79,6 +79,15 @@ namespace Testflow.SequenceManager.Resources.locale {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Illegal expression value: {0}..
+        /// </summary>
+        internal static string IllegalExpression {
+            get {
+                return ResourceManager.GetString("IllegalExpression", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Illegal data exist in sequence/parameter file..
         /// </summary>
         internal static string IllegalFileData {

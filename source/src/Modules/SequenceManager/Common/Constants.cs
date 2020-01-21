@@ -45,5 +45,13 @@
         public const string FuncNamespace = "Testflow.FunctionDefinitions";
 
         public const string FuncClassName = "StepFunctions";
+
+        #region 表达式相关
+
+        public const string ArgNameFormat = "Arg{0}";
+        public const string ArgNamePattern = "Arg[0-9]+";
+
+        #endregion
+
     }
 }

@@ -79,6 +79,15 @@ namespace Testflow.SequenceManager.Resources.locale {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to 表达式&lt;{0}&gt;非法。.
+        /// </summary>
+        internal static string IllegalExpression {
+            get {
+                return ResourceManager.GetString("IllegalExpression", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to 序列/数据文件中出现非法数据。.
         /// </summary>
         internal static string IllegalFileData {

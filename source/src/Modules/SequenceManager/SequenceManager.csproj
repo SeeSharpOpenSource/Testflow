@@ -66,6 +66,9 @@
     <Compile Include="Common\Constants.cs" />
     <Compile Include="DirectoryHelper.cs" />
     <Compile Include="Expression\ExpressionElement.cs" />
+    <Compile Include="Expression\ExpressionParser.cs" />
+    <Compile Include="Expression\OperatorAdapterComparer.cs" />
+    <Compile Include="Expression\OperatorAdapter.cs" />
     <Compile Include="Resources\locale\i18n_sequence_zh.Designer.cs">
       <DependentUpon>i18n_sequence_zh.resx</DependentUpon>
       <AutoGen>True</AutoGen>

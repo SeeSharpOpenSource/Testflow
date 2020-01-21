@@ -123,6 +123,9 @@
   <data name="FileCannotFound" xml:space="preserve">
     <value>无法找到文件“{0}”。</value>
   </data>
+  <data name="IllegalExpression" xml:space="preserve">
+    <value>表达式&lt;{0}&gt;非法。</value>
+  </data>
   <data name="IllegalFileData" xml:space="preserve">
     <value>序列/数据文件中出现非法数据。</value>
   </data>

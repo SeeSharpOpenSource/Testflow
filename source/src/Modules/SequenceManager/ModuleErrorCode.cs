@@ -19,5 +19,7 @@ namespace Testflow.SequenceManager
         public const int TypeDataError = 7 | CommonErrorCode.SequenceManageErrorMask;
 
         public const int VariableError = 8 | CommonErrorCode.SequenceManageErrorMask;
+
+        public const int ExpressionError = 9 | CommonErrorCode.SequenceManageErrorMask;
     }
 }

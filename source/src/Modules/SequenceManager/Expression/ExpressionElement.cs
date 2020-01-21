@@ -92,6 +92,22 @@ namespace Testflow.SequenceManager.Expression
             this._parent = null;
         }
 
+        public ExpressionElement(ParameterType type, string value)
+        {
+            this._type = type;
+            this._value = value;
+            this._expression = null;
+            this._parent = null;
+        }
+
+        public ExpressionElement(IExpressionData value)
+        {
+            this._type = ParameterType.Expression;
+            this._value = string.Empty;
+            this._expression = value;
+            this._parent = null;
+        }
+
         public ExpressionElement(SerializationInfo info, StreamingContext context)
         {
             info.AddValue("Type", Type, typeof(ParameterType));

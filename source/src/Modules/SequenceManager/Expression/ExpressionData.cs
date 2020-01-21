@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Runtime.Serialization;
 using Testflow.Data.Expression;
 using Testflow.Data.Sequence;
@@ -11,7 +12,6 @@ namespace Testflow.SequenceManager.Expression
     /// <summary>
     /// 表达式数据
     /// </summary>
-    [Serializable]
     public class ExpressionData : IExpressionData
     {
         /// <summary>
@@ -38,19 +38,22 @@ namespace Testflow.SequenceManager.Expression
             }
         }
 
-        private IExpressionElement _target;
+        private List<IExpressionElement> _arguments;
         /// <summary>
         /// 表达式中的目标
         /// </summary>
-        public IExpressionElement Target
+        public IList<IExpressionElement> Arguments
         {
-            get { return _target; }
+            get { return _arguments; }
             set
             {
-                this._target = value;
-                if (null != Parent && null == _source)
+                this._arguments = (List<IExpressionElement>) value;
+                if (null != Parent && null == _source && null != value)
                 {
-                    _target.Initialize(Parent);
+                    foreach (IExpressionElement element in _arguments)
+                    {
+                        element.Initialize(Parent);
+                    }
                 }
             }
         }
@@ -64,35 +67,21 @@ namespace Testflow.SequenceManager.Expression
         {
             this.Name = string.Empty;
             this.Source = new ExpressionElement();
-            this.Target = new ExpressionElement();
+            this.Arguments = new List<IExpressionElement>(2);
             this.Operation = CommonConst.NAOperator;
             this.Parent = null;
         }
 
-        public ExpressionData(SerializationInfo info, StreamingContext context)
+        public IExpressionData Clone()
         {
-            info.AddValue("Name", Name, typeof(string));
-            info.AddValue("Source", Source, typeof(ExpressionElement));
-            info.AddValue("Target", Target, typeof(ExpressionElement));
-            info.AddValue("Operation", Operation, typeof(string));
-        }
-
-        public void GetObjectData(SerializationInfo info, StreamingContext context)
-        {
-            this.Name = info.GetString("Name");
-            this.Source = (IExpressionElement) info.GetValue("Source", typeof(ExpressionElement));
-            this.Target = (IExpressionElement) info.GetValue("Target", typeof(ExpressionElement));
-            this.Operation = info.GetString("Operation");
-        }
-
-        public ISequenceDataContainer Clone()
-        {
+            List<IExpressionElement> copyedArguments = new List<IExpressionElement>(this.Arguments.Count);
+            ModuleUtils.CloneDataCollection(this.Arguments, copyedArguments);
             ExpressionData data = new ExpressionData()
             {
                 Name = string.Empty,
                 Operation = this.Operation,
                 Source = (IExpressionElement) Source.Clone(),
-                Target = (IExpressionElement) Target.Clone(),
+                Arguments = copyedArguments
             };
             return data;
         }
@@ -102,8 +91,11 @@ namespace Testflow.SequenceManager.Expression
             this.Parent = (ISequence) parent;
             if (null != parent)
             {
-                this.Source?.Initialize(Parent);
-                this.Target?.Initialize(Parent);
+                this.Source?.Initialize(parent);
+                foreach (IExpressionElement argument in _arguments)
+                {
+                    argument.Initialize(parent);
+                }
             }
         }
     }
