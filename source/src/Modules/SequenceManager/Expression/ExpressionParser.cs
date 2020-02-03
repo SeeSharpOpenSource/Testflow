@@ -5,8 +5,6 @@ using Testflow.Data.Expression;
 using Testflow.Data.Sequence;
 using Testflow.Modules;
 using Testflow.SequenceManager.Common;
-using Testflow.Usr;
-using Testflow.Utility.I18nUtil;
 
 namespace Testflow.SequenceManager.Expression
 {
@@ -85,7 +83,7 @@ namespace Testflow.SequenceManager.Expression
         public IExpressionData ParseExpression(string expression, ISequence parent)
         {
             // 参数别名到参数值的映射
-            Dictionary<string, IExpressionElement> argumentCache = new Dictionary<string, IExpressionElement>(10);
+            Dictionary<string, string> argumentCache = new Dictionary<string, string>(10);
             StringBuilder expressionCache = new StringBuilder(expression);
             // 预处理，删除冗余的空格，替换参数为固定模式的字符串
             ParsingPreProcess(expressionCache, parent, argumentCache);
@@ -108,15 +106,8 @@ namespace Testflow.SequenceManager.Expression
             return expressionDataCache[expressionDataCache.ToString()];
         }
 
-        private void ParsingPreProcess(StringBuilder expressionCache, ISequence parent, Dictionary<string, IExpressionElement> argumentCache)
+        private void ParsingPreProcess(StringBuilder expressionCache, ISequence parent, Dictionary<string, string> argumentCache)
         {
-            const char quotation = '\'';
-            const char doubleQuotation = '"';
-            const char whitespace = ' ';
-            bool inQuotation = false;
-            bool inDoubleQuotation = false;
-            int doubleQuotationEndIndex = -1;
-            int quotationEndIndex = -1;
             int argumentIndex = 0;
             int argEndIndex = -1;
             bool nextCharIsDelim = false;
@@ -124,46 +115,7 @@ namespace Testflow.SequenceManager.Expression
             for (int i = expressionCache.Length - 1; i >= 0 ; i--)
             {
                 char character = expressionCache[i];
-                // 如果在引号中，且当前character不是结束符，则跳过当前字符执行
-                if ((!character.Equals(doubleQuotation) && inDoubleQuotation) ||
-                    (!character.Equals(quotation) && inQuotation))
-                {
-                    continue;
-                }
-                if (whitespace.Equals(character))
-                {
-                    // 删除所有没有包含在单引号和双引号中的空格字符
-                    expressionCache.Remove(i, 1);
-                }
-                else if (character.Equals(doubleQuotation) && !inQuotation)
-                {
-                    inDoubleQuotation = !inDoubleQuotation;
-                    if (inDoubleQuotation)
-                    {
-                        doubleQuotationEndIndex = i;
-                    }
-                    else
-                    {
-                        CacheConstString(expressionCache, ref argumentIndex, i, doubleQuotationEndIndex, argumentCache);
-                        // 复位结束为止索引
-                        doubleQuotationEndIndex = -1;
-                    }
-                }
-                else if (character.Equals(quotation) && !inDoubleQuotation)
-                {
-                    inQuotation = !inQuotation;
-                    if (inQuotation)
-                    {
-                        quotationEndIndex = i;
-                    }
-                    else
-                    {
-                        CacheConstString(expressionCache, ref argumentIndex, i, quotationEndIndex, argumentCache);
-                        // 复位结束为止索引
-                        quotationEndIndex = -1;
-                    }
-                }
-                else if (_expressionDelim.Contains(character))
+                if (_expressionDelim.Contains(character))
                 {
                     // 当前字符是运算符，且参数结束为止不为-1，则说明下一个位置是参数数据结束的位置
                     if (argEndIndex != -1)
@@ -180,35 +132,15 @@ namespace Testflow.SequenceManager.Expression
                     nextCharIsDelim = false;
                 }
             }
-            // 如果双引号或者单引号不成对，则抛出异常
-            if (inDoubleQuotation || inQuotation)
+            // 如果参数结束位置有效，则缓存第一个参数值
+            if (argEndIndex != 1)
             {
-                _logService.Print(LogLevel.Error, CommonConst.PlatformLogSession,
-                    $"Quotation Error in expression <{expressionCache}>");
-                I18N i18N = I18N.GetInstance(Constants.I18nName);
-                throw new TestflowDataException(ModuleErrorCode.ExpressionError,
-                    i18N.GetFStr("IllegalExpression", expressionCache.ToString()));
+                CacheArgumentValue(expressionCache, ref argumentIndex, 0, argEndIndex, argumentCache);
             }
         }
 
-        private void CacheConstString(StringBuilder expressionCache, ref int argIndex, int startQuotationIndex,
-            int endQuotationIndex, Dictionary<string, IExpressionElement> argumentCache)
-        {
-            string argName = string.Format(Constants.ArgNameFormat, argIndex++);
-            int strStartIndex = startQuotationIndex + 1;
-            // 取出常量值，不包括引号
-            string constStrValue = expressionCache.ToString()
-                .Substring(strStartIndex, endQuotationIndex - strStartIndex);
-            // 获取需要移除的长度，包括引号
-            int replaceLength = endQuotationIndex - startQuotationIndex + 1;
-//                        string replaceStrValue = expression.Substring(i, replaceLength);
-            argumentCache.Add(argName, new ExpressionElement(ParameterType.Value, constStrValue));
-            // 替换原来字符串位置的值为：StrX
-            expressionCache.Remove(startQuotationIndex, replaceLength);
-            expressionCache.Insert(startQuotationIndex, argName);
-        }
-
-        private void CacheArgumentValue(StringBuilder expressionCache, ref int argIndex, int argStartIndex, int argEndIndex, Dictionary<string, IExpressionElement> argumentCache)
+        private void CacheArgumentValue(StringBuilder expressionCache, ref int argIndex, int argStartIndex,
+            int argEndIndex, Dictionary<string, string> argumentCache)
         {
             string argName = string.Format(Constants.ArgNameFormat, argIndex++);
             // 取出常量值，不包括引号
@@ -216,35 +148,64 @@ namespace Testflow.SequenceManager.Expression
             string argumentValue = expressionCache.ToString()
                 .Substring(argStartIndex, argValueLength);
             // 获取需要移除的长度，包括引号
-            argumentCache.Add(argName, new ExpressionElement(ParameterType.Value, argumentValue));
+            argumentCache.Add(argName, argumentValue);
             // 替换原来字符串位置的值为：StrX
             expressionCache.Remove(argStartIndex, argValueLength);
             expressionCache.Insert(argStartIndex, argName);
         }
 
-        private void ParsingPostProcess(IExpressionData expressionData, Dictionary<string, IExpressionElement> argumentCache)
+        private void ParsingPostProcess(IExpressionData expressionData, Dictionary<string, string> argumentCache)
         {
-
+            ExpressionPostProcess(expressionData, argumentCache);
         }
 
         private void ExpressionPostProcess(IExpressionData expressionData,
-            Dictionary<string, IExpressionElement> argumentCache)
+            Dictionary<string, string> argumentCache)
         {
             ExpressionElementPostProcess(expressionData.Source, argumentCache);
             foreach (IExpressionElement expressionElement in expressionData.Arguments)
             {
                 ExpressionElementPostProcess(expressionElement, argumentCache);
-            } 
+            }
         }
 
         private void ExpressionElementPostProcess(IExpressionElement expressionElement, 
-            Dictionary<string, IExpressionElement> argumentCache)
+            Dictionary<string, string> argumentCache)
         {
             if (expressionElement.Type != ParameterType.NotAvailable)
             {
                 return;
             }
-            IExpressionElement value = argumentCache[expressionElement.Value];
+            string value = argumentCache[expressionElement.Value];
+            // 值是数值类型
+            if (_digitRegex.IsMatch(value))
+            {
+                expressionElement.Value = value;
+                expressionElement.Type = ParameterType.Value;
+            }
+            else if (_strRegex.IsMatch(value))
+            {
+                // 字符串替换为去除双引号后的值
+                Match matchData = _strRegex.Match(value);
+                expressionElement.Value = matchData.Groups[1].Value;
+                expressionElement.Type = ParameterType.Value;
+            }
+            else
+            {
+                // 否则则认为表达式为变量值
+                expressionElement.Value = value;
+                expressionElement.Type = ParameterType.Variable;
+            }
+//
+//            // 如果双引号或者单引号不成对，则抛出异常
+//            if (inDoubleQuotation || inQuotation)
+//            {
+//                _logService.Print(LogLevel.Error, CommonConst.PlatformLogSession,
+//                    $"Illegal expression <{expressionCache}>");
+//                I18N i18N = I18N.GetInstance(Constants.I18nName);
+//                throw new TestflowDataException(ModuleErrorCode.ExpressionError,
+//                    i18N.GetFStr("IllegalExpression", expressionCache.ToString()));
+//            }
         }
     }
 }
