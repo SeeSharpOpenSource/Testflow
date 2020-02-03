@@ -63,11 +63,11 @@ namespace Testflow.SequenceManager.Expression
         /// </summary>
         public string Operation { get; set; }
 
-        public ExpressionData()
+        public ExpressionData(int argumentCount)
         {
             this.Name = string.Empty;
             this.Source = new ExpressionElement();
-            this.Arguments = new List<IExpressionElement>(2);
+            this.Arguments = new List<IExpressionElement>(argumentCount);
             this.Operation = CommonConst.NAOperator;
             this.Parent = null;
         }
@@ -76,7 +76,7 @@ namespace Testflow.SequenceManager.Expression
         {
             List<IExpressionElement> copyedArguments = new List<IExpressionElement>(this.Arguments.Count);
             ModuleUtils.CloneDataCollection(this.Arguments, copyedArguments);
-            ExpressionData data = new ExpressionData()
+            ExpressionData data = new ExpressionData(this.Arguments.Count)
             {
                 Name = string.Empty,
                 Operation = this.Operation,

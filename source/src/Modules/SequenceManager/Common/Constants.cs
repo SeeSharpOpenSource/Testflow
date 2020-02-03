@@ -48,8 +48,14 @@
 
         #region 表达式相关
 
-        public const string ArgNameFormat = "Arg{0}";
-        public const string ArgNamePattern = "Arg[0-9]+";
+        public const string ArgNameFormat = "ARG{0}";
+        public const string ArgNamePattern = "ARG\\d+";
+        public const string ExpPlaceHodlerPattern = "EXP\\d+";
+        public const string ExpPlaceHodlerFormat = "EXP{0}";
+        public const string SingleArgPattern = "^ARG\\d+$";
+        public const string SingleExpPattern = "^EXP\\d+$";
+        public const string DigitPattern = "^(?:\\d+(?:\\.\\d+)?|0x[0-9a-fA-F]+|\\d+(?:\\.\\d+)?[Ee](?:[\\+-]?\\d+))?$";
+        public const string StringPattern = "^(\"|')(.*)\\1$";
 
         #endregion
 

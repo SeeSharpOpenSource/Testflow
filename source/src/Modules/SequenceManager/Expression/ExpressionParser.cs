@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Text;
+using System.Text.RegularExpressions;
 using Testflow.Data.Expression;
 using Testflow.Data.Sequence;
 using Testflow.Modules;
@@ -15,12 +16,13 @@ namespace Testflow.SequenceManager.Expression
         private readonly ILogService _logService;
         // 包含运算符中用到的所有符号的集合
         private readonly HashSet<char> _expressionDelim;
-        // 参数别名到参数值的映射
-        private readonly Dictionary<string, IExpressionElement> _argumentCache;
 
         private readonly List<OperatorAdapter> _operatorAdapters;
-        // 正则表达式中的元符号
-        private readonly HashSet<char> _metaCharacters;
+
+        private readonly Regex _parseOverRegex;
+        private readonly Regex _digitRegex;
+        private readonly Regex _strRegex;
+        
 
         internal ExpressionParser(IModuleConfigData configData, ILogService logService)
         {
@@ -28,11 +30,9 @@ namespace Testflow.SequenceManager.Expression
                 configData.GetProperty<Dictionary<string, ExpressionOperatorInfo>>("ExpressionOperators");
             _calculatorInfos = configData.GetProperty<ExpressionCalculatorInfo[]>("ExpressionCalculators");
             _logService = logService;
-
-            _metaCharacters = new HashSet<char>
-            {
-                '^', '[', '.', '$', '{', '*', '(', '\\', '+', ')','|', '?', '<', '>'
-            };
+            _parseOverRegex = new Regex(Constants.SingleExpPattern, RegexOptions.Compiled);
+            _digitRegex = new Regex(Constants.DigitPattern, RegexOptions.Compiled);
+            _strRegex = new Regex(Constants.StringPattern, RegexOptions.Compiled);
 
             _expressionDelim = new HashSet<char>();
             foreach (KeyValuePair<string, ExpressionOperatorInfo> operatorInfoPair in operatorInfos)
@@ -44,17 +44,24 @@ namespace Testflow.SequenceManager.Expression
                     _expressionDelim.Add(elem);
                 }
             }
+
+
+
             string argumentPattern = GetArgumentPattern(_expressionDelim);
             _operatorAdapters = new List<OperatorAdapter>(_operatorAdapters.Count);
+            // 正则表达式中的元符号
+            HashSet<char> metaCharacters = new HashSet<char>
+            {
+                '^', '[', '.', '$', '{', '*', '(', '\\', '+', ')','|', '?', '<', '>'
+            };
             // 创建各个Operator的符号匹配器
             foreach (KeyValuePair<string, ExpressionOperatorInfo> operatorInfoPair in operatorInfos)
             {
-                OperatorAdapter operatorAdapter = new OperatorAdapter(operatorInfoPair.Value, argumentPattern, _metaCharacters);
+                OperatorAdapter operatorAdapter = new OperatorAdapter(operatorInfoPair.Value, argumentPattern, metaCharacters);
                 _operatorAdapters.Add(operatorAdapter);
             }
             // 按照优先级，从大到小排序
             _operatorAdapters.Sort(new OperatorAdapterComparer());
-            _argumentCache = new Dictionary<string, IExpressionElement>(10);
         }
 
         // 获取参数的pattern，使用小括号，保证可以在分组数据中找到
@@ -75,28 +82,33 @@ namespace Testflow.SequenceManager.Expression
             return $"({Constants.ArgNamePattern})";
         }
 
-        public ExpressionData ParseExpression(string expression, ISequence parent)
+        public IExpressionData ParseExpression(string expression, ISequence parent)
         {
-            _argumentCache.Clear();
+            // 参数别名到参数值的映射
+            Dictionary<string, IExpressionElement> argumentCache = new Dictionary<string, IExpressionElement>(10);
             StringBuilder expressionCache = new StringBuilder(expression);
             // 预处理，删除冗余的空格，替换参数为固定模式的字符串
-            ParsingPreProcess(expressionCache, parent);
+            ParsingPreProcess(expressionCache, parent, argumentCache);
             // 分割表达式元素
-            IExpressionData expressionData = ParseExpressionData(expression);
-            ParsingPostProcess(expressionData);
+            IExpressionData expressionData = ParseExpressionData(expressionCache);
+            ParsingPostProcess(expressionData, argumentCache);
+            return expressionData;
         }
 
-        private IExpressionData ParseExpressionData(string expression)
+        private IExpressionData ParseExpressionData(StringBuilder expressionCache)
         {
-            throw new System.NotImplementedException();
+            Dictionary<string, IExpressionData> expressionDataCache = new Dictionary<string, IExpressionData>(10);
+            while (!_parseOverRegex.IsMatch(expressionDataCache.ToString()))
+            {
+                foreach (OperatorAdapter operatorAdapter in _operatorAdapters)
+                {
+                    operatorAdapter.ParseExpression(expressionCache, expressionDataCache);
+                }
+            }
+            return expressionDataCache[expressionDataCache.ToString()];
         }
 
-        private void ParsingPostProcess(IExpressionData expressionData)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        private void ParsingPreProcess(StringBuilder expressionCache, ISequence parent)
+        private void ParsingPreProcess(StringBuilder expressionCache, ISequence parent, Dictionary<string, IExpressionElement> argumentCache)
         {
             const char quotation = '\'';
             const char doubleQuotation = '"';
@@ -132,7 +144,7 @@ namespace Testflow.SequenceManager.Expression
                     }
                     else
                     {
-                        CacheConstString(expressionCache, ref argumentIndex, i, doubleQuotationEndIndex);
+                        CacheConstString(expressionCache, ref argumentIndex, i, doubleQuotationEndIndex, argumentCache);
                         // 复位结束为止索引
                         doubleQuotationEndIndex = -1;
                     }
@@ -146,7 +158,7 @@ namespace Testflow.SequenceManager.Expression
                     }
                     else
                     {
-                        CacheConstString(expressionCache, ref argumentIndex, i, quotationEndIndex);
+                        CacheConstString(expressionCache, ref argumentIndex, i, quotationEndIndex, argumentCache);
                         // 复位结束为止索引
                         quotationEndIndex = -1;
                     }
@@ -156,7 +168,7 @@ namespace Testflow.SequenceManager.Expression
                     // 当前字符是运算符，且参数结束为止不为-1，则说明下一个位置是参数数据结束的位置
                     if (argEndIndex != -1)
                     {
-                        CacheArgumentValue(expressionCache, ref argumentIndex, i + 1, argEndIndex);
+                        CacheArgumentValue(expressionCache, ref argumentIndex, i + 1, argEndIndex, argumentCache);
                         argEndIndex = -1;
                     }
                     nextCharIsDelim = true;
@@ -180,7 +192,7 @@ namespace Testflow.SequenceManager.Expression
         }
 
         private void CacheConstString(StringBuilder expressionCache, ref int argIndex, int startQuotationIndex,
-            int endQuotationIndex)
+            int endQuotationIndex, Dictionary<string, IExpressionElement> argumentCache)
         {
             string argName = string.Format(Constants.ArgNameFormat, argIndex++);
             int strStartIndex = startQuotationIndex + 1;
@@ -190,14 +202,13 @@ namespace Testflow.SequenceManager.Expression
             // 获取需要移除的长度，包括引号
             int replaceLength = endQuotationIndex - startQuotationIndex + 1;
 //                        string replaceStrValue = expression.Substring(i, replaceLength);
-            _argumentCache.Add(argName, new ExpressionElement(ParameterType.Value, constStrValue));
+            argumentCache.Add(argName, new ExpressionElement(ParameterType.Value, constStrValue));
             // 替换原来字符串位置的值为：StrX
             expressionCache.Remove(startQuotationIndex, replaceLength);
             expressionCache.Insert(startQuotationIndex, argName);
         }
 
-        private void CacheArgumentValue(StringBuilder expressionCache, ref int argIndex, int argStartIndex, 
-            int argEndIndex)
+        private void CacheArgumentValue(StringBuilder expressionCache, ref int argIndex, int argStartIndex, int argEndIndex, Dictionary<string, IExpressionElement> argumentCache)
         {
             string argName = string.Format(Constants.ArgNameFormat, argIndex++);
             // 取出常量值，不包括引号
@@ -205,10 +216,35 @@ namespace Testflow.SequenceManager.Expression
             string argumentValue = expressionCache.ToString()
                 .Substring(argStartIndex, argValueLength);
             // 获取需要移除的长度，包括引号
-            _argumentCache.Add(argName, new ExpressionElement(ParameterType.Value, argumentValue));
+            argumentCache.Add(argName, new ExpressionElement(ParameterType.Value, argumentValue));
             // 替换原来字符串位置的值为：StrX
             expressionCache.Remove(argStartIndex, argValueLength);
             expressionCache.Insert(argStartIndex, argName);
+        }
+
+        private void ParsingPostProcess(IExpressionData expressionData, Dictionary<string, IExpressionElement> argumentCache)
+        {
+
+        }
+
+        private void ExpressionPostProcess(IExpressionData expressionData,
+            Dictionary<string, IExpressionElement> argumentCache)
+        {
+            ExpressionElementPostProcess(expressionData.Source, argumentCache);
+            foreach (IExpressionElement expressionElement in expressionData.Arguments)
+            {
+                ExpressionElementPostProcess(expressionElement, argumentCache);
+            } 
+        }
+
+        private void ExpressionElementPostProcess(IExpressionElement expressionElement, 
+            Dictionary<string, IExpressionElement> argumentCache)
+        {
+            if (expressionElement.Type != ParameterType.NotAvailable)
+            {
+                return;
+            }
+            IExpressionElement value = argumentCache[expressionElement.Value];
         }
     }
 }
