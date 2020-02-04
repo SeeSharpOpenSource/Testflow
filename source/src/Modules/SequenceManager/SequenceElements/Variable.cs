@@ -56,7 +56,7 @@ namespace Testflow.SequenceManager.SequenceElements
         {
             Variable variable = new Variable()
             {
-                Name = this.Name + Constants.CopyPostfix,
+                Name = this.Name,
                 Description = this.Description,
                 LogRecordLevel = this.LogRecordLevel,
                 ReportRecordLevel = this.ReportRecordLevel,
