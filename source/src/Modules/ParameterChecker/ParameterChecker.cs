@@ -188,7 +188,6 @@ namespace Testflow.ParameterChecker
 
             switch (parameterData.ParameterType)
             {
-                #region ParameterType.NotAvailable
                 //还没输入参数值
                 //todo这里好像不对？
                 case ParameterType.NotAvailable:
@@ -201,9 +200,7 @@ namespace Testflow.ParameterChecker
                         };
                     }
                     return null;
-                #endregion
-
-                #region ParameterType.Value
+                    break;
                 //输入参数值
                 //检查参数类型是不是值类型
                 case ParameterType.Value:
@@ -267,16 +264,17 @@ namespace Testflow.ParameterChecker
                     }
                     
                     return null;
-                #endregion
-
-                #region ParameterType.Variable:
+                    break;
                 case ParameterType.Variable:
                     return FindVariablesCheckPropertyType(arr, parameterData.Value, parameterType.Type, overwriteType);
-                #endregion
+                    break;
+                    case ParameterType.Expression:
+                    return null;
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException("Invalid parameter value type.");
+                    break;
             }
-
-            //todo 好好写
-            throw new Exception("应该到不了这里，如果到了，那就真的出错了。有可能ParameterType null?那你前面要去设置的。");
         }
 
         private IList<IWarningInfo> CheckSteps(ISequenceStepCollection stepCollection, bool overwriteType, params ISequenceFlowContainer[] arr)
