@@ -16,11 +16,14 @@ namespace Testflow.SequenceManager.Expression
         private readonly HashSet<char> _expressionDelim;
 
         private readonly List<OperatorAdapter> _operatorAdapters;
-
+        // 解析结束的匹配模式
         private readonly Regex _parseOverRegex;
+        // 数值类型参数的匹配模式
         private readonly Regex _digitRegex;
+        // 字符串类型的匹配模式
         private readonly Regex _strRegex;
-        
+        // 布尔类型的匹配模式
+        private readonly Regex _boolRegex;
 
         internal ExpressionParser(IModuleConfigData configData, ILogService logService)
         {
@@ -31,6 +34,7 @@ namespace Testflow.SequenceManager.Expression
             _parseOverRegex = new Regex(Constants.SingleExpPattern, RegexOptions.Compiled);
             _digitRegex = new Regex(Constants.DigitPattern, RegexOptions.Compiled);
             _strRegex = new Regex(Constants.StringPattern, RegexOptions.Compiled);
+            _boolRegex = new Regex(Constants.BoolPattern, RegexOptions.Compiled);
 
             _expressionDelim = new HashSet<char>();
             foreach (KeyValuePair<string, ExpressionOperatorInfo> operatorInfoPair in operatorInfos)
@@ -177,8 +181,8 @@ namespace Testflow.SequenceManager.Expression
                 return;
             }
             string value = argumentCache[expressionElement.Value];
-            // 值是数值类型
-            if (_digitRegex.IsMatch(value))
+            // 值是数值类型或布尔类型
+            if (_digitRegex.IsMatch(value) || _boolRegex.IsMatch(value))
             {
                 expressionElement.Value = value;
                 expressionElement.Type = ParameterType.Value;
