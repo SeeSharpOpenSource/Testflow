@@ -121,8 +121,8 @@ namespace Testflow.SlaveCore.Coroutine
             {
                 Stop();
             }
-            _blockEvent.Dispose();
-            ExecutionTracker.Dispose();
+            _blockEvent?.Dispose();
+            ExecutionTracker?.Dispose();
         }
 
         private static bool IsRunState(int stateValue)
