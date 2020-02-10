@@ -19,10 +19,12 @@ namespace Testflow.SequenceManager.SequenceElements
         }
 
         public int Index { get; set; }
-        [RuntimeType(typeof(SequenceStepParameterCollection))]
-        public IList<ISequenceStepParameter> StepParameters { get; set; }
+
         [RuntimeType(typeof(VariableInitValueCollection))]
         public IList<IVariableInitValue> VariableValues { get; set; }
+
+        [RuntimeType(typeof(SequenceStepParameterCollection))]
+        public IList<ISequenceStepParameter> StepParameters { get; set; }
 
         public void Initialize(ISequenceFlowContainer parent)
         {

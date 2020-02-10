@@ -7,6 +7,7 @@ using Testflow.SequenceManager.Common;
 namespace Testflow.SequenceManager.SequenceElements
 {
     [Serializable]
+    [SerializationOrderEnable]
     // SequenceGroupParameter只在序列化时使用
     public class SequenceGroupParameter : ISequenceGroupParameter
     {
@@ -22,16 +23,27 @@ namespace Testflow.SequenceManager.SequenceElements
         }
         [RuntimeSerializeIgnore]
         public string Name { get; set; }
+
         [RuntimeSerializeIgnore]
         public string Description { get; set; }
+
+        [SerializationOrder(0)]
         [RuntimeSerializeIgnore]
         public ISequenceParameterInfo Info { get; set; }
+
+        [SerializationOrder(1)]
         [RuntimeType(typeof(VariableInitValueCollection))]
         public IList<IVariableInitValue> VariableValues { get; set; }
+
+        [SerializationOrder(2)]
         [RuntimeType(typeof(SequenceParameter))]
         public ISequenceParameter SetUpParameters { get; set; }
+
+        [SerializationOrder(3)]
         [RuntimeType(typeof(SequenceParameterCollection))]
         public IList<ISequenceParameter> SequenceParameters { get; set; }
+
+        [SerializationOrder(4)]
         [RuntimeType(typeof(SequenceParameter))]
         public ISequenceParameter TearDownParameters { get; set; }
 

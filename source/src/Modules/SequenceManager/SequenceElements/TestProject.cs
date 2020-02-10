@@ -12,6 +12,7 @@ using Testflow.SequenceManager.Serializer;
 namespace Testflow.SequenceManager.SequenceElements
 {
     [Serializable]
+    [SerializationOrderEnable]
     [JsonConverter(typeof(SequenceJsonConvertor))]
     public class TestProject : ITestProject
     {
@@ -55,43 +56,54 @@ namespace Testflow.SequenceManager.SequenceElements
         [RuntimeSerializeIgnore]
         public ISequenceFlowContainer Parent { get; set; }
 
+        [SerializationOrder(0)]
+        [RuntimeType(typeof(AssemblyInfoCollection))]
+        public IAssemblyInfoCollection Assemblies { get; set; }
+
+        [SerializationOrder(1)]
         [RuntimeType(typeof(TypeDataCollection))]
         public ITypeDataCollection TypeDatas { get; set; }
 
         [RuntimeSerializeIgnore]
         public string ModelVersion { get; set; }
 
-        [RuntimeType(typeof(AssemblyInfoCollection))]
-        public IAssemblyInfoCollection Assemblies { get; set; }
-
         public ExecutionModel ExecutionModel { get; set; }
 
+        [SerializationOrder(2)]
         [RuntimeType(typeof(VariableCollection))]
         public IVariableCollection Variables { get; set; }
 
+        [SerializationOrder(3)]
         [RuntimeType(typeof(VariableInitValueCollection))]
         public IList<IVariableInitValue> VariableValues { get; set; }
 
+        [SerializationOrder(4)]
         [RuntimeType(typeof(Sequence))]
         public ISequence SetUp { get; set; }
 
+        [SerializationOrder(5)]
         [RuntimeType(typeof(SequenceParameter))]
         public ISequenceParameter SetUpParameters { get; set; }
 
+        [SerializationOrder(6)]
         [XmlIgnore]
         [SerializationIgnore]
         [RuntimeSerializeIgnore]
         public ISequenceGroupCollection SequenceGroups { get; set; }
 
+        [SerializationOrder(7)]
         [RuntimeSerializeIgnore]
         public SequenceGroupLocationInfoCollection SequenceGroupLocations { get; set; }
 
+        [SerializationOrder(8)]
         [RuntimeType(typeof(ParameterDataCollections))]
         public IList<IParameterDataCollection> SequenceGroupParameters { get; set; }
 
+        [SerializationOrder(9)]
         [RuntimeType(typeof(Sequence))]
         public ISequence TearDown { get; set; }
 
+        [SerializationOrder(10)]
         [RuntimeType(typeof(SequenceParameter))]
         public ISequenceParameter TearDownParameters { get; set; }
 

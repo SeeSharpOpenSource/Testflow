@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Xml.Serialization;
@@ -9,13 +8,12 @@ using Testflow.Data;
 using Testflow.Data.Sequence;
 using Testflow.SequenceManager.Common;
 using Testflow.SequenceManager.Serializer;
-using Testflow.Utility;
-using Testflow.Utility.I18nUtil;
 
 namespace Testflow.SequenceManager.SequenceElements
 {
     [Serializable]
     [JsonConverter(typeof(SequenceJsonConvertor))]
+    [SerializationOrderEnable]
     public class SequenceGroup : ISequenceGroup
     {
         public SequenceGroup()
@@ -56,21 +54,26 @@ namespace Testflow.SequenceManager.SequenceElements
         [RuntimeSerializeIgnore]
         public ISequenceFlowContainer Parent { get; set; }
 
+        [SerializationOrder(0)]
         [RuntimeSerializeIgnore]
         public ISequenceGroupInfo Info { get; set; }
 
+        [SerializationOrder(1)]
         [RuntimeType(typeof(AssemblyInfoCollection))]
         public IAssemblyInfoCollection Assemblies { get; set; }
 
         [RuntimeSerializeIgnore]
         public bool Available { get; set; }
 
+        [SerializationOrder(2)]
         [RuntimeType(typeof(TypeDataCollection))]
         public ITypeDataCollection TypeDatas { get; set; }
 
+        [SerializationOrder(3)]
         [RuntimeType(typeof(ArgumentCollection))]
         public IArgumentCollection Arguments { get; set; }
 
+        [SerializationOrder(4)]
         [RuntimeType(typeof(VariableCollection))]
         public IVariableCollection Variables { get; set; }
 
@@ -81,12 +84,15 @@ namespace Testflow.SequenceManager.SequenceElements
 
         public ExecutionModel ExecutionModel { get; set; }
 
+        [SerializationOrder(5)]
         [RuntimeType(typeof(Sequence))]
         public ISequence SetUp { get; set; }
 
+        [SerializationOrder(6)]
         [RuntimeType(typeof(SequenceCollection))]
         public ISequenceCollection Sequences { get; set; }
 
+        [SerializationOrder(7)]
         [RuntimeType(typeof(Sequence))]
         public ISequence TearDown { get; set; }
 

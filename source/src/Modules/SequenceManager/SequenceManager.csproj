@@ -59,6 +59,8 @@
     <Compile Include="Common\RuntimeElementTypeAttribute.cs" />
     <Compile Include="Common\RuntimeSerializeIgnoreAttribute.cs" />
     <Compile Include="Common\RuntimeTypeAttribute.cs" />
+    <Compile Include="Common\SerializationOrderEnableAttribute.cs" />
+    <Compile Include="Common\SerializationOrderAttribute.cs" />
     <Compile Include="Common\VariableTreeTable.cs" />
     <Compile Include="Common\GenericCollectionAttribute.cs" />
     <Compile Include="Common\SerializationIgnoreAttribute.cs" />
