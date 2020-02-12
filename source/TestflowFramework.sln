@@ -83,6 +83,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EngineCoreTestLib", "test\M
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Authentication", "src\Dev\Authentification\Authentication.csproj", "{A3451458-F57D-441B-A45B-AC2AE315EE33}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FunctionDefinitions", "src\Dev\FunctionDefinitions\FunctionDefinitions.csproj", "{91DBB2DE-CF8D-49A3-8984-D9FDBDF1E557}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -213,6 +215,10 @@ Global
 		{A3451458-F57D-441B-A45B-AC2AE315EE33}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A3451458-F57D-441B-A45B-AC2AE315EE33}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A3451458-F57D-441B-A45B-AC2AE315EE33}.Release|Any CPU.Build.0 = Release|Any CPU
+		{91DBB2DE-CF8D-49A3-8984-D9FDBDF1E557}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{91DBB2DE-CF8D-49A3-8984-D9FDBDF1E557}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{91DBB2DE-CF8D-49A3-8984-D9FDBDF1E557}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{91DBB2DE-CF8D-49A3-8984-D9FDBDF1E557}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -256,5 +262,6 @@ Global
 		{97802083-7497-483F-9E2B-7F05CDAA4124} = {EEE2376E-0091-4A52-A018-A84F0620DA76}
 		{26070F54-64B4-4F52-995D-7646F0520307} = {C102BAFB-95F5-4460-89B5-088FCB9728CC}
 		{A3451458-F57D-441B-A45B-AC2AE315EE33} = {F3BC7E81-DCA6-4751-B80D-E538C3524573}
+		{91DBB2DE-CF8D-49A3-8984-D9FDBDF1E557} = {F3BC7E81-DCA6-4751-B80D-E538C3524573}
 	EndGlobalSection
 EndGlobal
