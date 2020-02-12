@@ -46,12 +46,7 @@ namespace Testflow.SequenceManagerTest
                 Available = true
 
             };
-            mockObj.Setup(m => m.GetComInterfaceByName(assemblyName)).Returns(new FakeComInterface()
-            {
-                Assembly = assemblyInfo,
-                ComponentId = 0,
-                Description = "This is test"
-            });
+            mockObj.Setup(m => m.GetAssemblyInfo(assemblyName)).Returns(assemblyInfo);
         }
 
         public override void Initialize()

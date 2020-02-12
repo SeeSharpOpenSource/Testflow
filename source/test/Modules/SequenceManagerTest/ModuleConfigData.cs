@@ -47,6 +47,7 @@ namespace Testflow.SequenceManagerTest
             Properties.Add("EnablePerformanceMonitor", false.ToString());
             Properties.Add("PlatformLibDir", $"{Properties["TestflowHome"]}{Path.DirectorySeparatorChar}lib{Path.DirectorySeparatorChar}");
             Properties.Add("DotNetLibDir", @"C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.5\");
+            Properties.Add("DotNetRootDir", @"C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.5\");
             Properties.Add("DatabaseName", "testflowData.db3");
 
 
