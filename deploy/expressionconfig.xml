@@ -1,13 +1,21 @@
 <?xml version="1.0"?>
 <ExpressionOperatorConfiguration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" Version="1.0.1.0">
   <ExpressionOperators>
-    <ExpressionOperator Name="GetArrayElement" Description="Get the element in specified subscript.">
+    <ExpressionOperator Name="GetElement" Description="Get the element in specified subscript.">
       <Symbol>[]</Symbol>
       <FormatString>{0}[{1}]</FormatString>
-      <Assembly>ExpressionFuncs.dll</Assembly>
-      <ClassName>Testflow.ExpressionFunctions.ArrayElementAcquirer</ClassName>
-      <SourceAssembly>mscorlib.dll</SourceAssembly>
-      <SourceClassName>System.Array</SourceClassName>
+      <Priority>10</Priority>
+      <ArgumentsCount>1</ArgumentsCount>
     </ExpressionOperator>
   </ExpressionOperators>
+  <ExpressionCalculators>
+    <!-- <ExpressionCalculatorInfo Name="GetArrayElement" Description="Get the array data element in specified subscript.">
+      <OperatorName>GetElement</OperatorName>
+      <CalculatorClass AssemblyPath="ExpressionCalculators.dll" ClassName="Testflow.ExpressionCalculators.ArrayElementAcquirer" />
+      <SourceType AssemblyPath="mscorlib.dll" ClassName="System.Array" />
+      <ArgumentTypes>
+        <ArgumentType AssemblyPath="mscorlib.dll" ClassName="System.Int32" />
+      </ArgumentTypes>
+    </ExpressionCalculatorInfo> -->
+  </ExpressionCalculators>
 </ExpressionOperatorConfiguration>
