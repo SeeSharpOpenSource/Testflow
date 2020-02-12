@@ -162,6 +162,11 @@ namespace Testflow.SequenceManager
             };
         }
 
+        public IVariable CreateVariable()
+        {
+            return new Variable();
+        }
+
         public IVariable CreateVarialbe()
         {
             return new Variable();

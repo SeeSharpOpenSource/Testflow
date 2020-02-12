@@ -1,4 +1,5 @@
-﻿using Testflow.Usr;
+﻿using System;
+using Testflow.Usr;
 using Testflow.Data;
 using Testflow.Data.Description;
 using Testflow.Data.Expression;
@@ -106,8 +107,15 @@ namespace Testflow.Modules
         /// <summary>
         /// 创建空白的Variable
         /// </summary>
-        /// <returns></returns>
+        IVariable CreateVariable();
+
+        /// <summary>
+        /// 创建空白的Variable
+        /// </summary>
+        [Obsolete]
         IVariable CreateVarialbe();
+
+
         
         /// <summary>
         /// 创建空白的AssemblyInfo
