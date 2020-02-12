@@ -109,5 +109,10 @@ namespace Testflow.Modules
         /// 获取所有类型信息的列表
         /// </summary>
         IList<ITypeData> GetTypeDatas();
+
+        /// <summary>
+        /// 判断某个TypeData是不是baseType的衍生类型
+        /// </summary>
+        bool IsDerivedFrom(ITypeData typeData, ITypeData baseType);
     }
 }

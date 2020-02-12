@@ -189,6 +189,11 @@ namespace Testflow.ComInterfaceManager
             return _descriptionData.GetTypeDatas();
         }
 
+        public bool IsDerivedFrom(ITypeData typeData, ITypeData baseType)
+        {
+            return _loaderManager.IsDerivedFrom(typeData, baseType);
+        }
+
         public void Dispose()
         {
             _descriptionData?.Dispose();

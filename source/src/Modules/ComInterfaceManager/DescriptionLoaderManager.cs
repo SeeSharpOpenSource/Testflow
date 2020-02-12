@@ -173,7 +173,49 @@ namespace Testflow.ComInterfaceManager
             return classDescription;
         }
 
+        public bool IsDerivedFrom(ITypeData typeData, ITypeData baseType)
+        {
+            string typeName = ModuleUtils.GetFullName(typeData);
+            string baseTypeName = ModuleUtils.GetFullName(baseType);
+            bool? result = _loader.IsDerivedFrom(typeData.AssemblyName, typeName, baseType.AssemblyName, baseTypeName);
+            CheckDerivedResult(result, typeData, baseType);
+            return result.Value;
+        }
+
         #region AppDomain返回值校验
+
+        private void CheckDerivedResult(bool? result, ITypeData typeData, ITypeData baseTypeData)
+        {
+            if (null != result)
+            {
+                return;
+            }
+            I18N i18N = I18N.GetInstance(Constants.I18nName);
+            ILogService logService = TestflowRunner.GetInstance().LogService;
+            switch (_loader.ErrorCode)
+            {
+                case ModuleErrorCode.LibraryLoadError:
+                    logService.Print(LogLevel.Error, CommonConst.PlatformLogSession, _loader.Exception,
+                        $"Assembly '{typeData.AssemblyName}/{baseTypeData.AssemblyName}' load error.");
+                    throw new TestflowRuntimeException(ModuleErrorCode.LibraryLoadError,
+                        i18N.GetStr("RuntimeError"));
+                    break;
+                case ModuleErrorCode.TypeCannotLoad:
+                    logService.Print(LogLevel.Error, CommonConst.PlatformLogSession, _loader.Exception,
+                        $"Type '{typeData.Name}/{baseTypeData.Name}' does not exist.");
+                    throw new TestflowRuntimeException(ModuleErrorCode.TypeCannotLoad,
+                        i18N.GetFStr("TypeNotFound", $"{typeData.Name}/{baseTypeData.Name}"));
+                    break;
+                case ModuleErrorCode.AssemblyNotLoad:
+                    logService.Print(LogLevel.Error, CommonConst.PlatformLogSession, _loader.Exception,
+                        $"Assemly '{typeData.AssemblyName}/{baseTypeData.AssemblyName}' does not exist.");
+                    throw new TestflowRuntimeException(ModuleErrorCode.AssemblyNotLoad,
+                        i18N.GetFStr("AssemblyNotLoad", $"{typeData.AssemblyName}/{baseTypeData.AssemblyName}"));
+                    break;
+                default:
+                    break;
+            }
+        }
 
         private void CheckEnumItems(string[] enumItems, ITypeData typeData)
         {

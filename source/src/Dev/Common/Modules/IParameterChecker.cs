@@ -49,29 +49,29 @@ namespace Testflow.Modules
         /// <summary>
         /// 校验Step模块的参数配置正确性
         /// </summary>
-        /// <param name="Step">待校验的步骤</param>
+        /// <param name="step">待校验的步骤</param>
         /// <param name="arr">变量可能存在于这些ISequenceFlowContainer</param>
         /// /// <param name="overwriteType">检测到null类型的变量时，是否覆盖</param>
         /// <returns>检查过程中出现的告警信息</returns>
-        IList<IWarningInfo> CheckStep(ISequenceStep Step, ISequenceFlowContainer[] arr, bool overwriteType);
+        IList<IWarningInfo> CheckStep(ISequenceStep step, ISequenceFlowContainer[] arr, bool overwriteType);
 
         /// <summary>
         /// 校验某个Step的Return的参数配置正确性
         /// </summary>
-        /// <param name="Step">所在Step</param>
+        /// <param name="step">所在Step</param>
         /// <param name="arr">变量可能存在于这些ISequenceFlowContainer</param>
         /// /// <param name="overwriteType">检测到null类型的变量时，是否覆盖</param>
         /// <returns>检查过程中出现的告警信息</returns>
-        IWarningInfo CheckReturn(ISequenceStep Step, ISequenceFlowContainer[] arr, bool overwriteType);
+        IWarningInfo CheckReturn(ISequenceStep step, ISequenceFlowContainer[] arr, bool overwriteType);
 
         /// <summary>
         /// 校验某个Step的Instance的参数配置正确性
         /// </summary>
-        /// <param name="Step">所在Step</param>
+        /// <param name="step">所在Step</param>
         /// <param name="arr">变量可能存在于这些ISequenceFlowContainer</param>
         /// /// <param name="overwriteType">检测到null类型的变量时，是否覆盖</param>
         /// <returns>检查过程中出现的告警信息</returns>
-        IWarningInfo CheckInstance(ISequenceStep Step, ISequenceFlowContainer[] arr, bool overwriteType);
+        IWarningInfo CheckInstance(ISequenceStep step, ISequenceFlowContainer[] arr, bool overwriteType);
 
 
         /// <summary>

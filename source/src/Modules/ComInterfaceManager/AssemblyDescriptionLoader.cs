@@ -724,6 +724,28 @@ namespace Testflow.ComInterfaceManager
             }
         }
 
+
+        public bool? IsDerivedFrom(string assemlyName, string typeName, string baseAssemblyName, string baseTypeName)
+        {
+            if (!_assemblies.ContainsKey(assemlyName) || _assemblies.ContainsKey(baseAssemblyName))
+            {
+                this.ErrorCode = ModuleErrorCode.AssemblyNotLoad;
+                return null;
+            }
+            try
+            {
+                Type type = _assemblies[assemlyName].GetType(typeName);
+                Type baseType = _assemblies[baseAssemblyName].GetType(baseTypeName);
+                return type.IsSubclassOf(baseType);
+            }
+            catch (Exception ex)
+            {
+                this.ErrorCode = ModuleErrorCode.TypeCannotLoad;
+                this.Exception = ex;
+                return null;
+            }
+        }
+
         public string[] GetEnumItems(string assemblyName, string typeFullName)
         {
             Exception = null;
@@ -905,6 +927,5 @@ namespace Testflow.ComInterfaceManager
 //            }
 //            return $"{nestedType.Namespace}.{nestedType.Name}";
         }
-
     }
 }
