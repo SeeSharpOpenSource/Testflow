@@ -76,7 +76,11 @@ namespace Testflow.DesigntimeService.Common
 
             int index = sequenceStep.Function.ParameterType.IndexOf(argument);
             return sequenceStep.Function.Parameters[index];
+        }
 
+        public static void Rename(ISequenceFlowContainer target, string newName)
+        {
+            
         }
     }
 }

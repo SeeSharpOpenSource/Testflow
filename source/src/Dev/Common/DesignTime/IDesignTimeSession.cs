@@ -30,6 +30,11 @@ namespace Testflow.DesignTime
 
         #region 编辑Edit
 
+        /// <summary>
+        /// 重命名某个对象
+        /// </summary>
+        void Rename(ISequenceFlowContainer target, string newName);
+
         #region SequenceGroup Argument
         /// <summary>
         /// 为测试序列组添加参数

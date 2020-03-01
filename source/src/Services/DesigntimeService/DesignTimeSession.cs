@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Testflow.Data;
 using Testflow.Data.Sequence;
 using Testflow.DesignTime;
@@ -15,18 +13,14 @@ namespace Testflow.DesigntimeService
 {
     public class DesignTimeSession : IDesignTimeSession
     {
-        private Modules.ISequenceManager _sequenceManager => TestflowRunner.GetInstance().SequenceManager;
-        private Modules.IComInterfaceManager _interfaceManager => TestflowRunner.GetInstance().ComInterfaceManager;
+        private readonly ISequenceManager _sequenceManager;
+        private readonly IComInterfaceManager _interfaceManager;
 
         public long SessionId { get ; set ; }
 
-        private IDesigntimeContext _contextInst;
-        public IDesigntimeContext Context
-        {
-            get { return _contextInst;}
-        }
+        public IDesigntimeContext Context { get; }
 
-        private void ContextSequenceGroupModify()
+        private void SetModifyFlags()
         {
             Context.SequenceGroup.Info.Modified = true;
             Context.SequenceGroup.Info.ModifiedTime = DateTime.Now;
@@ -35,7 +29,9 @@ namespace Testflow.DesigntimeService
         public DesignTimeSession(long sessionId, ISequenceGroup sequenceGroup)
         {
             this.SessionId = sessionId;
-            this._contextInst = new DesignTimeContext(sequenceGroup);
+            this.Context = new DesignTimeContext(sequenceGroup);
+            _sequenceManager = TestflowRunner.GetInstance().SequenceManager;
+            _interfaceManager = TestflowRunner.GetInstance().ComInterfaceManager;
         }
 
         #region 初始化
@@ -51,6 +47,12 @@ namespace Testflow.DesigntimeService
         #endregion
 
         #region SequenceGroup Argument 没有实现
+
+        public void Rename(ISequenceFlowContainer target, string newName)
+        {
+            ModuleUtils.Rename(target, newName);
+        }
+
         public IArgument AddArgument(string name, ITypeData type)
         {
             throw new NotImplementedException();
@@ -74,7 +76,7 @@ namespace Testflow.DesigntimeService
             ILoopCounter loopCounter = _sequenceManager.CreateLoopCounter();
             loopCounter.MaxValue = maxCount;
             sequenceStep.LoopCounter = loopCounter;
-            ContextSequenceGroupModify();
+            SetModifyFlags();
             return loopCounter;
         }
 
@@ -83,7 +85,7 @@ namespace Testflow.DesigntimeService
             IRetryCounter retryCounter = _sequenceManager.CreateRetryCounter();
             retryCounter.MaxRetryTimes = maxCount;
             sequenceStep.RetryCounter = retryCounter;
-            ContextSequenceGroupModify();
+            SetModifyFlags();
             return retryCounter;
         }
  
@@ -91,7 +93,7 @@ namespace Testflow.DesigntimeService
         {
             ILoopCounter loopCounter = sequenceStep.LoopCounter;
             sequenceStep.LoopCounter = null;
-            ContextSequenceGroupModify();
+            SetModifyFlags();
             return loopCounter;
         }
 
@@ -99,7 +101,7 @@ namespace Testflow.DesigntimeService
         {
             IRetryCounter retryCounter = sequenceStep.RetryCounter;
             sequenceStep.RetryCounter = null;
-            ContextSequenceGroupModify();
+            SetModifyFlags();
             return retryCounter;
         }
 
@@ -107,14 +109,14 @@ namespace Testflow.DesigntimeService
         {
             counter.MaxValue = maxCount;
             counter.CounterEnabled = enabled;
-            ContextSequenceGroupModify();
+            SetModifyFlags();
         }
 
         public void ModifyCounter(IRetryCounter counter, int maxCount, bool enabled)
         {
             counter.MaxRetryTimes = maxCount;
             counter.RetryEnabled = enabled;
-            ContextSequenceGroupModify();
+            SetModifyFlags();
         }
         #endregion
 
@@ -135,9 +137,9 @@ namespace Testflow.DesigntimeService
             {
                 Context.SequenceGroup.Sequences.Insert(index, sequence);
             }
-            sequence.Parent = Context.SequenceGroup;
+            sequence.Initialize(Context.SequenceGroup);
             //sequenceGroup有变动
-            ContextSequenceGroupModify();
+            SetModifyFlags();
             return sequence;
         }
         public ISequence AddSequence(string sequenceName, string description, int index)
@@ -171,11 +173,11 @@ namespace Testflow.DesigntimeService
 
         public void RemoveSequence(int index)
         {
-            if(index == -1)
+            if(index == CommonConst.SetupIndex)
             {
                 Context.SequenceGroup.SetUp = _sequenceManager.CreateSequence();
             }
-            else if(index == -2)
+            else if(index == CommonConst.TeardownIndex)
             {
                 Context.SequenceGroup.TearDown = _sequenceManager.CreateSequence();
             }
@@ -183,7 +185,7 @@ namespace Testflow.DesigntimeService
             {
                 Context.SequenceGroup.Sequences.RemoveAt(index);
             }
-            ContextSequenceGroupModify();
+            SetModifyFlags();
         }
 
         public bool RemoveSequence(ISequence sequence)
@@ -203,7 +205,7 @@ namespace Testflow.DesigntimeService
                 bool removed = Context.SequenceGroup.Sequences.Remove(sequence);
                 if (removed)
                 {
-                    ContextSequenceGroupModify();
+                    SetModifyFlags();
                 }
                 return removed;
             }
@@ -271,8 +273,8 @@ namespace Testflow.DesigntimeService
             {
                 throw new TestflowDataException(ModuleErrorCode.InvalidEditOperation, "Parent needs to be Sequence or SequenceStep");
             }
-            stepData.Parent = parent;
-            ContextSequenceGroupModify();
+            stepData.Initialize(parent);
+            SetModifyFlags();
             return stepData;
         }
 
@@ -299,7 +301,7 @@ namespace Testflow.DesigntimeService
                             i18N.GetStr("InvalidOperation"));
                     }
                     parentStep.SubSteps.Insert(n + index, stepDatas[n]);
-                    stepDatas[n].Parent = parent;
+                    stepDatas[n].Initialize(parent);
                 }
             }
             else
@@ -308,7 +310,7 @@ namespace Testflow.DesigntimeService
             }
 
 
-            ContextSequenceGroupModify();
+            SetModifyFlags();
             return stepDatas[0];
         }
 
@@ -375,7 +377,7 @@ namespace Testflow.DesigntimeService
             {
                 throw new TestflowDataException(ModuleErrorCode.InvalidEditOperation, "Parent needs to be Sequence or SequenceStep");
             }
-            ContextSequenceGroupModify();
+            SetModifyFlags();
         }
 
         //todo I18n
@@ -406,7 +408,7 @@ namespace Testflow.DesigntimeService
             //判断成功remove与否
             if (removed)
             {
-                ContextSequenceGroupModify();
+                SetModifyFlags();
             }
             else
             {
@@ -489,7 +491,7 @@ namespace Testflow.DesigntimeService
                 throw new TestflowDataException(ModuleErrorCode.InvalidEditOperation, "Parent must be ISequenceGroup or ISequence.");
             }
 
-            variable.Parent = parent;
+            variable.Initialize(parent);
             return variable;
         }
 
@@ -596,7 +598,7 @@ namespace Testflow.DesigntimeService
         public void SetInstance(string variableName, ISequenceStep sequence)
         {
             sequence.Function.Instance = variableName;
-            ContextSequenceGroupModify();
+            SetModifyFlags();
         }
 
         public void SetParameterValue(string parameterName, string value, ParameterType parameterType, int sequenceIndex, params int[] indexes)
@@ -643,7 +645,7 @@ namespace Testflow.DesigntimeService
         public void SetReturn(string variableName, ISequenceStep sequence)
         {
             sequence.Function.Return = variableName;
-            ContextSequenceGroupModify();
+            SetModifyFlags();
         }
         #endregion
     }

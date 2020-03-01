@@ -84,6 +84,12 @@ namespace Testflow.DesigntimeService
         {
             // ignore
         }
+
+        public void Rename(ISequenceFlowContainer target, string newName)
+        {
+            ModuleUtils.Rename(target, newName);
+        }
+
         #endregion
 
         #region load; unload

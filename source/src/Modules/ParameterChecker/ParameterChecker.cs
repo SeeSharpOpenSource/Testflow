@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Testflow.Data;
 using Testflow.Data.Sequence;
 using Testflow.Modules;
@@ -34,7 +32,7 @@ namespace Testflow.ParameterChecker
 
         public void ApplyConfig(IModuleConfigData configData)
         {
-
+            this.ConfigData = configData;
         }
         #endregion
 
@@ -74,9 +72,9 @@ namespace Testflow.ParameterChecker
         /// <param name="arr"> 要检查的Sequence/SequenceGroup集合 </param>
         /// <returns> warnList (注：虽只会有一条错误信息，但为了上级代码整洁与一致性，返回List)</returns>
         /// 
-        public IWarningInfo CheckInstance(ISequenceStep Step, ISequenceFlowContainer[] arr, bool overwriteType)
+        public IWarningInfo CheckInstance(ISequenceStep step, ISequenceFlowContainer[] arr, bool overwriteType)
         {
-            IFunctionData function = Step.Function;
+            IFunctionData function = step.Function;
 
             if(string.IsNullOrEmpty(function.Instance))
             {
@@ -87,7 +85,7 @@ namespace Testflow.ParameterChecker
                     return new WarningInfo(){
                         //todo I18n
                         WarnCode = WarnCode.ParameterDataNotAvailable,
-                        Infomation = $"\"{Step.Name}\" require instant to be not null"
+                        Infomation = $"\"{step.Name}\" require instant to be not null"
                     };                 
                 }
             }
@@ -103,9 +101,9 @@ namespace Testflow.ParameterChecker
         /// <param name="function"> function信息 </param>
         /// <param name="arr"> 要检查的Sequence/SequenceGroup集合 </param>
         /// <returns> warnList (注：虽只会有一条错误信息，但为了上级代码整洁与一致性，返回List)</returns>
-        public IWarningInfo CheckReturn(ISequenceStep Step, ISequenceFlowContainer[] arr, bool overwriteType)
+        public IWarningInfo CheckReturn(ISequenceStep step, ISequenceFlowContainer[] arr, bool overwriteType)
         {
-            IFunctionData function = Step.Function;
+            IFunctionData function = step.Function;
 
             //先判断返回类型是不是void, void则不检查
             if (function.ReturnType == null)
@@ -116,7 +114,7 @@ namespace Testflow.ParameterChecker
                     {
                         //todo I18n
                         WarnCode = WarnCode.ReturnNotEmpty,
-                        Infomation = $"\"{Step.Name}\" function Return Type is void, but value not empty"
+                        Infomation = $"\"{step.Name}\" function Return Type is void, but value not empty"
                     };
                 }
 
@@ -131,10 +129,10 @@ namespace Testflow.ParameterChecker
             return FindVariablesCheckPropertyType(arr, function.Return, function.ReturnType.Type, overwriteType);
         }
 
-        public IList<IWarningInfo> CheckStep(ISequenceStep Step, ISequenceFlowContainer[] arr, bool overwriteType)
+        public IList<IWarningInfo> CheckStep(ISequenceStep step, ISequenceFlowContainer[] arr, bool overwriteType)
         {
             IList<IWarningInfo> warningList = new List<IWarningInfo>();
-            IFunctionData function = Step.Function;
+            IFunctionData function = step.Function;
 
             #region 空function, 空step
             if(function == null)
@@ -146,7 +144,7 @@ namespace Testflow.ParameterChecker
             IWarningInfo warnInfo = null;
 
             #region Instance
-            warnInfo = CheckInstance(Step, arr, overwriteType);
+            warnInfo = CheckInstance(step, arr, overwriteType);
             if(warnInfo != null)
             {
                 warningList.Add(warnInfo);
@@ -154,7 +152,7 @@ namespace Testflow.ParameterChecker
             #endregion
 
             #region Return
-            warnInfo = CheckReturn(Step, arr, overwriteType);
+            warnInfo = CheckReturn(step, arr, overwriteType);
             if (warnInfo != null)
             {
                 warningList.Add(warnInfo);
@@ -175,7 +173,7 @@ namespace Testflow.ParameterChecker
 
             foreach(IWarningInfo info in warningList)
             {
-                info.SequenceStep = Step;
+                info.SequenceStep = step;
             }
 
             return warningList;

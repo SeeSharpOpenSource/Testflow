@@ -82,6 +82,13 @@ namespace Testflow.DesignTime
         #region Sequence Edit
 
         /// <summary>
+        /// 重命名某个对象
+        /// </summary>
+        /// <param name="target"></param>
+        /// <param name="newName"></param>
+        void Rename(ISequenceFlowContainer target, string newName);
+
+        /// <summary>
         /// 添加组件库到当前设计时会话
         /// </summary>
         /// <param name="comInterface">待添加的组件</param>

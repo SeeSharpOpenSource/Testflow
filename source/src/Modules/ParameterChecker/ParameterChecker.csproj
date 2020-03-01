@@ -40,10 +40,21 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Constants.cs" />
     <Compile Include="Convertor\ValueConvertor.cs" />
     <Compile Include="ModuleErrorCode.cs" />
     <Compile Include="ParameterChecker.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Resources\locale\i18n_paramcheck_en.Designer.cs">
+      <DependentUpon>i18n_paramcheck_en.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="Resources\locale\i18n_paramcheck_zh.Designer.cs">
+      <DependentUpon>i18n_paramcheck_zh.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
     <Compile Include="WarnCode.cs" />
     <Compile Include="WarningInfo.cs" />
   </ItemGroup>
@@ -52,6 +63,16 @@
       <Project>{1681cdd7-0cc2-49d2-9e82-7b03b52db283}</Project>
       <Name>Common</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\locale\i18n_paramcheck_en.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>i18n_paramcheck_en.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\locale\i18n_paramcheck_zh.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>i18n_paramcheck_zh.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
