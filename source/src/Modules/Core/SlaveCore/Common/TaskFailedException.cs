@@ -9,16 +9,18 @@ namespace Testflow.SlaveCore.Common
 
         public int SequenceIndex { get; }
 
-        public TaskFailedException(int sequenceIndex, FailedType failedType) : base($"Sequence {0} failed.")
+        public TaskFailedException(int sequenceIndex, FailedType failedType, int errorCode) : base($"Sequence {0} failed.")
         {
             this.SequenceIndex = sequenceIndex;
             this.FailedType = failedType;
+            this.HResult = errorCode;
         }
 
-        public TaskFailedException(int sequenceIndex, string message, FailedType failedType) : base(message)
+        public TaskFailedException(int sequenceIndex, string message, FailedType failedType, int errorCode) : base(message)
         {
             this.SequenceIndex = sequenceIndex;
             this.FailedType = failedType;
+            this.HResult = errorCode;
         }
     }
 }

@@ -135,7 +135,7 @@ namespace Testflow.SlaveCore.Runner.Actuators
                 if (block.WaitOne(Constants.ThreadAbortJoinTime) == false)
                 {
                     result1 = StepResult.Failed;
-                    throw new TaskFailedException(SequenceIndex, "CallBack has exceeded waiting Time", FailedType.RuntimeError);
+                    throw new TaskFailedException(SequenceIndex, "CallBack has exceeded waiting Time", FailedType.RuntimeError, ModuleErrorCode.EventTimeOut);
                 }
 
                 //没超时，就获得消息
@@ -150,7 +150,7 @@ namespace Testflow.SlaveCore.Runner.Actuators
                 {
                     result1 = StepResult.Failed;
                     // 抛出强制失败异常
-                    throw new TaskFailedException(SequenceIndex, "CallBack failed", FailedType.RuntimeError);
+                    throw new TaskFailedException(SequenceIndex, "CallBack failed", FailedType.RuntimeError, ModuleErrorCode.UserForceFailed);
                 }
             }
                 #endregion

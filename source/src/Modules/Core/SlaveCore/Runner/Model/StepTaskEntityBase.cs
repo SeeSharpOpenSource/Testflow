@@ -301,7 +301,7 @@ namespace Testflow.SlaveCore.Runner.Model
             // 记录失败信息
             RecordRuntimeStatus();
             // 抛出异常信息
-            throw new TaskFailedException(SequenceIndex, Context.I18N.GetStr("OperationAborted"), FailedType.Abort);
+            throw new TaskFailedException(SequenceIndex, Context.I18N.GetStr("OperationAborted"), FailedType.Abort, ModuleErrorCode.UserForceFailed);
         }
 
         public void EndTiming()
@@ -447,8 +447,8 @@ namespace Testflow.SlaveCore.Runner.Model
             if (passCount < passTimes)
             {
                 TaskFailedException retryFailedException = new TaskFailedException(SequenceIndex,
-                        Context.I18N.GetStr("MaxRetryFailed"), FailedType.RetryFailed);
-                this.Result = StepResult.Failed;
+                        Context.I18N.GetStr("MaxRetryFailed"), FailedType.RetryFailed, ModuleErrorCode.RetryFailed);
+                this.Result = StepResult.Error;
                 RecordInvocationError(retryFailedException, retryFailedException.FailedType);
                 // 如果期间未发生LoopBreakException，则直接抛出FailedException
                 if (null == loopBreakException)
@@ -599,7 +599,7 @@ namespace Testflow.SlaveCore.Runner.Model
             InvokeStepSingleTime(forceInvoke);
             this.Result = StepResult.Failed;
             Context.LogSession.Print(LogLevel.Warn, Context.SessionId, $"Sequence step <{this.GetStack()}> passed but force failed.");
-            throw new TaskFailedException(SequenceIndex, FailedType.ForceFailed);
+            throw new TaskFailedException(SequenceIndex, FailedType.ForceFailed, ModuleErrorCode.ForceFailed);
         }
 
         private void HandleException(FailedAction failedAction, Exception exception)
@@ -717,7 +717,7 @@ namespace Testflow.SlaveCore.Runner.Model
             };
             // 一旦失败，需要记录WatchData
             Context.StatusQueue.Enqueue(statusInfo);
-            Context.LogSession.Print(LogLevel.Error, Context.SessionId, ex.Message);
+            Context.LogSession.Print(LogLevel.Error, Context.SessionId, ex);
         }
 
         // 获取当前Step是否是包含在Retry节点下
