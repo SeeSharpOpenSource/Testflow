@@ -61,7 +61,7 @@ namespace Testflow.SlaveCore.SlaveFlowControl
                 SendOverMessage();
 
                 // 打印状态日志
-                Context.LogSession.Print(LogLevel.Info, Context.SessionId, "Test execution over.");
+                Context.LogSession.Print(LogLevel.Info, Context.SessionId, "Sequence execution over.");
             }
         }
 

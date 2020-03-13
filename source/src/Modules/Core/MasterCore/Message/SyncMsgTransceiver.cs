@@ -64,7 +64,7 @@ namespace Testflow.MasterCore.Message
             _engineMessageListener.Start(_engineMessageQueue);
             _statusMessageListener.Start(_statusMessageQueue);
             _callBackMessageListener.Start(_callBackMessageQueue);
-            GlobalInfo.LogService.Print(LogLevel.Info, CommonConst.PlatformLogSession,
+            GlobalInfo.LogService.Print(LogLevel.Debug, CommonConst.PlatformLogSession,
                 "Message transceiver started.");
         }
 
@@ -95,7 +95,7 @@ namespace Testflow.MasterCore.Message
             ZombieCleaner.Stop();
             UpLinkMessenger.Clear();
             Thread.VolatileWrite(ref _stopFlag, 1);
-            GlobalInfo.LogService.Print(LogLevel.Info, CommonConst.PlatformLogSession,
+            GlobalInfo.LogService.Print(LogLevel.Debug, CommonConst.PlatformLogSession,
                 "Message transceiver stopped.");
         }
         

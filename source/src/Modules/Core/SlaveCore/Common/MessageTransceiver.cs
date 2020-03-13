@@ -63,6 +63,8 @@ namespace Testflow.SlaveCore.Common
                 IsBackground = true
             };
             _peakThread.Start();
+            _slaveContext.LogSession.Print(LogLevel.Debug, _slaveContext.SessionId,
+                            "Message receive start.");
         }
 
         public int SessionId { get; }
@@ -117,7 +119,7 @@ namespace Testflow.SlaveCore.Common
             }
             Thread.VolatileWrite(ref _stopFlag, 1);
             // 打印状态日志
-            _slaveContext.LogSession.Print(LogLevel.Info, _slaveContext.SessionId,
+            _slaveContext.LogSession.Print(LogLevel.Debug, _slaveContext.SessionId,
                             "Message receive stopped.");
         }
 

@@ -270,7 +270,7 @@ namespace Testflow.SlaveCore.Runner.Actuators
                 varValueStr = CommonConst.NullValue;
             }
             string printStr = string.Format(variableLogFormat, variable.Name, stackStr, varValueStr);
-            Context.LogSession.Print(LogLevel.Info, Context.SessionId, printStr);
+            Context.LogSession.Print(LogLevel.Debug, Context.SessionId, printStr);
         }
 
         private void LogTraceVariable(string varString, object value)

@@ -24,7 +24,7 @@ namespace Testflow.SlaveCore
         public void StartSlaveTask()
         {
             // 打印状态日志
-            _context.LogSession.Print(LogLevel.Info, _context.SessionId, "Slave controller started.");
+            _context.LogSession.Print(LogLevel.Debug, _context.SessionId, "Slave controller started.");
 
             _context.MessageTransceiver.StartReceive();
             _context.LogSession.Print(LogLevel.Debug, _context.SessionId, "Slave transceiver started.");
@@ -67,7 +67,7 @@ namespace Testflow.SlaveCore
             finally
             {
                 StopSlaveTask();
-                _context.LogSession.Print(LogLevel.Info, _context.SessionId, "Slave controller  stopped.");
+                _context.LogSession.Print(LogLevel.Debug, _context.SessionId, "Slave controller stopped.");
             }
         }
 

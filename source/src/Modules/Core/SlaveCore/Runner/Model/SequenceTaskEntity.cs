@@ -212,7 +212,7 @@ namespace Testflow.SlaveCore.Runner.Model
                 finalReportType = ModuleUtils.GetReportType(failedType);
                 lastStepResult = ModuleUtils.GetStepResult(failedType);
                 failedInfo = new FailedInfo(ex, failedType);
-                _context.LogSession.Print(LogLevel.Info, Index, "Step force failed.");
+                _context.LogSession.Print(LogLevel.Debug, Index, "Step force failed.");
             }
             else if (ex is TestflowAssertException)
             {
