@@ -538,7 +538,7 @@ namespace Testflow.SlaveCore.Runner.Model
             // 停止计时
             Actuator.EndTiming();
             this.Result = StepResult.Skip;
-            Context.LogSession.Print(LogLevel.Info, Context.SessionId, $"Sequence step <{this.GetStack()}> skipped.");
+            Context.LogSession.Print(LogLevel.Debug, Context.SessionId, $"Sequence step <{this.GetStack()}> skipped.");
             // 如果当前step被标记为记录状态，则返回状态信息
             if (null != StepData && StepData.RecordStatus)
             {
