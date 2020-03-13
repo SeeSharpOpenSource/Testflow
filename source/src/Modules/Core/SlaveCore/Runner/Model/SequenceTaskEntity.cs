@@ -203,6 +203,7 @@ namespace Testflow.SlaveCore.Runner.Model
         private void FillFinalExceptionReportInfo(Exception ex, out StatusReportType finalReportType,
             out StepResult lastStepResult, out FailedInfo failedInfo)
         {
+            bool isCriticalError = false;
             if (ex is TaskFailedException)
             {
                 TaskFailedException failedException = (TaskFailedException) ex;
@@ -215,6 +216,7 @@ namespace Testflow.SlaveCore.Runner.Model
             }
             else if (ex is TestflowAssertException)
             {
+                isCriticalError = true;
                 this.State = RuntimeState.Failed;
                 finalReportType = StatusReportType.Failed;
                 lastStepResult = StepResult.Failed;
@@ -231,6 +233,7 @@ namespace Testflow.SlaveCore.Runner.Model
             }
             else if (ex is TestflowException)
             {
+                isCriticalError = true;
                 this.State = RuntimeState.Error;
                 finalReportType = StatusReportType.Error;
                 lastStepResult = StepResult.Error;
@@ -239,6 +242,7 @@ namespace Testflow.SlaveCore.Runner.Model
             }
             else
             {
+                isCriticalError = true;
                 this.State = RuntimeState.Error;
                 finalReportType = StatusReportType.Error;
                 lastStepResult = StepResult.Error;
@@ -253,6 +257,11 @@ namespace Testflow.SlaveCore.Runner.Model
 //                failedInfo = new FailedInfo(ex.InnerException, FailedType.TargetError);
 //                _context.LogSession.Print(LogLevel.Error, Index, ex, "Invocation exception catched.");
 //            }
+            // 如果异常由关键异常触发，则打印错误信息
+            if (isCriticalError)
+            {
+                _context.LogSession.Print(LogLevel.Error, _context.SessionId, ex, $"ErrorCode:{ex.HResult}. ErrorInfo: {ex.Message}");
+            }
         }
 
         private void SetResultState(out StepResult lastStepResult, out StatusReportType finalReportType, 
