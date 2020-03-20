@@ -220,7 +220,7 @@ namespace Testflow.ComInterfaceManager
 
         public bool IsDerivedFrom(ITypeData typeData, ITypeData baseType)
         {
-            return _loaderManager.IsDerivedFrom(typeData, baseType);
+            return !typeData.Equals(baseType) && _loaderManager.IsDerivedFrom(typeData, baseType);
         }
 
         public void Dispose()

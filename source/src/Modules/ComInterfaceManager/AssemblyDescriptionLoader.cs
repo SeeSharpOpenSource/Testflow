@@ -735,7 +735,7 @@ namespace Testflow.ComInterfaceManager
 
         public bool? IsDerivedFrom(string assemlyName, string typeName, string baseAssemblyName, string baseTypeName)
         {
-            if (!_assemblies.ContainsKey(assemlyName) || _assemblies.ContainsKey(baseAssemblyName))
+            if (!_assemblies.ContainsKey(assemlyName) || !_assemblies.ContainsKey(baseAssemblyName))
             {
                 this.ErrorCode = ModuleErrorCode.AssemblyNotLoad;
                 return null;
