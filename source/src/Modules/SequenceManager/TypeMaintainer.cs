@@ -142,7 +142,7 @@ namespace Testflow.SequenceManager
             string variableName = ModuleUtils.GetVarNameByParamValue(paramValue);
             if (null != (variable = variableTree.GetVariable(variableName)))
             {
-                if (!ModuleUtils.IsPropertyParam(paramValue))
+                if (!ModuleUtils.IsPropertyParam(paramValue) && (null == variable.Type || _comInterfaceManager.IsDerivedFrom(type, variable.Type)))
                 {
                     variable.Type = type;
                 }
