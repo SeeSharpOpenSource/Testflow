@@ -661,21 +661,29 @@ namespace Testflow.ComInterfaceManager
             }
         }
 
-        public ClassInterfaceDescription GetClassDescription(string assemblyName, string typeFullName, out string path,
+        public ClassInterfaceDescription GetClassDescription(string assemblyName, string typeFullName, ref string path,
             out string version)
         {
             Exception = null;
             ErrorCode = 0;
-            path = string.Empty;
             version = Constants.DefaultVersion;
-            if (!_assemblies.ContainsKey(assemblyName))
-            {
-                ErrorCode = ModuleErrorCode.AssemblyNotLoad;
-                return null;
-            }
             try
             {
-                Assembly assembly = _assemblies[assemblyName];
+                Assembly assembly = null;
+                if (_assemblies.ContainsKey(assemblyName))
+                {
+                    assembly = _assemblies[assemblyName];
+                }
+                else
+                {
+                    if (string.IsNullOrWhiteSpace(path) || !File.Exists(path))
+                    {
+                        ErrorCode = ModuleErrorCode.AssemblyNotLoad;
+                        return null;
+                    }
+                    assembly = Assembly.LoadFrom(path);
+                    _assemblies.Add(assemblyName, assembly);
+                }
                 path = assembly.Location;
                 version = assembly.GetName().Version.ToString();
                 Type classType = assembly.GetType(typeFullName);

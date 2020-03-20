@@ -16,7 +16,7 @@ namespace Testflow.Modules
         IComInterfaceDescription GetComInterfaceByName(string assemblyName);
 
         /// <summary>
-        /// 使用类型名获取TypeData
+        /// 使用类型名获取TypeData，该类型必须是已经加载过的，否则返回null
         /// </summary>
         /// <param name="typename">类型名称</param>
         /// <param name="namespaceStr">命名空间</param>
@@ -99,6 +99,15 @@ namespace Testflow.Modules
         /// <param name="typeData">类型描述信息</param>
         /// <param name="assemblyInfo">程序集描述信息</param>
         IClassInterfaceDescription GetClassDescriptionByType(ITypeData typeData, out IAssemblyInfo assemblyInfo);
+
+        /// <summary>
+        /// 使用类型名获取类接口，该类型可以通过在指定的Assembly中重新加载，如果path未配置且当前程序集未加载则返回null
+        /// </summary>
+        /// <param name="assemblyName">程序集名称</param>
+        /// <param name="namespaceStr">命名空间</param>
+        /// <param name="typename">类型名称</param>
+        /// <param name="path">程序集所在路径</param>
+        IClassInterfaceDescription GetClassDescriptionByType(string assemblyName, string namespaceStr, string typename, string path = null);
 
         /// <summary>
         /// 获取所有接口描述信息的列表

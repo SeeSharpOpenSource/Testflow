@@ -147,19 +147,17 @@ namespace Testflow.ComInterfaceManager
             return enumItems;
         }
 
-        public ClassInterfaceDescription GetClassDescription(ITypeData typeData, DescriptionDataTable descriptionDatas, 
-            out string path, out string version)
+        public ClassInterfaceDescription GetClassDescription(ITypeData typeData, DescriptionDataTable descriptionDatas, ref string path, out string version)
         {
             string typeFullName = ModuleUtils.GetFullName(typeData);
             string assemblyName = typeData.AssemblyName;
-            return GetClassDescription(descriptionDatas, assemblyName, typeFullName, out path, out version);
+            return GetClassDescription(descriptionDatas, assemblyName, typeFullName, ref path, out version);
         }
 
-        public ClassInterfaceDescription GetClassDescription(DescriptionDataTable descriptionDatas, string assemblyName,
-            string typeFullName, out string path, out string version)
+        public ClassInterfaceDescription GetClassDescription(DescriptionDataTable descriptionDatas, string assemblyName, string typeFullName, ref string path, out string version)
         {
             ClassInterfaceDescription classDescription = _loader.GetClassDescription(assemblyName,
-                typeFullName, out path, out version);
+                typeFullName, ref path, out version);
             // 初始化TypeData
             ITypeData classType = ModuleUtils.GetTypeDataByDescription(_sequenceManager, descriptionDatas,
                 classDescription.ClassTypeDescription);

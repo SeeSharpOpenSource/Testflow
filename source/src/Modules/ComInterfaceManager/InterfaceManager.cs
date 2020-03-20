@@ -162,14 +162,43 @@ namespace Testflow.ComInterfaceManager
                 assemblyInfo = interfaceDescription.Assembly;
                 return classDescription;
             }
-            string path, version;
-            classDescription = _loaderManager.GetClassDescription(typeData, _descriptionData, out path, out version);
+            string path = null;
+            string version;
+            classDescription = _loaderManager.GetClassDescription(typeData, _descriptionData, ref path, out version);
 
             assemblyInfo = GetAssemblyInfo(assemblyName);
             TestflowRunner testflowRunner;
             if (null == assemblyInfo && null != (testflowRunner = TestflowRunner.GetInstance()))
             {
                 assemblyInfo = testflowRunner.SequenceManager.CreateAssemblyInfo();
+                assemblyInfo.Path = path;
+                assemblyInfo.Version = version;
+                assemblyInfo.AssemblyName = assemblyName;
+                assemblyInfo.Available = true;
+                _descriptionData.Add(assemblyInfo);
+            }
+            return classDescription;
+        }
+
+        public IClassInterfaceDescription GetClassDescriptionByType(string assemblyName, string namespaceStr, string typename, string path = null)
+        {
+            ComInterfaceDescription interfaceDescription = _descriptionData.GetComDescription(assemblyName);
+            IClassInterfaceDescription classDescription = null;
+            // 如果该类型描述已存在则直接返回
+            if (interfaceDescription != null &&
+                null !=
+                (classDescription = interfaceDescription.Classes.FirstOrDefault(
+                        item => item.ClassType.Equals(assemblyName, namespaceStr, typename))))
+            {
+                return classDescription;
+            }
+            string fullName = ModuleUtils.GetFullName(namespaceStr, typename);
+            string version;
+            classDescription = _loaderManager.GetClassDescription(_descriptionData, assemblyName, fullName, ref path, out version);
+            TestflowRunner testflowRunner;
+            if (!_descriptionData.Contains(assemblyName) && null != (testflowRunner = TestflowRunner.GetInstance()))
+            {
+                IAssemblyInfo assemblyInfo = testflowRunner.SequenceManager.CreateAssemblyInfo();
                 assemblyInfo.Path = path;
                 assemblyInfo.Version = version;
                 assemblyInfo.AssemblyName = assemblyName;
