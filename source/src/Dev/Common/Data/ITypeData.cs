@@ -29,5 +29,14 @@ namespace Testflow.Data
         /// 类型名称
         /// </summary>
         string Name { get; set; }
+
+        /// <summary>
+        /// 判断该Type是否是某个类型的TypeData
+        /// </summary>
+        /// <param name="assemblyName">代比较的程序集名称</param>
+        /// <param name="namespaceStr">待比较的命名空间名称</param>
+        /// <param name="name">代比较的类名称</param>
+        /// <returns></returns>
+        bool Equals(string assemblyName, string namespaceStr, string name);
     }
 }

@@ -19,7 +19,7 @@ namespace Testflow.SequenceManager.SequenceElements
         public string AssemblyName { get; set; }
         public string Namespace { get; set; }
         public string Name { get; set; }
-
+        
         [XmlIgnore]
         [SerializationIgnore]
         [RuntimeSerializeIgnore]
@@ -34,6 +34,12 @@ namespace Testflow.SequenceManager.SequenceElements
             }
             return this.AssemblyName.Equals(typeData.AssemblyName) && this.Namespace.Equals(typeData.Namespace) &&
                    Name.Equals(typeData.Name);
+        }
+
+        public bool Equals(string assemblyName, string namespaceStr, string name)
+        {
+            return this.AssemblyName.Equals(assemblyName) && this.Namespace.Equals(namespaceStr) &&
+                   this.Name.Equals(name);
         }
 
         public override int GetHashCode()
