@@ -17,11 +17,12 @@
     <ConfigItems Name="SyncTimeout" Value="10000" Type="System.Int32" />
     <ConfigItems Name="TestTimeout" Value="-1" Type="System.Int32" />
     <ConfigItems Name="StopTimeout" Value="10000" Type="System.Int32" />
-    <ConfigItems Name="TestGenTimeout" Value="5000" Type="System.Int32" />
-    <ConfigItems Name="AbortTimeout" Value="10000" Type="System.Int32" />
+    <ConfigItems Name="TestGenTimeout" Value="100000" Type="System.Int32" />
+    <ConfigItems Name="AbortTimeout" Value="30000" Type="System.Int32" />
     <ConfigItems Name="MessengerType" Value="MSMQ" Type="Testflow.Utility.MessageUtil.MessengerType" />
     <ConfigItems Name="EnablePerformanceMonitor" Value="False" Type="System.Boolean" />
     <ConfigItems Name="NumericFormat" Value="0.#####" Type="System.String" />
+	<ConfigItems Name="ErrorCodeProperty" Value="ErrorCode" Type="System.String" />
   </ModuleConfigData>
   <ModuleConfigData Name="DataMaintain">
     <ConfigItems Name="DatabaseName" Value="testflowData.db3" Type="System.String" />
