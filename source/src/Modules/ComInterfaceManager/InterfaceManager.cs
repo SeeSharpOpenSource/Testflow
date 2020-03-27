@@ -223,6 +223,20 @@ namespace Testflow.ComInterfaceManager
             return !typeData.Equals(baseType) && _loaderManager.IsDerivedFrom(typeData, baseType);
         }
 
+        public bool IsCastable(ITypeData sourceType, ITypeData targetType)
+        {
+            IAssemblyInfo assemblyInfo;
+            IClassInterfaceDescription srcDescription = GetClassDescriptionByType(sourceType, out assemblyInfo);
+            IClassInterfaceDescription targetDescription = GetClassDescriptionByType(targetType, out assemblyInfo);
+            if (null == srcDescription || null == targetDescription)
+            {
+                return false;
+            }
+            // 目前仅认为值类型之间和枚举类型可以互相转换
+            return (srcDescription.Kind == VariableType.Value || srcDescription.Kind == VariableType.Enumeration) &&
+                (targetDescription.Kind == VariableType.Value || targetDescription.Kind == VariableType.Enumeration);
+        }
+
         public void Dispose()
         {
             _descriptionData?.Dispose();

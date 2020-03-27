@@ -123,5 +123,13 @@ namespace Testflow.Modules
         /// 判断某个TypeData是不是baseType的衍生类型
         /// </summary>
         bool IsDerivedFrom(ITypeData typeData, ITypeData baseType);
+
+        /// <summary>
+        /// 判断某个TypeData是不是可以强制转换为某个类型
+        /// </summary>
+        /// <param name="sourceType">转换的源类型</param>
+        /// <param name="targetType">转换的目标类型</param>
+        /// <returns></returns>
+        bool IsCastable(ITypeData sourceType, ITypeData targetType);
     }
 }
