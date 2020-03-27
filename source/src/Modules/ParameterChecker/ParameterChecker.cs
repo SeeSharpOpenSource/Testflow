@@ -469,7 +469,7 @@ namespace Testflow.ParameterChecker
                     Infomation = $"Variable {variableString} has Type null . Different from Type \"{checkType.Name}\" . May cause issues during runtime."
                 };
             }
-            else if (!type.Equals(checkType))
+            else if (!IsValidValueType(type, checkType))
             {
                 return new WarningInfo()
                 {
@@ -511,6 +511,12 @@ namespace Testflow.ParameterChecker
             #endregion
 
             return null;
+        }
+
+        private bool IsValidValueType(ITypeData paramType, ITypeData valueType)
+        {
+            return paramType.Equals(valueType) || _comInterfaceManager.IsCastable(valueType, paramType) ||
+                   _comInterfaceManager.IsDerivedFrom(valueType, paramType);
         }
 
         //todo I18n
