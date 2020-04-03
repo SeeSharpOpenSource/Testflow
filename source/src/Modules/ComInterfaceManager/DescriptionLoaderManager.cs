@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using System.Threading;
@@ -250,10 +251,6 @@ namespace Testflow.ComInterfaceManager
 
         private void CheckPropertyDescription(ITypeData typeData, string property)
         {
-            if (null != _loader.Exception)
-            {
-                return;
-            }
             I18N i18N = I18N.GetInstance(Constants.I18nName);
             ILogService logService = TestflowRunner.GetInstance().LogService;
             switch (_loader.ErrorCode)
@@ -283,6 +280,43 @@ namespace Testflow.ComInterfaceManager
                         i18N.GetFStr("AssemblyNotLoad", typeData.AssemblyName));
                     break;
                 default:
+                    break;
+            }
+        }
+
+
+        private void CheckPropertyMapping(ITypeData typeData, Dictionary<string, string> mapping)
+        {
+            if (null != mapping)
+            {
+                return;
+            }
+            I18N i18N = I18N.GetInstance(Constants.I18nName);
+            ILogService logService = TestflowRunner.GetInstance().LogService;
+            switch (_loader.ErrorCode)
+            {
+                case ModuleErrorCode.LibraryLoadError:
+                    logService.Print(LogLevel.Error, CommonConst.PlatformLogSession, _loader.Exception,
+                        $"Assembly '{typeData.AssemblyName}' load error.");
+                    throw new TestflowRuntimeException(ModuleErrorCode.LibraryLoadError,
+                        i18N.GetStr("RuntimeError"));
+                    break;
+                case ModuleErrorCode.TypeCannotLoad:
+                    logService.Print(LogLevel.Error, CommonConst.PlatformLogSession, _loader.Exception,
+                        $"Type '{typeData.Name}' does not exist.");
+                    throw new TestflowRuntimeException(ModuleErrorCode.TypeCannotLoad,
+                        i18N.GetFStr("TypeNotFound", typeData.Name));
+                    break;
+                case ModuleErrorCode.AssemblyNotLoad:
+                    logService.Print(LogLevel.Error, CommonConst.PlatformLogSession, _loader.Exception,
+                        $"Assemly '{typeData.AssemblyName}' does not exist.");
+                    throw new TestflowRuntimeException(ModuleErrorCode.AssemblyNotLoad,
+                        i18N.GetFStr("AssemblyNotLoad", typeData.AssemblyName));
+                    break;
+                default:
+                    logService.Print(LogLevel.Error, CommonConst.PlatformLogSession, _loader.Exception,
+                        $"Load type '{typeData.Name}' properties error.");
+                    throw new TestflowRuntimeException(ModuleErrorCode.PropertyNotFound, i18N.GetStr("RuntimeError"));
                     break;
             }
         }
@@ -415,10 +449,43 @@ namespace Testflow.ComInterfaceManager
         #endregion
 
 
+        #region 类型属性获取
+
         public void Dispose()
         {
             AppDomain.Unload(_loaderDomain);
         }
+
+        // 获取某个类型的某个属性，该属性的类型必须能够转换为propertyType
+        public Dictionary<string, string> GetTypeProperties(ITypeData type, ITypeData propertyType)
+        {
+            throw new NotImplementedException();
+        }
+
+        // 获取某个类型的所有属性
+        public Dictionary<string, string> GetTypeProperties(ITypeData type)
+        {
+            Dictionary<string, string> mapping = _loader.GetPropertiesToTypeMapping(type.AssemblyName, type.Namespace, type.Name);
+            CheckPropertyMapping(type, mapping);
+            return mapping;
+        }
+
+        // 获取某个类型的某个字段，该字段的类型必须能够转换为propertyType
+        public Dictionary<string, string> GetTypeFields(ITypeData type, ITypeData propertyType)
+        {
+            throw new NotImplementedException();
+        }
+
+        // 获取某个类型的所有字段
+        public Dictionary<string, string> GetTypeFields(ITypeData type)
+        {
+            Dictionary<string, string> mapping = _loader.GetFieldsToTypeMapping(type.AssemblyName, type.Namespace, type.Name);
+            CheckPropertyMapping(type, mapping);
+            return mapping;
+        }
+
+
+        #endregion
 
     }
 }

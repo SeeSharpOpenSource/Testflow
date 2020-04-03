@@ -781,6 +781,85 @@ namespace Testflow.ComInterfaceManager
             }
         }
 
+        public Dictionary<string, string> GetPropertiesToTypeMapping(string assemblyName, string namespaceStr, string typeName)
+        {
+            Exception = null;
+            ErrorCode = 0;
+            try
+            {
+                
+                Assembly assembly = null;
+                if (_assemblies.ContainsKey(assemblyName))
+                {
+                    assembly = _assemblies[assemblyName];
+                }
+                else
+                {
+                    ErrorCode = ModuleErrorCode.AssemblyNotLoad;
+                    return null;
+                }
+                string typeFullName = ModuleUtils.GetFullName(namespaceStr, typeName);
+                Type classType = assembly.GetType(typeFullName);
+                if (null == classType)
+                {
+                    ErrorCode = ModuleErrorCode.TypeCannotLoad;
+                    return null;
+                }
+                PropertyInfo[] propertyInfos = classType.GetProperties(BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance);
+                Dictionary<string, string> propertyMapping = new Dictionary<string, string>(propertyInfos.Length);
+                foreach (PropertyInfo propertyInfo in propertyInfos)
+                {
+                    propertyMapping.Add(propertyInfo.Name, ModuleUtils.GetFullName(propertyInfo.PropertyType));
+                }
+                return propertyMapping;
+            }
+            catch (Exception ex)
+            {
+                ErrorCode = ModuleErrorCode.LibraryLoadError;
+                Exception = ex;
+                return null;
+            }
+        }
+
+        public Dictionary<string, string> GetFieldsToTypeMapping(string assemblyName, string namespaceStr, string typeName)
+        {
+            Exception = null;
+            ErrorCode = 0;
+            try
+            {
+                Assembly assembly = null;
+                if (_assemblies.ContainsKey(assemblyName))
+                {
+                    assembly = _assemblies[assemblyName];
+                }
+                else
+                {
+                    ErrorCode = ModuleErrorCode.AssemblyNotLoad;
+                    return null;
+                }
+                string typeFullName = ModuleUtils.GetFullName(namespaceStr, typeName);
+                Type classType = assembly.GetType(typeFullName);
+                if (null == classType)
+                {
+                    ErrorCode = ModuleErrorCode.TypeCannotLoad;
+                    return null;
+                }
+                FieldInfo[] fieldInfos = classType.GetFields(BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance);
+                Dictionary<string, string> fieldMapping = new Dictionary<string, string>(fieldInfos.Length);
+                foreach (FieldInfo fieldInfo in fieldInfos)
+                {
+                    fieldMapping.Add(fieldInfo.Name, ModuleUtils.GetFullName(fieldInfo.FieldType));
+                }
+                return fieldMapping;
+            }
+            catch (Exception ex)
+            {
+                ErrorCode = ModuleErrorCode.LibraryLoadError;
+                Exception = ex;
+                return null;
+            }
+        }
+
         public ComInterfaceDescription LoadMscorlibDescription()
         {
             Assembly mscorAssembly = typeof(int).Assembly;

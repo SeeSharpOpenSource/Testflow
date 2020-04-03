@@ -132,9 +132,18 @@ namespace Testflow.ComInterfaceManager
             return _loaderManager.GetPropertyType(variableType, propertyName, _descriptionData);
         }
 
-        public IList<string> GetTypeProperties(ITypeData type, ITypeData propertyType = null)
+        public Dictionary<string, string> GetTypeProperties(ITypeData type, ITypeData propertyType = null)
         {
-            throw new System.NotImplementedException();
+            return null == propertyType
+                ? _loaderManager.GetTypeProperties(type)
+                : _loaderManager.GetTypeProperties(type, propertyType);
+        }
+
+        public Dictionary<string, string> GetTypeFields(ITypeData type, ITypeData propertyType = null)
+        {
+            return null == propertyType
+                ? _loaderManager.GetTypeFields(type)
+                : _loaderManager.GetTypeFields(type, propertyType);
         }
 
         public string[] GetEnumItems(ITypeData typeData)
