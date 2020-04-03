@@ -44,6 +44,12 @@ namespace Testflow.Modules
         ISequenceStep CreateSequenceStep(bool createSubStepCollection = false);
 
         /// <summary>
+        /// 对指定的序列步骤创建空白的子序列步骤集合，如果当前Step已经包含子序列步骤集合则不执行任何操作
+        /// </summary>
+        /// <returns></returns>
+        void AddSubStepCollection(ISequenceStep parent);
+
+        /// <summary>
         /// 根据类型创建的序列Step
         /// </summary>
         /// <returns></returns>

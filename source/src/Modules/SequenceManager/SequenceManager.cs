@@ -107,6 +107,15 @@ namespace Testflow.SequenceManager
             return sequenceStep;
         }
 
+        public void AddSubStepCollection(ISequenceStep parent)
+        {
+            if (null != parent.SubSteps)
+            {
+                return;
+            }
+            parent.SubSteps = new SequenceStepCollection();
+        }
+
         public ISequenceStep CreateNonExecutionStep(SequenceStepType stepType)
         {
             return SequenceStepCreator.CreateSequenceStep(stepType);
