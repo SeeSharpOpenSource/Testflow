@@ -267,6 +267,10 @@ namespace Testflow.DesigntimeService
                     throw new TestflowDataException(ModuleErrorCode.InvalidEditOperation, 
                         i18N.GetStr("InvalidOperation"));
                 }
+                if (null == parentStep.SubSteps)
+                {
+                    _sequenceManager.AddSubStepCollection(parentStep);
+                }
                 parentStep.SubSteps.Insert(index, stepData);
             }
             else
