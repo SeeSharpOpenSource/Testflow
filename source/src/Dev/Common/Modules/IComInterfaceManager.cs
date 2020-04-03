@@ -84,7 +84,15 @@ namespace Testflow.Modules
         /// <param name="type">类型信息</param>
         /// <param name="propertyType">过滤的Type全名，包括命名空间。如果不指定可以配置为null</param>
         /// <returns></returns>
-        IList<string> GetTypeProperties(ITypeData type, ITypeData propertyType = null);
+        Dictionary<string, string> GetTypeProperties(ITypeData type, ITypeData propertyType = null);
+
+        /// <summary>
+        /// 获取某个类型的所有公有字段，可以使用FieldType进行过滤
+        /// </summary>
+        /// <param name="type">类型信息</param>
+        /// <param name="fieldType">过滤的Type全名，包括命名空间。如果不指定可以配置为null</param>
+        /// <returns></returns>
+        Dictionary<string, string> GetTypeFields(ITypeData type, ITypeData fieldType = null);
 
         /// <summary>
         /// 获取枚举类型的子项信息
