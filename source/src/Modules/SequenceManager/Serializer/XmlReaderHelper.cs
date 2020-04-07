@@ -172,13 +172,11 @@ namespace Testflow.SequenceManager.Serializer
                     string propertyName = GetTypeName(propertyInfo.PropertyType);
                     Type propertyType = typeMapping.ContainsKey(propertyName) ? 
                         typeMapping[propertyName] : propertyInfo.PropertyType;
-                    SerializationIgnoreAttribute ignoreAttribute =
-                        propertyInfo.GetCustomAttribute<SerializationIgnoreAttribute>();
                     GenericCollectionAttribute collectionAttribute =
                         propertyType.GetCustomAttribute<GenericCollectionAttribute>();
                     // 值类型、字符串、枚举类型，并且未被ignore的非集合属性直接用值转换器处理
                     if ((propertyInfo.PropertyType.IsValueType || typeof (string).Equals(propertyInfo.PropertyType) ||
-                         propertyInfo.PropertyType.IsEnum) && null == ignoreAttribute && null == collectionAttribute)
+                         propertyInfo.PropertyType.IsEnum) && null == collectionAttribute)
                     {
                         string attribute = reader.GetAttribute(propertyInfo.Name);
                         if (null == attribute)
