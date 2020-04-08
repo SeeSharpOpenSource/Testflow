@@ -70,7 +70,8 @@ namespace Testflow.SequenceManager
         {
             if (!string.IsNullOrWhiteSpace(sequenceStep.LoopCounter?.CounterVariable))
             {
-                string variableName = ModuleUtils.GetVarNameByParamValue(sequenceStep.LoopCounter.CounterVariable);
+                string paramValue = sequenceStep.LoopCounter.CounterVariable;
+                string variableName = ModuleUtils.GetVarNameByParamValue(paramValue);
                 IVariable variable = variableTree.GetVariable(variableName);
                 Type varType = typeof(int);
                 // Argument不能作为遍历变量
@@ -78,10 +79,9 @@ namespace Testflow.SequenceManager
                 {
                     ThrowIfVariableNotFound(variableName, sequenceStep);
                 }
-                else if (!ModuleUtils.IsPropertyParam(sequenceStep.LoopCounter.CounterVariable) && 
-                    (variable.Type == null || !variable.Type.Name.Equals(varType.Name)))
+                else if ((variable.Type == null || variable.AutoType || !variable.Type.Name.Equals(varType.Name)) && 
+                         !ModuleUtils.IsPropertyParam(paramValue))
                 {
-                    
                     variable.Type = _comInterfaceManager.GetTypeByName(varType.Name, varType.Namespace);
                 }
             }
@@ -131,7 +131,6 @@ namespace Testflow.SequenceManager
                     VerifyVariableTypes(subStep, variableTree);
                 }
             }
-            
         }
 
         private void SetVariableAndArgumentType(string paramValue, ITypeData type, VariableTreeTable variableTree, 
@@ -142,7 +141,10 @@ namespace Testflow.SequenceManager
             string variableName = ModuleUtils.GetVarNameByParamValue(paramValue);
             if (null != (variable = variableTree.GetVariable(variableName)))
             {
-                if (!ModuleUtils.IsPropertyParam(paramValue) && (null == variable.Type || _comInterfaceManager.IsDerivedFrom(type, variable.Type)))
+                // 只有参数值直接为变量，且变量类型为null，或者变量类型为自动类型且当前参数类型继承自原来变量的类型时才可以将当前参数类型配置到变量类型中
+                if ((null == variable.Type ||
+                     (variable.AutoType && _comInterfaceManager.IsDerivedFrom(type, variable.Type))) &&
+                    !ModuleUtils.IsPropertyParam(paramValue))
                 {
                     variable.Type = type;
                 }

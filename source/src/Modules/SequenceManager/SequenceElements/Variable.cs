@@ -21,6 +21,7 @@ namespace Testflow.SequenceManager.SequenceElements
             this.OIRecordLevel = RecordLevel.None;
             this.Value = string.Empty;
             this.Parent = null;
+            this.AutoType = true;
         }
 
         public string Name { get; set; }
@@ -37,7 +38,8 @@ namespace Testflow.SequenceManager.SequenceElements
         public RecordLevel LogRecordLevel { get; set; }
         public RecordLevel ReportRecordLevel { get; set; }
         public RecordLevel OIRecordLevel { get; set; }
-
+        public bool AutoType { get; set; }
+        
         [XmlIgnore]
         [SerializationIgnore]
         public string Value { get; set; }
@@ -65,6 +67,7 @@ namespace Testflow.SequenceManager.SequenceElements
                 Type = this.Type,
                 TypeIndex = Constants.UnverifiedTypeIndex,
                 VariableType = this.VariableType,
+                AutoType = this.AutoType,
                 Value = this.Value
             };
             return variable;

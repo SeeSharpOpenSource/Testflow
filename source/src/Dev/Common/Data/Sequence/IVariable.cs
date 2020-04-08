@@ -36,6 +36,11 @@ namespace Testflow.Data.Sequence
         RecordLevel OIRecordLevel { get; set; }
 
         /// <summary>
+        /// 变量是否为自动类型，如果为True，则Variable的变量类型会根据变量被使用的位置自动配置
+        /// </summary>
+        bool AutoType { get; set; }
+
+        /// <summary>
         /// 变量的值，如果没有则为null
         /// </summary>
         [XmlIgnore]
