@@ -42,6 +42,11 @@ namespace Testflow.Data.Sequence
         string SequenceParamFile { get; set; }
 
         /// <summary>
+        /// 操作员面板信息
+        /// </summary>
+        IOperationPanelInfo OperationPanelInfo { get; set; }
+
+        /// <summary>
         /// 测试序列组是否被修改的标识位
         /// </summary>
         [XmlIgnore]

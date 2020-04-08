@@ -89,6 +89,7 @@
     <Compile Include="Expression\ExpressionData.cs" />
     <Compile Include="SequenceElements\FunctionData.cs" />
     <Compile Include="SequenceElements\LoopCounter.cs" />
+    <Compile Include="SequenceElements\OperationPanelInfo.cs" />
     <Compile Include="SequenceElements\ParameterData.cs" />
     <Compile Include="SequenceElements\ParameterDataCollection.cs" />
     <Compile Include="SequenceElements\ParameterDataCollections.cs" />

@@ -72,6 +72,7 @@
     <Compile Include="Data\Expression\IExpressionData.cs" />
     <Compile Include="Data\Expression\IExpressionElement.cs" />
     <Compile Include="Data\Sequence\IFunctionData.cs" />
+    <Compile Include="Data\Sequence\IOperationPanelInfo.cs" />
     <Compile Include="Data\Sequence\IParameterData.cs" />
     <Compile Include="Data\Sequence\IParameterDataCollection.cs" />
     <Compile Include="Data\Sequence\ISequenceDataContainer.cs" />

@@ -18,6 +18,7 @@ namespace Testflow.SequenceManager.SequenceElements
             this.SequenceGroupFile = string.Empty;
             this.SequenceParamFile = string.Empty;
             this.Modified = true;
+            this.OperationPanelInfo = new OperationPanelInfo();
         }
 
         public string Version { get; set; }
@@ -32,6 +33,7 @@ namespace Testflow.SequenceManager.SequenceElements
         public DateTime ModifiedTime { get; set; }
         public string SequenceGroupFile { get; set; }
         public string SequenceParamFile { get; set; }
+        public IOperationPanelInfo OperationPanelInfo { get; set; }
 
         [XmlIgnore]
         [SerializationIgnore]
