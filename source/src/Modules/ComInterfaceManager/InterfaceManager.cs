@@ -227,6 +227,14 @@ namespace Testflow.ComInterfaceManager
             return _descriptionData.GetTypeDatas();
         }
 
+        public ITypeDescription GetTypeDescription(ITypeData typeData)
+        {
+            ComInterfaceDescription comDescription = _descriptionData.GetComDescription(typeData.AssemblyName);
+            IClassInterfaceDescription classDescription =
+                comDescription?.Classes.FirstOrDefault(item => item.ClassType.Equals(typeData));
+            return ((ClassInterfaceDescription) classDescription)?.ClassTypeDescription;
+        }
+
         public bool IsDerivedFrom(ITypeData typeData, ITypeData baseType)
         {
             return !typeData.Equals(baseType) && _loaderManager.IsDerivedFrom(typeData, baseType);

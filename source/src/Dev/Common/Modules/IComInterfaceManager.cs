@@ -128,6 +128,11 @@ namespace Testflow.Modules
         IList<ITypeData> GetTypeDatas();
 
         /// <summary>
+        /// 根据类型数据获取类型的描述信息
+        /// </summary>
+        ITypeDescription GetTypeDescription(ITypeData typeData);
+
+        /// <summary>
         /// 判断某个TypeData是不是baseType的衍生类型
         /// </summary>
         bool IsDerivedFrom(ITypeData typeData, ITypeData baseType);
