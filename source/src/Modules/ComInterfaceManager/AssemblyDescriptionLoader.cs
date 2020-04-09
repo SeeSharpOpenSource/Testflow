@@ -630,10 +630,18 @@ namespace Testflow.ComInterfaceManager
                         BindingFlags.Instance | BindingFlags.Public);
                     if (null == propertyInfo)
                     {
-                        ErrorCode = ModuleErrorCode.PropertyNotFound;
-                        return null;
+                        FieldInfo fieldInfo = dataType.GetField(propertyElem, BindingFlags.Instance | BindingFlags.Public);
+                        if (null == fieldInfo)
+                        {
+                            ErrorCode = ModuleErrorCode.PropertyNotFound;
+                            return null;
+                        }
+                        dataType = fieldInfo.FieldType;
                     }
-                    dataType = propertyInfo.PropertyType;
+                    else
+                    {
+                        dataType = propertyInfo.PropertyType;
+                    }
                     AddToAssemblyMapping(dataType);
                 }
 
