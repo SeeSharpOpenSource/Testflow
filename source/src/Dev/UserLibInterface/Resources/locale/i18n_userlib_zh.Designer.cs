@@ -106,6 +106,15 @@ namespace Testflow.ExtensionBase.Resources.locale {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to 无效的序列类型。.
+        /// </summary>
+        internal static string InvalidSequence {
+            get {
+                return ResourceManager.GetString("InvalidSequence", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to 杂项.
         /// </summary>
         internal static string Miscellaneous {

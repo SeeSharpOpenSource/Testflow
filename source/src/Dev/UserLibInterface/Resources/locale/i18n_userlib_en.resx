@@ -132,6 +132,9 @@
   <data name="Hardware" xml:space="preserve">
     <value>Hardware</value>
   </data>
+  <data name="InvalidSequence" xml:space="preserve">
+    <value>Invalid sequence data type.</value>
+  </data>
   <data name="Miscellaneous" xml:space="preserve">
     <value>Miscellaneous</value>
   </data>

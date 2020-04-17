@@ -106,6 +106,15 @@ namespace Testflow.ExtensionBase.Resources.locale {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Invalid sequence data type..
+        /// </summary>
+        internal static string InvalidSequence {
+            get {
+                return ResourceManager.GetString("InvalidSequence", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Miscellaneous.
         /// </summary>
         internal static string Miscellaneous {

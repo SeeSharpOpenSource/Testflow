@@ -132,6 +132,9 @@
   <data name="Hardware" xml:space="preserve">
     <value>硬件</value>
   </data>
+  <data name="InvalidSequence" xml:space="preserve">
+    <value>无效的序列类型。</value>
+  </data>
   <data name="Miscellaneous" xml:space="preserve">
     <value>杂项</value>
   </data>
