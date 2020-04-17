@@ -53,6 +53,7 @@ namespace Testflow.MasterCore.EventData
             }
             StepResults = stepResults;
             this.WatchDatas = watchDatas;
+            CoroutineStatus = new List<ICoroutineStatusInfo>(2);
         }
 
         public int SessionId { get; }
@@ -67,6 +68,7 @@ namespace Testflow.MasterCore.EventData
         public double ProcessorTime { get; set; }
         public RuntimeState State { get; set; }
         public IList<ICallStack> CallStacks { get; }
+        public IList<ICoroutineStatusInfo> CoroutineStatus { get; }
         public IList<RuntimeState> SequenceState { get; }
         public IDictionary<int, IFailedInfo> FailedInfos { get; set; }
         public IDictionary<ICallStack, StepResult> StepResults { get; set; }

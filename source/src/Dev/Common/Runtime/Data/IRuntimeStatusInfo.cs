@@ -71,6 +71,11 @@ namespace Testflow.Runtime.Data
         IList<ICallStack> CallStacks { get; }
 
         /// <summary>
+        /// 状态被更新的各个协程的状态信息
+        /// </summary>
+        IList<ICoroutineStatusInfo> CoroutineStatus { get; }
+
+            /// <summary>
         /// 所有序列的状态信息
         /// </summary>
         IList<RuntimeState> SequenceState { get; }
@@ -78,16 +83,19 @@ namespace Testflow.Runtime.Data
         /// <summary>
         /// 失败信息，Key为FailedInfo对应的CoroutineId，Value为对应的失败描述信息
         /// </summary>
+        [Obsolete]
         IDictionary<int, IFailedInfo> FailedInfos { get; set; }
 
         /// <summary>
         /// 触发当前RuntimeStatusInfo时同时返回的step结果。key为step的Stack，Value为该步骤的结果
         /// </summary>
+        [Obsolete]
         IDictionary<ICallStack, StepResult> StepResults { get; set; }
 
         /// <summary>
         /// 被监视的变量数据
         /// </summary>
+        [Obsolete]
         IDictionary<IVariable, string> WatchDatas { get; set; }
     }
 }

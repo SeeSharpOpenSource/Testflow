@@ -51,6 +51,7 @@
     <Compile Include="Common\ModuleGlobalInfo.cs" />
     <Compile Include="Common\ModuleUtils.cs" />
     <Compile Include="CallBack\CallBackProcessor.cs" />
+    <Compile Include="EventData\CoroutineStatusInfo.cs" />
     <Compile Include="ObjectManage\IRuntimeObjectCustomer.cs" />
     <Compile Include="ObjectManage\Objects\BreakPointObject.cs" />
     <Compile Include="ObjectManage\Objects\EvaluationObject.cs" />
