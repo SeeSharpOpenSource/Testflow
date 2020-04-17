@@ -84,9 +84,9 @@
       <Project>{dc3cd3de-1b8e-4847-b752-63352f35f1e2}</Project>
       <Name>Logger</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\src\Dev\UserLibInterface\UserLibInterface.csproj">
+    <ProjectReference Include="..\..\..\src\Dev\UserLibInterface\ExtensionBase.csproj">
       <Project>{c286714c-de6e-4643-9b56-245fb0f3a322}</Project>
-      <Name>UserLibInterface</Name>
+      <Name>ExtensionBase</Name>
       <EmbedInteropTypes>False</EmbedInteropTypes>
     </ProjectReference>
     <ProjectReference Include="..\..\..\src\Dev\Utility\Utility.csproj">

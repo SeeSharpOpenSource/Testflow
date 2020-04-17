@@ -62,9 +62,9 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\src\Dev\UserLibInterface\UserLibInterface.csproj">
+    <ProjectReference Include="..\..\..\src\Dev\UserLibInterface\ExtensionBase.csproj">
       <Project>{c286714c-de6e-4643-9b56-245fb0f3a322}</Project>
-      <Name>UserLibInterface</Name>
+      <Name>ExtensionBase</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

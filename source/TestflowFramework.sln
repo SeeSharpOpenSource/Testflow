@@ -13,7 +13,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common", "src\Dev\Common\Co
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Logger", "src\Dev\Logger\Logger.csproj", "{DC3CD3DE-1B8E-4847-B752-63352F35F1E2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UserLibInterface", "src\Dev\UserLibInterface\UserLibInterface.csproj", "{C286714C-DE6E-4643-9B56-245FB0F3A322}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExtensionBase", "src\Dev\UserLibInterface\ExtensionBase.csproj", "{C286714C-DE6E-4643-9B56-245FB0F3A322}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Utility", "src\Dev\Utility\Utility.csproj", "{35105702-E8D2-4465-A118-687B6C85C466}"
 EndProject

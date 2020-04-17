@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("UserLibInterface")]
-[assembly: AssemblyDescription("Testflow user library interfaces")]
+[assembly: AssemblyTitle("ExtensionBase")]
+[assembly: AssemblyDescription("Testflow extension develop base")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("JYTEK")]
-[assembly: AssemblyProduct("UserLibInterface")]
+[assembly: AssemblyProduct("TestFlow")]
 [assembly: AssemblyCopyright("Copyright © JYTEK 2016")]
 [assembly: AssemblyTrademark("SeeSharp")]
 [assembly: AssemblyCulture("")]

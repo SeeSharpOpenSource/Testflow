@@ -7,8 +7,8 @@
     <ProjectGuid>{C286714C-DE6E-4643-9B56-245FB0F3A322}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Testflow.Usr</RootNamespace>
-    <AssemblyName>UsrLibBase</AssemblyName>
+    <RootNamespace>Testflow.ExtensionBase</RootNamespace>
+    <AssemblyName>ExtensionBase</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>

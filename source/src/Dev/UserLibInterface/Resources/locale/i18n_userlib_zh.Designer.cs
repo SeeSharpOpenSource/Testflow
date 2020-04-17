@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Testflow.Usr.Resources.locale {
+namespace Testflow.ExtensionBase.Resources.locale {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace Testflow.Usr.Resources.locale {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Testflow.Usr.Resources.locale.i18n_userlib_zh", typeof(i18n_userlib_zh).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Testflow.ExtensionBase.Resources.locale.i18n_userlib_zh", typeof(i18n_userlib_zh).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
