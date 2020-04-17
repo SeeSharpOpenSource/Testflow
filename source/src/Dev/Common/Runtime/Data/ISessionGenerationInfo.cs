@@ -21,5 +21,15 @@ namespace Testflow.Runtime.Data
         /// Sequence整体的生成状态
         /// </summary>
         GenerationStatus Status { get; set; }
+
+        /// <summary>
+        /// 发生生成错误的Step的堆栈
+        /// </summary>
+        ICallStack ErrorStack { get; set; }
+
+        /// <summary>
+        /// 生成错误的错误信息
+        /// </summary>
+        string ErrorInfo { get; set; }
     }
 }

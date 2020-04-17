@@ -12,6 +12,8 @@ namespace Testflow.MasterCore.EventData
         public int Session { get; }
         public ISerializableMap<int, GenerationStatus> SequenceStatus { get; }
         public GenerationStatus Status { get; set; }
+        public ICallStack ErrorStack { get; set; }
+        public string ErrorInfo { get; set; }
 
         public SessionGenerationInfo(ISequenceGroup sequenceGroup, int session)
         {
