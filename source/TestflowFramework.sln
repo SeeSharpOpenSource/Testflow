@@ -85,6 +85,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Authentication", "src\Dev\A
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FunctionDefinitions", "src\Dev\FunctionDefinitions\FunctionDefinitions.csproj", "{91DBB2DE-CF8D-49A3-8984-D9FDBDF1E557}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "External", "External", "{28715545-018F-458C-B8E2-63408FD2C1AD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExpressionCalculators", "src\External\ExpressionFunctions\ExpressionCalculators.csproj", "{1A3B26DB-8F13-4B79-8039-303F7330AB6F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -219,6 +223,10 @@ Global
 		{91DBB2DE-CF8D-49A3-8984-D9FDBDF1E557}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{91DBB2DE-CF8D-49A3-8984-D9FDBDF1E557}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{91DBB2DE-CF8D-49A3-8984-D9FDBDF1E557}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1A3B26DB-8F13-4B79-8039-303F7330AB6F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1A3B26DB-8F13-4B79-8039-303F7330AB6F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1A3B26DB-8F13-4B79-8039-303F7330AB6F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1A3B26DB-8F13-4B79-8039-303F7330AB6F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -263,5 +271,7 @@ Global
 		{26070F54-64B4-4F52-995D-7646F0520307} = {C102BAFB-95F5-4460-89B5-088FCB9728CC}
 		{A3451458-F57D-441B-A45B-AC2AE315EE33} = {F3BC7E81-DCA6-4751-B80D-E538C3524573}
 		{91DBB2DE-CF8D-49A3-8984-D9FDBDF1E557} = {F3BC7E81-DCA6-4751-B80D-E538C3524573}
+		{28715545-018F-458C-B8E2-63408FD2C1AD} = {F6DA2263-AA6B-425E-8EE8-57927F36CCA5}
+		{1A3B26DB-8F13-4B79-8039-303F7330AB6F} = {28715545-018F-458C-B8E2-63408FD2C1AD}
 	EndGlobalSection
 EndGlobal
