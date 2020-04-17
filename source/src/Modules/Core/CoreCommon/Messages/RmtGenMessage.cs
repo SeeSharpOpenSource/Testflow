@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Runtime.Serialization;
 using Testflow.CoreCommon.Common;
 using Testflow.CoreCommon.Data;
+using Testflow.Runtime;
 using Testflow.Usr;
 
 namespace Testflow.CoreCommon.Messages

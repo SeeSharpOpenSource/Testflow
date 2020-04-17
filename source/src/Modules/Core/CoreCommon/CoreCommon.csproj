@@ -73,7 +73,6 @@
     <Compile Include="Common\MessageType.cs" />
     <Compile Include="ModuleErrorCode.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Common\RunnerType.cs" />
     <Compile Include="Common\RuntimeTarget.cs" />
   </ItemGroup>
   <ItemGroup>
