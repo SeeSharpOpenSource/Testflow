@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Testflow.Usr.Common
+namespace Testflow.ExtensionBase.Common
 {
     /// <summary>
     /// 用于断言声明的注解

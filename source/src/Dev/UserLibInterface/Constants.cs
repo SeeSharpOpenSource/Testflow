@@ -1,4 +1,4 @@
-﻿namespace Testflow.Usr
+﻿namespace Testflow.ExtensionBase
 {
     internal static class Constants
     {

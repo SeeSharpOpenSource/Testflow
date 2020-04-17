@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Testflow.Usr
+namespace Testflow.ExtensionBase
 {
     /// <summary>
     /// Testflow的控制台接口

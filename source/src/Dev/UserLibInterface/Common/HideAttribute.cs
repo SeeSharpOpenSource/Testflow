@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Testflow.Usr.Common
+namespace Testflow.ExtensionBase.Common
 {
     /// <summary>
     /// 是否隐藏某个类/属性/方法

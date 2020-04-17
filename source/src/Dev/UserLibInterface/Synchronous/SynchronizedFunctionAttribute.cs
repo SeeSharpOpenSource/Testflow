@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Testflow.Usr.Synchronous
+namespace Testflow.ExtensionBase.Synchronous
 {
     /// <summary>
     /// 同步方法

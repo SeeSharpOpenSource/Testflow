@@ -7,6 +7,7 @@ using Testflow.CoreCommon.Common;
 using Testflow.CoreCommon.Messages;
 using Testflow.Data;
 using Testflow.Data.Sequence;
+using Testflow.ExtensionBase.Common;
 using Testflow.Runtime;
 using Testflow.Runtime.Data;
 using Testflow.SlaveCore.Common;

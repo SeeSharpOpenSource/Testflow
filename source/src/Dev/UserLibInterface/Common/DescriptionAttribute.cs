@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Testflow.Usr.Common
+namespace Testflow.ExtensionBase.Common
 {
     /// <summary>
     /// 描述信息

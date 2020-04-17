@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Testflow.Usr.Common
+namespace Testflow.ExtensionBase.Common
 {
     /// <summary>
     /// Testflow中会被使用的数据类型

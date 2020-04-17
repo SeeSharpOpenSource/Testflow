@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Reflection;
 using Testflow.Data;
+using Testflow.ExtensionBase;
 using Testflow.Utility.I18nUtil;
 
 namespace Testflow.Usr.Common

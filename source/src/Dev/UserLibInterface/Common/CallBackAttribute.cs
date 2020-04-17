@@ -1,7 +1,7 @@
 ﻿using System;
 using Testflow.Data;
 
-namespace Testflow.Usr.Common
+namespace Testflow.ExtensionBase.Common
 {
     /// <summary>
     /// 回调类型注解

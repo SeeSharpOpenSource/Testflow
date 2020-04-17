@@ -7,6 +7,7 @@ using System.Text;
 using Testflow.ComInterfaceManager.Data;
 using Testflow.Data;
 using Testflow.Data.Description;
+using Testflow.ExtensionBase.Common;
 using Testflow.Usr;
 using Testflow.Usr.Common;
 

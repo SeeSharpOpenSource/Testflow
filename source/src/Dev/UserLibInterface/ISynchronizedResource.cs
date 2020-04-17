@@ -1,4 +1,4 @@
-﻿namespace Testflow.Usr
+﻿namespace Testflow.ExtensionBase
 {
     /// <summary>
     /// 同步资源的接口
