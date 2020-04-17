@@ -6,13 +6,23 @@ using Testflow.Data.Sequence;
 using Testflow.Modules;
 using Testflow.Usr;
 using Testflow.Data.Description;
+using Testflow.Utility.I18nUtil;
 
 namespace Testflow.ParameterChecker
 {
     public class ParameterChecker : IParameterChecker
     {
-        private Modules.IComInterfaceManager _comInterfaceManager;
+        private IComInterfaceManager _comInterfaceManager;
         public IModuleConfigData ConfigData { get; set; }
+
+        public ParameterChecker()
+        {
+            I18NOption i18NOption = new I18NOption(typeof(ParameterChecker).Assembly, "i18n_paramcheck_zh", "i18n_paramcheck_en")
+            {
+                Name = Constants.I18nName
+            };
+            I18N.InitInstance(i18NOption);
+        }
 
         #region 初始化
         public void DesigntimeInitialize()
