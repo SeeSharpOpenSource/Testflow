@@ -13,11 +13,11 @@ namespace Testflow.ExtensionBase.OperationPanel
 {
     public abstract class OperationPanelBase
     {
-        public ISequenceFlowContainer SequenceData { get; }
+        public ISequenceFlowContainer SequenceData { get; private set; }
 
-        public RunnerType RunnerType { get; }
+        public RunnerType RunnerType { get; private set; }
 
-        protected OperationPanelBase(ISequenceFlowContainer sequenceData)
+        protected OperationPanelBase()
         {
             I18NOption i18NOption = new I18NOption(Assembly.GetAssembly(this.GetType()), "i18n_userlib_zh",
                 "i18n_userlib_en")
@@ -25,8 +25,10 @@ namespace Testflow.ExtensionBase.OperationPanel
                 Name = Constants.I18nName
             };
             I18N.InitInstance(i18NOption);
-            I18N i18N = I18N.GetInstance(Constants.I18nName);
+        }
 
+        public virtual void Initialize(ISequenceFlowContainer sequenceData)
+        {
             if (sequenceData is ITestProject)
             {
                 RunnerType = RunnerType.TestProject;
@@ -37,6 +39,7 @@ namespace Testflow.ExtensionBase.OperationPanel
             }
             else
             {
+                I18N i18N = I18N.GetInstance(Constants.I18nName);
                 throw new TestflowDataException(-1, i18N.GetStr("InvalidSequence"));
             }
             this.SequenceData = sequenceData;
