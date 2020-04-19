@@ -55,7 +55,7 @@ namespace Testflow.ResultManager
             switch (reportType)
             {
                 case ReportType.txt:
-                    _resultPrinter = new TxtWriter(sequenceData);
+                    _resultPrinter = new TxtWriter();
                     break;
                 case ReportType.xml:
                     _resultPrinter = new XMLWriter();

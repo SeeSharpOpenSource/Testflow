@@ -24,9 +24,8 @@ namespace Testflow.ResultManager
         const int TabLength = 8;
         private ISequenceFlowContainer _sequenceData;
 
-        internal TxtWriter(ISequenceFlowContainer sequenceData)
+        internal TxtWriter()
         {
-            sequenceData = sequenceData;
             _dataMaintainer = TestflowRunner.GetInstance().DataMaintainer;
             _i18n = I18N.GetInstance(Constants.I18nName);
         }
@@ -37,6 +36,7 @@ namespace Testflow.ResultManager
             StreamWriter sw = null;
             try
             {
+                _sequenceData = sequenceData;
                 sw = new StreamWriter(filePath, true);
                 //PrintSessionResults()
                 PrintTestInstance(sw, runtimeHash);
