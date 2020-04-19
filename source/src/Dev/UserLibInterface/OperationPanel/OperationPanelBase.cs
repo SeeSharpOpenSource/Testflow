@@ -28,10 +28,11 @@ namespace Testflow.ExtensionBase.OperationPanel
         }
 
         /// <summary>
-        /// 初始化OperationPanel
+        /// 初始化并显示OperationPanel
         /// </summary>
-        /// <param name="sequenceData"></param>
-        public virtual void Initialize(ISequenceFlowContainer sequenceData)
+        /// <param name="sequenceData">测试序列</param>
+        /// <param name="extraParams">扩展参数，定义参见接口文档</param>
+        public virtual void ShowPanel(ISequenceFlowContainer sequenceData, params object[] extraParams)
         {
             if (sequenceData is ITestProject)
             {
