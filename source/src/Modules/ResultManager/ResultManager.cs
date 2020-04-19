@@ -2,6 +2,7 @@
 using Testflow.Usr;
 using Testflow.ResultManager.Common;
 using Testflow.Data;
+using Testflow.Data.Sequence;
 using Testflow.Utility.I18nUtil;
 
 namespace Testflow.ResultManager
@@ -45,14 +46,8 @@ namespace Testflow.ResultManager
 
         #endregion
 
-        /// <summary>
-        /// 根据用户所指定文件类型输出报告
-        /// </summary>
-        /// <param name="filePath">文件路径</param>
-        /// <param name="runtimeHash">运行时哈希值</param>
-        /// <param name="reportType">报告类型枚举，有txt文件，xml文件，json文件，和自定义报告</param>
-        /// <param name="customPrinter">可选参数，用于当reportType为custom的时候</param>
-        public void PrintReport(string filePath, string runtimeHash, ReportType reportType, IResultPrinter customPrinter = null)
+        public void PrintReport(string filePath,  string runtimeHash, ReportType reportType,
+            ISequenceFlowContainer sequenceData = null, IResultPrinter customPrinter = null)
         {
             //检查文件路径正确与否
             string newFilePath = ModuleUtil.CheckFilePath(filePath);
@@ -60,7 +55,7 @@ namespace Testflow.ResultManager
             switch (reportType)
             {
                 case ReportType.txt:
-                    _resultPrinter = new TxtWriter();
+                    _resultPrinter = new TxtWriter(sequenceData);
                     break;
                 case ReportType.xml:
                     _resultPrinter = new XMLWriter();
@@ -77,7 +72,7 @@ namespace Testflow.ResultManager
                     break;
             }
             //输出报告
-            _resultPrinter.PrintReport(newFilePath, runtimeHash);
+            _resultPrinter.PrintReport(newFilePath, sequenceData, runtimeHash);
         }
 
         public void Dispose()

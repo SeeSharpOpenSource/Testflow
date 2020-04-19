@@ -8,7 +8,9 @@ using Testflow.Modules;
 using Testflow.Runtime.Data;
 using Testflow.ResultManager.Common;
 using Testflow.Data;
+using Testflow.Data.Sequence;
 using Testflow.Utility.I18nUtil;
+using Testflow.Utility.Utils;
 
 namespace Testflow.ResultManager
 {
@@ -20,15 +22,17 @@ namespace Testflow.ResultManager
         const string DateFormat = "yyyy-MM-dd hh:mm:ss.fff";
         const string DoubleFormat = "F3";
         const int TabLength = 8;
+        private ISequenceFlowContainer _sequenceData;
 
-        internal TxtWriter()
+        internal TxtWriter(ISequenceFlowContainer sequenceData)
         {
+            sequenceData = sequenceData;
             _dataMaintainer = TestflowRunner.GetInstance().DataMaintainer;
             _i18n = I18N.GetInstance(Constants.I18nName);
         }
 
         //父类继承
-        public void PrintReport(string filePath, string runtimeHash)
+        public void PrintReport(string filePath, ISequenceFlowContainer sequenceData, string runtimeHash)
         {
             StreamWriter sw = null;
             try
@@ -170,7 +174,8 @@ namespace Testflow.ResultManager
                 {
                     tableContent.Clear();
                     tableContent.Append(preOffset);
-                    string stepName = runtimeStatus[i].Stack;
+                    string stackStr = runtimeStatus[i].Stack;
+                    string stepName = GetStepName(stackStr);
                     string time = runtimeStatus[i].Time.ToString(DateFormat);
                     string result = runtimeStatus[i].Result.ToString();
                     string failInfo = runtimeStatus[i].FailedInfo?.Message ?? string.Empty;
@@ -182,6 +187,20 @@ namespace Testflow.ResultManager
                 }
                 sw.WriteLine("");
             }
+        }
+
+        private string GetStepName(string stackStr)
+        {
+            ISequenceStep step = null;
+            if (_sequenceData is ISequenceGroup)
+            {
+                step = SequenceUtils.GetStepFromStack((ISequenceGroup) _sequenceData, stackStr);
+            }
+            else if (_sequenceData is ITestProject)
+            {
+                step = SequenceUtils.GetStepFromStack((ITestProject) _sequenceData, stackStr);
+            }
+            return step?.Name ?? stackStr;
         }
 
         private string GetDelimTab(string printText, int maxTabCount)
