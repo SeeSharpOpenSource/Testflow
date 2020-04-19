@@ -24,6 +24,8 @@ namespace Testflow.Utility.Utils
             I18N.InitInstance(i18NOption);
         }
 
+        #region 使用堆栈获取Step
+
         /// <summary>
         /// 通过Stack获取Step
         /// </summary>
@@ -100,6 +102,11 @@ namespace Testflow.Utility.Utils
         {
             if (sequence.Steps.Count <= stack[0])
             {
+                // 如果是Stack长度为1，且第一个StepIndex为0，则说明是空序列的占位符，返回null
+                if (stack[0] == 0 && stack.Count == 1)
+                {
+                    return null;
+                }
                 I18N i18N = I18N.GetInstance(UtilityConstants.UtilsName);
                 throw new TestflowDataException(ModuleErrorCode.SequenceDataError,
                     i18N.GetFStr("InvalidCallStack", stackStr));
@@ -117,6 +124,105 @@ namespace Testflow.Utility.Utils
             }
             return step;
         }
+
+        /// <summary>
+        /// 通过Stack获取Step
+        /// </summary>
+        public static bool TryGetStepFromStack(ITestProject testProject, ICallStack callStack, out ISequenceStep step)
+        {
+            if (callStack.StepStack.Count <= 0)
+            {
+                step = null;
+                return false;
+            }
+            int sessionId = callStack.Session;
+            int sequenceIndex = callStack.Sequence;
+            ISequence sequence = GetSequence(testProject, sessionId, sequenceIndex);
+            return TryGetStepFromStack(sequence, callStack.StepStack, callStack.ToString(), out step);
+        }
+
+        /// <summary>
+        /// 通过Stack获取Step
+        /// </summary>
+        public static bool TryGetStepFromStack(ISequenceGroup sequenceGroup, ICallStack callStack, out ISequenceStep step)
+        {
+            if (callStack.StepStack.Count <= 0)
+            {
+                step = null;
+                return false;
+            }
+            int sessionId = callStack.Session;
+            int sequenceIndex = callStack.Sequence;
+            ISequence sequence = GetSequence(sequenceGroup, sessionId, sequenceIndex);
+            return TryGetStepFromStack(sequence, callStack.StepStack, callStack.ToString(), out step);
+        }
+
+        /// <summary>
+        /// 通过Stack获取Step
+        /// </summary>
+        public static bool TryGetStepFromStack(ITestProject testProject, string stackStr, out ISequenceStep step)
+        {
+            string[] stackElems = stackStr.Split(StackDelims.ToCharArray());
+            if (stackElems.Length < 3)
+            {
+                step = null;
+                return false;
+            }
+            int sessionId = int.Parse(stackElems[0]);
+            int sequenceIndex = int.Parse(stackElems[1]);
+            List<int> stack = new List<int>(stackElems.Length - 2);
+            for (int i = 2; i < stackElems.Length; i++)
+            {
+                stack.Add(int.Parse(stackElems[i]));
+            }
+            ISequence sequence = GetSequence(testProject, sessionId, sequenceIndex);
+            return TryGetStepFromStack(sequence, stack, stackStr, out step);
+        }
+
+        /// <summary>
+        /// 通过Stack获取Step
+        /// </summary>
+        public static bool TryGetStepFromStack(ISequenceGroup sequenceGroup, string stackStr, out ISequenceStep step)
+        {
+            string[] stackElems = stackStr.Split(StackDelims.ToCharArray());
+            if (stackElems.Length < 3)
+            {
+                step = null;
+                return false;
+            }
+            int sessionId = int.Parse(stackElems[0]);
+            int sequenceIndex = int.Parse(stackElems[1]);
+            List<int> stack = new List<int>(stackElems.Length - 2);
+            for (int i = 2; i < stackElems.Length; i++)
+            {
+                stack.Add(int.Parse(stackElems[i]));
+            }
+            ISequence sequence = GetSequence(sequenceGroup, sessionId, sequenceIndex);
+            return TryGetStepFromStack(sequence, stack, stackStr, out step);
+        }
+
+        private static bool TryGetStepFromStack(ISequence sequence, IList<int> stack, string stackStr, out ISequenceStep step)
+        {
+            if (sequence.Steps.Count <= stack[0])
+            {
+                I18N i18N = I18N.GetInstance(UtilityConstants.UtilsName);
+                throw new TestflowDataException(ModuleErrorCode.SequenceDataError,
+                    i18N.GetFStr("InvalidCallStack", stackStr));
+            }
+            step = sequence.Steps[stack[0]];
+            for (int i = 1; i < stack.Count; i++)
+            {
+                if (!step.HasSubSteps || step.SubSteps.Count < stack[i])
+                {
+                    step = null;
+                    return false;
+                }
+                step = step.SubSteps[stack[i]];
+            }
+            return true;
+        }
+
+        #endregion
 
         /// <summary>
         /// 通过索引号获取Sequence
