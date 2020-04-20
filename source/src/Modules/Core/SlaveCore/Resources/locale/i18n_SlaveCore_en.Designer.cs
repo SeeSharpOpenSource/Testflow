@@ -295,6 +295,15 @@ namespace Testflow.SlaveCore.Resources.locale {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The value of parameter &lt;{0}&gt; is not configured..
+        /// </summary>
+        internal static string UnconfiguredParam {
+            get {
+                return ResourceManager.GetString("UnconfiguredParam", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to SequenceGroup with input arguments cannot run with out test project..
         /// </summary>
         internal static string UnexistArgumentSource {

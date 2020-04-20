@@ -24,6 +24,8 @@ namespace Testflow.SlaveCore.Runner.Model
     {
         // 块步骤类型集合。块集合中的Function可以为null或者定义在funcdefs的特殊类型接口
         private static HashSet<SequenceStepType> _blockStepTypes = new HashSet<SequenceStepType>();
+        // 保存测试生成时当前Step的字段，生成结束后重置为null
+        public static StepTaskEntityBase CurrentGenerationStep { get; internal set; }
 
         static StepTaskEntityBase()
         {
@@ -157,6 +159,7 @@ namespace Testflow.SlaveCore.Runner.Model
 
         public virtual void Generate(ref int coroutineId)
         {
+            StepTaskEntityBase.CurrentGenerationStep = this;
             this.Coroutine = Context.CoroutineManager.GetCoroutineHandle(coroutineId);
             Actuator.Generate(coroutineId);
             // 只有在StepData的LoopCounter不为null，loop最大值大于1，并且Step类型不是ConditionLoop的情况下才会执行LoopCounter

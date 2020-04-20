@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Reflection;
+using Testflow.CoreCommon;
 using Testflow.Data;
 using Testflow.Data.Sequence;
 using Testflow.Runtime.Data;
 using Testflow.SlaveCore.Common;
 using Testflow.SlaveCore.Runner.Model;
+using Testflow.Usr;
 
 namespace Testflow.SlaveCore.Runner.Actuators
 {
@@ -73,7 +75,9 @@ namespace Testflow.SlaveCore.Runner.Actuators
                         _params.Add(null);
                         break;
                     default:
-                        throw new ArgumentOutOfRangeException();
+                        throw new TestflowDataException(ModuleErrorCode.SequenceDataError,
+                                Context.I18N.GetStr("InvalidParamVar"));
+                        break;
                 }
             }
             CommonStepDataCheck(instanceVarName);

@@ -195,6 +195,9 @@
   <data name="StepForceFailed" xml:space="preserve">
     <value>Step is configured as "Force Failed".</value>
   </data>
+  <data name="UnconfiguredParam" xml:space="preserve">
+    <value>The value of parameter &lt;{0}&gt; is not configured.</value>
+  </data>
   <data name="UnexistArgumentSource" xml:space="preserve">
     <value>SequenceGroup with input arguments cannot run with out test project.</value>
   </data>

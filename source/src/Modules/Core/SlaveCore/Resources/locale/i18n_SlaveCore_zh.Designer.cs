@@ -295,6 +295,15 @@ namespace Testflow.SlaveCore.Resources.locale {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to 序列中&lt;{0}&gt;参数的值未配置。.
+        /// </summary>
+        internal static string UnconfiguredParam {
+            get {
+                return ResourceManager.GetString("UnconfiguredParam", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to 带有入参的SequenceGroup必须和父级的TestProject同时运行。.
         /// </summary>
         internal static string UnexistArgumentSource {

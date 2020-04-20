@@ -102,7 +102,9 @@ namespace Testflow.SlaveCore.SlaveFlowControl
             TestGenMessage testGenMessage = new TestGenMessage(MessageNames.TestGenName, Context.SessionId,
                 CommonConst.PlatformLogSession, GenerationStatus.Failed)
             {
-                Index = Context.MsgIndex
+                Index = Context.MsgIndex,
+                ErrorInfo = Context.I18N.GetStr("OperationAborted"),
+                ErrorStack = StepTaskEntityBase.CurrentGenerationStep.GetStack()
             };
             Context.UplinkMsgProcessor.SendMessage(testGenMessage, true);
 
@@ -123,7 +125,9 @@ namespace Testflow.SlaveCore.SlaveFlowControl
             TestGenMessage testGenFailMessage = new TestGenMessage(MessageNames.TestGenName, Context.SessionId,
                 CommonConst.PlatformSession, GenerationStatus.Failed)
             {
-                Index = Context.MsgIndex
+                Index = Context.MsgIndex,
+                ErrorInfo = ex.Message,
+                ErrorStack = StepTaskEntityBase.CurrentGenerationStep.GetStack()
             };
             Context.UplinkMsgProcessor.SendMessage(testGenFailMessage, true);
 

@@ -117,9 +117,17 @@ namespace Testflow.SlaveCore.Runner.Actuators
                         parameters[i].Value = ModuleUtils.GetFullParameterVariableName(varFullName, parameters[i].Value);
                         Params[i] = null;
                         break;
-                    default:
-                        Context.LogSession.Print(LogLevel.Error, Context.SessionId,
+                    case ParameterType.NotAvailable:
+                        // 如果参数的修饰符为out，则可以不配置
+                        if (argumentInfos[i].Modifier != ArgumentModifier.Out)
+                        {
+                            Context.LogSession.Print(LogLevel.Error, Context.SessionId,
                                 $"The value of parameter '{argumentInfos[i].Name}' is not configured");
+                            throw new TestflowDataException(ModuleErrorCode.SequenceDataError,
+                                    Context.I18N.GetFStr("UnconfiguredParam", argumentInfos[i].Name));
+                        }
+                        break;
+                    default:
                         throw new TestflowDataException(ModuleErrorCode.SequenceDataError,
                                 Context.I18N.GetStr("InvalidParamVar"));
                         break;
