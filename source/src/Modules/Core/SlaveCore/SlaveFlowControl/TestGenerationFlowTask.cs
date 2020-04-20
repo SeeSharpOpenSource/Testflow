@@ -102,15 +102,17 @@ namespace Testflow.SlaveCore.SlaveFlowControl
             TestGenMessage testGenMessage = new TestGenMessage(MessageNames.TestGenName, Context.SessionId,
                 CommonConst.PlatformLogSession, GenerationStatus.Failed)
             {
-                Index = Context.MsgIndex,
-                ErrorInfo = Context.I18N.GetStr("OperationAborted"),
-                ErrorStack = StepTaskEntityBase.CurrentGenerationStep.GetStack()
+                Index = Context.MsgIndex
             };
             Context.UplinkMsgProcessor.SendMessage(testGenMessage, true);
 
             // 发送远程运行器生成失败的消息
             RmtGenMessage rmtGenMessage = new RmtGenMessage(MessageNames.UpRmtGenMsgName, Context.SessionId,
-                RunnerType.SequenceGroup);
+                RunnerType.SequenceGroup)
+            {
+                ErrorInfo = Context.I18N.GetStr("OperationAborted"),
+                ErrorStack = StepTaskEntityBase.CurrentGenerationStep.GetStack()
+            };
             rmtGenMessage.Params.Add("MsgType", "Failed");
             FailedInfo failedInfo = new FailedInfo(Context.I18N.GetStr("OperationAborted"), FailedType.Abort);
             rmtGenMessage.Params.Add("FailedInfo", failedInfo.ToString());
@@ -125,15 +127,17 @@ namespace Testflow.SlaveCore.SlaveFlowControl
             TestGenMessage testGenFailMessage = new TestGenMessage(MessageNames.TestGenName, Context.SessionId,
                 CommonConst.PlatformSession, GenerationStatus.Failed)
             {
-                Index = Context.MsgIndex,
-                ErrorInfo = ex.Message,
-                ErrorStack = StepTaskEntityBase.CurrentGenerationStep.GetStack()
+                Index = Context.MsgIndex
             };
             Context.UplinkMsgProcessor.SendMessage(testGenFailMessage, true);
 
             // 发送远程运行器生成失败的消息
             RmtGenMessage rmtGenMessage = new RmtGenMessage(MessageNames.UpRmtGenMsgName, Context.SessionId,
-                RunnerType.SequenceGroup);
+                RunnerType.SequenceGroup)
+            {
+                ErrorInfo = ex.Message,
+                ErrorStack = StepTaskEntityBase.CurrentGenerationStep.GetStack()
+            };
             rmtGenMessage.Params.Add("MsgType", "Failed");
             FailedInfo failedInfo = new FailedInfo(ex, FailedType.TestGenFailed);
             rmtGenMessage.Params.Add("FailedInfo", failedInfo.ToString());

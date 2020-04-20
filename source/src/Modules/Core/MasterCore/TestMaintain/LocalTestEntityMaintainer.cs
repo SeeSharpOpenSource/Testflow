@@ -167,7 +167,11 @@ namespace Testflow.MasterCore.TestMaintain
             {
                 state = false;
                 TestGenEventInfo genEventInfo = new TestGenEventInfo(rmtGenMessage.Id, TestGenState.Error,
-                    rmtGenMessage.Time);
+                    rmtGenMessage.Time)
+                {
+                    ErrorStack = rmtGenMessage.ErrorStack,
+                    ErrorInfo = rmtGenMessage.ErrorInfo
+                };
                 if (rmtGenMessage.Params.ContainsKey("FailedInfo"))
                 {
                     genEventInfo.ErrorInfo = rmtGenMessage.Params["FailedInfo"];

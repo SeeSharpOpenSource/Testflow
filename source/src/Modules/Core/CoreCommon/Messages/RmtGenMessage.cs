@@ -49,6 +49,16 @@ namespace Testflow.CoreCommon.Messages
         public string Sequence { get; set; }
 
         /// <summary>
+        /// 测试生成错误堆栈
+        /// </summary>
+        public CallStack ErrorStack { get; set; }
+
+        /// <summary>
+        /// 测试生成错误信息
+        /// </summary>
+        public string ErrorInfo { get; set; }
+
+        /// <summary>
         /// 额外参数配置
         /// </summary>
         public Dictionary<string, string> Params { get; set; }
@@ -76,6 +86,14 @@ namespace Testflow.CoreCommon.Messages
             if (null != MasterHost)
             {
                 info.AddValue("MasterHost", MasterHost);
+            }
+            if (!string.IsNullOrWhiteSpace(ErrorInfo))
+            {
+                info.AddValue("ErrorInfo", ErrorInfo);
+            }
+            if (null != ErrorStack)
+            {
+                info.AddValue("ErrorStack", ErrorStack);
             }
         }
     }

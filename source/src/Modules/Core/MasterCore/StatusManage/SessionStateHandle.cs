@@ -150,7 +150,6 @@ namespace Testflow.MasterCore.StatusManage
         public void TestGenEventProcess(TestGenEventInfo eventInfo)
         {
             // TODO 暂时不更新所有Sequence的状态，按照SequenceGroup为单位进行报告
-            ISessionGenerationInfo generationInfo;
             switch (eventInfo.GenState)
             {
                 case TestGenState.StartGeneration:
@@ -420,6 +419,8 @@ namespace Testflow.MasterCore.StatusManage
             {
                 _generationInfo.SequenceStatus[sequenceIndex] = status;
             }
+            _generationInfo.ErrorStack = eventInfo.ErrorStack;
+            _generationInfo.ErrorInfo = eventInfo.ErrorInfo;
             return _generationInfo;
         }
 
