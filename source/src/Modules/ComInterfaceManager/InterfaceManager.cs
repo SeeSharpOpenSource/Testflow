@@ -148,7 +148,7 @@ namespace Testflow.ComInterfaceManager
 
         public string[] GetEnumItems(ITypeData typeData)
         {
-            ComInterfaceDescription interfaceDescription = _descriptionData.GetComDescription(typeData.Name);
+            ComInterfaceDescription interfaceDescription = _descriptionData.GetComDescription(typeData.AssemblyName);
             string fullName = ModuleUtils.GetFullName(typeData);
             if (null != interfaceDescription)
             {
