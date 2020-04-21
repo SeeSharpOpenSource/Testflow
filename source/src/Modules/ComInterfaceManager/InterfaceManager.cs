@@ -201,9 +201,8 @@ namespace Testflow.ComInterfaceManager
             {
                 return classDescription;
             }
-            string fullName = ModuleUtils.GetFullName(namespaceStr, typename);
             string version;
-            classDescription = _loaderManager.GetClassDescription(_descriptionData, assemblyName, fullName, ref path, out version);
+            classDescription = _loaderManager.GetClassDescription(_descriptionData, assemblyName, namespaceStr, typename, ref path, out version);
             TestflowRunner testflowRunner;
             if (!_descriptionData.Contains(assemblyName) && null != (testflowRunner = TestflowRunner.GetInstance()))
             {

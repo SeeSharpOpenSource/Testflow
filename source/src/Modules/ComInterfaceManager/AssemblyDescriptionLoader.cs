@@ -67,7 +67,43 @@ namespace Testflow.ComInterfaceManager
         {
             Exception = null;
             ErrorCode = 0;
-            Assembly assembly;
+            Assembly assembly  = GetAssembly(path, ref assemblyName, ref version);
+            if (null == assembly)
+            {
+                return null;
+            }
+            return GetComInterfaceDescription(assembly, assemblyName);
+        }
+
+        private ComInterfaceDescription GetComInterfaceDescription(Assembly assembly, string assemblyName)
+        {
+            try
+            {
+                ComInterfaceDescription descriptionData = new ComInterfaceDescription()
+                {
+                    Category = string.Empty,
+                    Signature = assembly.FullName,
+                    Name = assembly.GetName().Name
+                };
+//                descriptionData.Assembly = assemblyInfo;
+                // TODO 加载xml文件注释
+                foreach (Type typeInfo in assembly.GetExportedTypes())
+                {
+                    AddTypeDescriptions(typeInfo, assemblyName, descriptionData);
+                }
+                return descriptionData;
+            }
+            catch (Exception ex)
+            {
+                Exception = ex;
+                this.ErrorCode = ModuleErrorCode.LibraryLoadError;
+                return null;
+            }
+        }
+
+        private Assembly GetAssembly(string path, ref string assemblyName, ref string version)
+        {
+            Assembly assembly = null;
             if (!_assemblies.ContainsKey(assemblyName))
             {
                 if (!File.Exists(path))
@@ -106,43 +142,26 @@ namespace Testflow.ComInterfaceManager
             {
                 assembly = _assemblies[assemblyName];
             }
-            
-            try
+            return assembly;
+        }
+
+        private void AddTypeDescriptions(Type typeInfo, string assemblyName, ComInterfaceDescription descriptionData)
+        {
+            HideAttribute hideAttribute = typeInfo.GetCustomAttribute<HideAttribute>();
+
+            //如果隐藏属性为true，则隐藏该类型。如果是屏蔽类型，则跳过
+            if ((null != hideAttribute && hideAttribute.Hide) || _ignoreClass.Any(item => typeInfo.Name.EndsWith(item)))
             {
-                ComInterfaceDescription descriptionData = new ComInterfaceDescription()
-                {
-                    Category = string.Empty,
-                    Signature = assembly.FullName,
-                    Name = assembly.GetName().Name
-                };
-//                descriptionData.Assembly = assemblyInfo;
-                // TODO 加载xml文件注释
-                foreach (Type typeInfo in assembly.GetExportedTypes())
-                {
-                    HideAttribute hideAttribute = typeInfo.GetCustomAttribute<HideAttribute>();
-                
-                    //如果隐藏属性为true，则隐藏该类型。如果是屏蔽类型，则跳过
-                    if ((null != hideAttribute && hideAttribute.Hide) || _ignoreClass.Any(item => typeInfo.Name.EndsWith(item)))
-                    {
-                        continue;
-                    }
-                    VariableType classKind = GetKindOfType(typeInfo);
-                    if (classKind == VariableType.Enumeration || classKind == VariableType.Value)
-                    {
-                        AddDataTypeDescription(descriptionData, typeInfo, assemblyName, classKind);
-                    }
-                    else if (classKind == VariableType.Class || classKind == VariableType.Struct)
-                    {
-                        AddClassDescription(descriptionData, typeInfo, assemblyName, classKind);
-                    }
-                }
-                return descriptionData;
+                return;
             }
-            catch (Exception ex)
+            VariableType classKind = GetKindOfType(typeInfo);
+            if (classKind == VariableType.Enumeration || classKind == VariableType.Value)
             {
-                Exception = ex;
-                this.ErrorCode = ModuleErrorCode.LibraryLoadError;
-                return null;
+                AddDataTypeDescription(descriptionData, typeInfo, assemblyName, classKind);
+            }
+            else if (classKind == VariableType.Class || classKind == VariableType.Struct)
+            {
+                AddClassDescription(descriptionData, typeInfo, assemblyName, classKind);
             }
         }
 
@@ -670,8 +689,7 @@ namespace Testflow.ComInterfaceManager
             }
         }
 
-        public ClassInterfaceDescription GetClassDescription(string assemblyName, string typeFullName, ref string path,
-            out string version)
+        public ClassInterfaceDescription GetClassDescription(string assemblyName, string namespaceStr, string typeName, ref string path, out string version)
         {
             Exception = null;
             ErrorCode = 0;
@@ -695,7 +713,7 @@ namespace Testflow.ComInterfaceManager
                 }
                 path = assembly.Location;
                 version = assembly.GetName().Version.ToString();
-                Type classType = assembly.GetType(typeFullName);
+                Type classType = GetTypeByName(assembly, namespaceStr, typeName);
                 if (null == classType)
                 {
                     ErrorCode = ModuleErrorCode.TypeCannotLoad;
@@ -739,6 +757,29 @@ namespace Testflow.ComInterfaceManager
                 Exception = ex;
                 return null;
             }
+        }
+
+        private static Type GetTypeByName(Assembly assembly, string namespaceStr, string typeName)
+        {
+            const char delim = '.';
+            string fullName;
+            if (!typeName.Contains(delim))
+            {
+                fullName = ModuleUtils.GetFullName(namespaceStr, typeName);
+                return assembly.GetType(fullName);
+            }
+            string[] nameElems = typeName.Split(delim);
+            fullName = ModuleUtils.GetFullName(namespaceStr, nameElems[0]);
+            Type classType = assembly.GetType(fullName);
+            for (int i = 1; i < nameElems.Length; i++)
+            {
+                if (null == classType)
+                {
+                    return null;
+                }
+                classType = classType.GetNestedType(nameElems[i]);
+            }
+            return classType;
         }
 
 

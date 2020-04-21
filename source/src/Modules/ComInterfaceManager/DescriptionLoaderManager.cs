@@ -152,14 +152,16 @@ namespace Testflow.ComInterfaceManager
         {
             string typeFullName = ModuleUtils.GetFullName(typeData);
             string assemblyName = typeData.AssemblyName;
-            return GetClassDescription(descriptionDatas, assemblyName, typeFullName, ref path, out version);
+            return GetClassDescription(descriptionDatas, assemblyName, typeData.Namespace, typeData.Name, ref path, out version);
         }
 
-        public ClassInterfaceDescription GetClassDescription(DescriptionDataTable descriptionDatas, string assemblyName, string typeFullName, ref string path, out string version)
+        public ClassInterfaceDescription GetClassDescription(DescriptionDataTable descriptionDatas, string assemblyName, string namespaceStr, string typeName, ref string path, out string version)
         {
             ClassInterfaceDescription classDescription = _loader.GetClassDescription(assemblyName,
-                typeFullName, ref path, out version);
+                namespaceStr, typeName, ref path, out version);
             // 初始化TypeData
+            string typeFullName = ModuleUtils.GetFullName(namespaceStr, typeName);
+            CheckClassDescription(classDescription, assemblyName, typeFullName);
             ITypeData classType = ModuleUtils.GetTypeDataByDescription(_sequenceManager, descriptionDatas,
                 classDescription.ClassTypeDescription);
             classDescription.ClassType = classType;
@@ -168,7 +170,6 @@ namespace Testflow.ComInterfaceManager
             {
                 funcDescription.ClassType = classType;
             }
-            CheckClassDescription(classDescription, assemblyName, typeFullName);
             return classDescription;
         }
 
