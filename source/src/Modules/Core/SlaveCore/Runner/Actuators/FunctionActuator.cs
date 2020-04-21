@@ -245,8 +245,8 @@ namespace Testflow.SlaveCore.Runner.Actuators
             {
                 IArgument argument = Function.ParameterType[i];
                 IParameterData parameter = Function.Parameters[i];
-                // 如果参数值是直接传递值，或者参数没有使用ref或out修饰，则返回
-                if (parameter.ParameterType == ParameterType.Value || argument.Modifier == ArgumentModifier.None)
+                // 如果参数值不是变量赋值，或者参数没有使用ref或out修饰，则返回
+                if (parameter.ParameterType != ParameterType.Variable || argument.Modifier == ArgumentModifier.None)
                 {
                     continue;
                 }
