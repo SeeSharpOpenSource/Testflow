@@ -12,11 +12,13 @@ namespace Testflow.SequenceManager.SequenceElements
     {
         public IAssemblyInfo Assembly { get; set; }
         public ITypeData OperationPanelClass { get; set; }
+        public string Parameters { get; set; }
 
         public OperationPanelInfo()
         {
             this.Assembly = null;
             this.OperationPanelClass = null;
+            this.Parameters = null;
         }
 
         public OperationPanelInfo(SerializationInfo info, StreamingContext context)
