@@ -396,7 +396,7 @@ namespace Testflow.MasterCore.StatusManage
 
         #endregion
 
-        public void StopStateHandle(DateTime time, RuntimeState state, string failedInfo)
+        public void StopStateHandle(DateTime time, RuntimeState state, FailedInfo failedInfo)
         {
             this.CurrentTime = time;
             this.EndTime = time;
@@ -411,7 +411,7 @@ namespace Testflow.MasterCore.StatusManage
             _sequenceTestResult.ElapsedTime = ElapsedTime.TotalMilliseconds;
             _sequenceTestResult.ResultState = State;
             _sequenceTestResult.EndTime = EndTime;
-            _sequenceTestResult.FailedInfo = new FailedInfo(failedInfo);
+            _sequenceTestResult.FailedInfo = failedInfo;
             _stateManageContext.DatabaseProxy.UpdateData(_sequenceResultData);
         }
 

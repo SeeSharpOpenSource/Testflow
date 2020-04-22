@@ -170,12 +170,11 @@ namespace Testflow.MasterCore.TestMaintain
                     rmtGenMessage.Time)
                 {
                     ErrorStack = rmtGenMessage.ErrorStack,
-                    ErrorInfo = rmtGenMessage.ErrorInfo
                 };
-//                if (rmtGenMessage.Params.ContainsKey("FailedInfo"))
-//                {
-//                    genEventInfo.ErrorInfo = rmtGenMessage.Params["FailedInfo"];
-//                }
+                if (rmtGenMessage.Params.ContainsKey("FailedInfo"))
+                {
+                    genEventInfo.ErrorInfo = new FailedInfo(rmtGenMessage.Params["FailedInfo"]);
+                }
                 _globalInfo.EventQueue.Enqueue(genEventInfo);
                 FreeHost(rmtGenMessage.Id);
             }

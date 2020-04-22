@@ -176,7 +176,7 @@ namespace Testflow.MasterCore.StatusManage
                         sequenceStateHandle.StopStateHandle(eventInfo.TimeStamp, State, eventInfo.ErrorInfo);
                     }
                     // 持久化会话失败信息
-                    UpdateSessionResultData(new FailedInfo(eventInfo.ErrorInfo));
+                    UpdateSessionResultData(eventInfo.ErrorInfo);
                     // 更新TestResults信息
                     SetTestResultStatistics(null);
                     // 触发生成失败的事件
@@ -420,7 +420,7 @@ namespace Testflow.MasterCore.StatusManage
                 _generationInfo.SequenceStatus[sequenceIndex] = status;
             }
             _generationInfo.ErrorStack = eventInfo.ErrorStack;
-            _generationInfo.ErrorInfo = eventInfo.ErrorInfo;
+            _generationInfo.ErrorInfo = eventInfo.ErrorInfo?.Message ?? string.Empty;
             return _generationInfo;
         }
 

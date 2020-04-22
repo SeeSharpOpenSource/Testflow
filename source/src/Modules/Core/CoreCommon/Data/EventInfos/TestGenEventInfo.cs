@@ -13,7 +13,7 @@ namespace Testflow.CoreCommon.Data.EventInfos
         /// <summary>
         /// 测试生成错误信息
         /// </summary>
-        public string ErrorInfo { get; set; }
+        public FailedInfo ErrorInfo { get; set; }
 
         /// <summary>
         /// 失败Step的堆栈信息
@@ -23,7 +23,7 @@ namespace Testflow.CoreCommon.Data.EventInfos
         public TestGenEventInfo(RmtGenMessage message, TestGenState genState) : base(message.Id, EventType.TestGen, message.Time)
         {
             this.GenState = genState;
-            this.ErrorInfo = message.ErrorInfo;
+            this.ErrorInfo = !string.IsNullOrWhiteSpace(message.ErrorInfo) ? new FailedInfo(message.ErrorInfo) : null;
             this.ErrorStack = message.ErrorStack;
         }
 
