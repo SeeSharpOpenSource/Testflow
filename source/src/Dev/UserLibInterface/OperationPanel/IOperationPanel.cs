@@ -11,44 +11,21 @@ using Testflow.Utility.I18nUtil;
 
 namespace Testflow.ExtensionBase.OperationPanel
 {
-    public abstract class OperationPanelBase : IDisposable
+    public abstract class IOperationPanel : IDisposable
     {
-        public ISequenceFlowContainer SequenceData { get; private set; }
+        public ISequenceFlowContainer SequenceData { get; protected set; }
 
-        public RunnerType RunnerType { get; private set; }
-
-        protected OperationPanelBase()
-        {
-            I18NOption i18NOption = new I18NOption(Assembly.GetAssembly(this.GetType()), "i18n_userlib_zh",
-                "i18n_userlib_en")
-            {
-                Name = Constants.I18nName
-            };
-            I18N.InitInstance(i18NOption);
-        }
+        /// <summary>
+        /// 当前OI支持运行的Sequence类型
+        /// </summary>
+        public OiSequenceType SupportSequence { get; protected set; }
 
         /// <summary>
         /// 初始化并显示OperationPanel
         /// </summary>
         /// <param name="sequenceData">测试序列</param>
         /// <param name="extraParams">扩展参数，定义参见接口文档</param>
-        public virtual void ShowPanel(ISequenceFlowContainer sequenceData, params object[] extraParams)
-        {
-            if (sequenceData is ITestProject)
-            {
-                RunnerType = RunnerType.TestProject;
-            }
-            else if (sequenceData is ISequenceGroup)
-            {
-                RunnerType = RunnerType.SequenceGroup;
-            }
-            else
-            {
-                I18N i18N = I18N.GetInstance(Constants.I18nName);
-                throw new TestflowDataException(-1, i18N.GetStr("InvalidSequence"));
-            }
-            this.SequenceData = sequenceData;
-        }
+        public abstract void ShowPanel(ISequenceFlowContainer sequenceData, params object[] extraParams);
 
         /// <summary>
         /// 测试生成开始回调方法

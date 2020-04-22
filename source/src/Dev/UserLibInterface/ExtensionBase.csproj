@@ -47,7 +47,8 @@
     <Compile Include="Common\TestflowCategoryAttribute.cs" />
     <Compile Include="Constants.cs" />
     <Compile Include="LibTypeNames.cs" />
-    <Compile Include="OperationPanel\OperationPanelBase.cs" />
+    <Compile Include="OperationPanel\OiSequenceType.cs" />
+    <Compile Include="OperationPanel\IOperationPanel.cs" />
     <Compile Include="Resources\locale\i18n_userlib_en.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
