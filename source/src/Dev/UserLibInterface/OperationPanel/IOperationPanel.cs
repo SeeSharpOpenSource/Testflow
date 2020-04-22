@@ -36,8 +36,7 @@ namespace Testflow.ExtensionBase.OperationPanel
         /// <summary>
         /// 测试生成开始回调方法
         /// </summary>
-        /// <param name="startTime">测试开始执行时间</param>
-        void TestStart(DateTime startTime);
+        void TestStart(IList<ITestResultCollection> testResults);
 
         /// <summary>
         /// 会话开始执行回调方法
