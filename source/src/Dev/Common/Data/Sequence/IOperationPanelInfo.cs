@@ -14,5 +14,10 @@
         /// 操作员面板所在类
         /// </summary>
         ITypeData OperationPanelClass { get; set; }
+
+        /// <summary>
+        /// 操作员面板参数
+        /// </summary>
+        string Parameters { get; set; }
     }
 }
