@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Text.RegularExpressions;
 using Testflow.ComInterfaceManager.Data;
 using Testflow.Data;
 using Testflow.Data.Description;
@@ -18,6 +19,7 @@ namespace Testflow.ComInterfaceManager
         private readonly HashSet<string> _ignoreMethod;
         private readonly HashSet<string> _ignoreClass;
         private readonly Dictionary<string, Assembly> _assemblies;
+        private readonly Regex _arrayTypeNameRegex;
 
         private readonly HashSet<string> _simpleValueType;
         public AssemblyDescriptionLoader()
@@ -51,6 +53,8 @@ namespace Testflow.ComInterfaceManager
             _simpleValueType.Add(ModuleUtils.GetFullName(typeof (double)));
             _simpleValueType.Add(ModuleUtils.GetFullName(typeof (float)));
             _simpleValueType.Add(ModuleUtils.GetFullName(typeof (bool)));
+
+            _arrayTypeNameRegex = new Regex("\\[(,*)\\]$");
         }
 
         public Exception Exception { get; private set; }
@@ -759,7 +763,7 @@ namespace Testflow.ComInterfaceManager
             }
         }
 
-        private static Type GetTypeByName(Assembly assembly, string namespaceStr, string typeName)
+        private Type GetTypeByName(Assembly assembly, string namespaceStr, string typeName)
         {
             const char delim = '.';
             string fullName;
@@ -767,6 +771,15 @@ namespace Testflow.ComInterfaceManager
             {
                 fullName = ModuleUtils.GetFullName(namespaceStr, typeName);
                 return assembly.GetType(fullName);
+            }
+            Match matchData = _arrayTypeNameRegex.Match(typeName);
+            bool isArray = false;
+            int arrayRank = 0;
+            if (matchData.Success)
+            {
+                typeName = typeName.Substring(0, matchData.Groups[0].Index);
+                isArray = true;
+                arrayRank = matchData.Groups[1].Length + 1;
             }
             string[] nameElems = typeName.Split(delim);
             fullName = ModuleUtils.GetFullName(namespaceStr, nameElems[0]);
@@ -778,6 +791,10 @@ namespace Testflow.ComInterfaceManager
                     return null;
                 }
                 classType = classType.GetNestedType(nameElems[i]);
+            }
+            if (isArray)
+            {
+                classType = arrayRank == 1 ? classType.MakeArrayType() : classType.MakeArrayType(arrayRank);
             }
             return classType;
         }
@@ -999,8 +1016,27 @@ namespace Testflow.ComInterfaceManager
         private static string GetParamTypeName(Type type)
         {
             const string refTypeSymbol = "&";
-            string typeName = GetTypeName(type);
+            string typeName = type.IsArray ? GetArrayTypeName(type) : GetTypeName(type);
             return !typeName.Contains(refTypeSymbol) ? typeName : typeName.Replace(refTypeSymbol, "");
+        }
+
+        private static string GetArrayTypeName(Type paramType)
+        {
+            Type elementType = paramType.GetElementType();
+            string typeName = elementType.IsArray ? GetArrayTypeName(elementType) : GetTypeName(elementType);
+            int rank = paramType.GetArrayRank();
+            if (rank == 1)
+            {
+                return $"{typeName}[]";
+            }
+            StringBuilder typeNameCache = new StringBuilder(20);
+            typeNameCache.Append(typeName).Append('[');
+            for (int i = 1; i < rank; i++)
+            {
+                typeNameCache.Append(',');
+            }
+            typeNameCache.Append(']');
+            return typeNameCache.ToString();
         }
 
         // 部分类型支持原生的ref类型type，这在slave端会导致识别的困难，需要将其替换为非ref类型。例如所有基础类型和数组都有原生的ref类型

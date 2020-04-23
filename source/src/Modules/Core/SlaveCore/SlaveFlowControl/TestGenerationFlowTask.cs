@@ -111,7 +111,7 @@ namespace Testflow.SlaveCore.SlaveFlowControl
                 RunnerType.SequenceGroup)
             {
                 ErrorInfo = Context.I18N.GetStr("OperationAborted"),
-                ErrorStack = StepTaskEntityBase.CurrentGenerationStep.GetStack()
+                ErrorStack = StepTaskEntityBase.CurrentGenerationStep?.GetStack()
             };
             rmtGenMessage.Params.Add("MsgType", "Failed");
             FailedInfo failedInfo = new FailedInfo(Context.I18N.GetStr("OperationAborted"), FailedType.Abort);
@@ -136,7 +136,7 @@ namespace Testflow.SlaveCore.SlaveFlowControl
                 RunnerType.SequenceGroup)
             {
                 ErrorInfo = ex.Message,
-                ErrorStack = StepTaskEntityBase.CurrentGenerationStep.GetStack()
+                ErrorStack = StepTaskEntityBase.CurrentGenerationStep?.GetStack()
             };
             rmtGenMessage.Params.Add("MsgType", "Failed");
             FailedInfo failedInfo = new FailedInfo(ex, FailedType.TestGenFailed);
