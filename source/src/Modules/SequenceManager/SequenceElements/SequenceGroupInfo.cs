@@ -58,6 +58,10 @@ namespace Testflow.SequenceManager.SequenceElements
         public SequenceGroupInfo(SerializationInfo info, StreamingContext context)
         {
             ModuleUtils.FillDeserializationInfo(info, this, this.GetType());
+            if (null == OperationPanelInfo)
+            {
+                this.OperationPanelInfo = new OperationPanelInfo();
+            }
         }
 
         public void GetObjectData(SerializationInfo info, StreamingContext context)
