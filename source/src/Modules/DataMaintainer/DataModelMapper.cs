@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data.Common;
 using System.Net.Sockets;
 using System.Reflection;
+using System.Text.RegularExpressions;
 using Testflow.Runtime.Data;
 using Testflow.Usr;
 
@@ -10,6 +11,10 @@ namespace Testflow.DataMaintainer
 {
     internal class DataModelMapper
     {
+        private const string InvalidChar = "'";
+        private const string ReplaceChar = "''";
+
+
         // 数据类型到对应表格的映射
         private readonly Dictionary<string, string> _typeToTableMapping;
         // 对应表格->每个表格的映射表->表格列名和属性名的正反映射
@@ -25,12 +30,13 @@ namespace Testflow.DataMaintainer
         // 类型转换和对象转换为字符串委托的映射
         private readonly Dictionary<Type, Func<string, object>> _classTypeParserMapping;
 
+//        private readonly Regex _invalidCharRegex;
 
         public DataModelMapper()
         {
             _classTypeParserMapping = new Dictionary<Type, Func<string, object>>(10);
             _classTypeConvertorMapping = new Dictionary<Type, Func<object, string>>(10);
-
+//            this._invalidCharRegex = new Regex("(?<=[^'])'(?=[^'])", RegexOptions.Compiled);
             _typeToTableMapping = new Dictionary<string, string>(10)
             {
                 {typeof (TestInstanceData).Name, DataBaseItemNames.InstanceTableName},
@@ -98,7 +104,16 @@ namespace Testflow.DataMaintainer
             this._valueToStrConvertor.Add(typeof (long).Name, new Func<object, string>((value) => value.ToString()));
             this._valueToStrConvertor.Add(typeof (ulong).Name, new Func<object, string>((value) => value.ToString()));
             this._valueToStrConvertor.Add(typeof (float).Name, new Func<object, string>((value) => value.ToString()));
-            this._valueToStrConvertor.Add(typeof (string).Name, new Func<object, string>((value) => $"'{value}'"));
+            this._valueToStrConvertor.Add(typeof (string).Name, new Func<object, string>((value) =>
+            {
+                string valueStr = (string) value;
+                // 检查是否包含单引号，如果存在，替换为两个单引号
+                if (valueStr.Contains(InvalidChar))
+                {
+                    valueStr = RemoveInvalidChars(valueStr);
+                }
+                return $"'{valueStr}'";
+            }));
             this._valueToStrConvertor.Add(typeof (DateTime).Name,
                 new Func<object, string>((value) => $"'{((DateTime) value).ToString(CommonConst.GlobalTimeFormat)}'"));
 
@@ -174,7 +189,12 @@ namespace Testflow.DataMaintainer
                 }
                 else if (_classTypeConvertorMapping.ContainsKey(propertyType))
                 {
-                    valueStr = $"'{_classTypeConvertorMapping[propertyType].Invoke(value)}'";
+                    string classValueStr = _classTypeConvertorMapping[propertyType].Invoke(value);
+                    if (classValueStr.Contains(InvalidChar))
+                    {
+                        classValueStr = RemoveInvalidChars(classValueStr);
+                    }
+                    valueStr = $"'{classValueStr}'";
                 }
                 columnValueMapping.Add(columnName, valueStr);
             }
@@ -213,6 +233,11 @@ namespace Testflow.DataMaintainer
                 _classTypeConvertorMapping.Add(type, toStringFunc);
                 _classTypeParserMapping.Add(type, parseFunc);
             }
+        }
+
+        private string RemoveInvalidChars(string strValue)
+        {
+            return strValue.Replace(InvalidChar, ReplaceChar);
         }
     }
 }
