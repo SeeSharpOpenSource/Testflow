@@ -5,6 +5,7 @@ using System.Text.RegularExpressions;
 using Newtonsoft.Json;
 using Testflow.CoreCommon;
 using Testflow.CoreCommon.Common;
+using Testflow.Data;
 using Testflow.SlaveCore.Common;
 using Testflow.Usr;
 
@@ -115,9 +116,11 @@ namespace Testflow.SlaveCore.Runner
             }
         }
 
-        public bool IsNonValueTypeString(ref string valueString)
+        public bool IsNonValueTypeString(Type typeData, ref string valueString)
         {
-            return _arrayRegex.IsMatch(valueString) || _classRegex.IsMatch(valueString);
+            // 如果字符串时json的数组类型或者类类型，或者目标类型为byte[]，认为是非值类型的字符
+            return _arrayRegex.IsMatch(valueString) || _classRegex.IsMatch(valueString) ||
+                   ReferenceEquals(typeData, typeof (byte[]));
         }
     }
 }

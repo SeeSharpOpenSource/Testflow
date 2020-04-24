@@ -95,7 +95,7 @@ namespace Testflow.SlaveCore.Runner
             {
                 return _strConvertor.CastValue(targetType, sourceValue);
             }
-            else if (_nonValueConvertor.IsNonValueTypeString(ref sourceValue))
+            else if (_nonValueConvertor.IsNonValueTypeString(targetType, ref sourceValue))
             {
                 return _nonValueConvertor.CastConstantValue(targetType, sourceValue);
             }
