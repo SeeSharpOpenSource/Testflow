@@ -1015,9 +1015,12 @@ namespace Testflow.ComInterfaceManager
         // 部分类型支持原生的ref类型type，这在slave端会导致识别的困难，需要将其替换为非ref类型。例如所有基础类型和数组都有原生的ref类型
         private static string GetParamTypeName(Type type)
         {
-            const string refTypeSymbol = "&";
+            if (type.IsByRef)
+            {
+                type = type.GetElementType();
+            }
             string typeName = type.IsArray ? GetArrayTypeName(type) : GetTypeName(type);
-            return !typeName.Contains(refTypeSymbol) ? typeName : typeName.Replace(refTypeSymbol, "");
+            return typeName;
         }
 
         private static string GetArrayTypeName(Type paramType)
