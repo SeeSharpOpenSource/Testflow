@@ -387,6 +387,7 @@ namespace Testflow.SlaveCore.Runner.Model
             }
             int retryTimes = 0;
             int passCount = 0;
+            bool hasErrorStep = false;
             TestflowLoopBreakException loopBreakException = null;
             while (retryTimes < maxRetry && passCount < passTimes)
             {
@@ -438,12 +439,17 @@ namespace Testflow.SlaveCore.Runner.Model
                     // 停止计时
                     Actuator.EndTiming();
                     RecordRetryTargetInvocationError(ex);
+                    if (!(ex.InnerException is TestflowAssertException))
+                    {
+                        hasErrorStep = true;
+                    }
                 }
                 catch (TargetException ex)
                 {
                     // 停止计时
                     Actuator.EndTiming();
                     RecordInvocationError(ex, FailedType.TargetError);
+                    hasErrorStep = true;
                 }
             }
             // 如果成功次数小于预订的成功次数，则抛出异常
@@ -451,7 +457,7 @@ namespace Testflow.SlaveCore.Runner.Model
             {
                 TaskFailedException retryFailedException = new TaskFailedException(SequenceIndex,
                         Context.I18N.GetStr("MaxRetryFailed"), FailedType.RetryFailed, ModuleErrorCode.RetryFailed);
-                this.Result = StepResult.Error;
+                this.Result = hasErrorStep ? StepResult.Error : StepResult.Failed;
                 RecordInvocationError(retryFailedException, retryFailedException.FailedType);
                 // 如果期间未发生LoopBreakException，则直接抛出FailedException
                 if (null == loopBreakException)
