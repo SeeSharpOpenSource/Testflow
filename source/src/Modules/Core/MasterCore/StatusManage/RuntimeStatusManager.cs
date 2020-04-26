@@ -75,7 +75,7 @@ namespace Testflow.MasterCore.StatusManage
             {
                 stateHandle.Start();
             }
-
+            _stateManageContext.EventDispatcher.Start();
             _cancellation = new CancellationTokenSource();
             this._internalMessageThd = new Thread(ProcessInternalMessage)
             {
@@ -312,6 +312,9 @@ namespace Testflow.MasterCore.StatusManage
             _globalInfo.TestGenBlocker.Set();
             _cancellation.Cancel();
             _globalInfo.EventQueue.FreeBlocks();
+
+            _globalInfo.EventDispatcher.Stop();
+
 //            Thread.Sleep(_globalInfo.ConfigData.GetProperty<int>("StopTimeout"));
             ModuleUtils.StopThreadWork(_internalMessageThd);
             Thread.VolatileWrite(ref _stopFlag, 1);

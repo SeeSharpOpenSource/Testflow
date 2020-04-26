@@ -133,31 +133,27 @@ namespace Testflow.MasterCore.StatusManage
             }
         }
 
-        public void RaiseEvent(string eventName, int sessionId, params object[] eventParam)
+        public void Start()
         {
-            // TODO 暂时直接使用线程池调用，后期优化
-            ThreadPool.QueueUserWorkItem(InvokeEvent, new EventParam(eventName, sessionId, eventParam));
+            foreach (SessionEventPump eventPump in _eventPumps.Values)
+            {
+                eventPump.Start();
+            }
         }
 
-        private void InvokeEvent(object state)
+        public void Stop()
         {
-            EventParam eventParamInfo = (EventParam)state;
-            string eventName = eventParamInfo.EventName;
-            object[] eventParam = eventParamInfo.EventParams;
+            foreach (SessionEventPump eventPump in _eventPumps.Values)
+            {
+                eventPump.PushEventsParamInfo(null);
+            }
+        }
+
+        public void RaiseEvent(string eventName, int sessionId, params object[] eventParam)
+        {
+            EventParam eventParamInfo = new EventParam(eventName, sessionId, eventParam);
             switch (eventName)
             {
-                case Constants.TestGenerationStart:
-                    OnTestGenerationStart(ModuleUtils.GetParamValue<ITestGenerationInfo>(eventParam, 0));
-                    break;
-                case Constants.TestGenerationEnd:
-                    OnTestGenerationEnd(ModuleUtils.GetParamValue<ITestGenerationInfo>(eventParam, 0));
-                    break;
-                case Constants.TestInstanceStart:
-                    OnTestProjectStart(ModuleUtils.GetParamValue<List<ITestResultCollection>>(eventParam, 0));
-                    break;
-                case Constants.TestInstanceOver:
-                    OnTestProjectOver(ModuleUtils.GetParamValue<List<ITestResultCollection>>(eventParam, 0));
-                    break;
                 case Constants.SessionGenerationStart:
                 case Constants.SessionGenerationReport:
                 case Constants.SessionGenerationEnd:
@@ -178,6 +174,32 @@ namespace Testflow.MasterCore.StatusManage
                             sessionEventPump.PushEventsParamInfo(eventParamInfo);
                         }
                     }
+                    break;
+                default:
+                    // TestInstance相关事件使用线程池触发
+                    ThreadPool.QueueUserWorkItem(InvokeEvent, eventParamInfo);
+                    break;
+            }
+        }
+
+        private void InvokeEvent(object state)
+        {
+            EventParam eventParamInfo = (EventParam)state;
+            string eventName = eventParamInfo.EventName;
+            object[] eventParam = eventParamInfo.EventParams;
+            switch (eventName)
+            {
+                case Constants.TestGenerationStart:
+                    OnTestGenerationStart(ModuleUtils.GetParamValue<ITestGenerationInfo>(eventParam, 0));
+                    break;
+                case Constants.TestGenerationEnd:
+                    OnTestGenerationEnd(ModuleUtils.GetParamValue<ITestGenerationInfo>(eventParam, 0));
+                    break;
+                case Constants.TestInstanceStart:
+                    OnTestProjectStart(ModuleUtils.GetParamValue<List<ITestResultCollection>>(eventParam, 0));
+                    break;
+                case Constants.TestInstanceOver:
+                    OnTestProjectOver(ModuleUtils.GetParamValue<List<ITestResultCollection>>(eventParam, 0));
                     break;
                 default:
                     I18N i18N = I18N.GetInstance(Constants.I18nName);
