@@ -107,10 +107,10 @@ namespace Testflow.RuntimeService
         private void RegisterEvents()
         {
             //注册事件,空事件在runtimeEngine方法里面判断
-            _engineController.RegisterRuntimeEvent(TestGenStart, Constants.TestGenerationStart, CoreCommon.Common.CoreConstants.TestProjectIndex);
-            _engineController.RegisterRuntimeEvent(TestGenOver, Constants.TestGenerationEnd, CoreCommon.Common.CoreConstants.TestProjectIndex);
-            _engineController.RegisterRuntimeEvent(TestStart, Constants.TestInstanceStart, CoreCommon.Common.CoreConstants.TestProjectIndex);
-            _engineController.RegisterRuntimeEvent(TestOver, Constants.TestInstanceOver, CoreCommon.Common.CoreConstants.TestProjectIndex);
+            _engineController.RegisterRuntimeEvent(TestGenStart, CommonConst.BroadcastSession, Constants.TestGenerationStart, CoreCommon.Common.CoreConstants.TestProjectIndex);
+            _engineController.RegisterRuntimeEvent(TestGenOver, CommonConst.BroadcastSession, Constants.TestGenerationEnd, CoreCommon.Common.CoreConstants.TestProjectIndex);
+            _engineController.RegisterRuntimeEvent(TestStart, CommonConst.BroadcastSession, Constants.TestInstanceStart, CoreCommon.Common.CoreConstants.TestProjectIndex);
+            _engineController.RegisterRuntimeEvent(TestOver, CommonConst.BroadcastSession, Constants.TestInstanceOver, CoreCommon.Common.CoreConstants.TestProjectIndex);
         }
         #endregion
 

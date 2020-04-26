@@ -9,12 +9,12 @@ namespace Testflow.MasterCore.Common
         public const int DefaultRuntimeSize = 10;
         public const string I18nName = "engineCore";
         public const int DefaultEventsQueueSize = 512;
-        public const int MaxEventsQueueSize = 12800;
+        public const int MaxEventsQueueSize = 4096;
 
         public const int UnverifiedSequenceIndex = -1;
 
         public const int TestProjectSessionId = -1;
-        public const int EventQueueTimeOut = 500;
+        public const int EventQueueTimeOut = 5000;
 
         public const int OperationTimeout = 1000;
         public const string TestProjectSessionName = "TestProjectSession";

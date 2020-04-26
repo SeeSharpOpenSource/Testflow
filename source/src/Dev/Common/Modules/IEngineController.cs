@@ -69,17 +69,19 @@ namespace Testflow.Modules
         /// 注册运行时事件
         /// </summary>
         /// <param name="callBack">事件回调</param>
+        /// <param name="session">，-1对应TestInstance会话，大于等于0为指定会话，小于-1为所有会话</param>
         /// <param name="eventName">事件名称</param>
         /// <param name="extraParams">额外参数</param>
-        void RegisterRuntimeEvent(Delegate callBack, string eventName, params object[] extraParams);
+        void RegisterRuntimeEvent(Delegate callBack, int session, string eventName, params object[] extraParams);
 
         /// <summary>
         /// 取消注册运行时事件
         /// </summary>
         /// <param name="callBack">事件回调</param>
+        /// <param name="session">会话ID，-1对应TestInstance会话，大于等于0为指定会话，小于-1为所有会话</param>
         /// <param name="eventName">事件名称</param>
         /// <param name="extraParams">额外参数</param>
-        void UnregisterRuntimeEvent(Delegate callBack, string eventName, params object[] extraParams);
+        void UnregisterRuntimeEvent(Delegate callBack, int session, string eventName, params object[] extraParams);
 
         /// <summary>
         /// 终止运行时会话

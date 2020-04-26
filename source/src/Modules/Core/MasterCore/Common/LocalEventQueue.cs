@@ -4,7 +4,7 @@ using Testflow.CoreCommon.Data.EventInfos;
 
 namespace Testflow.MasterCore.Common
 {
-    internal class LocalEventQueue<TMessageType> : Queue<TMessageType> where TMessageType : EventInfoBase
+    internal class LocalEventQueue<TMessageType> : Queue<TMessageType> where TMessageType : class
     {
         private SpinLock _operationLock;
 

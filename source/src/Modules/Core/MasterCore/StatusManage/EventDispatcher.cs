@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Threading;
 using Testflow.Usr;
 using Testflow.CoreCommon;
@@ -16,13 +17,34 @@ namespace Testflow.MasterCore.StatusManage
     /// <summary>
     /// 外部消息分发
     /// </summary>
-    internal class EventDispatcher
+    internal class EventDispatcher : IDisposable
     {
-
-        public EventDispatcher()
+        public EventDispatcher(ModuleGlobalInfo globalInfo, ISequenceFlowContainer sequenceData)
         {
             this.AsyncDispatch = true;
+            // 初始化事件泵
+            if (sequenceData is ISequenceGroup)
+            {
+                _eventPumps = new Dictionary<int, SessionEventPump>(1)
+                {
+                    {0, new SessionEventPump(0, globalInfo) }
+                };
+            }
+            else if (sequenceData is ITestProject)
+            {
+                ITestProject testProject = ((ITestProject) sequenceData);
+                _eventPumps = new Dictionary<int, SessionEventPump>(testProject.SequenceGroups.Count + 1)
+                {
+                    {CommonConst.TestGroupSession, new SessionEventPump(CommonConst.TestGroupSession, globalInfo)}
+                };
+                for (int sessionId = 0; sessionId < testProject.SequenceGroups.Count; sessionId++)
+                {
+                    _eventPumps.Add(sessionId, new SessionEventPump(sessionId, globalInfo));
+                }
+            }
         }
+
+        private readonly IDictionary<int, SessionEventPump> _eventPumps;
 
         public bool AsyncDispatch { get; set; }
 
@@ -37,38 +59,32 @@ namespace Testflow.MasterCore.StatusManage
                 case Constants.TestGenerationEnd:
                     TestGenerationEnd += ModuleUtils.GetDeleage<RuntimeDelegate.TestGenerationAction>(callBack);
                     break;
-                case Constants.SessionGenerationStart:
-                    SessionGenerationStart += ModuleUtils.GetDeleage<RuntimeDelegate.SessionGenerationAction>(callBack);
-                    break;
-                case Constants.SessionGenerationReport:
-                    SessionGenerationReport += ModuleUtils.GetDeleage<RuntimeDelegate.SessionGenerationAction>(callBack);
-                    break;
-                case Constants.SessionGenerationEnd:
-                    SessionGenerationEnd += ModuleUtils.GetDeleage<RuntimeDelegate.SessionGenerationAction>(callBack);
-                    break;
                 case Constants.TestInstanceStart:
                     TestInstanceStart += ModuleUtils.GetDeleage<RuntimeDelegate.TestInstanceStatusAction>(callBack);
-                    break;
-                case Constants.SessionStart:
-                    SessionStart += ModuleUtils.GetDeleage<RuntimeDelegate.SessionStatusAction>(callBack);
-                    break;
-                case Constants.SequenceStarted:
-                    SequenceStarted += ModuleUtils.GetDeleage<RuntimeDelegate.SequenceStatusAction>(callBack);
-                    break;
-                case Constants.StatusReceived:
-                    StatusReceived += ModuleUtils.GetDeleage<RuntimeDelegate.StatusReceivedAction>(callBack);
-                    break;
-                case Constants.SequenceOver:
-                    SequenceOver += ModuleUtils.GetDeleage<RuntimeDelegate.SequenceStatusAction>(callBack);
-                    break;
-                case Constants.SessionOver:
-                    SessionOver += ModuleUtils.GetDeleage<RuntimeDelegate.SessionStatusAction>(callBack);
                     break;
                 case Constants.TestInstanceOver:
                     TestInstanceOver += ModuleUtils.GetDeleage<RuntimeDelegate.TestInstanceStatusAction>(callBack);
                     break;
+                case Constants.SessionGenerationStart:
+                case Constants.SessionGenerationReport:
+                case Constants.SessionGenerationEnd:
+                case Constants.SessionStart:
+                case Constants.SequenceStarted:
+                case Constants.StatusReceived:
+                case Constants.SequenceOver:
+                case Constants.SessionOver:
                 case Constants.BreakPointHitted:
-                    BreakPointHitted += ModuleUtils.GetDeleage<RuntimeDelegate.BreakPointHittedAction>(callBack);
+                    if (_eventPumps.ContainsKey(session))
+                    {
+                        _eventPumps[session].Register(callBack, session, eventName);
+                    }
+                    else
+                    {
+                        foreach (SessionEventPump sessionEventPump in _eventPumps.Values)
+                        {
+                            sessionEventPump.Register(callBack, session, eventName);
+                        }
+                    }
                     break;
                 default:
                     I18N i18N = I18N.GetInstance(Constants.I18nName);
@@ -77,7 +93,7 @@ namespace Testflow.MasterCore.StatusManage
             }
         }
 
-        public void Unregister(Delegate callBack, string eventName)
+        public void Unregister(Delegate callBack, int session, string eventName)
         {
             switch (eventName)
             {
@@ -87,42 +103,32 @@ namespace Testflow.MasterCore.StatusManage
                 case Constants.TestGenerationEnd:
                     TestGenerationEnd -= ModuleUtils.GetDeleage<RuntimeDelegate.TestGenerationAction>(callBack);
                     break;
-                case Constants.SessionGenerationStart:
-                    SessionGenerationStart -= ModuleUtils.GetDeleage<RuntimeDelegate.SessionGenerationAction>(callBack);
-                    break;
-                case Constants.SessionGenerationReport:
-                    SessionGenerationReport -= ModuleUtils.GetDeleage<RuntimeDelegate.SessionGenerationAction>(callBack);
-                    break;
-                case Constants.SessionGenerationEnd:
-                    SessionGenerationEnd -= ModuleUtils.GetDeleage<RuntimeDelegate.SessionGenerationAction>(callBack);
-                    break;
                 case Constants.TestInstanceStart:
                     TestInstanceStart -= ModuleUtils.GetDeleage<RuntimeDelegate.TestInstanceStatusAction>(callBack);
-                    break;
-                case Constants.SessionStart:
-                    SessionStart -= ModuleUtils.GetDeleage<RuntimeDelegate.SessionStatusAction>(callBack);
-                    break;
-                case Constants.SequenceStarted:
-                    SequenceStarted -= ModuleUtils.GetDeleage<RuntimeDelegate.SequenceStatusAction>(callBack);
-                    break;
-                case Constants.StatusReceived:
-                    StatusReceived -= ModuleUtils.GetDeleage<RuntimeDelegate.StatusReceivedAction>(callBack);
-                    break;
-                case Constants.SequenceOver:
-                    SequenceOver -= ModuleUtils.GetDeleage<RuntimeDelegate.SequenceStatusAction>(callBack);
-                    break;
-                case Constants.SessionOver:
-                    SessionOver -= ModuleUtils.GetDeleage<RuntimeDelegate.SessionStatusAction>(callBack);
-                    break;
-                case Constants.BreakPointHitted:
-                    BreakPointHitted -= ModuleUtils.GetDeleage<RuntimeDelegate.BreakPointHittedAction>(callBack);
                     break;
                 case Constants.TestInstanceOver:
                     TestInstanceOver -= ModuleUtils.GetDeleage<RuntimeDelegate.TestInstanceStatusAction>(callBack);
                     break;
-                default:
-                    I18N i18N = I18N.GetInstance(Constants.I18nName);
-                    throw new TestflowInternalException(ModuleErrorCode.UnexistEvent, i18N.GetFStr("UnexistEvent", eventName));
+                case Constants.SessionGenerationStart:
+                case Constants.SessionGenerationReport:
+                case Constants.SessionGenerationEnd:
+                case Constants.SessionStart:
+                case Constants.SequenceStarted:
+                case Constants.StatusReceived:
+                case Constants.SequenceOver:
+                case Constants.SessionOver:
+                case Constants.BreakPointHitted:
+                    if (_eventPumps.ContainsKey(session))
+                    {
+                        _eventPumps[session].Unregister(callBack, eventName);
+                    }
+                    else
+                    {
+                        foreach (SessionEventPump sessionEventPump in _eventPumps.Values)
+                        {
+                            sessionEventPump.Unregister(callBack,  eventName);
+                        }
+                    }
                     break;
             }
         }
@@ -135,10 +141,9 @@ namespace Testflow.MasterCore.StatusManage
 
         private void InvokeEvent(object state)
         {
-            EventParam eventParams = (EventParam)state;
-            string eventName = eventParams.EventName;
-            int sessionId = eventParams.Session;
-            object[] eventParam = eventParams.EventParams;
+            EventParam eventParamInfo = (EventParam)state;
+            string eventName = eventParamInfo.EventName;
+            object[] eventParam = eventParamInfo.EventParams;
             switch (eventName)
             {
                 case Constants.TestGenerationStart:
@@ -147,41 +152,32 @@ namespace Testflow.MasterCore.StatusManage
                 case Constants.TestGenerationEnd:
                     OnTestGenerationEnd(ModuleUtils.GetParamValue<ITestGenerationInfo>(eventParam, 0));
                     break;
-                case Constants.SessionGenerationStart:
-                    OnSessionGenerationStart(ModuleUtils.GetParamValue<ISessionGenerationInfo>(eventParam, 0));
-                    break;
-                case Constants.SessionGenerationReport:
-                    OnSessionGenerationReport(ModuleUtils.GetParamValue<ISessionGenerationInfo>(eventParam, 0));
-                    break;
-                case Constants.SessionGenerationEnd:
-                    OnSessionGenerationEnd(ModuleUtils.GetParamValue<ISessionGenerationInfo>(eventParam, 0));
-                    break;
                 case Constants.TestInstanceStart:
                     OnTestProjectStart(ModuleUtils.GetParamValue<List<ITestResultCollection>>(eventParam, 0));
-                    break;
-                case Constants.SessionStart:
-                    OnTestStart(ModuleUtils.GetParamValue<ITestResultCollection>(eventParam, 0));
-                    break;
-                case Constants.SequenceStarted:
-                    OnSequenceStarted(ModuleUtils.GetParamValue<ISequenceTestResult>(eventParam, 0));
-                    break;
-                case Constants.StatusReceived:
-                    OnStatusReceived(ModuleUtils.GetParamValue<IRuntimeStatusInfo>(eventParam, 0));
-                    break;
-                case Constants.SequenceOver:
-                    OnSequenceOver(ModuleUtils.GetParamValue<ISequenceTestResult>(eventParam, 0));
-                    break;
-                case Constants.SessionOver:
-//                    eventHandle.OnTestOver(ModuleUtil.GetParamValue<ITestResultCollection>(eventParams, 0),
-//                        ModuleUtil.GetParamValue<ISequenceGroup>(eventParams, 1));
-                    OnTestOver(ModuleUtils.GetParamValue<ITestResultCollection>(eventParam, 0));
                     break;
                 case Constants.TestInstanceOver:
                     OnTestProjectOver(ModuleUtils.GetParamValue<List<ITestResultCollection>>(eventParam, 0));
                     break;
+                case Constants.SessionGenerationStart:
+                case Constants.SessionGenerationReport:
+                case Constants.SessionGenerationEnd:
+                case Constants.SessionStart:
+                case Constants.SequenceStarted:
+                case Constants.StatusReceived:
+                case Constants.SequenceOver:
+                case Constants.SessionOver:
                 case Constants.BreakPointHitted:
-                    OnBreakPointHitted(ModuleUtils.GetParamValue<IDebuggerHandle>(eventParam, 0),
-                        ModuleUtils.GetParamValue<IDebugInformation>(eventParam, 1));
+                    if (_eventPumps.ContainsKey(eventParamInfo.Session))
+                    {
+                        _eventPumps[eventParamInfo.Session].PushEventsParamInfo(eventParamInfo);
+                    }
+                    else
+                    {
+                        foreach (SessionEventPump sessionEventPump in _eventPumps.Values)
+                        {
+                            sessionEventPump.PushEventsParamInfo(eventParamInfo);
+                        }
+                    }
                     break;
                 default:
                     I18N i18N = I18N.GetInstance(Constants.I18nName);
@@ -204,60 +200,16 @@ namespace Testflow.MasterCore.StatusManage
         public event RuntimeDelegate.TestGenerationAction TestGenerationEnd;
 
         /// <summary>
-        /// 会话测试生成开始事件
-        /// </summary>
-        public event RuntimeDelegate.SessionGenerationAction SessionGenerationStart;
-
-        /// <summary>
-        /// 会话测试生成中间事件，生成过程中会不间断生成该事件
-        /// </summary>
-        public event RuntimeDelegate.SessionGenerationAction SessionGenerationReport;
-
-        /// <summary>
-        /// 会话测试生成结束事件
-        /// </summary>
-        public event RuntimeDelegate.SessionGenerationAction SessionGenerationEnd;
-
-        /// <summary>
         /// 测试工程开始事件
         /// </summary>
         public event RuntimeDelegate.TestInstanceStatusAction TestInstanceStart;
-
-        /// <summary>
-        /// 测试序列组开始执行的事件
-        /// </summary>
-        public event RuntimeDelegate.SessionStatusAction SessionStart;
-
-        /// <summary>
-        /// Events raised when a sequence is start and host receive runtime stauts information. Asynchronous event.
-        /// </summary>
-        public event RuntimeDelegate.SequenceStatusAction SequenceStarted;
-
-        /// <summary>
-        /// Events raised when receive runtime status information. Asynchronous event.
-        /// </summary>
-        public event RuntimeDelegate.StatusReceivedAction StatusReceived;
-
-        /// <summary>
-        /// Events raised when a sequence is over and host receive runtime stauts information. Asynchronous event.
-        /// </summary>
-        public event RuntimeDelegate.SequenceStatusAction SequenceOver;
-
-        /// <summary>
-        /// Events raised when a sequence is failed and host receive runtime stauts information. Asynchronous event.
-        /// </summary>
-        public event RuntimeDelegate.SessionStatusAction SessionOver;
 
         /// <summary>
         /// 测试工程结束事件
         /// </summary>
         public event RuntimeDelegate.TestInstanceStatusAction TestInstanceOver;
 
-        /// <summary>
-        /// 断点命中事件，当某个断点被命中时触发
-        /// </summary>
-        public event RuntimeDelegate.BreakPointHittedAction BreakPointHitted;
-
+        
         //
 
         //        /// <summary>
@@ -278,51 +230,6 @@ namespace Testflow.MasterCore.StatusManage
             TestGenerationEnd?.Invoke(generationinfo);
         }
 
-        private void OnSessionGenerationStart(ISessionGenerationInfo generationinfo)
-        {
-            SessionGenerationStart?.Invoke(generationinfo);
-        }
-
-        private void OnSessionGenerationEnd(ISessionGenerationInfo generationinfo)
-        {
-            SessionGenerationEnd?.Invoke(generationinfo);
-        }
-
-        private void OnSequenceStarted(ISequenceTestResult result)
-        {
-            SequenceStarted?.Invoke(result);
-        }
-
-        private void OnStatusReceived(IRuntimeStatusInfo statusinfo)
-        {
-            StatusReceived?.Invoke(statusinfo);
-        }
-
-        private void OnSequenceOver(ISequenceTestResult result)
-        {
-            SequenceOver?.Invoke(result);
-        }
-
-        private void OnTestOver(ITestResultCollection statistics)
-        {
-            SessionOver?.Invoke(statistics);
-        }
-
-        private void OnTestStart(ITestResultCollection statistics)
-        {
-            SessionStart?.Invoke(statistics);
-        }
-
-        private void OnBreakPointHitted(IDebuggerHandle debuggerHandle, IDebugInformation information)
-        {
-            BreakPointHitted?.Invoke(debuggerHandle, information);
-        }
-
-        private void OnSessionGenerationReport(ISessionGenerationInfo generationinfo)
-        {
-            SessionGenerationReport?.Invoke(generationinfo);
-        }
-
         private void OnTestProjectStart(IList<ITestResultCollection> testResults)
         {
             TestInstanceStart?.Invoke(testResults);
@@ -330,25 +237,29 @@ namespace Testflow.MasterCore.StatusManage
 
         private void OnTestProjectOver(IList<ITestResultCollection> testResults)
         {
+            // 需要等待所有消息泵执行结束后再执行
+            while (_eventPumps.Values.Any(item => !item.EventOver))
+            {
+                Thread.Sleep(100);
+            }
             TestInstanceOver?.Invoke(testResults);
         }
-
         #endregion
 
-        private class EventParam
+        private int _disposedFlag = 0;
+        public void Dispose()
         {
-            public string EventName { get; }
-
-            public int Session { get; }
-
-            public object[] EventParams { get; }
-
-            public EventParam(string eventName, int session, object[] eventParams)
+            if (_disposedFlag == 0)
             {
-                this.EventName = eventName;
-                this.Session = session;
-                this.EventParams = eventParams;
+                return;
             }
+            Thread.VolatileWrite(ref _disposedFlag, 1);
+            Thread.MemoryBarrier();
+            foreach (SessionEventPump eventPump in _eventPumps.Values)
+            {
+                eventPump?.Dispose();
+            }
+            _eventPumps.Clear();
         }
     }
 }

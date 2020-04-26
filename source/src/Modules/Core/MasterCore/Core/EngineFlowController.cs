@@ -25,6 +25,9 @@ namespace Testflow.MasterCore.Core
         private readonly ITestEntityMaintainer _testsMaintainer;
         private ISequenceFlowContainer _sequenceData;
 
+        private Delegate _sessionOverDelegate;
+        private Delegate _sequenceOverDelegate;
+
         private readonly BlockHandle _blockHandle;
         private BlockHandle _abortBlocker;
 
@@ -114,11 +117,13 @@ namespace Testflow.MasterCore.Core
         // 如果是SequenceGroup执行，直接开始即可。
         public void StartTestWork()
         {
-            _globalInfo.EventDispatcher.SessionOver += SessionOverClean;
+            _sessionOverDelegate = new RuntimeDelegate.SessionStatusAction(SessionOverClean);
+            _globalInfo.EventDispatcher.Register(_sessionOverDelegate, CommonConst.BroadcastSession, Constants.SessionOver);
             if (_sequenceData is ITestProject)
             {
                 // 注册TestProject的Setup执行结束后的事件
-                _globalInfo.EventDispatcher.SequenceOver += StartTestSessionsIfSetUpOver;
+                _sequenceOverDelegate = new RuntimeDelegate.SequenceStatusAction(StartTestSessionsIfSetUpOver);
+                _globalInfo.EventDispatcher.Register(_sequenceOverDelegate, Constants.TestProjectSessionId,Constants.SequenceOver);
 
                 ControlMessage startMessage = new ControlMessage(MessageNames.CtrlStart, CommonConst.TestGroupSession);
                 startMessage.AddParam("RunSetup", true.ToString());
@@ -146,7 +151,7 @@ namespace Testflow.MasterCore.Core
             {
                 return;
             }
-            _globalInfo.EventDispatcher.SequenceOver -= StartTestSessionsIfSetUpOver;
+            _globalInfo.EventDispatcher.Unregister(_sequenceOverDelegate, Constants.TestProjectSessionId, Constants.SequenceOver);
             if (result.ResultState != RuntimeState.Success)
             {
                 return;

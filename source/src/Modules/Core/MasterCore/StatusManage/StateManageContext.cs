@@ -20,7 +20,7 @@ namespace Testflow.MasterCore.StatusManage
         {
             this.GlobalInfo = globalInfo;
             this.RuntimeHash = globalInfo.RuntimeHash;
-            this.EventDispatcher = new EventDispatcher();
+            this.EventDispatcher = new EventDispatcher(globalInfo, sequenceData);
             this.DatabaseProxy = new PersistenceProxy(globalInfo);
             this.TestGenerationInfo = new TestGenerationInfo(sequenceData);
             this.TestResults = new TestProjectResults(sequenceData);

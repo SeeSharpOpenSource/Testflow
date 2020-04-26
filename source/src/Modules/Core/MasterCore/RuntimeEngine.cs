@@ -271,26 +271,19 @@ namespace Testflow.MasterCore
             return (TDataType) _runtimeInfoSelector.GetRuntimeInfo(infoName, extraParams);
         }
 
-        public void RegisterRuntimeEvent(Delegate callBack, string eventName, params object[] extraParams)
+        public void RegisterRuntimeEvent(Delegate callBack, int session, string eventName, params object[] extraParams)
         {
             //判断委托是否为空。用户可能并没有在外部注册事件，详见runtimeservice里的事件
             if(callBack == null)
             {
                 return;
             }
-
-            int session = CommonConst.BroadcastSession;
-            //extraParams里只有一个int sessionid，表示发给这个session
-            if (0 != extraParams.Length)
-            {
-                session = Int32.Parse(extraParams[0].ToString());
-            }
             _globalInfo.EventDispatcher.Register(callBack, session, eventName);
         }
 
-        public void UnregisterRuntimeEvent(Delegate callBack, string eventName, params object[] extraParams)
+        public void UnregisterRuntimeEvent(Delegate callBack, int session, string eventName, params object[] extraParams)
         {
-            _globalInfo.EventDispatcher.Unregister(callBack, eventName);
+            _globalInfo.EventDispatcher.Unregister(callBack, session, eventName);
         }
 
         #endregion
