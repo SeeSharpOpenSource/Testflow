@@ -606,11 +606,11 @@ namespace Testflow.DataMaintainer
             // 如果已经存在则直接跳出
             if (File.Exists(databaseFilePath))
             {
-                Connection = new SQLiteConnection($"Data Source={databaseFilePath}");
+                Connection = new SQLiteConnection($"Data Source={databaseFilePath};Synchronous=OFF;");
                 Connection.Open();
                 return;
             }
-            Connection = new SQLiteConnection($"Data Source={databaseFilePath}");
+            Connection = new SQLiteConnection($"Data Source={databaseFilePath};Synchronous=OFF;");
             DbTransaction transaction = null;
             try
             {
