@@ -726,7 +726,8 @@ namespace Testflow.SlaveCore.Runner.Model
             };
             // 一旦失败，需要记录WatchData
             Context.StatusQueue.Enqueue(statusInfo);
-            Context.LogSession.Print(LogLevel.Error, Context.SessionId, ex, $"ErrorCode:{ex.HResult}. ErrorInfo:{ex.Message}");
+            LogLevel logLevel = ex is TestflowAssertException ? LogLevel.Debug : LogLevel.Error;
+            Context.LogSession.Print(logLevel, Context.SessionId, ex, $"ErrorCode:{ex.HResult}. ErrorInfo:{ex.Message}");
         }
 
         // 获取当前Step是否是包含在Retry节点下
