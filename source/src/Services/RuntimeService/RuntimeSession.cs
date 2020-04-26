@@ -82,15 +82,15 @@ namespace Testflow.RuntimeService
         private void RegisterEvents()
         {
             //注册事件,空事件在runtimeEngine方法里面判断
-            _engineController.RegisterRuntimeEvent(SessionGenerationStart, CommonConst.BroadcastSession, Constants.SessionGenerationStart, Context.SessionId);
-            _engineController.RegisterRuntimeEvent(SessionGenerationReport, CommonConst.BroadcastSession, Constants.SessionGenerationReport, Context.SessionId);
-            _engineController.RegisterRuntimeEvent(SessionGenerationEnd, CommonConst.BroadcastSession, Constants.SessionGenerationEnd, Context.SessionId);
-            _engineController.RegisterRuntimeEvent(SessionStart, CommonConst.BroadcastSession, Constants.SessionStart, Context.SessionId);
-            _engineController.RegisterRuntimeEvent(SequenceStarted, CommonConst.BroadcastSession, Constants.SequenceStarted, Context.SessionId);
-            _engineController.RegisterRuntimeEvent(StatusReceived, CommonConst.BroadcastSession, Constants.StatusReceived, Context.SessionId);
-            _engineController.RegisterRuntimeEvent(SequenceOver, CommonConst.BroadcastSession, Constants.SequenceOver, Context.SessionId);
-            _engineController.RegisterRuntimeEvent(SessionOver, CommonConst.BroadcastSession, Constants.SessionOver, Context.SessionId);
-            _engineController.RegisterRuntimeEvent(BreakPointHitted, CommonConst.BroadcastSession, Constants.BreakPointHitted, Context.SessionId);
+            _engineController.RegisterRuntimeEvent(SessionGenerationStart, Constants.SessionGenerationStart, Context.SessionId);
+            _engineController.RegisterRuntimeEvent(SessionGenerationReport, Constants.SessionGenerationReport, Context.SessionId);
+            _engineController.RegisterRuntimeEvent(SessionGenerationEnd, Constants.SessionGenerationEnd, Context.SessionId);
+            _engineController.RegisterRuntimeEvent(SessionStart, Constants.SessionStart, Context.SessionId);
+            _engineController.RegisterRuntimeEvent(SequenceStarted, Constants.SequenceStarted, Context.SessionId);
+            _engineController.RegisterRuntimeEvent(StatusReceived, Constants.StatusReceived, Context.SessionId);
+            _engineController.RegisterRuntimeEvent(SequenceOver, Constants.SequenceOver, Context.SessionId);
+            _engineController.RegisterRuntimeEvent(SessionOver, Constants.SessionOver, Context.SessionId);
+            _engineController.RegisterRuntimeEvent(BreakPointHitted, Constants.BreakPointHitted, Context.SessionId);
         }
         #endregion
 

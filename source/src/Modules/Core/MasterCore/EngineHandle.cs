@@ -108,13 +108,23 @@ namespace Testflow.MasterCore
             return _runtimeEngine.RuntimeObjManager.RemoveRuntimeObject(objectId, param);
         }
 
-        public void RegisterRuntimeEvent(Delegate callBack, int session, string eventName, params object[] extraParams)
+        public void RegisterRuntimeEvent(Delegate callBack, string eventName, params object[] extraParams)
         {
+            int session = CommonConst.BroadcastSession;
+            if (extraParams.Length >= 1 && extraParams[0] is int)
+            {
+                session = (int) extraParams[0];
+            }
             _runtimeEngine.RegisterRuntimeEvent(callBack, session, eventName, extraParams);
         }
 
-        public void UnregisterRuntimeEvent(Delegate callBack, int session, string eventName, params object[] extraParams)
+        public void UnregisterRuntimeEvent(Delegate callBack, string eventName, params object[] extraParams)
         {
+            int session = CommonConst.BroadcastSession;
+            if (extraParams.Length >= 1 && extraParams[0] is int)
+            {
+                session = (int)extraParams[0];
+            }
             _runtimeEngine.UnregisterRuntimeEvent(callBack, session, eventName, extraParams);
         }
 
