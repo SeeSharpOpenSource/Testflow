@@ -298,11 +298,15 @@ namespace Testflow.SlaveCore.Runner.Model
         // 用户Abort后执行，配置结果为Abort，重置计时，记录失败信息，抛出失败异常
         protected void BreakAndReportAbortMessage()
         {
-            this.Result = StepResult.Abort;
             // 重置计时时间
             Actuator.ResetTiming();
             // 记录失败信息
-            RecordRuntimeStatus();
+            FailedInfo failedInfo = new FailedInfo(Context.I18N.GetStr("OperationAborted"), FailedType.Abort)
+            {
+                ErrorCode = ModuleErrorCode.UserForceFailed,
+                Source = ModuleUtils.GetTypeFullName(this.GetType())
+            };
+            SetStatusAndSendErrorEvent(StepResult.Abort, failedInfo);
             // 抛出异常信息
             throw new TaskFailedException(SequenceIndex, Context.I18N.GetStr("OperationAborted"), FailedType.Abort, ModuleErrorCode.UserForceFailed);
         }

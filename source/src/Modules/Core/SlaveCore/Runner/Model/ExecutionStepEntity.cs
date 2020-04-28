@@ -1,5 +1,8 @@
-﻿using Testflow.Data.Sequence;
+﻿using Testflow.CoreCommon.Data;
+using Testflow.Data.Sequence;
+using Testflow.Runtime;
 using Testflow.Runtime.Data;
+using Testflow.SequenceManager;
 using Testflow.SlaveCore.Common;
 
 namespace Testflow.SlaveCore.Runner.Model
@@ -34,7 +37,12 @@ namespace Testflow.SlaveCore.Runner.Model
                 {
                     if (!forceInvoke && Context.Cancellation.IsCancellationRequested)
                     {
-                        this.Result = StepResult.Abort;
+                        FailedInfo failedInfo = new FailedInfo(Context.I18N.GetStr("OperationAborted"), FailedType.Abort)
+                        {
+                            ErrorCode = CoreCommon.ModuleErrorCode.UserForceFailed,
+                            Source = ModuleUtils.GetTypeFullName(this.GetType())
+                        };
+                        SetStatusAndSendErrorEvent(StepResult.Abort, failedInfo);
                         return;
                     }
                     subStepEntity.Invoke(forceInvoke);
