@@ -336,25 +336,34 @@ namespace Testflow.SlaveCore.Runner.Model
                 }
                 // 停止计时
                 Actuator.EndTiming();
-                this.Result = ModuleUtils.GetStepResult(ex.FailedType);
-                // 如果InvokeErrorAction不是Continue，则抛出异常
-                RecordInvocationError(ex, ex.FailedType);
+                if (Result == StepResult.NotAvailable)
+                {
+                    this.Result = ModuleUtils.GetStepResult(ex.FailedType);
+                    // 如果InvokeErrorAction不是Continue，则抛出异常
+                    RecordInvocationError(ex, ex.FailedType);
+                }
                 HandleException(StepData.InvokeErrorAction, ex);
             }
             catch (TestflowAssertException ex)
             {
                 // 停止计时
                 Actuator.EndTiming();
-                this.Result = StepResult.Failed;
-                RecordInvocationError(ex, FailedType.AssertionFailed);
+                if (Result == StepResult.NotAvailable)
+                {
+                    this.Result = StepResult.Failed;
+                    RecordInvocationError(ex, FailedType.AssertionFailed);
+                }
                 HandleException(StepData.AssertFailedAction, ex);
             }
             catch (TargetInvocationException ex)
             {
                 // 停止计时
                 Actuator.EndTiming();
-                this.Result = StepResult.Error;
-                RecordTargetInvocationError(ex);
+                if (Result == StepResult.NotAvailable)
+                {
+                    this.Result = StepResult.Error;
+                    RecordTargetInvocationError(ex);
+                }
                 // 如果失败行为是终止，则抛出异常
                 FailedAction failedAction = ex.InnerException is TestflowAssertException
                     ? StepData.AssertFailedAction
