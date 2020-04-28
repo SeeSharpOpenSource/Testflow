@@ -1,6 +1,14 @@
-﻿using Testflow.Data.Sequence;
+﻿using System;
+using System.Reflection;
+using Testflow.CoreCommon.Data;
+using Testflow.Data;
+using Testflow.Data.Sequence;
+using Testflow.FlowControl;
+using Testflow.Runtime;
 using Testflow.Runtime.Data;
 using Testflow.SlaveCore.Common;
+using Testflow.SlaveCore.Data;
+using Testflow.Usr;
 
 namespace Testflow.SlaveCore.Runner.Model
 {
@@ -32,6 +40,41 @@ namespace Testflow.SlaveCore.Runner.Model
             try
             {
                 tryBlock.Invoke(forceInvoke);
+            }
+            // 需要处理上次出错的Step的数据
+            catch (TestflowAssertException ex)
+            {
+                StepTaskEntityBase errorStep = StepTaskEntityBase.GetCurrentStep(SequenceIndex, Coroutine.Id);
+                if (null != errorStep && errorStep.Result == StepResult.NotAvailable)
+                {
+                    // 停止计时
+                    errorStep.EndTiming();
+                    errorStep.Result = StepResult.Failed;
+                    errorStep.RecordInvocationError(ex, FailedType.AssertionFailed);
+                }
+                throw;
+            }
+            catch (TargetInvocationException ex)
+            {
+                StepTaskEntityBase errorStep = StepTaskEntityBase.GetCurrentStep(SequenceIndex, Coroutine.Id);
+                if (null != errorStep && errorStep.Result == StepResult.NotAvailable)
+                {
+                    // 停止计时
+                    errorStep.EndTiming();
+                    errorStep.RecordTargetInvocationError(ex);
+                }
+                throw;
+            }
+            catch (TargetException ex)
+            {
+                StepTaskEntityBase errorStep = StepTaskEntityBase.GetCurrentStep(SequenceIndex, Coroutine.Id);
+                if (null != errorStep && errorStep.Result == StepResult.NotAvailable)
+                {
+                    // 停止计时
+                    Actuator.EndTiming();
+                    this.Result = StepResult.Error;
+                    RecordInvocationError(ex, FailedType.TargetError);
+                }
             }
             finally
             {

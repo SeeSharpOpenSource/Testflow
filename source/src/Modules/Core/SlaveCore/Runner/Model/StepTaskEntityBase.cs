@@ -121,7 +121,7 @@ namespace Testflow.SlaveCore.Runner.Model
         private bool _hasLoopCounter = false;
         protected readonly ActuatorBase Actuator;
         // step执行结果
-        public StepResult Result { get; protected set; }
+        public StepResult Result { get; set; }
         public int SequenceIndex { get; }
         public object Return => Actuator?.Return ?? null;
 
@@ -439,7 +439,7 @@ namespace Testflow.SlaveCore.Runner.Model
                     // 停止计时
                     Actuator.EndTiming();
                     RecordRetryTargetInvocationError(ex);
-                    if (!(ex.InnerException is TestflowAssertException))
+                    if (null != ex.InnerException && !(ex.InnerException is TestflowAssertException))
                     {
                         hasErrorStep = true;
                     }
@@ -611,7 +611,7 @@ namespace Testflow.SlaveCore.Runner.Model
             throw new TaskFailedException(SequenceIndex, FailedType.ForceFailed, ModuleErrorCode.ForceFailed);
         }
 
-        private void HandleException(FailedAction failedAction, Exception exception)
+        public void HandleException(FailedAction failedAction, Exception exception)
         {
             if (exception is TestflowLoopBreakException)
             {
@@ -655,7 +655,7 @@ namespace Testflow.SlaveCore.Runner.Model
 
         #endregion
 
-        private void RecordTargetInvocationError(TargetInvocationException ex)
+        public void RecordTargetInvocationError(TargetInvocationException ex)
         {
             Exception innerException = ex.InnerException;
             if (innerException is TestflowLoopBreakException)
@@ -717,7 +717,7 @@ namespace Testflow.SlaveCore.Runner.Model
             Context.StatusQueue.Enqueue(statusInfo);
         }
 
-        private void RecordInvocationError(Exception ex, FailedType failedType)
+        public void RecordInvocationError(Exception ex, FailedType failedType)
         {
             FailedInfo failedInfo = new FailedInfo(ex, failedType);
             SequenceStatusInfo statusInfo = new SequenceStatusInfo(SequenceIndex, this.GetStack(), StatusReportType.Record, RuntimeState.Running, Result, failedInfo)
@@ -748,7 +748,7 @@ namespace Testflow.SlaveCore.Runner.Model
             return false;
         }
 
-        private FailedType GetFailedType(Exception ex)
+        public static FailedType GetFailedType(Exception ex)
         {
             if (ex is TestflowAssertException)
             {
