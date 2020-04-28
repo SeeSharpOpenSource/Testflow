@@ -49,10 +49,6 @@ namespace Testflow.SlaveCore.Runner.Model
                 StepTaskEntityBase subStepEntity = SubStepRoot;
                 do
                 {
-                    if (!forceInvoke && Context.Cancellation.IsCancellationRequested)
-                    {
-                        return;
-                    }
                     subStepEntity.Invoke(forceInvoke);
                 } while (null != (subStepEntity = subStepEntity.NextStep));
             }

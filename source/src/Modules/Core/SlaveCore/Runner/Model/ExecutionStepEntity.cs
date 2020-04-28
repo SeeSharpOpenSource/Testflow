@@ -17,6 +17,7 @@ namespace Testflow.SlaveCore.Runner.Model
         {
             // 重置计时时间
             Actuator.ResetTiming();
+
             // 调用前置监听
             OnPreListener();
 
@@ -35,16 +36,6 @@ namespace Testflow.SlaveCore.Runner.Model
                 StepTaskEntityBase subStepEntity = SubStepRoot;
                 do
                 {
-                    if (!forceInvoke && Context.Cancellation.IsCancellationRequested)
-                    {
-                        FailedInfo failedInfo = new FailedInfo(Context.I18N.GetStr("OperationAborted"), FailedType.Abort)
-                        {
-                            ErrorCode = CoreCommon.ModuleErrorCode.UserForceFailed,
-                            Source = ModuleUtils.GetTypeFullName(this.GetType())
-                        };
-                        SetStatusAndSendErrorEvent(StepResult.Abort, failedInfo);
-                        return;
-                    }
                     subStepEntity.Invoke(forceInvoke);
                 } while (null != (subStepEntity = subStepEntity.NextStep));
             }

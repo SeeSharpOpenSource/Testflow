@@ -267,7 +267,6 @@ namespace Testflow.SlaveCore.Runner.Model
                 {
                     variableFullName = ModuleUtils.GetVariableFullName(StepData.LoopCounter.CounterVariable, StepData, Context.SessionId);
                 }
-                bool notCancelled = true;
                 do
                 {
                     // 如果是取消状态并且不是强制执行则返回
@@ -281,8 +280,7 @@ namespace Testflow.SlaveCore.Runner.Model
                     }
                     _invokeStepAction.Invoke(forceInvoke);
                     currentIndex++;
-                    notCancelled = forceInvoke || !Context.Cancellation.IsCancellationRequested;
-                } while (currentIndex < StepData.LoopCounter.MaxValue && notCancelled);
+                } while (currentIndex < StepData.LoopCounter.MaxValue);
             }
             else
             {
@@ -298,6 +296,7 @@ namespace Testflow.SlaveCore.Runner.Model
         // 用户Abort后执行，配置结果为Abort，重置计时，记录失败信息，抛出失败异常
         protected void BreakAndReportAbortMessage()
         {
+            this.Result = StepResult.Abort;
             // 重置计时时间
             Actuator.ResetTiming();
             // 记录失败信息
@@ -399,6 +398,11 @@ namespace Testflow.SlaveCore.Runner.Model
                 if (null != retryVar)
                 {
                     Context.VariableMapper.SetParamValue(retryVar, StepData.RetryCounter.CounterVariable, retryTimes);
+                }
+                // 如果是取消状态并且不是强制执行则返回
+                if (!forceInvoke && Context.Cancellation.IsCancellationRequested)
+                {
+                    BreakAndReportAbortMessage();
                 }
                 try
                 {

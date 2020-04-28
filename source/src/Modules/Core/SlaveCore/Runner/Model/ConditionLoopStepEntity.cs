@@ -76,16 +76,6 @@ namespace Testflow.SlaveCore.Runner.Model
                         StepTaskEntityBase subStepEntity = SubStepRoot;
                         do
                         {
-                            if (!forceInvoke && Context.Cancellation.IsCancellationRequested)
-                            {
-                                FailedInfo failedInfo = new FailedInfo(Context.I18N.GetStr("OperationAborted"), FailedType.Abort)
-                                {
-                                    ErrorCode = ModuleErrorCode.UserForceFailed,
-                                    Source = ModuleUtils.GetTypeFullName(this.GetType())
-                                };
-                                SetStatusAndSendErrorEvent(StepResult.Abort, failedInfo);
-                                return;
-                            }
                             subStepEntity.Invoke(forceInvoke);
                         } while (null != (subStepEntity = subStepEntity.NextStep));
                     }
