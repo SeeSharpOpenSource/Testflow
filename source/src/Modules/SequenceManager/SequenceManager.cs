@@ -196,11 +196,12 @@ namespace Testflow.SequenceManager
             switch (target)
             {
                 case SerializationTarget.File:
+                    string seqFilePath = param[0];
                     _typeMaintainer.VerifyVariableTypes(testProject);
                     _typeMaintainer.RefreshUsedAssemblyAndType(testProject);
-                    _directoryHelper.SetToRelativePath(testProject);
-                    SequenceSerializer.Serialize(param[0], testProject as TestProject);
-                    _directoryHelper.SetToAbsolutePath(testProject);
+                    _directoryHelper.SetToRelativePath(testProject, seqFilePath);
+                    SequenceSerializer.Serialize(seqFilePath, testProject as TestProject);
+                    _directoryHelper.SetToAbsolutePath(testProject, TODO);
                     break;
                 case SerializationTarget.DataBase:
                     throw new NotImplementedException();
@@ -219,9 +220,9 @@ namespace Testflow.SequenceManager
 //                    filePath = ModuleUtils.GetAbsolutePath(filePath, ConfigData.GetProperty<string[]>("WorkspaceDir")[0]);
                     _typeMaintainer.VerifyVariableTypes(sequenceGroup);
                     _typeMaintainer.RefreshUsedAssemblyAndType(sequenceGroup);
-                    _directoryHelper.SetToRelativePath(sequenceGroup);
+                    _directoryHelper.SetToRelativePath(sequenceGroup, filePath);
                     SequenceSerializer.Serialize(filePath, sequenceGroup as SequenceGroup);
-                    _directoryHelper.SetToAbsolutePath(sequenceGroup);
+                    _directoryHelper.SetToAbsolutePath(sequenceGroup, TODO);
                     break;
                 case SerializationTarget.DataBase:
                     throw new NotImplementedException();
@@ -243,7 +244,7 @@ namespace Testflow.SequenceManager
                 case SerializationTarget.File:
                     TestProject testProject = SequenceDeserializer.LoadTestProject(param[0], forceLoad, this.ConfigData);
                     ModuleUtils.ValidateParent(testProject);
-                    _directoryHelper.SetToAbsolutePath(testProject);
+                    _directoryHelper.SetToAbsolutePath(testProject, TODO);
                     return testProject;
                     break;
                 case SerializationTarget.DataBase:
@@ -266,7 +267,7 @@ namespace Testflow.SequenceManager
                 case SerializationTarget.File:
                     SequenceGroup sequenceGroup = SequenceDeserializer.LoadSequenceGroup(param[0], forceLoad, this.ConfigData);
                     ModuleUtils.ValidateParent(sequenceGroup, null);
-                    _directoryHelper.SetToAbsolutePath(sequenceGroup);
+                    _directoryHelper.SetToAbsolutePath(sequenceGroup, TODO);
                     return sequenceGroup;
                     break;
                 case SerializationTarget.DataBase:

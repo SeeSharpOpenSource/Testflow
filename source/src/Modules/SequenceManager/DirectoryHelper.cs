@@ -15,7 +15,7 @@ namespace Testflow.SequenceManager
 {
     internal class DirectoryHelper
     {
-        private List<string> availableDirs;
+        private readonly List<string> _availableDirs;
         private readonly StringBuilder _pathCache;
         private readonly Regex _absolutePathRegex;
 
@@ -37,29 +37,41 @@ namespace Testflow.SequenceManager
                 : string.Format(relativePathFormat, dirDelim);
             _absolutePathRegex = new Regex(relativePathRegexStr);
 
-            availableDirs = new List<string>(workspaceDirs.Length + 2);
-            availableDirs.AddRange(workspaceDirs);
-            availableDirs.Add(platformLibDir);
-            availableDirs.Add(dotNetLibDir);
-            availableDirs.Add(dotNetRootDir);
+            _availableDirs = new List<string>(workspaceDirs.Length + 2);
+            _availableDirs.AddRange(workspaceDirs);
+            _availableDirs.Add(platformLibDir);
+            _availableDirs.Add(dotNetLibDir);
+            _availableDirs.Add(dotNetRootDir);
 
             _pathCache = new StringBuilder(200);
         }
 
         #region 配置所有路径为相对路径
 
-        public void SetToRelativePath(ITestProject testProject)
+        public void SetToRelativePath(ITestProject testProject, string filePath)
         {
+            string seqDir = ModuleUtils.GetParentDirectory(filePath);
+            // 将当前序列路径作为首要判断路径
+            _availableDirs.Insert(0, seqDir);
+
             SetToRelativePath(testProject.Assemblies);
             foreach (ISequenceGroup sequenceGroup in testProject.SequenceGroups)
             {
-                SetToRelativePath(sequenceGroup);
+                SetToRelativePath(sequenceGroup.Assemblies);
             }
+
+            _availableDirs.RemoveAt(0);
         }
 
-        public void SetToRelativePath(ISequenceGroup sequenceGroup)
+        public void SetToRelativePath(ISequenceGroup sequenceGroup, string filePath)
         {
+            string seqDir = ModuleUtils.GetParentDirectory(filePath);
+            // 将当前序列路径作为首要判断路径
+            _availableDirs.Insert(0, seqDir);
+
             SetToRelativePath(sequenceGroup.Assemblies);
+
+            _availableDirs.RemoveAt(0);
         }
 
         private void SetToRelativePath(IAssemblyInfoCollection assemblies)
@@ -71,7 +83,7 @@ namespace Testflow.SequenceManager
                     continue;
                 }
                 // 如果包含在可用路径内则替换为相对路径
-                foreach (string availableDir in availableDirs)
+                foreach (string availableDir in _availableDirs)
                 {
                     if (assemblyInfo.Path.StartsWith(availableDir, StringComparison.OrdinalIgnoreCase))
                     {
@@ -88,16 +100,16 @@ namespace Testflow.SequenceManager
 
         #region 配置所有路径为绝对路径
 
-        public void SetToAbsolutePath(ITestProject testProject)
+        public void SetToAbsolutePath(ITestProject testProject, string filePath)
         {
             SetToAbsolutePath(testProject.Assemblies);
             foreach (ISequenceGroup sequenceGroup in testProject.SequenceGroups)
             {
-                SetToAbsolutePath(sequenceGroup);
+                SetToAbsolutePath(sequenceGroup.Assemblies);
             }
         }
 
-        public void SetToAbsolutePath(ISequenceGroup sequenceGroup)
+        public void SetToAbsolutePath(ISequenceGroup sequenceGroup, string filePath)
         {
             SetToAbsolutePath(sequenceGroup.Assemblies);
         }
@@ -136,10 +148,10 @@ namespace Testflow.SequenceManager
                 path = path.Substring(1, path.Length - 1);
             }
             // 转换为绝对路径时反向寻找，先.net库再平台库再用户库
-            for (int i = availableDirs.Count - 1; i >= 0; i--)
+            for (int i = _availableDirs.Count - 1; i >= 0; i--)
             {
                 _pathCache.Clear();
-                string availableDir = availableDirs[i];
+                string availableDir = _availableDirs[i];
                 _pathCache.Append(availableDir).Append(path);
                 // 如果库存在则配置为绝对路径，然后返回
                 if (File.Exists(_pathCache.ToString()))
@@ -161,7 +173,7 @@ namespace Testflow.SequenceManager
                 return path;
             }
             // 如果包含在可用路径内则不处理，否则替换为相对路径
-            foreach (string availableDir in availableDirs)
+            foreach (string availableDir in _availableDirs)
             {
                 if (!path.StartsWith(availableDir))
                 {

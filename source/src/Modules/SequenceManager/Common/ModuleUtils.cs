@@ -633,6 +633,17 @@ namespace Testflow.SequenceManager.Common
             return Directory.Exists(path);
         }
 
+        public static string GetParentDirectory(string filePath)
+        {
+            char seperator = Path.DirectorySeparatorChar;
+            if (filePath.EndsWith(seperator.ToString()) || !filePath.Contains(seperator))
+            {
+                return filePath;
+            }
+            int splitIndex = filePath.LastIndexOf(seperator) + 1;
+            return filePath.Substring(0, splitIndex);
+        }
+
         #endregion
 
 
