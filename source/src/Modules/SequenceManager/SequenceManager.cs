@@ -13,6 +13,7 @@ using Testflow.SequenceManager.SequenceElements;
 using Testflow.SequenceManager.Serializer;
 using Testflow.SequenceManager.StepCreators;
 using Testflow.Utility.I18nUtil;
+using Testflow.Utility.Utils;
 
 namespace Testflow.SequenceManager
 {
@@ -197,7 +198,7 @@ namespace Testflow.SequenceManager
             switch (target)
             {
                 case SerializationTarget.File:
-                    string seqFilePath = param[0];
+                    string seqFilePath = StringUtil.NormalizeFilePath(param[0]);
                     _typeMaintainer.VerifyVariableTypes(testProject);
                     _typeMaintainer.RefreshUsedAssemblyAndType(testProject);
                     try
@@ -229,7 +230,7 @@ namespace Testflow.SequenceManager
             switch (target)
             {
                 case SerializationTarget.File:
-                    string filePath = param[0];
+                    string filePath = StringUtil.NormalizeFilePath(param[0]);
                     _typeMaintainer.VerifyVariableTypes(sequenceGroup);
                     _typeMaintainer.RefreshUsedAssemblyAndType(sequenceGroup);
                     try
@@ -265,7 +266,7 @@ namespace Testflow.SequenceManager
             switch (source)
             {
                 case SerializationTarget.File:
-                    string filePath = param[0];
+                    string filePath = StringUtil.NormalizeFilePath(param[0]);
                     TestProject testProject = SequenceDeserializer.LoadTestProject(filePath, forceLoad, this.ConfigData);
                     ModuleUtils.ValidateParent(testProject);
                     _directoryHelper.SetAssembliesToAbsolutePath(testProject, filePath);
@@ -289,7 +290,7 @@ namespace Testflow.SequenceManager
             switch (source)
             {
                 case SerializationTarget.File:
-                    string seqFilePath = param[0];
+                    string seqFilePath = StringUtil.NormalizeFilePath(param[0]);
                     SequenceGroup sequenceGroup = SequenceDeserializer.LoadSequenceGroup(seqFilePath, forceLoad, this.ConfigData);
                     ModuleUtils.ValidateParent(sequenceGroup, null);
                     _directoryHelper.SetInfoPathToAbsolute(sequenceGroup.Info, seqFilePath);
@@ -308,7 +309,8 @@ namespace Testflow.SequenceManager
         {
             SequenceGroup sequenceGroupObj = sequenceGroup as SequenceGroup;
             sequenceGroupObj.RefreshSignature();
-            SequenceDeserializer.LoadParameter(sequenceGroupObj, param[0], forceLoad);
+            string paramFilePath = StringUtil.NormalizeFilePath(param[0]);
+            SequenceDeserializer.LoadParameter(sequenceGroupObj, paramFilePath, forceLoad);
         }
 
         public string RuntimeSerialize(ITestProject testProject)
