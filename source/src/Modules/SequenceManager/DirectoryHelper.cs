@@ -8,6 +8,7 @@ using Testflow.Data.Description;
 using Testflow.Data.Sequence;
 using Testflow.Modules;
 using Testflow.SequenceManager.Common;
+using Testflow.SequenceManager.SequenceElements;
 using Testflow.Usr;
 using Testflow.Utility.I18nUtil;
 
@@ -18,6 +19,7 @@ namespace Testflow.SequenceManager
         private readonly List<string> _availableDirs;
         private readonly StringBuilder _pathCache;
         private readonly Regex _absolutePathRegex;
+
 
         public DirectoryHelper(IModuleConfigData configData)
         {
@@ -33,12 +35,12 @@ namespace Testflow.SequenceManager
             char dirDelim = Path.DirectorySeparatorChar;
             // \在正则表达式中需要转义
             string relativePathRegexStr = dirDelim.Equals('\\')
-                ? string.Format(relativePathFormat, @"\\")
-                : string.Format(relativePathFormat, dirDelim);
+                ? String.Format(relativePathFormat, @"\\")
+                : String.Format(relativePathFormat, dirDelim);
             _absolutePathRegex = new Regex(relativePathRegexStr);
 
             _availableDirs = new List<string>(workspaceDirs.Length + 2);
-            _availableDirs.AddRange(workspaceDirs);
+            _availableDirs.AddRange(workspaceDirs); 
             _availableDirs.Add(platformLibDir);
             _availableDirs.Add(dotNetLibDir);
             _availableDirs.Add(dotNetRootDir);
@@ -48,33 +50,121 @@ namespace Testflow.SequenceManager
 
         #region 配置所有路径为相对路径
 
-        public void SetToRelativePath(ITestProject testProject, string filePath)
+        public void SetAssembliesToRelativePath(ITestProject testProject, string filePath)
         {
             string seqDir = ModuleUtils.GetParentDirectory(filePath);
             // 将当前序列路径作为首要判断路径
             _availableDirs.Insert(0, seqDir);
+            SetAssembliesToRelativePath(testProject.Assemblies);
+            _availableDirs.RemoveAt(0);
 
-            SetToRelativePath(testProject.Assemblies);
             foreach (ISequenceGroup sequenceGroup in testProject.SequenceGroups)
             {
-                SetToRelativePath(sequenceGroup.Assemblies);
-            }
+                seqDir = ModuleUtils.GetParentDirectory(sequenceGroup.Info.SequenceGroupFile);
 
-            _availableDirs.RemoveAt(0);
+                _availableDirs.Insert(0, seqDir);
+                SetAssembliesToRelativePath(sequenceGroup.Assemblies);
+                _availableDirs.RemoveAt(0);
+            }
         }
 
-        public void SetToRelativePath(ISequenceGroup sequenceGroup, string filePath)
+        public void SetAssembliesToRelativePath(ISequenceGroup sequenceGroup, string filePath)
         {
             string seqDir = ModuleUtils.GetParentDirectory(filePath);
             // 将当前序列路径作为首要判断路径
             _availableDirs.Insert(0, seqDir);
-
-            SetToRelativePath(sequenceGroup.Assemblies);
-
+            SetAssembliesToRelativePath(sequenceGroup.Assemblies);
             _availableDirs.RemoveAt(0);
         }
 
-        private void SetToRelativePath(IAssemblyInfoCollection assemblies)
+        public void InitSequenceGroupLocations(TestProject testProject, string testProjectPath)
+        {
+            testProject.SequenceGroupLocations.Clear();
+            ISequenceGroupCollection sequenceGroups = testProject.SequenceGroups;
+            for (int i = 0; i < sequenceGroups.Count; i++)
+            {
+                ISequenceGroup sequenceGroup = sequenceGroups[i];
+                if (string.IsNullOrWhiteSpace(sequenceGroup.Info.SequenceGroupFile) ||
+                    string.IsNullOrWhiteSpace(sequenceGroup.Info.SequenceParamFile))
+                {
+                    InitSequenceGroupFilePath(sequenceGroup);
+                }
+                string sequenceGroupPath = ModuleUtils.GetAbsolutePath(sequenceGroup.Info.SequenceGroupFile,
+                    testProjectPath);
+                string parameterPath = ModuleUtils.GetAbsolutePath(sequenceGroup.Info.SequenceParamFile,
+                    testProjectPath);
+                if (!ModuleUtils.IsValidFilePath(sequenceGroupPath))
+                {
+                    sequenceGroupPath = ModuleUtils.GetSequenceGroupPath(testProjectPath, i);
+                    parameterPath = ModuleUtils.GetParameterFilePath(sequenceGroupPath);
+                    sequenceGroup.Info.SequenceGroupFile = ModuleUtils.GetRelativePath(sequenceGroupPath, testProjectPath);
+                    sequenceGroup.Info.SequenceParamFile = ModuleUtils.GetRelativePath(parameterPath, sequenceGroupPath);
+                }
+                else if (!ModuleUtils.IsValidFilePath(sequenceGroup.Info.SequenceParamFile))
+                {
+                    parameterPath = ModuleUtils.GetParameterFilePath(sequenceGroupPath);
+                    sequenceGroup.Info.SequenceParamFile = ModuleUtils.GetRelativePath(parameterPath, sequenceGroupPath);
+                }
+                SequenceGroupLocationInfo locationInfo = new SequenceGroupLocationInfo()
+                {
+                    Name = sequenceGroup.Name,
+                    SequenceFilePath = sequenceGroup.Info.SequenceGroupFile,
+                    ParameterFilePath = sequenceGroup.Info.SequenceParamFile
+                };
+                testProject.SequenceGroupLocations.Add(locationInfo);
+            }
+        }
+
+        // 配置SequenceGroupInfo中序列文件和参数文件的路径为相对路径
+        public void SetInfoPathToRelative(ISequenceGroupInfo sequenceGroupInfo)
+        {
+            string sequenceAbsolutePath = sequenceGroupInfo.SequenceGroupFile;
+            sequenceGroupInfo.SequenceGroupFile = ModuleUtils.GetFileName(sequenceAbsolutePath);
+            sequenceGroupInfo.SequenceParamFile = ModuleUtils.GetRelativePath(sequenceGroupInfo.SequenceParamFile,
+                sequenceAbsolutePath);
+        }
+
+        // 配置TestProject中SequenceLocations的位置
+        public void SetLocationPath(ISequenceGroupInfo sequenceGroupInfo, SequenceGroupLocationInfo sequenceLocation, string testProjectPath)
+        {
+            sequenceLocation.SequenceFilePath = ModuleUtils.GetRelativePath(sequenceGroupInfo.SequenceGroupFile,
+                testProjectPath);
+            sequenceLocation.ParameterFilePath = ModuleUtils.GetRelativePath(sequenceGroupInfo.SequenceParamFile,
+                testProjectPath);
+        }
+
+        // 配置TestProject中SequenceGroupInfo的序列文件和参数文件的路径为绝对路径
+        public void SetInfoPathToAbsolute(ISequenceGroupInfo sequenceGroupInfo, SequenceGroupLocationInfo sequenceLocation, string testProjectPath)
+        {
+            sequenceGroupInfo.SequenceGroupFile = ModuleUtils.GetAbsolutePath(sequenceLocation.SequenceFilePath, testProjectPath);
+            sequenceGroupInfo.SequenceParamFile = ModuleUtils.GetAbsolutePath(sequenceLocation.ParameterFilePath, testProjectPath);
+        }
+
+        // 配置SequenceGroupInfo中序列文件和参数文件的路径为绝对路径
+        public void SetInfoPathToAbsolute(ISequenceGroupInfo sequenceGroupInfo, string sequenceFullPath)
+        {
+            sequenceGroupInfo.SequenceGroupFile = ModuleUtils.GetAbsolutePath(sequenceGroupInfo.SequenceGroupFile, sequenceFullPath);
+            sequenceGroupInfo.SequenceParamFile = ModuleUtils.GetAbsolutePath(sequenceGroupInfo.SequenceGroupFile, sequenceFullPath);
+        }
+
+        // 初始化TestProject中未配置路径的SequenceGroup的路径
+        private void InitSequenceGroupFilePath(ISequenceGroup sequenceGroup, string testProjectPath)
+        {
+            string parentDir = ModuleUtils.GetParentDirectory(testProjectPath);
+            sequenceGroup.Info.SequenceGroupFile =
+                $"{parentDir}{sequenceGroup.Name}{Path.DirectorySeparatorChar}{sequenceGroup.Name}.{CommonConst.SequenceFileExtension}";
+            sequenceGroup.Info.SequenceParamFile =
+                $"{parentDir}{sequenceGroup.Name}{Path.DirectorySeparatorChar}{sequenceGroup.Name}.{CommonConst.SequenceDataFileExtension}";
+        }
+
+        public void UpdateSequenceGroupInfo(string filePath, ISequenceGroupInfo sequenceGroupInfo)
+        {
+            string fileRelativePath = ModuleUtils.GetFileName(filePath);
+            sequenceGroupInfo.SequenceGroupFile = fileRelativePath;
+            sequenceGroupInfo.SequenceParamFile = ModuleUtils.GetParameterFilePath(fileRelativePath);
+        }
+
+        private void SetAssembliesToRelativePath(IAssemblyInfoCollection assemblies)
         {
             foreach (IAssemblyInfo assemblyInfo in assemblies)
             {
@@ -100,21 +190,34 @@ namespace Testflow.SequenceManager
 
         #region 配置所有路径为绝对路径
 
-        public void SetToAbsolutePath(ITestProject testProject, string filePath)
+        public void SetAssembliesToAbsolutePath(ITestProject testProject, string filePath)
         {
-            SetToAbsolutePath(testProject.Assemblies);
-            foreach (ISequenceGroup sequenceGroup in testProject.SequenceGroups)
+            string seqDir = ModuleUtils.GetParentDirectory(filePath);
+            _availableDirs.Insert(0, seqDir);
+            SetAssembliesToAbsolutePath(testProject.Assemblies);
+            _availableDirs.RemoveAt(0);
+
+            SequenceGroupLocationInfoCollection seqGroupLocations = ((TestProject)testProject).SequenceGroupLocations;
+            ISequenceGroupCollection sequenceGroups = testProject.SequenceGroups;
+            for (int i = 0; i < sequenceGroups.Count; i++)
             {
-                SetToAbsolutePath(sequenceGroup.Assemblies);
+                string seqGroupDir = ModuleUtils.GetParentDirectory(seqDir + seqGroupLocations[i].SequenceFilePath);
+
+                _availableDirs.Insert(0, seqGroupDir);
+                SetAssembliesToAbsolutePath(sequenceGroups[i].Assemblies);
+                _availableDirs.RemoveAt(0);
             }
         }
 
-        public void SetToAbsolutePath(ISequenceGroup sequenceGroup, string filePath)
+        public void SetAssembliesToAbsolutePath(ISequenceGroup sequenceGroup, string filePath)
         {
-            SetToAbsolutePath(sequenceGroup.Assemblies);
+            string seqDir = ModuleUtils.GetParentDirectory(filePath);
+            _availableDirs.Insert(0, seqDir);
+            SetAssembliesToAbsolutePath(sequenceGroup.Assemblies);
+            _availableDirs.RemoveAt(0);
         }
 
-        private void SetToAbsolutePath(IAssemblyInfoCollection assemblies)
+        private void SetAssembliesToAbsolutePath(IAssemblyInfoCollection assemblies)
         {
             foreach (IAssemblyInfo assemblyInfo in assemblies)
             {

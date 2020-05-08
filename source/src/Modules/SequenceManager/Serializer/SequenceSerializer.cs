@@ -24,8 +24,6 @@ namespace Testflow.SequenceManager.Serializer
             List<string> serialziedFileList = new List<string>(10);
             try
             {
-                // 初始化各个SequenceGroup的文件位置信息
-                InitSequenceGroupLocations(testProject, seqFilePath);
                 serialziedFileList.Add(seqFilePath);
                 XmlWriterHelper.Write(testProject, seqFilePath);
                 // 将testProject当前配置的数据信息写入ParameterData中
@@ -94,10 +92,6 @@ namespace Testflow.SequenceManager.Serializer
             List<string> serializedFileList = new List<string>(20);
             try
             {
-                // 暂时修改序列组文件路径为相对路径
-                sequenceGroup.Info.SequenceGroupFile = ModuleUtils.GetFileName(seqFilePath);
-                sequenceGroup.Info.SequenceParamFile = ModuleUtils.GetRelativePath(paramFilePath, seqFilePath);
-
                 BackupExistFile(seqFilePath, paramFilePath);
 
                 serializedFileList.Add(seqFilePath);
@@ -171,39 +165,6 @@ namespace Testflow.SequenceManager.Serializer
                 NullValueHandling = NullValueHandling.Ignore
             };
             return JsonConvert.SerializeObject(sequenceGroup, settings);
-        }
-
-        private static void InitSequenceGroupLocations(TestProject testProject, string testProjectPath)
-        {
-            testProject.SequenceGroupLocations.Clear();
-            ISequenceGroupCollection sequenceGroups = testProject.SequenceGroups;
-            for (int i = 0; i < sequenceGroups.Count; i++)
-            {
-                ISequenceGroup sequenceGroup = sequenceGroups[i];
-                string sequenceGroupPath = ModuleUtils.GetAbsolutePath(sequenceGroup.Info.SequenceGroupFile,
-                    testProjectPath);
-                string parameterPath = ModuleUtils.GetAbsolutePath(sequenceGroup.Info.SequenceParamFile,
-                    testProjectPath);
-                if (!ModuleUtils.IsValidFilePath(sequenceGroupPath))
-                {
-                    sequenceGroupPath = ModuleUtils.GetSequenceGroupPath(testProjectPath, i);
-                    parameterPath = ModuleUtils.GetParameterFilePath(sequenceGroupPath);
-                    sequenceGroup.Info.SequenceGroupFile = ModuleUtils.GetRelativePath(sequenceGroupPath, testProjectPath);
-                    sequenceGroup.Info.SequenceParamFile = ModuleUtils.GetRelativePath(parameterPath, sequenceGroupPath);
-                }
-                else if (!ModuleUtils.IsValidFilePath(sequenceGroup.Info.SequenceParamFile))
-                {
-                    parameterPath = ModuleUtils.GetParameterFilePath(sequenceGroupPath);
-                    sequenceGroup.Info.SequenceParamFile = ModuleUtils.GetRelativePath(parameterPath, sequenceGroupPath);
-                }
-                SequenceGroupLocationInfo locationInfo = new SequenceGroupLocationInfo()
-                {
-                    Name = sequenceGroup.Name,
-                    SequenceFilePath = sequenceGroup.Info.SequenceGroupFile,
-                    ParameterFilePath = sequenceGroup.Info.SequenceParamFile
-                };
-                testProject.SequenceGroupLocations.Add(locationInfo);
-            }
         }
 
         private static void FillParameterDataToSequenceData(ITestProject testProject)

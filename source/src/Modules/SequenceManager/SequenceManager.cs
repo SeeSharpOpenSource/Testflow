@@ -193,15 +193,18 @@ namespace Testflow.SequenceManager
 
         public void Serialize(ITestProject testProject, SerializationTarget target, params string[] param)
         {
+            TestProject project = testProject as TestProject;
             switch (target)
             {
                 case SerializationTarget.File:
                     string seqFilePath = param[0];
                     _typeMaintainer.VerifyVariableTypes(testProject);
                     _typeMaintainer.RefreshUsedAssemblyAndType(testProject);
-                    _directoryHelper.SetToRelativePath(testProject, seqFilePath);
-                    SequenceSerializer.Serialize(seqFilePath, testProject as TestProject);
-                    _directoryHelper.SetToAbsolutePath(testProject, TODO);
+                    // 初始化各个SequenceGroup的文件位置信息
+                    _directoryHelper.InitSequenceGroupLocations(project, seqFilePath);
+                    _directoryHelper.SetAssembliesToRelativePath(testProject, seqFilePath);
+                    SequenceSerializer.Serialize(seqFilePath, project);
+                    _directoryHelper.SetAssembliesToAbsolutePath(testProject, seqFilePath);
                     break;
                 case SerializationTarget.DataBase:
                     throw new NotImplementedException();
@@ -217,12 +220,13 @@ namespace Testflow.SequenceManager
             {
                 case SerializationTarget.File:
                     string filePath = param[0];
-//                    filePath = ModuleUtils.GetAbsolutePath(filePath, ConfigData.GetProperty<string[]>("WorkspaceDir")[0]);
                     _typeMaintainer.VerifyVariableTypes(sequenceGroup);
                     _typeMaintainer.RefreshUsedAssemblyAndType(sequenceGroup);
-                    _directoryHelper.SetToRelativePath(sequenceGroup, filePath);
+                    _directoryHelper.UpdateSequenceGroupInfo(filePath, sequenceGroup.Info);
+                    _directoryHelper.SetAssembliesToRelativePath(sequenceGroup, filePath);
                     SequenceSerializer.Serialize(filePath, sequenceGroup as SequenceGroup);
-                    _directoryHelper.SetToAbsolutePath(sequenceGroup, TODO);
+                    _directoryHelper.SetInfoPathToAbsolute(sequenceGroup.Info, filePath);
+                    _directoryHelper.SetAssembliesToAbsolutePath(sequenceGroup, filePath);
                     break;
                 case SerializationTarget.DataBase:
                     throw new NotImplementedException();
@@ -242,9 +246,10 @@ namespace Testflow.SequenceManager
             switch (source)
             {
                 case SerializationTarget.File:
-                    TestProject testProject = SequenceDeserializer.LoadTestProject(param[0], forceLoad, this.ConfigData);
+                    string filePath = param[0];
+                    TestProject testProject = SequenceDeserializer.LoadTestProject(filePath, forceLoad, this.ConfigData);
                     ModuleUtils.ValidateParent(testProject);
-                    _directoryHelper.SetToAbsolutePath(testProject, TODO);
+                    _directoryHelper.SetAssembliesToAbsolutePath(testProject, filePath);
                     return testProject;
                     break;
                 case SerializationTarget.DataBase:
@@ -265,9 +270,11 @@ namespace Testflow.SequenceManager
             switch (source)
             {
                 case SerializationTarget.File:
-                    SequenceGroup sequenceGroup = SequenceDeserializer.LoadSequenceGroup(param[0], forceLoad, this.ConfigData);
+                    string seqFilePath = param[0];
+                    SequenceGroup sequenceGroup = SequenceDeserializer.LoadSequenceGroup(seqFilePath, forceLoad, this.ConfigData);
                     ModuleUtils.ValidateParent(sequenceGroup, null);
-                    _directoryHelper.SetToAbsolutePath(sequenceGroup, TODO);
+                    _directoryHelper.SetInfoPathToAbsolute(sequenceGroup.Info, seqFilePath);
+                    _directoryHelper.SetAssembliesToAbsolutePath(sequenceGroup, seqFilePath);
                     return sequenceGroup;
                     break;
                 case SerializationTarget.DataBase:
