@@ -6,6 +6,7 @@ using Testflow.ComInterfaceManager.Data;
 using Testflow.Data;
 using Testflow.Data.Description;
 using Testflow.Usr;
+using Testflow.Utility.Utils;
 
 namespace Testflow.ComInterfaceManager
 {
@@ -57,6 +58,7 @@ namespace Testflow.ComInterfaceManager
             if (!_descriptions.ContainsKey(assemblyInfo.AssemblyName) &&
                 !_refAssemblyInfos.ContainsKey(assemblyInfo.AssemblyName))
             {
+                assemblyInfo.Path = StringUtil.NormalizeFilePath(assemblyInfo.Path);
                 _refAssemblyInfos.Add(assemblyInfo.AssemblyName, assemblyInfo);
             }
             _lock.ExitWriteLock();
@@ -162,9 +164,9 @@ namespace Testflow.ComInterfaceManager
                 {
                     _typeMapping.Remove(ModuleUtils.GetFullName(classDescription.ClassType));
                 }
-                if (!_refAssemblyInfos.ContainsKey(assemblyName))
+                if (_refAssemblyInfos.ContainsKey(assemblyName))
                 {
-                    _refAssemblyInfos.Add(assemblyName, description.Assembly);
+                    _refAssemblyInfos.Remove(assemblyName);
                 }
             }
             _lock.ExitWriteLock();
