@@ -77,41 +77,83 @@ namespace Testflow.SequenceManager
             _availableDirs.RemoveAt(0);
         }
 
-        public void InitSequenceGroupLocations(TestProject testProject, string testProjectPath)
+        public void InitSequenceGroupInfoAndLocations(TestProject testProject, string testProjectPath)
         {
             testProject.SequenceGroupLocations.Clear();
             ISequenceGroupCollection sequenceGroups = testProject.SequenceGroups;
             for (int i = 0; i < sequenceGroups.Count; i++)
             {
                 ISequenceGroup sequenceGroup = sequenceGroups[i];
-                if (string.IsNullOrWhiteSpace(sequenceGroup.Info.SequenceGroupFile) ||
-                    string.IsNullOrWhiteSpace(sequenceGroup.Info.SequenceParamFile))
+                string sequenceGroupDir;
+                
+                if (ModuleUtils.IsValidFilePath(sequenceGroup.Info.SequenceGroupFile) &&
+                    ModuleUtils.IsValidFilePath(sequenceGroup.Info.SequenceParamFile))
                 {
-                    InitSequenceGroupFilePath(sequenceGroup);
+                    sequenceGroupDir = ModuleUtils.GetParentDirectory(sequenceGroup.Info.SequenceGroupFile);
                 }
-                string sequenceGroupPath = ModuleUtils.GetAbsolutePath(sequenceGroup.Info.SequenceGroupFile,
-                    testProjectPath);
-                string parameterPath = ModuleUtils.GetAbsolutePath(sequenceGroup.Info.SequenceParamFile,
-                    testProjectPath);
-                if (!ModuleUtils.IsValidFilePath(sequenceGroupPath))
+                else
                 {
-                    sequenceGroupPath = ModuleUtils.GetSequenceGroupPath(testProjectPath, i);
-                    parameterPath = ModuleUtils.GetParameterFilePath(sequenceGroupPath);
-                    sequenceGroup.Info.SequenceGroupFile = ModuleUtils.GetRelativePath(sequenceGroupPath, testProjectPath);
-                    sequenceGroup.Info.SequenceParamFile = ModuleUtils.GetRelativePath(parameterPath, sequenceGroupPath);
+                    // 初始化TestProject中未配置路径的SequenceGroup的路径
+                    string parentDir = ModuleUtils.GetParentDirectory(testProjectPath);
+                    sequenceGroupDir = $"{parentDir}{sequenceGroup.Name}{Path.DirectorySeparatorChar}";
+                    sequenceGroup.Info.SequenceGroupFile = $"{sequenceGroupDir}{sequenceGroup.Name}.{CommonConst.SequenceFileExtension}";
+                    sequenceGroup.Info.SequenceParamFile = $"{sequenceGroupDir}{sequenceGroup.Name}.{CommonConst.SequenceDataFileExtension}";
                 }
-                else if (!ModuleUtils.IsValidFilePath(sequenceGroup.Info.SequenceParamFile))
+                // 如果文件夹不存在，则创建
+                if (!Directory.Exists(sequenceGroupDir))
                 {
-                    parameterPath = ModuleUtils.GetParameterFilePath(sequenceGroupPath);
-                    sequenceGroup.Info.SequenceParamFile = ModuleUtils.GetRelativePath(parameterPath, sequenceGroupPath);
+                    CreateDirectory(sequenceGroupDir);
                 }
+                string sequenceGroupPath = sequenceGroup.Info.SequenceGroupFile;
+                string parameterPath = sequenceGroup.Info.SequenceParamFile;
+                
                 SequenceGroupLocationInfo locationInfo = new SequenceGroupLocationInfo()
                 {
                     Name = sequenceGroup.Name,
-                    SequenceFilePath = sequenceGroup.Info.SequenceGroupFile,
-                    ParameterFilePath = sequenceGroup.Info.SequenceParamFile
+                    SequenceFilePath = ModuleUtils.GetRelativePath(sequenceGroupPath, testProjectPath),
+                    ParameterFilePath = ModuleUtils.GetRelativePath(parameterPath, testProjectPath)
                 };
                 testProject.SequenceGroupLocations.Add(locationInfo);
+            }
+        }
+
+        private void CreateDirectory(string directory)
+        {
+            // 过滤磁盘驱动器路径
+            Regex diskDriverRegex = new Regex(@"^((?:[a-zA-Z]:\\)|(?:/\w+/))");
+            Match diskDriverMatch = diskDriverRegex.Match(directory);
+            if (!diskDriverMatch.Success)
+            {
+                return;
+            }
+            StringBuilder currentDirCache = new StringBuilder(directory.Length);
+            string diskDriverValue = diskDriverMatch.Groups[1].Value;
+            currentDirCache.Append(diskDriverValue);
+            char delim = Path.DirectorySeparatorChar;
+            string[] dirElements = directory.Substring(diskDriverValue.Length).Split(delim);
+            foreach (string dirElement in dirElements)
+            {
+                if (string.IsNullOrWhiteSpace(dirElement))
+                {
+                    continue;
+                }
+                currentDirCache.Append(dirElement).Append(delim);
+                if (!Directory.Exists(currentDirCache.ToString()))
+                {
+                    Directory.CreateDirectory(currentDirCache.ToString());
+                }
+            }
+        }
+
+        // 配置SequenceGroupInfo中序列文件和参数文件的路径为相对路径
+        public void SetInfoPathToRelative(ITestProject testProject)
+        {
+            foreach (ISequenceGroup sequenceGroup in testProject.SequenceGroups)
+            {
+                string sequenceAbsolutePath = sequenceGroup.Info.SequenceGroupFile;
+                sequenceGroup.Info.SequenceGroupFile = ModuleUtils.GetFileName(sequenceAbsolutePath);
+                sequenceGroup.Info.SequenceParamFile = ModuleUtils.GetRelativePath(sequenceGroup.Info.SequenceParamFile,
+                    sequenceAbsolutePath);
             }
         }
 
@@ -123,21 +165,19 @@ namespace Testflow.SequenceManager
             sequenceGroupInfo.SequenceParamFile = ModuleUtils.GetRelativePath(sequenceGroupInfo.SequenceParamFile,
                 sequenceAbsolutePath);
         }
-
-        // 配置TestProject中SequenceLocations的位置
-        public void SetLocationPath(ISequenceGroupInfo sequenceGroupInfo, SequenceGroupLocationInfo sequenceLocation, string testProjectPath)
-        {
-            sequenceLocation.SequenceFilePath = ModuleUtils.GetRelativePath(sequenceGroupInfo.SequenceGroupFile,
-                testProjectPath);
-            sequenceLocation.ParameterFilePath = ModuleUtils.GetRelativePath(sequenceGroupInfo.SequenceParamFile,
-                testProjectPath);
-        }
-
+        
         // 配置TestProject中SequenceGroupInfo的序列文件和参数文件的路径为绝对路径
-        public void SetInfoPathToAbsolute(ISequenceGroupInfo sequenceGroupInfo, SequenceGroupLocationInfo sequenceLocation, string testProjectPath)
+        public void SetInfoPathToAbsolute(TestProject testProject, string testProjectPath)
         {
-            sequenceGroupInfo.SequenceGroupFile = ModuleUtils.GetAbsolutePath(sequenceLocation.SequenceFilePath, testProjectPath);
-            sequenceGroupInfo.SequenceParamFile = ModuleUtils.GetAbsolutePath(sequenceLocation.ParameterFilePath, testProjectPath);
+            ISequenceGroupCollection sequenceGroups = testProject.SequenceGroups;
+            SequenceGroupLocationInfoCollection locations = testProject.SequenceGroupLocations;
+            for (int i = 0; i < sequenceGroups.Count; i++)
+            {
+                sequenceGroups[i].Info.SequenceGroupFile = ModuleUtils.GetAbsolutePath(locations[i].SequenceFilePath,
+                    testProjectPath);
+                sequenceGroups[i].Info.SequenceParamFile = ModuleUtils.GetAbsolutePath(locations[i].ParameterFilePath,
+                    testProjectPath);
+            }
         }
 
         // 配置SequenceGroupInfo中序列文件和参数文件的路径为绝对路径
@@ -146,24 +186,7 @@ namespace Testflow.SequenceManager
             sequenceGroupInfo.SequenceGroupFile = ModuleUtils.GetAbsolutePath(sequenceGroupInfo.SequenceGroupFile, sequenceFullPath);
             sequenceGroupInfo.SequenceParamFile = ModuleUtils.GetAbsolutePath(sequenceGroupInfo.SequenceGroupFile, sequenceFullPath);
         }
-
-        // 初始化TestProject中未配置路径的SequenceGroup的路径
-        private void InitSequenceGroupFilePath(ISequenceGroup sequenceGroup, string testProjectPath)
-        {
-            string parentDir = ModuleUtils.GetParentDirectory(testProjectPath);
-            sequenceGroup.Info.SequenceGroupFile =
-                $"{parentDir}{sequenceGroup.Name}{Path.DirectorySeparatorChar}{sequenceGroup.Name}.{CommonConst.SequenceFileExtension}";
-            sequenceGroup.Info.SequenceParamFile =
-                $"{parentDir}{sequenceGroup.Name}{Path.DirectorySeparatorChar}{sequenceGroup.Name}.{CommonConst.SequenceDataFileExtension}";
-        }
-
-        public void UpdateSequenceGroupInfo(string filePath, ISequenceGroupInfo sequenceGroupInfo)
-        {
-            string fileRelativePath = ModuleUtils.GetFileName(filePath);
-            sequenceGroupInfo.SequenceGroupFile = fileRelativePath;
-            sequenceGroupInfo.SequenceParamFile = ModuleUtils.GetParameterFilePath(fileRelativePath);
-        }
-
+        
         private void SetAssembliesToRelativePath(IAssemblyInfoCollection assemblies)
         {
             foreach (IAssemblyInfo assemblyInfo in assemblies)
@@ -197,15 +220,19 @@ namespace Testflow.SequenceManager
             SetAssembliesToAbsolutePath(testProject.Assemblies);
             _availableDirs.RemoveAt(0);
 
-            SequenceGroupLocationInfoCollection seqGroupLocations = ((TestProject)testProject).SequenceGroupLocations;
             ISequenceGroupCollection sequenceGroups = testProject.SequenceGroups;
-            for (int i = 0; i < sequenceGroups.Count; i++)
+            foreach (ISequenceGroup sequenceGroup in sequenceGroups)
             {
-                string seqGroupDir = ModuleUtils.GetParentDirectory(seqDir + seqGroupLocations[i].SequenceFilePath);
-
+                string seqGroupDir = ModuleUtils.GetParentDirectory(sequenceGroup.Info.SequenceGroupFile);
                 _availableDirs.Insert(0, seqGroupDir);
-                SetAssembliesToAbsolutePath(sequenceGroups[i].Assemblies);
-                _availableDirs.RemoveAt(0);
+                try
+                {
+                    SetAssembliesToAbsolutePath(sequenceGroup.Assemblies);
+                }
+                finally
+                {
+                    _availableDirs.RemoveAt(0);
+                }
             }
         }
 
@@ -213,8 +240,14 @@ namespace Testflow.SequenceManager
         {
             string seqDir = ModuleUtils.GetParentDirectory(filePath);
             _availableDirs.Insert(0, seqDir);
-            SetAssembliesToAbsolutePath(sequenceGroup.Assemblies);
-            _availableDirs.RemoveAt(0);
+            try
+            {
+                SetAssembliesToAbsolutePath(sequenceGroup.Assemblies);
+            }
+            finally
+            {
+                _availableDirs.RemoveAt(0);
+            }
         }
 
         private void SetAssembliesToAbsolutePath(IAssemblyInfoCollection assemblies)

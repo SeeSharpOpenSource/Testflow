@@ -107,12 +107,7 @@ namespace Testflow.SequenceManager.Common
             {
                 return false;
             }
-            if (File.Exists(filePath))
-            {
-                return true;
-            }
-            int pathIndex = filePath.LastIndexOf(Path.DirectorySeparatorChar);
-            return Directory.Exists(filePath.Substring(0, pathIndex)) && IsFile(filePath);
+            return IsFile(filePath);
         }
 
         const char PropertyDelim = '.';
@@ -623,7 +618,7 @@ namespace Testflow.SequenceManager.Common
             return path.Substring(seperatorIndex + 1, path.Length - seperatorIndex - 1);
         }
 
-        public static bool IsFile(string path)
+        private static bool IsFile(string path)
         {
             return path.Contains(".") || File.Exists(path);
         }

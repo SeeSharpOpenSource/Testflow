@@ -18,8 +18,6 @@ namespace Testflow.SequenceManager.Serializer
 
         public static void Serialize(string seqFilePath, TestProject testProject)
         {
-            seqFilePath = ModuleUtils.GetAbsolutePath(seqFilePath, Directory.GetCurrentDirectory());
-
             VerifySequenceData(testProject);
             List<string> serialziedFileList = new List<string>(10);
             try
@@ -28,35 +26,20 @@ namespace Testflow.SequenceManager.Serializer
                 XmlWriterHelper.Write(testProject, seqFilePath);
                 // 将testProject当前配置的数据信息写入ParameterData中
                 FillParameterDataToSequenceData(testProject);
+
+                string seqDir = ModuleUtils.GetParentDirectory(seqFilePath);
                 for (int i = 0; i < testProject.SequenceGroups.Count; i++)
                 {
                     SequenceGroup sequenceGroup = testProject.SequenceGroups[i] as SequenceGroup;
-                    string sequenceGroupPath = ModuleUtils.GetAbsolutePath(sequenceGroup.Info.SequenceGroupFile, seqFilePath);
-                    string parameterFilePath = ModuleUtils.GetAbsolutePath(sequenceGroup.Info.SequenceParamFile, sequenceGroupPath); ;
-                    if (!ModuleUtils.IsValidFilePath(sequenceGroupPath))
-                    {
-                        sequenceGroupPath = ModuleUtils.GetSequenceGroupPath(seqFilePath, i);
-                        sequenceGroup.Info.SequenceGroupFile = ModuleUtils.GetRelativePath(sequenceGroupPath, seqFilePath);
-                        parameterFilePath = ModuleUtils.GetParameterFilePath(sequenceGroupPath);
-                        sequenceGroup.Info.SequenceParamFile = ModuleUtils.GetRelativePath(parameterFilePath, sequenceGroupPath);
-                    }
-                    else if (!ModuleUtils.IsValidFilePath(parameterFilePath))
-                    {
-                        parameterFilePath = ModuleUtils.GetParameterFilePath(sequenceGroupPath);
-                        sequenceGroup.Info.SequenceParamFile = ModuleUtils.GetRelativePath(parameterFilePath, sequenceGroupPath);
-                    }
+                    SequenceGroupLocationInfo locationInfo = testProject.SequenceGroupLocations[i];
+                    string sequenceGroupPath = ModuleUtils.GetAbsolutePath(locationInfo.SequenceFilePath, seqDir);
+                    string parameterFilePath = ModuleUtils.GetAbsolutePath(locationInfo.ParameterFilePath, seqDir);
                     SequenceGroupParameter parameter = new SequenceGroupParameter();
                     parameter.Initialize(sequenceGroup);
                     // 将SequeneGroup配置的参数写入ParameterData中，用以序列化
                     FillParameterDataToSequenceData(sequenceGroup, parameter);
                     sequenceGroup.RefreshSignature();
                     parameter.RefreshSignature(sequenceGroup);
-                    // 创建sequenceGroupd的文件夹
-                    string directory = ModuleUtils.GetSequenceGroupDirectory(sequenceGroupPath);
-                    if (!Directory.Exists(directory))
-                    {
-                        Directory.CreateDirectory(directory);
-                    }
 
                     serialziedFileList.Add(sequenceGroupPath);
                     XmlWriterHelper.Write(sequenceGroup, sequenceGroupPath);
@@ -111,12 +94,6 @@ namespace Testflow.SequenceManager.Serializer
             {
                 RollBackFilesIfFailed(serializedFileList);
                 throw;
-            }
-            finally
-            {
-                // 恢复序列文件的绝对路径
-                sequenceGroup.Info.SequenceGroupFile = seqFilePath;
-                sequenceGroup.Info.SequenceParamFile = paramFilePath;
             }
         }
 

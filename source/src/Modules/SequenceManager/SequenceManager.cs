@@ -200,11 +200,21 @@ namespace Testflow.SequenceManager
                     string seqFilePath = param[0];
                     _typeMaintainer.VerifyVariableTypes(testProject);
                     _typeMaintainer.RefreshUsedAssemblyAndType(testProject);
-                    // 初始化各个SequenceGroup的文件位置信息
-                    _directoryHelper.InitSequenceGroupLocations(project, seqFilePath);
-                    _directoryHelper.SetAssembliesToRelativePath(testProject, seqFilePath);
-                    SequenceSerializer.Serialize(seqFilePath, project);
-                    _directoryHelper.SetAssembliesToAbsolutePath(testProject, seqFilePath);
+                    try
+                    {
+                        // 初始化各个SequenceGroup的文件位置信息
+                        _directoryHelper.InitSequenceGroupInfoAndLocations(project, seqFilePath);
+                        _directoryHelper.SetAssembliesToRelativePath(testProject, seqFilePath);
+                        // 写入序列数据时使用相对路径记录当前序列位置和参数位置
+                        _directoryHelper.SetInfoPathToRelative((TestProject)testProject);
+                        SequenceSerializer.Serialize(seqFilePath, project);
+                    }
+                    finally
+                    {
+                        // 写入序列数据结束后使用绝对路径记录当前序列位置和参数位置
+                        _directoryHelper.SetInfoPathToAbsolute((TestProject)testProject, seqFilePath);
+                        _directoryHelper.SetAssembliesToAbsolutePath(testProject, seqFilePath);
+                    }
                     break;
                 case SerializationTarget.DataBase:
                     throw new NotImplementedException();
@@ -222,11 +232,20 @@ namespace Testflow.SequenceManager
                     string filePath = param[0];
                     _typeMaintainer.VerifyVariableTypes(sequenceGroup);
                     _typeMaintainer.RefreshUsedAssemblyAndType(sequenceGroup);
-                    _directoryHelper.UpdateSequenceGroupInfo(filePath, sequenceGroup.Info);
-                    _directoryHelper.SetAssembliesToRelativePath(sequenceGroup, filePath);
-                    SequenceSerializer.Serialize(filePath, sequenceGroup as SequenceGroup);
-                    _directoryHelper.SetInfoPathToAbsolute(sequenceGroup.Info, filePath);
-                    _directoryHelper.SetAssembliesToAbsolutePath(sequenceGroup, filePath);
+                    try
+                    {
+                        _directoryHelper.SetAssembliesToRelativePath(sequenceGroup, filePath);
+                        // 写入序列数据时使用相对路径记录当前序列位置和参数位置
+                        _directoryHelper.SetInfoPathToRelative(sequenceGroup.Info);
+                        SequenceSerializer.Serialize(filePath, sequenceGroup as SequenceGroup);
+                    }
+                    finally
+                    {
+                        // 写入序列数据结束后使用绝对路径记录当前序列位置和参数位置
+                        _directoryHelper.SetInfoPathToAbsolute(sequenceGroup.Info, filePath);
+                        _directoryHelper.SetAssembliesToAbsolutePath(sequenceGroup, filePath);
+                    }
+                    
                     break;
                 case SerializationTarget.DataBase:
                     throw new NotImplementedException();
