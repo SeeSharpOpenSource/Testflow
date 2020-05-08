@@ -13,6 +13,7 @@ using Testflow.Runtime;
 using Testflow.Usr;
 using Testflow.Utility.I18nUtil;
 using Testflow.Utility.MessageUtil;
+using Testflow.Utility.Utils;
 
 namespace Testflow.ConfigurationManager
 {
@@ -118,30 +119,23 @@ namespace Testflow.ConfigurationManager
         {
             // 更新TestflowHome字段
             string homeDir = Environment.GetEnvironmentVariable(CommonConst.EnvironmentVariable);
-            if (null != homeDir && !homeDir.EndsWith(Path.DirectorySeparatorChar.ToString()))
-            {
-                homeDir += Path.DirectorySeparatorChar;
-            }
+            homeDir = StringUtil.NomalizeDirectory(homeDir);
             configData.AddConfigItem(Constants.GlobalConfig, "TestflowHome", homeDir);
 
-            // 更新WorkspaceDir字段
-            
             // 更新.NET运行时目录
             string dotNetVersion = configData.GetConfigValue<string>(Constants.GlobalConfig, "DotNetVersion");
             string runtimeDirectory = GetDotNetDir(dotNetVersion);
+            runtimeDirectory = StringUtil.NomalizeDirectory(runtimeDirectory);
             configData.AddConfigItem(Constants.GlobalConfig, "DotNetLibDir", runtimeDirectory);
 
             // 更新.NET安装根目录
             string dotNetRootDir = GetDotNetRootDir();
+            dotNetRootDir = StringUtil.NomalizeDirectory(dotNetRootDir);
             configData.AddConfigItem(Constants.GlobalConfig, "DotNetRootDir", dotNetRootDir);
 
             // 更新Testflow平台默认库目录
             string platformDir = configData.GetConfigValue<string>(Constants.GlobalConfig, "PlatformLibDir");
-            string libDir = $"{homeDir}{platformDir}";
-            if (libDir.EndsWith(Path.DirectorySeparatorChar.ToString()))
-            {
-                libDir += Path.DirectorySeparatorChar;
-            }
+            string libDir = StringUtil.NomalizeDirectory($"{homeDir}{platformDir}");
             configData.SetConfigItem(Constants.GlobalConfig, "PlatformLibDir", libDir);
 
             // 更新Testflow工作空间目录
@@ -161,11 +155,7 @@ namespace Testflow.ConfigurationManager
                 {
                     continue;
                 }
-                string dirPath = workSpaceDir;
-                if (!workSpaceDir.EndsWith(Path.DirectorySeparatorChar.ToString()))
-                {
-                    dirPath += Path.DirectorySeparatorChar;
-                }
+                string dirPath = StringUtil.NomalizeDirectory(workSpaceDir);
                 workspaceDirList.Add(dirPath);
             }
             configData.SetConfigItem(Constants.GlobalConfig, "WorkspaceDir", workspaceDirList.ToArray());
