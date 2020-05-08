@@ -3,7 +3,7 @@
 namespace Testflow.Utility.Utils
 {
     /// <summary>
-    /// 路径相关处理的工具类
+    /// 字符串相关处理的工具类
     /// </summary>
     public static class StringUtil
     {
@@ -12,13 +12,13 @@ namespace Testflow.Utility.Utils
         //  非法的变量名和表达式名
         //        private static char[] _invalidVariableNameChars;
         // 路径中的冗余符号
-        private static readonly string RedundantPathStr;
+        private static readonly string RedundantPathDelim;
 
         private static readonly string PathDelim;
 
         static StringUtil()
         {
-            RedundantPathStr = $"{Path.DirectorySeparatorChar}{Path.DirectorySeparatorChar}";
+            RedundantPathDelim = $"{Path.DirectorySeparatorChar}{Path.DirectorySeparatorChar}";
             PathDelim = Path.DirectorySeparatorChar.ToString();
 
             //            _invalidVariableNameChars = new char[]
@@ -35,9 +35,10 @@ namespace Testflow.Utility.Utils
         /// </summary>
         public static string NormalizeFilePath(string filePath)
         {
-            while (filePath.Contains(RedundantPathStr))
+            // 如果路径中包含冗余的分隔符，将分隔符替换
+            while (filePath.Contains(RedundantPathDelim))
             {
-                filePath = filePath.Replace(RedundantPathStr, Path.DirectorySeparatorChar.ToString());
+                filePath = filePath.Replace(RedundantPathDelim, PathDelim);
             }
             return filePath;
         }
@@ -47,7 +48,11 @@ namespace Testflow.Utility.Utils
         /// </summary>
         public static string NomalizeDirectory(string directory)
         {
-            return directory.EndsWith(PathDelim) ? directory : directory + PathDelim;
+            if (!directory.EndsWith(PathDelim))
+            {
+                directory += PathDelim;
+            }
+            return directory;
         }
     }
 }
