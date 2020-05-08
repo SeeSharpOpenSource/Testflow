@@ -17,51 +17,6 @@ namespace Testflow.SequenceManager.Common
 {
     internal static class ModuleUtils
     {
-        #region Static Fields
-
-//        //  非法的变量名和表达式名
-//        private static char[] _invalidVariableNameChars;
-//        // 变量名的名称模式
-//        private static Regex _variableNameRegex;
-//
-//        static ModuleUtils()
-//        {
-//            _invalidVariableNameChars = new char[]
-//            {
-//                '"',
-//                '\'',
-//                ',',
-//                '.',
-//                ';',
-//                ':',
-//                '!',
-//                '@',
-//                '#',
-//                '$',
-//                '%',
-//                '^',
-//                '&',
-//                '*',
-//                '(',
-//                ')',
-//                '-',
-//                '+',
-//                '=',
-//                '[',
-//                ']',
-//                '{',
-//                '}',
-//                '|',
-//                '>',
-//                '<',
-//                '?',
-//                '/',
-//                '\\'
-//            };
-//        }
-
-        #endregion
-
         #region Collection Utils
 
         public static void CloneDataCollection<TDataType>(IList<TDataType> source, IList<TDataType> target)
@@ -638,7 +593,7 @@ namespace Testflow.SequenceManager.Common
             int splitIndex = filePath.LastIndexOf(seperator) + 1;
             return filePath.Substring(0, splitIndex);
         }
-
+        
         #endregion
 
 
