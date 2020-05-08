@@ -20,6 +20,8 @@ namespace Testflow.SequenceManager
         private readonly StringBuilder _pathCache;
         private readonly Regex _absolutePathRegex;
 
+        // 在AvailableDirs中插入序列路径时的索引号
+        private int _seqDirIndex;
 
         public DirectoryHelper(IModuleConfigData configData)
         {
@@ -31,19 +33,21 @@ namespace Testflow.SequenceManager
             // 本来用上面就可以确定，因为前期版本里对相对路径前加了\，导致相对路径在第一条下会被判定为绝对路径，所以在此做当前处理
             // 暂未考虑Linux的问题，后续版本会去除这里的判断
 //            string relativePathFormat = @"^([a-zA-Z]:)?{0}";
-            string relativePathFormat = @"^[a-zA-Z]:{0}";
+            const string relativePathFormat = @"^[a-zA-Z]:{0}";
             char dirDelim = Path.DirectorySeparatorChar;
             // \在正则表达式中需要转义
             string relativePathRegexStr = dirDelim.Equals('\\')
-                ? String.Format(relativePathFormat, @"\\")
-                : String.Format(relativePathFormat, dirDelim);
+                ? string.Format(relativePathFormat, @"\\")
+                : string.Format(relativePathFormat, dirDelim);
             _absolutePathRegex = new Regex(relativePathRegexStr);
 
-            _availableDirs = new List<string>(workspaceDirs.Length + 2);
-            _availableDirs.AddRange(workspaceDirs); 
-            _availableDirs.Add(platformLibDir);
-            _availableDirs.Add(dotNetLibDir);
+            _availableDirs = new List<string>(workspaceDirs.Length + 5);
             _availableDirs.Add(dotNetRootDir);
+            _availableDirs.Add(dotNetLibDir);
+            // 序列当前路径的优先级仅次于dotNet系统库
+            _seqDirIndex = _availableDirs.Count;
+            _availableDirs.Add(platformLibDir);
+            _availableDirs.AddRange(workspaceDirs);
 
             _pathCache = new StringBuilder(200);
         }
@@ -54,17 +58,23 @@ namespace Testflow.SequenceManager
         {
             string seqDir = ModuleUtils.GetParentDirectory(filePath);
             // 将当前序列路径作为首要判断路径
-            _availableDirs.Insert(0, seqDir);
+            _availableDirs.Insert(_seqDirIndex, seqDir);
             SetAssembliesToRelativePath(testProject.Assemblies);
-            _availableDirs.RemoveAt(0);
+            _availableDirs.RemoveAt(_seqDirIndex);
 
             foreach (ISequenceGroup sequenceGroup in testProject.SequenceGroups)
             {
                 seqDir = ModuleUtils.GetParentDirectory(sequenceGroup.Info.SequenceGroupFile);
 
-                _availableDirs.Insert(0, seqDir);
-                SetAssembliesToRelativePath(sequenceGroup.Assemblies);
-                _availableDirs.RemoveAt(0);
+                _availableDirs.Insert(_seqDirIndex, seqDir);
+                try
+                {
+                    SetAssembliesToRelativePath(sequenceGroup.Assemblies);
+                }
+                finally
+                {
+                    _availableDirs.RemoveAt(_seqDirIndex);
+                }
             }
         }
 
@@ -72,9 +82,15 @@ namespace Testflow.SequenceManager
         {
             string seqDir = ModuleUtils.GetParentDirectory(filePath);
             // 将当前序列路径作为首要判断路径
-            _availableDirs.Insert(0, seqDir);
-            SetAssembliesToRelativePath(sequenceGroup.Assemblies);
-            _availableDirs.RemoveAt(0);
+            _availableDirs.Insert(_seqDirIndex, seqDir);
+            try
+            {
+                SetAssembliesToRelativePath(sequenceGroup.Assemblies);
+            }
+            finally
+            {
+                _availableDirs.RemoveAt(_seqDirIndex);
+            }
         }
 
         public void InitSequenceGroupInfoAndLocations(TestProject testProject, string testProjectPath)
@@ -216,22 +232,22 @@ namespace Testflow.SequenceManager
         public void SetAssembliesToAbsolutePath(ITestProject testProject, string filePath)
         {
             string seqDir = ModuleUtils.GetParentDirectory(filePath);
-            _availableDirs.Insert(0, seqDir);
+            _availableDirs.Insert(_seqDirIndex, seqDir);
             SetAssembliesToAbsolutePath(testProject.Assemblies);
-            _availableDirs.RemoveAt(0);
+            _availableDirs.RemoveAt(_seqDirIndex);
 
             ISequenceGroupCollection sequenceGroups = testProject.SequenceGroups;
             foreach (ISequenceGroup sequenceGroup in sequenceGroups)
             {
                 string seqGroupDir = ModuleUtils.GetParentDirectory(sequenceGroup.Info.SequenceGroupFile);
-                _availableDirs.Insert(0, seqGroupDir);
+                _availableDirs.Insert(_seqDirIndex, seqGroupDir);
                 try
                 {
                     SetAssembliesToAbsolutePath(sequenceGroup.Assemblies);
                 }
                 finally
                 {
-                    _availableDirs.RemoveAt(0);
+                    _availableDirs.RemoveAt(_seqDirIndex);
                 }
             }
         }
@@ -239,14 +255,14 @@ namespace Testflow.SequenceManager
         public void SetAssembliesToAbsolutePath(ISequenceGroup sequenceGroup, string filePath)
         {
             string seqDir = ModuleUtils.GetParentDirectory(filePath);
-            _availableDirs.Insert(0, seqDir);
+            _availableDirs.Insert(_seqDirIndex, seqDir);
             try
             {
                 SetAssembliesToAbsolutePath(sequenceGroup.Assemblies);
             }
             finally
             {
-                _availableDirs.RemoveAt(0);
+                _availableDirs.RemoveAt(_seqDirIndex);
             }
         }
 
@@ -284,10 +300,9 @@ namespace Testflow.SequenceManager
                 path = path.Substring(1, path.Length - 1);
             }
             // 转换为绝对路径时反向寻找，先.net库再平台库再用户库
-            for (int i = _availableDirs.Count - 1; i >= 0; i--)
+            foreach (string availableDir in _availableDirs)
             {
                 _pathCache.Clear();
-                string availableDir = _availableDirs[i];
                 _pathCache.Append(availableDir).Append(path);
                 // 如果库存在则配置为绝对路径，然后返回
                 if (File.Exists(_pathCache.ToString()))
@@ -300,45 +315,6 @@ namespace Testflow.SequenceManager
         }
 
         #endregion
-
-
-        public string GetRelativePath(string path)
-        {
-            if (IsRelativePath(path))
-            {
-                return path;
-            }
-            // 如果包含在可用路径内则不处理，否则替换为相对路径
-            foreach (string availableDir in _availableDirs)
-            {
-                if (!path.StartsWith(availableDir))
-                {
-                    continue;
-                }
-                // 将绝对路径截取为相对路径
-                return availableDir.Substring(availableDir.Length, path.Length - availableDir.Length);
-            }
-            return path;
-        }
-
-        public string GetAbsolutePath(string path)
-        {
-            if (!IsRelativePath(path))
-            {
-                return path;
-            }
-            string abosolutePath = InternalGetAbosolutePath(path);
-            if (null == abosolutePath)
-            {
-                ILogService logService = TestflowRunner.GetInstance().LogService;
-                logService.Print(LogLevel.Error, CommonConst.PlatformLogSession,
-                    $"File in relative path '{path}' cannot be found.");
-                I18N i18N = I18N.GetInstance(Constants.I18nName);
-                throw new TestflowDataException(ModuleErrorCode.DeSerializeFailed,
-                    i18N.GetFStr("FileCannotFound", path));
-            }
-            return abosolutePath;
-        }
 
         private bool IsRelativePath(string path)
         {
