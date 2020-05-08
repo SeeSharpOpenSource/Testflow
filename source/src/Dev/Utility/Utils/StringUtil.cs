@@ -46,7 +46,7 @@ namespace Testflow.Utility.Utils
         /// <summary>
         /// 规范化文件夹
         /// </summary>
-        public static string NomalizeDirectory(string directory)
+        public static string NormalizeDirectory(string directory)
         {
             if (!directory.EndsWith(PathDelim))
             {

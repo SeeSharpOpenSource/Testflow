@@ -119,23 +119,23 @@ namespace Testflow.ConfigurationManager
         {
             // 更新TestflowHome字段
             string homeDir = Environment.GetEnvironmentVariable(CommonConst.EnvironmentVariable);
-            homeDir = StringUtil.NomalizeDirectory(homeDir);
+            homeDir = StringUtil.NormalizeDirectory(homeDir);
             configData.AddConfigItem(Constants.GlobalConfig, "TestflowHome", homeDir);
 
             // 更新.NET运行时目录
             string dotNetVersion = configData.GetConfigValue<string>(Constants.GlobalConfig, "DotNetVersion");
             string runtimeDirectory = GetDotNetDir(dotNetVersion);
-            runtimeDirectory = StringUtil.NomalizeDirectory(runtimeDirectory);
+            runtimeDirectory = StringUtil.NormalizeDirectory(runtimeDirectory);
             configData.AddConfigItem(Constants.GlobalConfig, "DotNetLibDir", runtimeDirectory);
 
             // 更新.NET安装根目录
             string dotNetRootDir = GetDotNetRootDir();
-            dotNetRootDir = StringUtil.NomalizeDirectory(dotNetRootDir);
+            dotNetRootDir = StringUtil.NormalizeDirectory(dotNetRootDir);
             configData.AddConfigItem(Constants.GlobalConfig, "DotNetRootDir", dotNetRootDir);
 
             // 更新Testflow平台默认库目录
             string platformDir = configData.GetConfigValue<string>(Constants.GlobalConfig, "PlatformLibDir");
-            string libDir = StringUtil.NomalizeDirectory($"{homeDir}{platformDir}");
+            string libDir = StringUtil.NormalizeDirectory($"{homeDir}{platformDir}");
             configData.SetConfigItem(Constants.GlobalConfig, "PlatformLibDir", libDir);
 
             // 更新Testflow工作空间目录
@@ -155,7 +155,7 @@ namespace Testflow.ConfigurationManager
                 {
                     continue;
                 }
-                string dirPath = StringUtil.NomalizeDirectory(workSpaceDir);
+                string dirPath = StringUtil.NormalizeDirectory(workSpaceDir);
                 workspaceDirList.Add(dirPath);
             }
             configData.SetConfigItem(Constants.GlobalConfig, "WorkspaceDir", workspaceDirList.ToArray());
