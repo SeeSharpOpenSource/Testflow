@@ -21,9 +21,9 @@ namespace Testflow.SequenceManagerTest
             AddMockTypeData(mock, "Algorithm", "Testflow.Test", "TestAssemblyName");
             AddMockTypeData(mock, "Double", "System", "TestAssemblyName");
 
-            AddMockAssemblies(mock, "TestAssemblyName", "TestDemoPath");
-            AddMockAssemblies(mock, "Assembly3", "TestDemoPath");
-            AddMockAssemblies(mock, "mscorlib", "SystemPath");
+            AddMockAssemblies(mock, "TestAssemblyName", Environment.CurrentDirectory + @"\Test\SequenceGroup1\TestDemoPath");
+            AddMockAssemblies(mock, "Assembly3", Environment.CurrentDirectory + @"\Test\SequenceGroup1\TestDemoPath");
+            AddMockAssemblies(mock, "mscorlib", Environment.CurrentDirectory + @"\Test\SequenceGroup1\TestDemoPath");
         }
 
         private void AddMockTypeData(Mock<IComInterfaceManager> mockObj, string typeName, string namespaceStr, string assemblyName)

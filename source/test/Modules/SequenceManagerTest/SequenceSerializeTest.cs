@@ -23,9 +23,7 @@ namespace Testflow.SequenceManagerTest
     [TestClass]
     public class SequenceSerializeTest
     {
-        private const string TestProjectPath = @"Test\test.tfproj";
-        private const string SequenceGroupPath = @"Test\SequenceGroup1\SequenceGroup1.tfseq";
-        private const string ParameterPath = @"Test\SequenceGroup1\SequenceGroup1.tfparam";
+        private string TestProjectPath = Environment.CurrentDirectory + @"\Test\test.tfproj";
 
         public SequenceSerializeTest()
         {
@@ -81,6 +79,33 @@ namespace Testflow.SequenceManagerTest
         //
 
         #endregion
+
+        [ClassInitialize]
+        public static void SetUp(TestContext context)
+        {
+            if (!Directory.Exists(@"\SequenceGroupTest"))
+            {
+                Directory.CreateDirectory(@"\SequenceGroupTest");
+            }
+            if (!File.Exists(Environment.CurrentDirectory + @"\Test\SequenceGroup1\TestDemoPath"))
+            {
+                FileStream stream = File.Create(Environment.CurrentDirectory + @"\Test\SequenceGroup1\TestDemoPath");
+                stream.Close();
+            }
+            if (!Directory.Exists(@"\Test"))
+            {
+                Directory.CreateDirectory(@"\Test");
+            }
+            if (!Directory.Exists(@"\Test\SequenceGroup1"))
+            {
+                Directory.CreateDirectory(@"\Test\SequenceGroup1");
+            }
+            if (!File.Exists(Environment.CurrentDirectory + @"\Test\SequenceGroup1\TestDemoPath"))
+            {
+                FileStream stream = File.Create(Environment.CurrentDirectory + @"\Test\SequenceGroup1\TestDemoPath");
+                stream.Close();
+            }
+        }
 
         [TestMethod]
         public void TestProjectSerialize()
@@ -267,19 +292,21 @@ namespace Testflow.SequenceManagerTest
                 },
                 VariableType = VariableType.Value
             });
-            if (!Directory.Exists(@"\SequenceGroupTest"))
-            {
-                Directory.CreateDirectory(@"\SequenceGroupTest");
-            }
-            _sequenceManager.Serialize(sequenceGroup1, SerializationTarget.File, @"\SequenceGroupTest\SequenceGroup.tfseq");
+            string parentDir = $"{Environment.CurrentDirectory}\\Test\\SequenceGroup1\\";
+            sequenceGroup1.Info.SequenceGroupFile = $"{parentDir}{sequenceGroup1.Name}\\{sequenceGroup1.Name}.tfseq";
+            sequenceGroup1.Info.SequenceParamFile = $"{parentDir}{sequenceGroup1.Name}\\{sequenceGroup1.Name}.tfparam";
+            
+            _sequenceManager.Serialize(sequenceGroup1, SerializationTarget.File, $"{parentDir}SequenceGroup1.tfseq");
         }
 
-        [TestCleanup]
-        public void TearDown()
+        [ClassCleanup]
+        public static void TearDown()
         {
-            _sequenceManager.Dispose();
+//            _sequenceManager.Dispose();
         }
     }
+
+   
 
     public class TestFuncDescription : IFuncInterfaceDescription
     {

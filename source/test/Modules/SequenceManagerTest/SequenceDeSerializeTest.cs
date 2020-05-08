@@ -17,11 +17,11 @@ namespace Testflow.SequenceManagerTest
     [TestClass]
     public class SequenceDeserializeTest
     {
-        private const string TestProjectPath = @"Test\test.tfproj";
-        private const string SequenceGroupPath = @"Test\SequenceGroup1\SequenceGroup1.tfseq";
-        private const string ParameterPath = @"Test\SequenceGroup1\SequenceGroup1.tfparam";
-        private const string TestSequenceGroupPath = @"Test\SequenceGroup2\SequenceGroup2.tfseq";
-        private const string TestParameterPath = @"Test\SequenceGroup3\SequenceGroup3.tfparam";
+        private string TestProjectPath = Environment.CurrentDirectory + @"Test\test.tfproj";
+        private string SequenceGroupPath = Environment.CurrentDirectory + @"\Test\SequenceGroup1\SequenceGroup1.tfseq";
+        private string ParameterPath = Environment.CurrentDirectory + @"\Test\SequenceGroup1\SequenceGroup1.tfparam";
+        private string TestSequenceGroupPath = Environment.CurrentDirectory + @"\Test\SequenceGroup2\SequenceGroup2.tfseq";
+        private string TestParameterPath = Environment.CurrentDirectory + @"\Test\SequenceGroup3\SequenceGroup3.tfparam";
 
         public SequenceDeserializeTest()
         {
@@ -76,7 +76,36 @@ namespace Testflow.SequenceManagerTest
         //
 
         #endregion
-        
+
+
+        [ClassInitialize]
+        public static void SetUp(TestContext context)
+        {
+            if (!Directory.Exists(@"\SequenceGroupTest"))
+            {
+                Directory.CreateDirectory(@"\SequenceGroupTest");
+            }
+            if (!File.Exists(Environment.CurrentDirectory + @"\Test\SequenceGroup1\TestDemoPath"))
+            {
+                FileStream stream = File.Create(Environment.CurrentDirectory + @"\Test\SequenceGroup1\TestDemoPath");
+                stream.Close();
+            }
+            if (!Directory.Exists(@"\Test"))
+            {
+                Directory.CreateDirectory(@"\Test");
+            }
+            if (!Directory.Exists(@"\Test\SequenceGroup1"))
+            {
+                Directory.CreateDirectory(@"\Test\SequenceGroup1");
+            }
+            if (!File.Exists(Environment.CurrentDirectory + @"\Test\SequenceGroup1\TestDemoPath"))
+            {
+                FileStream stream = File.Create(Environment.CurrentDirectory + @"\Test\SequenceGroup1\TestDemoPath");
+                stream.Close();
+            }
+        }
+
+
         [TestInitialize]
         public void Initialize()
         {
