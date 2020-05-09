@@ -161,6 +161,12 @@ namespace Testflow.SequenceManager
             }
         }
 
+        public void UpdateSequenceGroupPathInfo(ISequenceGroup sequenceGroup, string seqFilePath)
+        {
+            sequenceGroup.Info.SequenceGroupFile = seqFilePath;
+            sequenceGroup.Info.SequenceParamFile = ModuleUtils.GetParameterFilePath(seqFilePath);
+        }
+
         // 配置SequenceGroupInfo中序列文件和参数文件的路径为相对路径
         public void SetInfoPathToRelative(ITestProject testProject)
         {
@@ -200,7 +206,7 @@ namespace Testflow.SequenceManager
         public void SetInfoPathToAbsolute(ISequenceGroupInfo sequenceGroupInfo, string sequenceFullPath)
         {
             sequenceGroupInfo.SequenceGroupFile = ModuleUtils.GetAbsolutePath(sequenceGroupInfo.SequenceGroupFile, sequenceFullPath);
-            sequenceGroupInfo.SequenceParamFile = ModuleUtils.GetAbsolutePath(sequenceGroupInfo.SequenceGroupFile, sequenceFullPath);
+            sequenceGroupInfo.SequenceParamFile = ModuleUtils.GetAbsolutePath(sequenceGroupInfo.SequenceParamFile, sequenceFullPath);
         }
         
         private void SetAssembliesToRelativePath(IAssemblyInfoCollection assemblies)

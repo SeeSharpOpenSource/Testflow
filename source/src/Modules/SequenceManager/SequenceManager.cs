@@ -235,6 +235,7 @@ namespace Testflow.SequenceManager
                     _typeMaintainer.RefreshUsedAssemblyAndType(sequenceGroup);
                     try
                     {
+                        _directoryHelper.UpdateSequenceGroupPathInfo(sequenceGroup, filePath);
                         _directoryHelper.SetAssembliesToRelativePath(sequenceGroup, filePath);
                         // 写入序列数据时使用相对路径记录当前序列位置和参数位置
                         _directoryHelper.SetInfoPathToRelative(sequenceGroup.Info);
