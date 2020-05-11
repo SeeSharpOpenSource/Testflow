@@ -182,12 +182,14 @@ namespace Testflow.MasterCore.Message
             {
                 return;
             }
+            Thread.VolatileWrite(ref _stopFlag, 1);
+            Activated = false;
+            Thread.MemoryBarrier();
             Stop();
             UpLinkMessenger.Clear();
             DownLinkMessenger.Clear();
             UpLinkMessenger.Dispose();
             DownLinkMessenger.Dispose();
-            Thread.VolatileWrite(ref _stopFlag, 1);
         }
 
         // 为了提高效率，暂时写死，后续优化
