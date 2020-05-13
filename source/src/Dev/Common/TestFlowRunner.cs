@@ -181,11 +181,18 @@ namespace Testflow
             RuntimeService.Activate();
         }
 
+        private int _disposedFlag = 0;
         /// <summary>
         /// 销毁当前Runner
         /// </summary>
         public virtual void Dispose()
         {
+            if (_disposedFlag != 0)
+            {
+                return;
+            }
+            Thread.VolatileWrite(ref _disposedFlag, 1);
+            Thread.MemoryBarrier();
             _runnerInst = null;
             DesignTimeService?.Dispose();
             RuntimeService?.Dispose();
@@ -197,6 +204,11 @@ namespace Testflow
             ParameterChecker?.Dispose();
             LogService?.Dispose();
             ConfigurationManager?.Dispose();
+        }
+
+        ~TestflowRunner()
+        {
+            this.Dispose();
         }
     }
 }
