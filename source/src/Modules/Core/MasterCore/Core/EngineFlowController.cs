@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Threading;
 using Testflow.CoreCommon;
 using Testflow.Usr;
@@ -63,20 +64,54 @@ namespace Testflow.MasterCore.Core
             if (sequenceContainer is ITestProject)
             {
                 ITestProject testProject = (ITestProject)sequenceContainer;
-                _testsMaintainer.Generate(testProject, RuntimePlatform.Clr);
+                RunnerPlatform rootPlatform = GetRunnerPlatform(testProject.Platform, RunnerPlatform.Default);
+                _testsMaintainer.Generate(testProject, RuntimePlatform.Clr, rootPlatform);
                 foreach (ISequenceGroup sequenceGroup in testProject.SequenceGroups)
                 {
-                    _testsMaintainer.Generate(sequenceGroup, RuntimePlatform.Clr);
+                    RunnerPlatform platform = GetRunnerPlatform(sequenceGroup.Info.Platform, rootPlatform);
+                    _testsMaintainer.Generate(sequenceGroup, RuntimePlatform.Clr, platform);
                 }
             }
             else if (sequenceContainer is ISequenceGroup)
             {
-                _testsMaintainer.Generate((ISequenceGroup)sequenceContainer, RuntimePlatform.Clr);
+                ISequenceGroup sequenceGroup = (ISequenceGroup)sequenceContainer;
+                RunnerPlatform platform = GetRunnerPlatform(sequenceGroup.Info.Platform, RunnerPlatform.Default);
+                _testsMaintainer.Generate(sequenceGroup, RuntimePlatform.Clr, platform);
             }
             else
             {
                 throw new ArgumentException();
             }
+        }
+
+
+        private RunnerPlatform GetRunnerPlatform(RunnerPlatform platform, RunnerPlatform parentPlatform)
+        {
+            switch (platform)
+            {
+                case RunnerPlatform.Default:
+                    if (parentPlatform != RunnerPlatform.Default)
+                    {
+                        platform = parentPlatform;
+                    }
+                    else
+                    {
+                        platform = Environment.Is64BitProcess ? RunnerPlatform.X64 : RunnerPlatform.X86;
+                    }
+                    break;
+                case RunnerPlatform.X86:
+                    break;
+                case RunnerPlatform.X64:
+                    if (!Environment.Is64BitOperatingSystem)
+                    {
+                        throw new TestflowRuntimeException(ModuleErrorCode.UnsupportedPlatform,
+                            _globalInfo.I18N.GetFStr("UnsupportedPlatform", platform.ToString()));
+                    }
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(platform), platform, null);
+            }
+            return platform;
         }
 
         public bool StartTestGeneration()
@@ -86,12 +121,10 @@ namespace Testflow.MasterCore.Core
             if (_sequenceData is ITestProject)
             {
                 ITestProject testProject = _sequenceData as ITestProject;
-                _testsMaintainer.SendRmtGenMessage(CoreConstants.TestProjectSessionId,
-                    sequenceManager.RuntimeSerialize(testProject));
+                _testsMaintainer.SendRmtGenMessage(CoreConstants.TestProjectSessionId, sequenceManager.RuntimeSerialize(testProject));
                 foreach (ISequenceGroup sequenceGroup in testProject.SequenceGroups)
                 {
-                    _testsMaintainer.SendRmtGenMessage(ModuleUtils.GetSessionId(testProject, sequenceGroup), 
-                        sequenceManager.RuntimeSerialize(sequenceGroup));
+                    _testsMaintainer.SendRmtGenMessage(ModuleUtils.GetSessionId(testProject, sequenceGroup), sequenceManager.RuntimeSerialize(sequenceGroup));
                 }
             }
             else
@@ -105,8 +138,7 @@ namespace Testflow.MasterCore.Core
             {
                 _globalInfo.LogService.Print(LogLevel.Error, CommonConst.PlatformLogSession, "Test generation timeout.");
                 _globalInfo.StateMachine.State = RuntimeState.Timeout;
-                throw new TestflowRuntimeException(ModuleErrorCode.OperationTimeout,
-                    _globalInfo.I18N.GetStr("TestGenTimeout"));
+                throw new TestflowRuntimeException(ModuleErrorCode.OperationTimeout, _globalInfo.I18N.GetStr("TestGenTimeout"));
             }
             // 如果是异常状态则返回false
             return _globalInfo.StateMachine.State < RuntimeState.Abort;
@@ -123,7 +155,7 @@ namespace Testflow.MasterCore.Core
             {
                 // 注册TestProject的Setup执行结束后的事件
                 _sequenceOverDelegate = new RuntimeDelegate.SequenceStatusAction(StartTestSessionsIfSetUpOver);
-                _globalInfo.EventDispatcher.Register(_sequenceOverDelegate, Constants.TestProjectSessionId,Constants.SequenceOver);
+                _globalInfo.EventDispatcher.Register(_sequenceOverDelegate, Constants.TestProjectSessionId, Constants.SequenceOver);
 
                 ControlMessage startMessage = new ControlMessage(MessageNames.CtrlStart, CommonConst.TestGroupSession);
                 startMessage.AddParam("RunSetup", true.ToString());
@@ -170,13 +202,12 @@ namespace Testflow.MasterCore.Core
             }
         }
 
-        
+
         private void SessionOverClean(ITestResultCollection testResults)
         {
             _testsMaintainer.FreeHost(testResults.Session);
             // 如果只剩下TestMaintainer的数据，则发送执行TestProjectTearDown的命令
-            if (_sequenceData is ITestProject && _testsMaintainer.TestContainers.Count == 1 &&
-                _testsMaintainer.TestContainers.ContainsKey(CommonConst.TestGroupSession))
+            if (_sequenceData is ITestProject && _testsMaintainer.TestContainers.Count == 1 && _testsMaintainer.TestContainers.ContainsKey(CommonConst.TestGroupSession))
             {
                 RunRootTearDownIfOtherSessionOver();
             }
@@ -220,8 +251,7 @@ namespace Testflow.MasterCore.Core
                     }
                     else
                     {
-                        abortEventInfo.FailInfo = FailedInfo.GetFailedStr(_globalInfo.I18N.GetStr("UserAbort"),
-                            FailedType.Abort);
+                        abortEventInfo.FailInfo = FailedInfo.GetFailedStr(_globalInfo.I18N.GetStr("UserAbort"), FailedType.Abort);
                     }
                     _globalInfo.EventQueue.Enqueue(abortEventInfo);
                     _testsMaintainer.FreeHost(session);
@@ -274,8 +304,7 @@ namespace Testflow.MasterCore.Core
             bool isNotTimeout = _abortBlocker.Wait(Constants.AbortState);
             if (!isNotTimeout)
             {
-                _globalInfo.LogService.Print(LogLevel.Warn, CommonConst.PlatformLogSession,
-                    $"Session {sessionId} abort timeout.");
+                _globalInfo.LogService.Print(LogLevel.Warn, CommonConst.PlatformLogSession, $"Session {sessionId} abort timeout.");
             }
         }
 
@@ -288,8 +317,7 @@ namespace Testflow.MasterCore.Core
             {
                 _globalInfo.LogService.Print(LogLevel.Error, CommonConst.PlatformLogSession, "Test execution timeout.");
                 _globalInfo.StateMachine.State = RuntimeState.Timeout;
-                throw new TestflowRuntimeException(ModuleErrorCode.OperationTimeout, 
-                    _globalInfo.I18N.GetStr("TestRunTimeout"));
+                throw new TestflowRuntimeException(ModuleErrorCode.OperationTimeout, _globalInfo.I18N.GetStr("TestRunTimeout"));
             }
             // 阻塞线程，直到状态机已经停止，并且处理完所有的状态变更事件则
             while (!ModuleUtils.IsOver(_globalInfo.StateMachine.State) || _globalInfo.StateMachine.EventRunning)
@@ -299,6 +327,7 @@ namespace Testflow.MasterCore.Core
         }
 
         private int _stopFlag = 0;
+
         public void Stop()
         {
             if (_stopFlag == 1)

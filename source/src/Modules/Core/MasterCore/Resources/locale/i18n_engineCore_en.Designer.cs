@@ -187,6 +187,15 @@ namespace Testflow.MasterCore.Resources.locale {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Current operating system cannot support platform &lt;{0}&gt;..
+        /// </summary>
+        internal static string UnsupportedPlatform {
+            get {
+                return ResourceManager.GetString("UnsupportedPlatform", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Test aborted by user operation..
         /// </summary>
         internal static string UserAbort {

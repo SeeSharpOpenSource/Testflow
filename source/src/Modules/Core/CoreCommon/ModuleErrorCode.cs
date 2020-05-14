@@ -25,6 +25,7 @@ namespace Testflow.CoreCommon
         public const int CallBackFunctionNameError = 17 | CommonErrorCode.EngineCoreErrorMask;
         public const int RetryFailed = 17 | CommonErrorCode.EngineCoreErrorMask;
         public const int UserForceFailed = 18 | CommonErrorCode.EngineCoreErrorMask;
+        public const int UnsupportedPlatform = 19 | CommonErrorCode.EngineCoreErrorMask;
 
         public const int RuntimeError = 100 | CommonErrorCode.EngineCoreErrorMask;
     }

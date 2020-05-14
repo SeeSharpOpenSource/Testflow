@@ -19,11 +19,22 @@ namespace Testflow.MasterCore.TestMaintain.Container
         {
 //            RuntimeType runtimeType = globalInfo.ConfigData.GetProperty<RuntimeType>("RuntimeType");
             _appDomain = AppDomain.CreateDomain(GetAppDomainName());
+            _appDomain.DomainUnload += AppDomainOnDomainUnload;
+            IsAvailable = true;
             _testThd = new Thread(StartLauncher)
             {
                 Name = GetThreadName(),
                 IsBackground = true
             };
+        }
+
+        private void AppDomainOnDomainUnload(object sender, EventArgs eventArgs)
+        {
+            if (IsAvailable)
+            {
+                OnRuntimeExited();
+                IsAvailable = false;
+            }
         }
 
         public override void Start(string startConfigData)
@@ -54,16 +65,25 @@ namespace Testflow.MasterCore.TestMaintain.Container
             catch (Exception ex)
             {
                 ILogService logService = TestflowRunner.GetInstance().LogService;
-                logService.Print(LogLevel.Error, CommonConst.PlatformLogSession, ex, "Exception raised in appdomain thread.");
+                logService.Print(LogLevel.Error, CommonConst.PlatformLogSession, ex,
+                    "Exception raised in appdomain thread.");
+            }
+            finally
+            {
+                IsAvailable = false;
             }
         }
 
         public override void Dispose()
         {
             int timeout = GlobalInfo.ConfigData.GetProperty<int>("AbortTimeout")*2;
+            _appDomain.DomainUnload -= AppDomainOnDomainUnload;
             if (_testThd.IsAlive && !_testThd.Join(timeout))
             {
                 _testThd.Abort();
+                IsAvailable = false;
+                Thread.MemoryBarrier();
+                OnRuntimeExited();
             }
             AppDomain.Unload(_appDomain);
         }

@@ -132,6 +132,7 @@
     <Compile Include="Runtime\ISequenceDebuggerCollection.cs" />
     <Compile Include="Runtime\Data\ISessionGenerationInfo.cs" />
     <Compile Include="Runtime\Data\ITestGenerationInfo.cs" />
+    <Compile Include="Runtime\RunnerPlatform.cs" />
     <Compile Include="Runtime\RunnerType.cs" />
     <Compile Include="Runtime\TaskBreakException.cs" />
     <Compile Include="TestflowContext.cs" />

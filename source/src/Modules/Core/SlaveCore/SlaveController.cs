@@ -102,8 +102,15 @@ namespace Testflow.SlaveCore
             _context.Dispose();
         }
 
+        private int _disposedFlag = 0;
         public void Dispose()
         {
+            if (_disposedFlag != 0)
+            {
+                return;
+            }
+            Thread.VolatileWrite(ref _disposedFlag, 1);
+            Thread.MemoryBarrier();
             StopSlaveTask();
             _transceiver.Dispose();
             _context.Dispose();

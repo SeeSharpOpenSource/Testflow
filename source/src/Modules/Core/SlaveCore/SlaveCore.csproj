@@ -44,6 +44,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ProcessTestLauncher.cs" />
     <Compile Include="AppDomainTestLauncher.cs" />
     <Compile Include="Common\CallBackEventManager.cs" />
     <Compile Include="Common\Constants.cs" />

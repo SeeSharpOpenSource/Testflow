@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using Testflow.Usr;
 using Testflow.CoreCommon;
 using Testflow.CoreCommon.Common;
@@ -22,25 +23,42 @@ namespace Testflow.MasterCore.TestMaintain.Container
                     AppDomain.MonitoringIsEnabled = true;
                     return new AppDomainRuntimeContainer(session, globalInfo, extraParam);
                     break;
-                case RuntimePlatform.Common:
+                case RuntimePlatform.LocalProcess:
                     AppDomain.MonitoringIsEnabled = false;
                     return new ProcessRuntimeContainer(session, globalInfo, extraParam);
+                    break;
+                case RuntimePlatform.RemoteHost:
+                    throw new NotImplementedException();
                     break;
                 default:
                     throw new ArgumentException();
             }
         }
 
+        public event Action RuntimeExited;
+
         public int Session { get; }
         protected ModuleGlobalInfo GlobalInfo { get; }
 
         public bool HostReady { get; set; }
+
+        private int _avaiableFlag = 0;
+        public bool IsAvailable
+        {
+            get { return _avaiableFlag != 0; }
+            protected set { Thread.VolatileWrite(ref _avaiableFlag, value ? 1 : 0); }
+        }
 
         protected RuntimeContainer(int session, ModuleGlobalInfo globalInfo)
         {
             this.Session = session;
             this.GlobalInfo = globalInfo;
             this.HostReady = false;
+        }
+
+        protected void OnRuntimeExited()
+        {
+            RuntimeExited?.Invoke();
         }
 
         public abstract void Start(string startConfigData);

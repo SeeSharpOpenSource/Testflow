@@ -187,6 +187,15 @@ namespace Testflow.MasterCore.Resources.locale {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to 当前操作系统不支持平台&lt;{0}&gt;。.
+        /// </summary>
+        internal static string UnsupportedPlatform {
+            get {
+                return ResourceManager.GetString("UnsupportedPlatform", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to 用户终止执行测试序列。.
         /// </summary>
         internal static string UserAbort {

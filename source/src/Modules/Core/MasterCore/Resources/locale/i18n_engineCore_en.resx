@@ -159,6 +159,9 @@
   <data name="UnregisteredMessage" xml:space="preserve">
     <value>Unregistered message type: {0}.</value>
   </data>
+  <data name="UnsupportedPlatform" xml:space="preserve">
+    <value>Current operating system cannot support platform &lt;{0}&gt;.</value>
+  </data>
   <data name="UserAbort" xml:space="preserve">
     <value>Test aborted by user operation.</value>
   </data>

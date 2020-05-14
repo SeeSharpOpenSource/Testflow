@@ -159,6 +159,9 @@
   <data name="UnregisteredMessage" xml:space="preserve">
     <value>未注册的消息类型：“{0}”。</value>
   </data>
+  <data name="UnsupportedPlatform" xml:space="preserve">
+    <value>当前操作系统不支持平台&lt;{0}&gt;。</value>
+  </data>
   <data name="UserAbort" xml:space="preserve">
     <value>用户终止执行测试序列。</value>
   </data>

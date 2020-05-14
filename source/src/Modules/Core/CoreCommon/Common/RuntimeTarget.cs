@@ -3,13 +3,18 @@
     public enum RuntimePlatform
     {
         /// <summary>
-        /// 基于Clr运行的Host
+        /// 基于Clr内部隔离的AppDomain运行
         /// </summary>
         Clr = 0,
 
         /// <summary>
-        /// 通用Host运行(支持跨主机、跨语言调用)
+        /// 本地进程运行
         /// </summary>
-        Common = 1
+        LocalProcess = 1,
+
+        /// <summary>
+        /// 远程Host运行
+        /// </summary>
+        RemoteHost = 2,
     }
 }

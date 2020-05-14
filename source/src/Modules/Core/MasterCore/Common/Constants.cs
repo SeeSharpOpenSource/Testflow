@@ -67,5 +67,8 @@ namespace Testflow.MasterCore.Common
 
 
         public const int NoDebugHitSession = -1000;
+
+        public const string X86SlaveRunnerFile = "SlaveRunner_x86.exe";
+        public const string X64SlaveRunnerFile = "SlaveRunner_x64.exe";
     }
 }
