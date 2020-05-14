@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Xml;
 using System.Xml.Serialization;
+using Testflow.Runtime;
 using Testflow.Usr;
 
 namespace Testflow.Data.Sequence
@@ -14,6 +15,11 @@ namespace Testflow.Data.Sequence
         /// 测试序列组的格式版本
         /// </summary>
         string Version { get; set; }
+
+        /// <summary>
+        /// 序列的运行平台
+        /// </summary>
+        RunnerPlatform Platform { get; set; }
 
         /// <summary>
         /// 测试序列组的哈希值，用以唯一确定一个测试序列组，一旦创建不会再更改

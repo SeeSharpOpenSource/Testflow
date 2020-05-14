@@ -2,6 +2,7 @@
 using System.Runtime.Serialization;
 using System.Xml.Serialization;
 using Testflow.Data.Sequence;
+using Testflow.Runtime;
 using Testflow.SequenceManager.Common;
 
 namespace Testflow.SequenceManager.SequenceElements
@@ -19,9 +20,14 @@ namespace Testflow.SequenceManager.SequenceElements
             this.SequenceParamFile = string.Empty;
             this.Modified = false;
             this.OperationPanelInfo = new OperationPanelInfo();
+            this.Platform = RunnerPlatform.Default;
         }
 
         public string Version { get; set; }
+
+        [RuntimeSerializeIgnore]
+        public RunnerPlatform Platform { get; set; }
+
         private string _hash;
 
         public string Hash
@@ -43,6 +49,7 @@ namespace Testflow.SequenceManager.SequenceElements
             SequenceGroupInfo sequenceGroupInfo = new SequenceGroupInfo()
             {
                 Version = this.Version,
+                Platform = this.Platform,
                 _hash = string.Empty,
                 CreationTime = DateTime.Now,
                 ModifiedTime = DateTime.Now,

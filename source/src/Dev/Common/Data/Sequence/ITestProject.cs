@@ -1,5 +1,6 @@
 ﻿ using System.Collections.Generic;
 using Testflow.Data.Description;
+ using Testflow.Runtime;
 
 namespace Testflow.Data.Sequence
 {
@@ -8,6 +9,11 @@ namespace Testflow.Data.Sequence
     /// </summary>
     public interface ITestProject : ISequenceFlowContainer
     {
+        /// <summary>
+        /// 序列的运行平台
+        /// </summary>
+        RunnerPlatform Platform { get; set; }
+
         /// <summary>
         /// 当前序列组中用到的所有Type数据
         /// </summary>

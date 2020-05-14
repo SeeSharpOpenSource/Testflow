@@ -6,6 +6,7 @@ using Newtonsoft.Json;
 using Testflow.Usr;
 using Testflow.Data;
 using Testflow.Data.Sequence;
+using Testflow.Runtime;
 using Testflow.SequenceManager.Common;
 using Testflow.SequenceManager.Serializer;
 
@@ -44,6 +45,7 @@ namespace Testflow.SequenceManager.SequenceElements
             this.TearDownParameters = new SequenceParameter();
             this.TearDownParameters.Initialize(this.TearDown);
             this.ModelVersion = string.Empty;
+            this.Platform = RunnerPlatform.Default;
         }
 
         [RuntimeSerializeIgnore]
@@ -55,6 +57,9 @@ namespace Testflow.SequenceManager.SequenceElements
         [SerializationIgnore]
         [RuntimeSerializeIgnore]
         public ISequenceFlowContainer Parent { get; set; }
+
+        [RuntimeSerializeIgnore]
+        public RunnerPlatform Platform { get; set; }
 
         [SerializationOrder(0)]
         [RuntimeType(typeof(AssemblyInfoCollection))]
