@@ -132,13 +132,16 @@ namespace Testflow.RuntimeService
         public void Dispose()
         {
             TestflowRunner runner = TestflowRunner.GetInstance();
-            runner.LogService?.Dispose();
-            runner.ComInterfaceManager?.Dispose();
-            runner.SequenceManager?.Dispose();
-            runner.DataMaintainer?.Dispose();
-            runner.EngineController?.Dispose();
-            runner.ParameterChecker?.Dispose();
-            runner.ResultManager?.Dispose();
+            if (null != runner)
+            {
+                runner.LogService?.Dispose();
+                runner.ComInterfaceManager?.Dispose();
+                runner.SequenceManager?.Dispose();
+                runner.DataMaintainer?.Dispose();
+                runner.EngineController?.Dispose();
+                runner.ParameterChecker?.Dispose();
+                runner.ResultManager?.Dispose();
+            }
         }
         #endregion
 
