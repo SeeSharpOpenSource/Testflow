@@ -171,6 +171,7 @@ namespace Testflow.SlaveCore.Common
             TimingManager.Dispose();
             CoroutineManager.Dispose();
             DebugManager.Dispose();
+            LogSession.Dispose();
         }
     }
 }
