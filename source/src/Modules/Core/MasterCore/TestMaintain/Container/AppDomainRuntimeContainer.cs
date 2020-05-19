@@ -37,11 +37,11 @@ namespace Testflow.MasterCore.TestMaintain.Container
             string configStr = (string)param;
             Type launcherType = typeof(AppDomainTestLauncher);
             string launcherFullName = $"{launcherType.Namespace}.{launcherType.Name}";
-
+            AppDomainTestLauncher launcherInstance = null;
             try
             {
                 _appDomain.Load(launcherType.Assembly.GetName());
-                AppDomainTestLauncher launcherInstance = (AppDomainTestLauncher) _appDomain.CreateInstanceFromAndUnwrap(
+                launcherInstance = (AppDomainTestLauncher) _appDomain.CreateInstanceFromAndUnwrap(
                     launcherType.Assembly.Location, launcherFullName, false, BindingFlags.Instance | BindingFlags.Public,
                     null,
                     new object[] {configStr}, CultureInfo.CurrentCulture, null);
@@ -61,6 +61,7 @@ namespace Testflow.MasterCore.TestMaintain.Container
             finally
             {
                 IsAvailable = false;
+                launcherInstance?.Dispose();
             }
         }
 

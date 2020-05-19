@@ -42,6 +42,7 @@ namespace Testflow.SlaveCore
             Thread.VolatileWrite(ref _diposedFlag, 1);
             Thread.MemoryBarrier();
             _slaveController.Dispose();
+            _slaveContext.LogSession.Dispose();
         }
     }
 }

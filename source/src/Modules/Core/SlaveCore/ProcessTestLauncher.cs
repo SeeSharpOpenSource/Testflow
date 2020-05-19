@@ -36,6 +36,8 @@ namespace Testflow.SlaveCore
             Thread.VolatileWrite(ref _diposedFlag, 1);
             Thread.MemoryBarrier();
             _slaveController.Dispose();
+            // 日志会话最后释放结束
+            _slaveContext.LogSession.Dispose();
         }
     }
 }
