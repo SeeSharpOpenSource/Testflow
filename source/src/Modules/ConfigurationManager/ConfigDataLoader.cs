@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using System.Text;
+using System.Threading;
 using System.Xml;
 using System.Xml.Serialization;
 using Microsoft.Win32;
@@ -238,8 +239,15 @@ namespace Testflow.ConfigurationManager
             return $"{type.Namespace}.{type.Name}";
         }
 
+        private int _diposedFlag = 0;
         public void Dispose()
         {
+            if (_diposedFlag != 0)
+            {
+                return;
+            }
+            Thread.VolatileWrite(ref _diposedFlag, 1);
+            Thread.MemoryBarrier();
             _valueConvertor.Clear();
         }
     }

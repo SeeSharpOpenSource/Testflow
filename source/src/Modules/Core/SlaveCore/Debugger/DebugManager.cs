@@ -237,11 +237,18 @@ namespace Testflow.SlaveCore.Debugger
 
             coroutineHandle.WaitSignal();
         }
-        
+
         #endregion
 
+        private int _diposedFlag = 0;
         public void Dispose()
         {
+            if (_diposedFlag != 0)
+            {
+                return;
+            }
+            Thread.VolatileWrite(ref _diposedFlag, 1);
+            Thread.MemoryBarrier();
             _breakPoints.Clear();
             foreach (StepTaskEntityBase stepTaskEntity in _breakPoints.Values)
             {

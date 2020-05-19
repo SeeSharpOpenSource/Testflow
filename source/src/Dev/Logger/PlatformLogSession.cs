@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using log4net;
 using log4net.Appender;
 using log4net.Core;
@@ -118,8 +119,15 @@ namespace Testflow.Logger
             base.Print(logLevel, sessionId, message);
         }
 
+        private int _diposedFlag = 0;
         public override void Dispose()
         {
+            if (_diposedFlag != 0)
+            {
+                return;
+            }
+            Thread.VolatileWrite(ref _diposedFlag, 1);
+            Thread.MemoryBarrier();
             IAppender[] appenders = Repository.GetAppenders();
             RollingFileAppender appender = appenders.First(item => item.Name.Equals(Constants.RootAppender)) as RollingFileAppender;
             string logFile = (null != appender) ? appender.File : string.Empty;

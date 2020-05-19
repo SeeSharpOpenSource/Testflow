@@ -64,8 +64,15 @@ namespace Testflow.MasterCore.TestMaintain.Container
             }
         }
 
+        private int _diposedFlag = 0;
         public override void Dispose()
         {
+            if (_diposedFlag != 0)
+            {
+                return;
+            }
+            Thread.VolatileWrite(ref _diposedFlag, 1);
+            Thread.MemoryBarrier();
             int timeout = GlobalInfo.ConfigData.GetProperty<int>("AbortTimeout")*2;
             if (_testThd.IsAlive && !_testThd.Join(timeout))
             {
@@ -74,7 +81,10 @@ namespace Testflow.MasterCore.TestMaintain.Container
                 Thread.MemoryBarrier();
                 OnRuntimeExited();
             }
-            AppDomain.Unload(_appDomain);
+            if (!_appDomain.IsFinalizingForUnload())
+            {
+                AppDomain.Unload(_appDomain);
+            }
         }
 
         private string GetThreadName()

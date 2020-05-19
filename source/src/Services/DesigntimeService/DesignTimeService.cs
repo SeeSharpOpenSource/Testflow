@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Testflow.Data.Description;
 using Testflow.Data.Sequence;
@@ -126,9 +127,13 @@ namespace Testflow.DesigntimeService
         public void Unload()
         {
             this.TestProject = null; // need to load
+            foreach (IDesignTimeSession designTimeSession in SequenceSessions.Values)
+            {
+                designTimeSession.Dispose();
+            }
 
-            SequenceSessions = new Dictionary<int, IDesignTimeSession>();
-            Components = new Dictionary<string, IComInterfaceDescription>();
+            SequenceSessions.Clear();
+            Components?.Clear();
 
             SetUpSession = null;
             TearDownSession = null;
@@ -279,9 +284,15 @@ namespace Testflow.DesigntimeService
 
         }
 
-        //强制结束与否，由外部管理
+        private int _diposedFlag = 0;
         public void Dispose()
         {
+            if (_diposedFlag != 0)
+            {
+                return;
+            }
+            Thread.VolatileWrite(ref _diposedFlag, 1);
+            Thread.MemoryBarrier();
             Unload();
             I18N.RemoveInstance(Constants.I18nName);
         }

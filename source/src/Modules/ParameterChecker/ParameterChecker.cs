@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using Testflow.Data;
 using Testflow.Data.Sequence;
 using Testflow.Modules;
@@ -35,9 +36,17 @@ namespace Testflow.ParameterChecker
             _comInterfaceManager = TestflowRunner.GetInstance().ComInterfaceManager;
         }
 
+        private int _diposedFlag = 0;
+
         public void Dispose()
         {
-            _comInterfaceManager?.Dispose();
+            if (_diposedFlag != 0)
+            {
+                return;
+            }
+            Thread.VolatileWrite(ref _diposedFlag, 1);
+            Thread.MemoryBarrier();
+            _comInterfaceManager = null;
         }
 
         public void ApplyConfig(IModuleConfigData configData)

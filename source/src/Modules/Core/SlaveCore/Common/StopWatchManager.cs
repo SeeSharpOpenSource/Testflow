@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Threading;
 
 namespace Testflow.SlaveCore.Common
 {
@@ -43,8 +44,15 @@ namespace Testflow.SlaveCore.Common
             return (long)((double) stopWatch.ElapsedTicks/_frequency*1E6);
         }
 
+        private int _diposedFlag = 0;
         public void Dispose()
         {
+            if (_diposedFlag != 0)
+            {
+                return;
+            }
+            Thread.VolatileWrite(ref _diposedFlag, 1);
+            Thread.MemoryBarrier();
             foreach (Stopwatch stopwatch in _stopWatches.Values)
             {
                 stopwatch.Reset();

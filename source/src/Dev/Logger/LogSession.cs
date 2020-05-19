@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using log4net;
 using log4net.Appender;
 using log4net.Core;
@@ -122,8 +123,15 @@ namespace Testflow.Logger
             }
         }
 
+        private int _diposedFlag = 0;
         public virtual void Dispose()
         {
+            if (_diposedFlag != 0)
+            {
+                return;
+            }
+            Thread.VolatileWrite(ref _diposedFlag, 1);
+            Thread.MemoryBarrier();
             LoggerManager.ShutdownRepository(_loggerName);
         }
     }

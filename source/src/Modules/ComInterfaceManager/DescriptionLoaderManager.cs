@@ -452,9 +452,19 @@ namespace Testflow.ComInterfaceManager
 
         #region 类型属性获取
 
+        private int _diposedFlag = 0;
         public void Dispose()
         {
-            AppDomain.Unload(_loaderDomain);
+            if (_diposedFlag != 0)
+            {
+                return;
+            }
+            Thread.VolatileWrite(ref _diposedFlag, 1);
+            Thread.MemoryBarrier();
+            if (!_loaderDomain.IsFinalizingForUnload())
+            {
+                AppDomain.Unload(_loaderDomain);
+            }
         }
 
         // 获取某个类型的某个属性，该属性的类型必须能够转换为propertyType

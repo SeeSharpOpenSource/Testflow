@@ -198,9 +198,16 @@ namespace Testflow.ComInterfaceManager
             _typeMapping.Add(fullName, typeData);
             _lock.ExitWriteLock();
         }
-        
+
+        private int _diposedFlag = 0;
         public void Dispose()
         {
+            if (_diposedFlag != 0)
+            {
+                return;
+            }
+            Thread.VolatileWrite(ref _diposedFlag, 1);
+            Thread.MemoryBarrier();
             _lock.Dispose();
         }
     }

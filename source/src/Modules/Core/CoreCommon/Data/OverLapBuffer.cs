@@ -53,8 +53,15 @@ namespace Testflow.CoreCommon.Data
             return dataValue;
         }
 
+        private int _diposedFlag = 0;
         public void Dispose()
         {
+            if (_diposedFlag != 0)
+            {
+                return;
+            }
+            Thread.VolatileWrite(ref _diposedFlag, 1);
+            Thread.MemoryBarrier();
             _innerBuffer = null;
             _operationLock?.Dispose();
             _operationLock = null;

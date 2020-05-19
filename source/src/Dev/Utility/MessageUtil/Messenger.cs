@@ -185,8 +185,15 @@ namespace Testflow.Utility.MessageUtil
         /// <summary>
         /// 销毁信使实例
         /// </summary>
+        private int _diposedFlag = 0;
         public virtual void Dispose()
         {
+            if (_diposedFlag != 0)
+            {
+                return;
+            }
+            Thread.VolatileWrite(ref _diposedFlag, 1);
+            Thread.MemoryBarrier();
             lock (_lock)
             {
                 _messengers.Remove(this);

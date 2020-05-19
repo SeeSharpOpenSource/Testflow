@@ -204,8 +204,15 @@ namespace Testflow.SlaveCore.SlaveFlowControl
 
         public override SlaveFlowTaskBase Next { get; protected set; }
 
+        private int _diposedFlag = 0;
         public override void Dispose()
         {
+            if (_diposedFlag != 0)
+            {
+                return;
+            }
+            Thread.VolatileWrite(ref _diposedFlag, 1);
+            Thread.MemoryBarrier();
             _blockEvent?.Set();
             _blockEvent?.Dispose();
             if (null != _sequenceThreads && _sequenceThreads.Count > 0)

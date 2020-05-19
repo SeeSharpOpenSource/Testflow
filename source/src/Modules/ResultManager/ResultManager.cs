@@ -1,4 +1,5 @@
-﻿using Testflow.Modules;
+﻿using System.Threading;
+using Testflow.Modules;
 using Testflow.Usr;
 using Testflow.ResultManager.Common;
 using Testflow.Data;
@@ -75,9 +76,16 @@ namespace Testflow.ResultManager
             _resultPrinter.PrintReport(newFilePath, sequenceData, runtimeHash);
         }
 
+        private int _diposedFlag = 0;
         public void Dispose()
         {
-            _dataMaintainer?.Dispose();
+            if (_diposedFlag != 0)
+            {
+                return;
+            }
+            Thread.VolatileWrite(ref _diposedFlag, 1);
+            Thread.MemoryBarrier();
+            _dataMaintainer = null;
         }
     }
 }

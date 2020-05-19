@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using System.Text;
+using System.Threading;
 using System.Xml;
 using Testflow.ConfigurationManager.Data;
 using Testflow.Data.Expression;
@@ -229,8 +230,15 @@ namespace Testflow.ConfigurationManager
             // ignore
         }
 
+        private int _diposedFlag = 0;
         public void Dispose()
         {
+            if (_diposedFlag != 0)
+            {
+                return;
+            }
+            Thread.VolatileWrite(ref _diposedFlag, 1);
+            Thread.MemoryBarrier();
             I18N.RemoveInstance(Constants.I18nName);
         }
 

@@ -158,8 +158,15 @@ namespace Testflow.SlaveCore.Common
             return _configData[propertyName];
         }
 
+        private int _diposedFlag = 0;
         public void Dispose()
         {
+            if (_diposedFlag != 0)
+            {
+                return;
+            }
+            Thread.VolatileWrite(ref _diposedFlag, 1);
+            Thread.MemoryBarrier();
             MessageTransceiver?.Dispose();
             TimingManager.Dispose();
             CoroutineManager.Dispose();

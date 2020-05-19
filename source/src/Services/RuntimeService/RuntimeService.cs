@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Testflow.Data.Sequence;
 using Testflow.Runtime;
@@ -129,19 +130,20 @@ namespace Testflow.RuntimeService
             _engineController = TestflowRunner.GetInstance().EngineController;
         }
 
+        private int _diposedFlag = 0;
         public void Dispose()
         {
-            TestflowRunner runner = TestflowRunner.GetInstance();
-            if (null != runner)
+            if (_diposedFlag != 0)
             {
-                runner.LogService?.Dispose();
-                runner.ComInterfaceManager?.Dispose();
-                runner.SequenceManager?.Dispose();
-                runner.DataMaintainer?.Dispose();
-                runner.EngineController?.Dispose();
-                runner.ParameterChecker?.Dispose();
-                runner.ResultManager?.Dispose();
+                return;
             }
+            Thread.VolatileWrite(ref _diposedFlag, 1);
+            Thread.MemoryBarrier();
+            foreach (IRuntimeSession runtimeSession in _sessions)
+            {
+                runtimeSession.Dispose();
+            }
+            _sessions.Clear();
         }
         #endregion
 

@@ -173,8 +173,15 @@ namespace Testflow.DataMaintainer
             return _databaseProxy.ExistFailedStep(runtimeHash, session, sequence);
         }
 
+        private int _diposedFlag = 0;
         public void Dispose()
         {
+            if (_diposedFlag != 0)
+            {
+                return;
+            }
+            Thread.VolatileWrite(ref _diposedFlag, 1);
+            Thread.MemoryBarrier();
             _databaseProxy?.Dispose();
         }
     }

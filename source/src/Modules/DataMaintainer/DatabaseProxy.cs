@@ -657,9 +657,16 @@ namespace Testflow.DataMaintainer
             }
         }
 
+        private int _diposedFlag = 0;
         public void Dispose()
         {
-            Connection?.Close();
+            if (_diposedFlag != 0)
+            {
+                return;
+            }
+            Thread.VolatileWrite(ref _diposedFlag, 1);
+            Thread.MemoryBarrier();
+            Connection?.Dispose();
             _databaseLock?.Dispose();
         }
 

@@ -271,7 +271,7 @@ namespace Testflow.MasterCore.StatusManage
         private int _disposedFlag = 0;
         public void Dispose()
         {
-            if (_disposedFlag == 0)
+            if (_disposedFlag != 0)
             {
                 return;
             }

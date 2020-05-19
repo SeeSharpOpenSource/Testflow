@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using Testflow.ComInterfaceManager.Data;
 using Testflow.Data;
 using Testflow.Data.Description;
@@ -253,8 +254,15 @@ namespace Testflow.ComInterfaceManager
                 (targetDescription.Kind == VariableType.Value || targetDescription.Kind == VariableType.Enumeration);
         }
 
+        private int _diposedFlag = 0;
         public void Dispose()
         {
+            if (_diposedFlag != 0)
+            {
+                return;
+            }
+            Thread.VolatileWrite(ref _diposedFlag, 1);
+            Thread.MemoryBarrier();
             _descriptionData?.Dispose();
             _loaderManager?.Dispose();
             I18N.RemoveInstance(Constants.I18nName);

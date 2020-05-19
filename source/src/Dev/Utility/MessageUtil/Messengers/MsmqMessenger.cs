@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Messaging;
 using System.Text;
+using System.Threading;
 using Testflow.Usr;
 using Testflow.Utility.I18nUtil;
 
@@ -109,8 +110,15 @@ namespace Testflow.Utility.MessageUtil.Messengers
             this._messageQueue.BeginReceive();
         }
 
+        private int _diposedFlag = 0;
         public override void Dispose()
         {
+            if (_diposedFlag != 0)
+            {
+                return;
+            }
+            Thread.VolatileWrite(ref _diposedFlag, 1);
+            Thread.MemoryBarrier();
             base.Dispose();
             if (0 != MessageCount)
             {

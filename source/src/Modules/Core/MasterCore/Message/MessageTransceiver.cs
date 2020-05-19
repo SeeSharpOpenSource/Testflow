@@ -175,14 +175,14 @@ namespace Testflow.MasterCore.Message
             _operationLock.Exit();
         }
 
-        private int _stopFlag = 0;
+        private int _disposedFlag = 0;
         public virtual void Dispose()
         {
-            if (_stopFlag == 1)
+            if (_disposedFlag != 0)
             {
                 return;
             }
-            Thread.VolatileWrite(ref _stopFlag, 1);
+            Thread.VolatileWrite(ref _disposedFlag, 1);
             Activated = false;
             Thread.MemoryBarrier();
             Stop();

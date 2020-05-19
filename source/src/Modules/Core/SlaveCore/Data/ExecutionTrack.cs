@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using Testflow.CoreCommon.Data;
 using Testflow.Runtime.Data;
 using Testflow.SlaveCore.Runner.Model;
@@ -34,8 +35,15 @@ namespace Testflow.SlaveCore.Data
             return stepInfo;
         }
 
+        private int _diposedFlag = 0;
         public void Dispose()
         {
+            if (_diposedFlag != 0)
+            {
+                return;
+            }
+            Thread.VolatileWrite(ref _diposedFlag, 1);
+            Thread.MemoryBarrier();
             _stepExecutionInfos.Dispose();
         }
     }
