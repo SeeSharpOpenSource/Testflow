@@ -6,6 +6,7 @@ using System.Threading;
 using log4net;
 using log4net.Appender;
 using log4net.Core;
+using log4net.Repository;
 using Testflow.Usr;
 using Testflow.Utility.MessageUtil;
 
@@ -42,8 +43,8 @@ namespace Testflow.Logger
 
             try
             {
-                log4net.Config.XmlConfigurator.Configure(new FileInfo(configFilePath));
-                Repository = LogManager.GetRepository();
+                Repository = LogManager.CreateRepository(Constants.SlaveLogName);
+                log4net.Config.XmlConfigurator.Configure(Repository, new FileInfo(configFilePath));
                 IAppender[] appenders = Repository.GetAppenders();
                 RollingFileAppender appender = appenders.First(item => item.Name.Equals(Constants.SlaveAppender)) as RollingFileAppender;
                 string originalLogFile = appender.File;

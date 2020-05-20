@@ -34,8 +34,8 @@ namespace Testflow.Logger
 
             try
             {
-                log4net.Config.XmlConfigurator.Configure(new FileInfo(configFilePath));
-                Repository = LogManager.GetRepository();
+                Repository = LogManager.CreateRepository(Constants.PlatformLogName);
+                log4net.Config.XmlConfigurator.Configure(Repository, new FileInfo(configFilePath));
                 IAppender[] appenders = Repository.GetAppenders();
                 RollingFileAppender appender = appenders.First(item => item.Name.Equals(Constants.RootAppender)) as RollingFileAppender;
                 string originalLogFile = appender.File;
