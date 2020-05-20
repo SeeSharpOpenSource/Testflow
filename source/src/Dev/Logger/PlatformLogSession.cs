@@ -30,7 +30,7 @@ namespace Testflow.Logger
             }
             char dirSeparator = Path.DirectorySeparatorChar;
             string logPath = $"{testflowHome}{dirSeparator}{Constants.PlatformLogDir}";
-            string configFilePath = $"{testflowHome}{dirSeparator}{Constants.PlatformConfFile}";
+            string configFilePath = $"{testflowHome}{Constants.PlatformConfFile}";
 
             try
             {
@@ -47,7 +47,7 @@ namespace Testflow.Logger
                     File.Delete(originalLogFile);
                 }
 
-                Logger = LogManager.GetLogger(Constants.PlatformLogName);
+                Logger = LogManager.GetLogger(Constants.PlatformLogName, Constants.PlatformLogName);
                 SetOriginalLevel();
             }
             catch (LogException ex)

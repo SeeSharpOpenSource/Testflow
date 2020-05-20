@@ -39,7 +39,7 @@ namespace Testflow.Logger
             }
             char dirSeparator = Path.DirectorySeparatorChar;
             string logPath = GetSlaveLogPath(instanceName, sessionName, testflowHome);
-            string configFilePath = $"{testflowHome}{dirSeparator}{Constants.SlaveConfFile}";
+            string configFilePath = $"{testflowHome}{Constants.SlaveConfFile}";
 
             try
             {
@@ -55,7 +55,7 @@ namespace Testflow.Logger
                 {
                     File.Delete(originalLogFile);
                 }
-                Logger = LogManager.GetLogger(Constants.PlatformLogName);
+                Logger = LogManager.GetLogger(Constants.SlaveLogName, Constants.SlaveLogName);
                 LogLevel = logLevel;
             }
             catch (LogException ex)
