@@ -99,7 +99,6 @@ namespace Testflow.SlaveCore
             }
             _context.UplinkMsgProcessor?.Stop();
             _downlinkMsgProcessor?.Stop();
-            _context.Dispose();
         }
 
         private int _disposedFlag = 0;
