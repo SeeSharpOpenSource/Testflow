@@ -205,10 +205,5 @@ namespace Testflow
             LogService?.Dispose();
             ConfigurationManager?.Dispose();
         }
-
-        ~TestflowRunner()
-        {
-            this.Dispose();
-        }
     }
 }
