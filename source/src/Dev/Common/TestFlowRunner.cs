@@ -163,6 +163,7 @@ namespace Testflow
             SequenceManager.DesigntimeInitialize();
             DataMaintainer.DesigntimeInitialize();
             EngineController.DesigntimeInitialize();
+            DesignTimeService.Initialize();
             DesignTimeService.Activate();
         }
 
@@ -178,6 +179,7 @@ namespace Testflow
             SequenceManager.RuntimeInitialize();
             DataMaintainer.RuntimeInitialize();
             EngineController.RuntimeInitialize();
+            RuntimeService.Initialize();
             RuntimeService.Activate();
         }
 
