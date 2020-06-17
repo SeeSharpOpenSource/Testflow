@@ -48,15 +48,10 @@ namespace Testflow.SequenceManager.Serializer
                     XmlWriterHelper.Write(parameter, parameterFilePath);
                 }
             }
-            catch (IOException ex)
+            catch (ApplicationException ex)
             {
                 RollBackFilesIfFailed(serialziedFileList);
                 throw new TestflowRuntimeException(ModuleErrorCode.SerializeFailed, ex.Message, ex);
-            }
-            catch (ApplicationException)
-            {
-                RollBackFilesIfFailed(serialziedFileList);
-                throw;
             }
         }
 
@@ -85,15 +80,10 @@ namespace Testflow.SequenceManager.Serializer
 
                 DeleteBackupFile(seqFilePath, paramFilePath);
             }
-            catch (IOException ex)
+            catch (ApplicationException ex)
             {
                 RollBackFilesIfFailed(serializedFileList);
                 throw new TestflowRuntimeException(ModuleErrorCode.SerializeFailed, ex.Message, ex);
-            }
-            catch (ApplicationException)
-            {
-                RollBackFilesIfFailed(serializedFileList);
-                throw;
             }
         }
 
