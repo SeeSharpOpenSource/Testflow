@@ -214,7 +214,7 @@ namespace Testflow.SequenceManager
                     {
                         // 写入序列数据结束后使用绝对路径记录当前序列位置和参数位置
                         _directoryHelper.SetInfoPathToAbsolute((TestProject)testProject, seqFilePath);
-                        _directoryHelper.SetAssembliesToAbsolutePath(testProject, seqFilePath);
+                        _directoryHelper.SetAssembliesToAbsolutePath(testProject, seqFilePath, false);
                     }
                     break;
                 case SerializationTarget.DataBase:
@@ -245,7 +245,7 @@ namespace Testflow.SequenceManager
                     {
                         // 写入序列数据结束后使用绝对路径记录当前序列位置和参数位置
                         _directoryHelper.SetInfoPathToAbsolute(sequenceGroup.Info, filePath);
-                        _directoryHelper.SetAssembliesToAbsolutePath(sequenceGroup, filePath);
+                        _directoryHelper.SetAssembliesToAbsolutePath(sequenceGroup, filePath, false);
                     }
                     
                     break;
@@ -270,7 +270,7 @@ namespace Testflow.SequenceManager
                     string filePath = StringUtil.NormalizeFilePath(param[0]);
                     TestProject testProject = SequenceDeserializer.LoadTestProject(filePath, forceLoad, this.ConfigData);
                     ModuleUtils.ValidateParent(testProject);
-                    _directoryHelper.SetAssembliesToAbsolutePath(testProject, filePath);
+                    _directoryHelper.SetAssembliesToAbsolutePath(testProject, filePath, forceLoad);
                     return testProject;
                     break;
                 case SerializationTarget.DataBase:
@@ -295,7 +295,7 @@ namespace Testflow.SequenceManager
                     SequenceGroup sequenceGroup = SequenceDeserializer.LoadSequenceGroup(seqFilePath, forceLoad, this.ConfigData);
                     ModuleUtils.ValidateParent(sequenceGroup, null);
                     _directoryHelper.SetInfoPathToAbsolute(sequenceGroup.Info, seqFilePath);
-                    _directoryHelper.SetAssembliesToAbsolutePath(sequenceGroup, seqFilePath);
+                    _directoryHelper.SetAssembliesToAbsolutePath(sequenceGroup, seqFilePath, forceLoad);
                     return sequenceGroup;
                     break;
                 case SerializationTarget.DataBase:

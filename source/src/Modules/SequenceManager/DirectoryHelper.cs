@@ -235,11 +235,11 @@ namespace Testflow.SequenceManager
 
         #region 配置所有路径为绝对路径
 
-        public void SetAssembliesToAbsolutePath(ITestProject testProject, string filePath)
+        public void SetAssembliesToAbsolutePath(ITestProject testProject, string filePath, bool forceLoad)
         {
             string seqDir = ModuleUtils.GetParentDirectory(filePath);
             _availableDirs.Insert(_seqDirIndex, seqDir);
-            SetAssembliesToAbsolutePath(testProject.Assemblies);
+            SetAssembliesToAbsolutePath(testProject.Assemblies, forceLoad);
             _availableDirs.RemoveAt(_seqDirIndex);
 
             ISequenceGroupCollection sequenceGroups = testProject.SequenceGroups;
@@ -249,7 +249,7 @@ namespace Testflow.SequenceManager
                 _availableDirs.Insert(_seqDirIndex, seqGroupDir);
                 try
                 {
-                    SetAssembliesToAbsolutePath(sequenceGroup.Assemblies);
+                    SetAssembliesToAbsolutePath(sequenceGroup.Assemblies, forceLoad);
                 }
                 finally
                 {
@@ -258,13 +258,13 @@ namespace Testflow.SequenceManager
             }
         }
 
-        public void SetAssembliesToAbsolutePath(ISequenceGroup sequenceGroup, string filePath)
+        public void SetAssembliesToAbsolutePath(ISequenceGroup sequenceGroup, string filePath, bool forceLoad)
         {
             string seqDir = ModuleUtils.GetParentDirectory(filePath);
             _availableDirs.Insert(_seqDirIndex, seqDir);
             try
             {
-                SetAssembliesToAbsolutePath(sequenceGroup.Assemblies);
+                SetAssembliesToAbsolutePath(sequenceGroup.Assemblies, forceLoad);
             }
             finally
             {
@@ -272,7 +272,7 @@ namespace Testflow.SequenceManager
             }
         }
 
-        private void SetAssembliesToAbsolutePath(IAssemblyInfoCollection assemblies)
+        private void SetAssembliesToAbsolutePath(IAssemblyInfoCollection assemblies, bool forceLoad)
         {
             foreach (IAssemblyInfo assemblyInfo in assemblies)
             {
@@ -283,17 +283,25 @@ namespace Testflow.SequenceManager
                     continue;
                 }
                 string abosolutePath = InternalGetAbosolutePath(path);
-                //　如果没找到库，则抛出异常
-                if (null == abosolutePath)
+                
+                if (null != abosolutePath)
+                {
+                    assemblyInfo.Path = abosolutePath;
+                }
+                else
                 {
                     ILogService logService = TestflowRunner.GetInstance().LogService;
                     logService.Print(LogLevel.Error, CommonConst.PlatformLogSession,
                         $"Assembly '{assemblyInfo.AssemblyName}' cannot be found in '{assemblyInfo.Path}'.");
-                    I18N i18N = I18N.GetInstance(Constants.I18nName);
-                    throw new TestflowDataException(ModuleErrorCode.DeSerializeFailed,
-                        i18N.GetFStr("AssemblyCannotFound", assemblyInfo.AssemblyName));
+                    //　如果没找到库，且不是强制加载，则抛出异常
+                    if (!forceLoad)
+                    {
+                        I18N i18N = I18N.GetInstance(Constants.I18nName);
+                        throw new TestflowDataException(ModuleErrorCode.DeSerializeFailed,
+                            i18N.GetFStr("AssemblyCannotFound", assemblyInfo.AssemblyName));
+                    }
                 }
-                assemblyInfo.Path = abosolutePath;
+                
             }
         }
 
