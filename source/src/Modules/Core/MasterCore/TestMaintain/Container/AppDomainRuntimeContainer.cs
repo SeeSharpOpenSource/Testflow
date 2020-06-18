@@ -41,8 +41,8 @@ namespace Testflow.MasterCore.TestMaintain.Container
             try
             {
                 _appDomain.Load(launcherType.Assembly.GetName());
-                launcherInstance = (AppDomainTestLauncher) _appDomain.CreateInstanceFromAndUnwrap(
-                    launcherType.Assembly.Location, launcherFullName, false, BindingFlags.Instance | BindingFlags.Public,
+                launcherInstance = (AppDomainTestLauncher) _appDomain.CreateInstanceAndUnwrap(
+                    launcherType.Assembly.FullName, launcherFullName, false, BindingFlags.Instance | BindingFlags.Public,
                     null,
                     new object[] {configStr}, CultureInfo.CurrentCulture, null);
                 launcherInstance.Start();
