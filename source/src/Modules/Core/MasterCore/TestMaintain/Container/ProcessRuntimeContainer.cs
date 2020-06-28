@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Text;
 using System.Threading;
 using Testflow.MasterCore.Common;
 using Testflow.Runtime;
@@ -15,12 +16,13 @@ namespace Testflow.MasterCore.TestMaintain.Container
         public ProcessRuntimeContainer(int session, ModuleGlobalInfo globalInfo,
             params object[] extraParam) : base(session, globalInfo)
         {
-            string testflowHome = GlobalInfo.ConfigData.GetProperty<string>("TestFlowHome");
+            string testflowHome = GlobalInfo.ConfigData.GetProperty<string>("TestflowHome");
             string fileName = GetExecutiveFilePath(testflowHome, (RunnerPlatform) extraParam[0]);
             _startInfo = new ProcessStartInfo(fileName)
             {
                 CreateNoWindow = true,
-                WorkingDirectory = testflowHome
+                WorkingDirectory = testflowHome,
+                UseShellExecute = false
             };
         }
 
@@ -34,7 +36,12 @@ namespace Testflow.MasterCore.TestMaintain.Container
 
         public override void Start(string startConfigData)
         {
-            _startInfo.Arguments = startConfigData;
+            StringBuilder paramBuf = new StringBuilder(startConfigData, startConfigData.Length + 1000);
+            // 替换双引号为三个引号，并在前后插入引号
+            paramBuf.Replace("\"", "\"\"\"");
+//            paramBuf.Insert(0, "\"");
+//            paramBuf.Append("\"");
+            _startInfo.Arguments = paramBuf.ToString();
             _slaveProcess = new Process()
             {
                 StartInfo = _startInfo,
