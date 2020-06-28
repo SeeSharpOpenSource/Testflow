@@ -24,7 +24,6 @@ namespace Testflow.MasterCore.TestMaintain.Container
                     return new AppDomainRuntimeContainer(session, globalInfo, extraParam);
                     break;
                 case RuntimePlatform.LocalProcess:
-                    AppDomain.MonitoringIsEnabled = false;
                     return new ProcessRuntimeContainer(session, globalInfo, extraParam);
                     break;
                 case RuntimePlatform.RemoteHost:
