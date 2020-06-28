@@ -8,7 +8,7 @@
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Testflow.SlaveRunnerX86</RootNamespace>
-    <AssemblyName>SlaveRunnerX86</AssemblyName>
+    <AssemblyName>SlaveRunner_X86</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
