@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Testflow.Data.Sequence;
 using Testflow.Runtime;
 using Testflow.Usr;
@@ -224,6 +225,8 @@ namespace Testflow.Utility.Utils
 
         #endregion
 
+        #region 查找Sequence
+
         /// <summary>
         /// 通过索引号获取Sequence
         /// </summary>
@@ -231,7 +234,7 @@ namespace Testflow.Utility.Utils
         {
             if (sequenceData is ITestProject)
             {
-                ITestProject testProject = (ITestProject)sequenceData;
+                ITestProject testProject = (ITestProject) sequenceData;
                 if (sessionId == CommonConst.TestGroupSession)
                 {
                     return sequence == CommonConst.SetupIndex
@@ -243,12 +246,12 @@ namespace Testflow.Utility.Utils
                     if (testProject.SequenceGroups.Count <= sessionId || sessionId < 0)
                     {
                         I18N i18N = I18N.GetInstance(UtilityConstants.UtilsName);
-                        throw new TestflowDataException(ModuleErrorCode.SequenceDataError, 
+                        throw new TestflowDataException(ModuleErrorCode.SequenceDataError,
                             i18N.GetStr("CannotFindSequence"));
                     }
                     return GetSequence(testProject.SequenceGroups[sessionId], sequence);
                 }
-                
+
             }
             else if (sequenceData is ISequenceGroup)
             {
@@ -288,5 +291,79 @@ namespace Testflow.Utility.Utils
             }
             return sequence;
         }
+
+        #endregion
+
+        #region 查找变量
+
+        public static bool IsVariableExist(string variableName, ISequenceStep step)
+        {
+            ISequenceFlowContainer parent = step.Parent;
+            while (parent is ISequenceStep)
+            {
+                parent = parent.Parent;
+            }
+            ISequence sequence = (ISequence) parent;
+            if (null == sequence)
+            {
+                return false;
+            }
+            return IsVariableExist(variableName, sequence);
+        }
+
+        public static bool IsVariableExist(string variableName, ISequence sequence)
+        {
+            // 否则则认为表达式为变量值
+            if (sequence.Variables.Any(item => item.Name.Equals(variableName)))
+            {
+                return true;
+            }
+            ISequenceFlowContainer parent = sequence.Parent;
+            if (null == parent)
+            {
+                return false;
+            }
+            IVariableCollection rootVariables = parent is ISequenceGroup
+                ? ((ISequenceGroup) parent).Variables
+                : ((ITestProject) parent).Variables;
+            return rootVariables.Any(item => item.Name.Equals(variableName));
+        }
+
+        public static IVariable GetVariable(string variableName, ISequenceStep step)
+        {
+            ISequenceFlowContainer parent = step.Parent;
+            while (parent is ISequenceStep)
+            {
+                parent = parent.Parent;
+            }
+            ISequence sequence = (ISequence)parent;
+            if (null == sequence)
+            {
+                return null;
+            }
+            return GetVariable(variableName, sequence);
+        }
+
+        public static IVariable GetVariable(string variableName, ISequence sequence)
+        {
+            IVariable variable = sequence.Variables.FirstOrDefault(item => item.Name.Equals(variableName));
+            if (null != variable)
+            {
+                return variable;
+            }
+            ISequenceFlowContainer parent = sequence.Parent;
+            if (null == parent)
+            {
+                return null;
+            }
+            IVariableCollection rootVariables = parent is ISequenceGroup
+                ? ((ISequenceGroup) parent).Variables
+                : ((ITestProject) parent).Variables;
+            variable = rootVariables.FirstOrDefault(item => item.Name.Equals(variableName));
+            return variable;
+        }
+
+        #endregion
+
     }
 }
