@@ -120,6 +120,9 @@
   <data name="AssemblyCannotFound" xml:space="preserve">
     <value>The library of assembly "{0}" cannot be located.</value>
   </data>
+  <data name="ExpVariableNotExist" xml:space="preserve">
+    <value>The variable '{0}' in expression has not declared.</value>
+  </data>
   <data name="FileCannotFound" xml:space="preserve">
     <value>The file in directory '{0}' cannot be found.</value>
   </data>

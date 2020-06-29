@@ -70,6 +70,15 @@ namespace Testflow.SequenceManager.Resources.locale {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The variable &apos;{0}&apos; in expression has not declared..
+        /// </summary>
+        internal static string ExpVariableNotExist {
+            get {
+                return ResourceManager.GetString("ExpVariableNotExist", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The file in directory &apos;{0}&apos; cannot be found..
         /// </summary>
         internal static string FileCannotFound {

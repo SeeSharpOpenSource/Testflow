@@ -120,6 +120,9 @@
   <data name="AssemblyCannotFound" xml:space="preserve">
     <value>无法定位到程序集“{0}”所在的库。</value>
   </data>
+  <data name="ExpVariableNotExist" xml:space="preserve">
+    <value>表达式中使用了未定义的变量{0}。</value>
+  </data>
   <data name="FileCannotFound" xml:space="preserve">
     <value>无法找到文件“{0}”。</value>
   </data>

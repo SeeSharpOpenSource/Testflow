@@ -49,7 +49,7 @@ namespace Testflow.SequenceManager.Expression
             // 缓存表达式中参数顺序到参数编号的映射，0为Source
             foreach (Match matchData in matches)
             {
-                int argIndex = int.Parse(matchData.Groups[0].Value);
+                int argIndex = int.Parse(matchData.Groups[1].Value);
                 _orderToIndexMapping.Add(orderIndex++, argIndex);
                 // 暂时替换参数占位符为参数名信息
                 formatCache.Replace(matchData.Value, argName);

@@ -49,7 +49,7 @@
         #region 表达式相关
 
         public const string ArgNameFormat = "ARG{0}";
-        public const string ArgNamePattern = "ARG\\d+";
+        public const string ArgNamePattern = "(?:(?:ARG)|(?:EXP))\\d+";
         public const string ExpPlaceHodlerPattern = "EXP\\d+";
         public const string ExpPlaceHodlerFormat = "EXP{0}";
         public const string SingleArgPattern = "^ARG\\d+$";

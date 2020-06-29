@@ -11,7 +11,7 @@ namespace Testflow.SequenceManager.Expression
             {
                 return 0;
             }
-            return x.Priority > y.Priority ? 1 : -1;
+            return x.Priority < y.Priority ? 1 : -1;
         }
     }
 }

@@ -70,6 +70,15 @@ namespace Testflow.SequenceManager.Resources.locale {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to 表达式中使用了未定义的变量{0}。.
+        /// </summary>
+        internal static string ExpVariableNotExist {
+            get {
+                return ResourceManager.GetString("ExpVariableNotExist", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to 无法找到文件“{0}”。.
         /// </summary>
         internal static string FileCannotFound {

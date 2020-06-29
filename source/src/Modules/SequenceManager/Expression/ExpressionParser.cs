@@ -1,17 +1,28 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using Testflow.Data.Expression;
 using Testflow.Data.Sequence;
 using Testflow.Modules;
 using Testflow.SequenceManager.Common;
+using Testflow.Usr;
+using Testflow.Utility.I18nUtil;
+using Testflow.Utility.Utils;
 
 namespace Testflow.SequenceManager.Expression
 {
     public class ExpressionParser
     {
-        private readonly ExpressionCalculatorInfo[] _calculatorInfos;
+        private const int CacheCapacity = 500;
+        private readonly List<ExpressionCalculatorInfo> _calculatorInfos;
         private readonly ILogService _logService;
+
+        // 表达式解析缓存
+        private readonly StringBuilder _expressionCache;
+        // 参数缓存
+        private Dictionary<string, string> _argumentCache;
+
         // 包含运算符中用到的所有符号的集合
         private readonly HashSet<char> _expressionDelim;
 
@@ -25,11 +36,13 @@ namespace Testflow.SequenceManager.Expression
         // 布尔类型的匹配模式
         private readonly Regex _boolRegex;
 
-        internal ExpressionParser(IModuleConfigData configData, ILogService logService)
+        public ExpressionParser(IModuleConfigData configData, ILogService logService)
         {
+            _expressionCache = new StringBuilder(CacheCapacity);
+            _argumentCache = new Dictionary<string, string>(10);
             Dictionary<string, ExpressionOperatorInfo> operatorInfos =
                 configData.GetProperty<Dictionary<string, ExpressionOperatorInfo>>("ExpressionOperators");
-            _calculatorInfos = configData.GetProperty<ExpressionCalculatorInfo[]>("ExpressionCalculators");
+            _calculatorInfos = configData.GetProperty<List<ExpressionCalculatorInfo>>("ExpressionCalculators");
             _logService = logService;
             _parseOverRegex = new Regex(Constants.SingleExpPattern, RegexOptions.Compiled);
             _digitRegex = new Regex(Constants.DigitPattern, RegexOptions.Compiled);
@@ -46,11 +59,8 @@ namespace Testflow.SequenceManager.Expression
                     _expressionDelim.Add(elem);
                 }
             }
-
-
-
             string argumentPattern = GetArgumentPattern(_expressionDelim);
-            _operatorAdapters = new List<OperatorAdapter>(_operatorAdapters.Count);
+            _operatorAdapters = new List<OperatorAdapter>(operatorInfos.Count);
             // 正则表达式中的元符号
             HashSet<char> metaCharacters = new HashSet<char>
             {
@@ -84,39 +94,64 @@ namespace Testflow.SequenceManager.Expression
             return $"({Constants.ArgNamePattern})";
         }
 
+        #region 表达式解析
+
+        /// <summary>
+        /// 解析表达式并校验变量
+        /// </summary>
         public IExpressionData ParseExpression(string expression, ISequence parent)
         {
             // 参数别名到参数值的映射
-            Dictionary<string, string> argumentCache = new Dictionary<string, string>(10);
-            StringBuilder expressionCache = new StringBuilder(expression);
+            _argumentCache.Clear();
+            _expressionCache.Clear();
+            _expressionCache.Append(expression);
             // 预处理，删除冗余的空格，替换参数为固定模式的字符串
-            ParsingPreProcess(expressionCache, parent, argumentCache);
+            ParsingPreProcess(_expressionCache, _argumentCache);
             // 分割表达式元素
-            IExpressionData expressionData = ParseExpressionData(expressionCache);
-            ParsingPostProcess(expressionData, argumentCache);
+            IExpressionData expressionData = ParseExpressionData(_expressionCache);
+            ParsingPostProcess(expressionData, parent, _argumentCache);
+            ResetExpressionCache();
+            return expressionData;
+        }
+
+        /// <summary>
+        /// 解析表达式
+        /// </summary>
+        public IExpressionData ParseExpression(string expression)
+        {
+            // 参数别名到参数值的映射
+            _argumentCache.Clear();
+            _expressionCache.Clear();
+            _expressionCache.Append(expression);
+            // 预处理，删除冗余的空格，替换参数为固定模式的字符串
+            ParsingPreProcess(_expressionCache, _argumentCache);
+            // 分割表达式元素
+            IExpressionData expressionData = ParseExpressionData(_expressionCache);
+            ParsingPostProcess(expressionData, null, _argumentCache);
+            ResetExpressionCache();
             return expressionData;
         }
 
         private IExpressionData ParseExpressionData(StringBuilder expressionCache)
         {
             Dictionary<string, IExpressionData> expressionDataCache = new Dictionary<string, IExpressionData>(10);
-            while (!_parseOverRegex.IsMatch(expressionDataCache.ToString()))
+            while (!_parseOverRegex.IsMatch(expressionCache.ToString()))
             {
                 foreach (OperatorAdapter operatorAdapter in _operatorAdapters)
                 {
                     operatorAdapter.ParseExpression(expressionCache, expressionDataCache);
                 }
             }
-            return expressionDataCache[expressionDataCache.ToString()];
+            return expressionDataCache[expressionCache.ToString()];
         }
 
-        private void ParsingPreProcess(StringBuilder expressionCache, ISequence parent, Dictionary<string, string> argumentCache)
+        private void ParsingPreProcess(StringBuilder expressionCache, Dictionary<string, string> argumentCache)
         {
             int argumentIndex = 0;
             int argEndIndex = -1;
-            bool nextCharIsDelim = false;
-            
-            for (int i = expressionCache.Length - 1; i >= 0 ; i--)
+            bool nextCharIsDelim = true;
+
+            for (int i = expressionCache.Length - 1; i >= 0; i--)
             {
                 char character = expressionCache[i];
                 if (_expressionDelim.Contains(character))
@@ -147,37 +182,63 @@ namespace Testflow.SequenceManager.Expression
             int argEndIndex, Dictionary<string, string> argumentCache)
         {
             string argName = string.Format(Constants.ArgNameFormat, argIndex++);
-            // 取出常量值，不包括引号
-            int argValueLength = argEndIndex - argStartIndex + 1;
-            string argumentValue = expressionCache.ToString()
-                .Substring(argStartIndex, argValueLength);
+            
+            string argumentValue = GetTrimmedArgValue(expressionCache, argStartIndex, argEndIndex);
             // 获取需要移除的长度，包括引号
             argumentCache.Add(argName, argumentValue);
             // 替换原来字符串位置的值为：StrX
+            int argValueLength = argEndIndex - argStartIndex + 1;
             expressionCache.Remove(argStartIndex, argValueLength);
             expressionCache.Insert(argStartIndex, argName);
         }
 
-        private void ParsingPostProcess(IExpressionData expressionData, Dictionary<string, string> argumentCache)
+        private string GetTrimmedArgValue(StringBuilder expressionCache, int argStartIndex, int argEndIndex)
         {
-            ExpressionPostProcess(expressionData, argumentCache);
+            while (_expressionCache[argStartIndex] == ' ')
+            {
+                argStartIndex++;
+            }
+            while (_expressionCache[argEndIndex] == ' ')
+            {
+                argEndIndex--;
+            }
+            int argValueLength = argEndIndex - argStartIndex + 1;
+            if (argValueLength <= 0)
+            {
+                I18N i18N = I18N.GetInstance(Constants.I18nName);
+                throw new TestflowDataException(ModuleErrorCode.ExpressionError,
+                    i18N.GetFStr("IllegalExpression", expressionCache.ToString()));
+            }
+            string argumentValue = expressionCache.ToString(argStartIndex, argValueLength);
+            return argumentValue;
         }
 
-        private void ExpressionPostProcess(IExpressionData expressionData,
+        private void ParsingPostProcess(IExpressionData expressionData, ISequence parent,
             Dictionary<string, string> argumentCache)
         {
-            ExpressionElementPostProcess(expressionData.Source, argumentCache);
+            ExpressionPostProcess(expressionData, argumentCache, parent);
+        }
+
+        private void ExpressionPostProcess(IExpressionData expressionData, Dictionary<string, string> argumentCache,
+            ISequence parent)
+        {
+            ExpressionElementPostProcess(expressionData.Source, argumentCache, parent);
             foreach (IExpressionElement expressionElement in expressionData.Arguments)
             {
-                ExpressionElementPostProcess(expressionElement, argumentCache);
+                ExpressionElementPostProcess(expressionElement, argumentCache, parent);
             }
         }
 
-        private void ExpressionElementPostProcess(IExpressionElement expressionElement, 
-            Dictionary<string, string> argumentCache)
+        private void ExpressionElementPostProcess(IExpressionElement expressionElement,
+            Dictionary<string, string> argumentCache, ISequence parent)
         {
-            if (expressionElement.Type != ParameterType.NotAvailable)
+            if (expressionElement.Type == ParameterType.NotAvailable)
             {
+                return;
+            }
+            if (expressionElement.Type == ParameterType.Expression)
+            {
+                ExpressionPostProcess(expressionElement.Expression, argumentCache, parent);
                 return;
             }
             string value = argumentCache[expressionElement.Value];
@@ -196,6 +257,11 @@ namespace Testflow.SequenceManager.Expression
             }
             else
             {
+                if (null != parent && !SequenceUtils.IsVariableExist(value, parent))
+                {
+                    I18N i18N = I18N.GetInstance(Constants.I18nName);
+                    throw new TestflowDataException(ModuleErrorCode.ExpressionError, i18N.GetFStr("ExpVariableNotExist", value));
+                }
                 // 否则则认为表达式为变量值
                 expressionElement.Value = value;
                 expressionElement.Type = ParameterType.Variable;
@@ -210,6 +276,60 @@ namespace Testflow.SequenceManager.Expression
 //                throw new TestflowDataException(ModuleErrorCode.ExpressionError,
 //                    i18N.GetFStr("IllegalExpression", expressionCache.ToString()));
 //            }
+        }
+
+        #endregion
+
+        public bool RenameVariable(string expression, string varOldName, string varNewName)
+        {
+            if (!expression.Contains(varOldName))
+            {
+                return false;
+            }
+            int index = expression.Length;
+            _expressionCache.Clear();
+            _expressionCache.Append(expression);
+            const char empty = '\0';
+            int oldNameLength = varOldName.Length;
+            bool varExist = false;
+            while ((index = expression.LastIndexOf(varOldName, 0, index)) >= 0)
+            {
+                // 找出对应变量名左侧和右侧第一个非空格的字符
+                char leftElement;
+                int leftIndex = index - 1;
+                do
+                {
+                    leftElement = leftIndex >= 0 ? _expressionCache[leftIndex] : empty;
+                    leftIndex--;
+                } while (' ' == leftElement);
+                char rightElement;
+                int rightIndex = index + oldNameLength;
+                do
+                {
+                    rightElement = rightIndex < _expressionCache.Length ? _expressionCache[rightIndex] : empty;
+                    rightIndex++;
+                } while (' ' == rightElement);
+                // 如果左侧元素或右侧元素是计算分隔符或者空字符，则认为此处为变量
+                // TODO 这里可能会出现字符串中有变量名且前后字符都是运算符的问题，该场景少见，后续优化
+                if ((_expressionDelim.Contains(leftElement) || leftElement == empty) &&
+                    (_expressionDelim.Contains(rightElement) || rightElement == empty))
+                {
+                    _expressionCache.Replace(varOldName, varNewName, index, oldNameLength);
+                    varExist = true;
+                }
+            }
+            return varExist;
+        }
+
+
+        private void ResetExpressionCache()
+        {
+            _expressionCache.Clear();
+            if (_expressionCache.Capacity > CacheCapacity)
+            {
+                _expressionCache.Capacity = CacheCapacity;
+            }
+            _argumentCache.Clear();
         }
     }
 }
