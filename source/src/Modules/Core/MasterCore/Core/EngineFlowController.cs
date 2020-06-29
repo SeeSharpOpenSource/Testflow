@@ -65,18 +65,18 @@ namespace Testflow.MasterCore.Core
             {
                 ITestProject testProject = (ITestProject)sequenceContainer;
                 RunnerPlatform rootPlatform = GetRunnerPlatform(testProject.Platform, RunnerPlatform.Default);
-                _testsMaintainer.Generate(testProject, RuntimePlatform.LocalProcess, rootPlatform);
+                _testsMaintainer.Generate(testProject, RuntimePlatform.Clr, rootPlatform);
                 foreach (ISequenceGroup sequenceGroup in testProject.SequenceGroups)
                 {
                     RunnerPlatform platform = GetRunnerPlatform(sequenceGroup.Info.Platform, rootPlatform);
-                    _testsMaintainer.Generate(sequenceGroup, RuntimePlatform.LocalProcess, platform);
+                    _testsMaintainer.Generate(sequenceGroup, RuntimePlatform.Clr, platform);
                 }
             }
             else if (sequenceContainer is ISequenceGroup)
             {
                 ISequenceGroup sequenceGroup = (ISequenceGroup)sequenceContainer;
                 RunnerPlatform platform = GetRunnerPlatform(sequenceGroup.Info.Platform, RunnerPlatform.Default);
-                _testsMaintainer.Generate(sequenceGroup, RuntimePlatform.LocalProcess, platform);
+                _testsMaintainer.Generate(sequenceGroup, RuntimePlatform.Clr, platform);
             }
             else
             {
