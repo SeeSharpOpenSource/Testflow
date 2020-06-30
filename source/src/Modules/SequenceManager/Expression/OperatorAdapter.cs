@@ -141,7 +141,7 @@ namespace Testflow.SequenceManager.Expression
             // 如果参数值不是表达式，则将该参数占位符填充到表达式中
             else
             {
-                expElement = new ExpressionElement(ParameterType.NotAvailable, value);
+                expElement = new ExpressionElement(ParameterType.Value, value);
             }
             return expElement;
         }

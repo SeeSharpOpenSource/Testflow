@@ -54,7 +54,7 @@
         public const string ExpPlaceHodlerFormat = "EXP{0}";
         public const string SingleArgPattern = "^ARG\\d+$";
         public const string SingleExpPattern = "^EXP\\d+$";
-        public const string DigitPattern = "^(?:\\d+(?:\\.\\d+)?|0x[0-9a-fA-F]+|\\d+(?:\\.\\d+)?[Ee](?:[\\+-]?\\d+))?$";
+        public const string DigitPattern = "^(\\+|-)?(?:\\d+(?:\\.\\d+)?|0x[0-9a-fA-F]+|\\d+(?:\\.\\d+)?[Ee](?:[\\+-]?\\d+))?$";
         public const string StringPattern = "^(\"|')(.*)\\1$";
         public const string BoolPattern = "^(?:[Tt]rue|[Ff]alse)$";
 

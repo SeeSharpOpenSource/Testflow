@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -52,7 +53,7 @@ namespace Testflow.SequenceManager.Expression
             _expressionDelim = new HashSet<char>();
             foreach (KeyValuePair<string, ExpressionOperatorInfo> operatorInfoPair in operatorInfos)
             {
-                string operatorSymbol = operatorInfoPair.Key;
+                string operatorSymbol = operatorInfoPair.Value.Symbol;
                 char[] symbolElem = operatorSymbol.ToCharArray();
                 foreach (char elem in symbolElem)
                 {
@@ -122,25 +123,39 @@ namespace Testflow.SequenceManager.Expression
             // 参数别名到参数值的映射
             _argumentCache.Clear();
             _expressionCache.Clear();
-            _expressionCache.Append(expression);
-            // 预处理，删除冗余的空格，替换参数为固定模式的字符串
-            ParsingPreProcess(_expressionCache, _argumentCache);
-            // 分割表达式元素
-            IExpressionData expressionData = ParseExpressionData(_expressionCache);
-            ParsingPostProcess(expressionData, null, _argumentCache);
-            ResetExpressionCache();
-            return expressionData;
+            try
+            {
+                _expressionCache.Append(expression);
+                // 预处理，删除冗余的空格，替换参数为固定模式的字符串
+                ParsingPreProcess(_expressionCache, _argumentCache);
+                // 分割表达式元素
+                IExpressionData expressionData = ParseExpressionData(_expressionCache);
+                ParsingPostProcess(expressionData, null, _argumentCache);
+                return expressionData;
+            }
+            finally
+            {
+                ResetExpressionCache();
+            }
         }
 
         private IExpressionData ParseExpressionData(StringBuilder expressionCache)
         {
             Dictionary<string, IExpressionData> expressionDataCache = new Dictionary<string, IExpressionData>(10);
-            while (!_parseOverRegex.IsMatch(expressionCache.ToString()))
+            string oldExpression = expressionDataCache.ToString();
+            while (!_parseOverRegex.IsMatch(oldExpression))
             {
                 foreach (OperatorAdapter operatorAdapter in _operatorAdapters)
                 {
                     operatorAdapter.ParseExpression(expressionCache, expressionDataCache);
                 }
+                if (oldExpression.Equals(expressionCache.ToString()))
+                {
+                    I18N i18N = I18N.GetInstance(Constants.I18nName);
+                    throw new TestflowDataException(ModuleErrorCode.ExpressionError,
+                        i18N.GetFStr("IllegalExpression", expressionCache.ToString()));
+                }
+                oldExpression = expressionCache.ToString();
             }
             return expressionDataCache[expressionCache.ToString()];
         }
@@ -150,11 +165,32 @@ namespace Testflow.SequenceManager.Expression
             int argumentIndex = 0;
             int argEndIndex = -1;
             bool nextCharIsDelim = true;
-
+            char quoteChar = '\0';
+            bool isInQuote = false;
+            const char quoteChar1 = '"';
+            const char quoteChar2 = '\'';
             for (int i = expressionCache.Length - 1; i >= 0; i--)
             {
                 char character = expressionCache[i];
-                if (_expressionDelim.Contains(character))
+
+                // 如果是引号符号，则需要判断是否在引号中
+                if (character == quoteChar1 || character == quoteChar2)
+                {
+                    // 如果在引号中，且当前符号就是最外围的引号类型，则修改状态为退出引号
+                    if (isInQuote && character == quoteChar)
+                    {
+                        isInQuote = false;
+                        quoteChar = '\0';
+                    }
+                    // 如果在引号外，则修改标记，进入引号范围
+                    else if (!isInQuote)
+                    {
+                        isInQuote = true;
+                        quoteChar = character;
+                    }
+                }
+
+                if (_expressionDelim.Contains(character) && !isInQuote)
                 {
                     // 当前字符是运算符，且参数结束为止不为-1，则说明下一个位置是参数数据结束的位置
                     if (argEndIndex != -1)
@@ -252,7 +288,7 @@ namespace Testflow.SequenceManager.Expression
             {
                 // 字符串替换为去除双引号后的值
                 Match matchData = _strRegex.Match(value);
-                expressionElement.Value = matchData.Groups[1].Value;
+                expressionElement.Value = matchData.Groups[2].Value;
                 expressionElement.Type = ParameterType.Value;
             }
             else
@@ -292,7 +328,7 @@ namespace Testflow.SequenceManager.Expression
             const char empty = '\0';
             int oldNameLength = varOldName.Length;
             bool varExist = false;
-            while ((index = expression.LastIndexOf(varOldName, 0, index)) >= 0)
+            while ((index = expression.LastIndexOf(varOldName, 0, index, StringComparison.Ordinal)) >= 0)
             {
                 // 找出对应变量名左侧和右侧第一个非空格的字符
                 char leftElement;

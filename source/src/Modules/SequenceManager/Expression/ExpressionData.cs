@@ -66,7 +66,7 @@ namespace Testflow.SequenceManager.Expression
         public ExpressionData(int argumentCount)
         {
             this.Name = string.Empty;
-            this.Source = new ExpressionElement();
+//            this.Source = new ExpressionElement();
             this.Arguments = new List<IExpressionElement>(argumentCount);
             this.Operation = CommonConst.NAOperator;
             this.Parent = null;
