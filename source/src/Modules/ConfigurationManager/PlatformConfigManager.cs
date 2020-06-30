@@ -93,7 +93,7 @@ namespace Testflow.ConfigurationManager
             Dictionary<string, ExpressionOperatorInfo> operatorInfos = new Dictionary<string, ExpressionOperatorInfo>(expressionTokens.Operators.Count);
             foreach (ExpressionOperatorInfo operatorInfo in expressionTokens.Operators)
             {
-                operatorInfos.Add(operatorInfo.Symbol, operatorInfo);
+                operatorInfos.Add(operatorInfo.Name, operatorInfo);
             }
             globalConfigData.AddConfigItem(Constants.SequenceManage, "ExpressionOperators", operatorInfos);
             globalConfigData.AddConfigItem(Constants.EngineConfig, "ExpressionOperators", operatorInfos);
