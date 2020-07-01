@@ -30,6 +30,11 @@
         /// </summary>
         public const int FlowControl = 5 | CommonErrorMask;
 
+        /// <summary>
+        /// 外部异常，由非TestFlow内部触发，并非直接由错误触发
+        /// </summary>
+        public const int ExternalError = 0x00FF | CommonErrorMask;
+
         #region 各模块异常码掩码定义
 
         /// <summary>
