@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Threading;
 using Testflow.Usr;
 using Testflow.CoreCommon;
@@ -26,36 +27,45 @@ namespace Testflow.SlaveCore.SlaveFlowControl
             Context.LogSession.Print(LogLevel.Debug, Context.SessionId, "Wait for RmtGenMessage.");
 
             RmtGenMessage rmtGenMessage;
-            // 等待接收到RmtGenMessage为止
-            while (null == (rmtGenMessage = Context.RmtGenMessage) && !Context.Cancellation.IsCancellationRequested)
-            {
-                Thread.Sleep(10);
-            }
-            // 如果被取消则直接返回
-            if (Context.Cancellation.IsCancellationRequested)
-            {
-                return;
-            }
-            // 打印状态日志
-            Context.LogSession.Print(LogLevel.Debug, Context.SessionId, "RmtGenMessage received.");
 
-            SequenceManager.SequenceManager sequenceManager = new SequenceManager.SequenceManager();
-            Context.SequenceType = rmtGenMessage.SequenceType;
-            if (rmtGenMessage.SequenceType == RunnerType.TestProject)
+            do
             {
-                ITestProject testProject = sequenceManager.RuntimeDeserializeTestProject(rmtGenMessage.Sequence);
-                Context.Sequence = testProject;
-                Context.ExecutionModel = ExecutionModel.SequentialExecution;
-            }
-            else
-            {
-                ISequenceGroup sequenceGroup = sequenceManager.RuntimeDeserializeSequenceGroup(rmtGenMessage.Sequence);
-                Context.Sequence = sequenceGroup;
-                Context.ExecutionModel = sequenceGroup.ExecutionModel;
-            }
+                rmtGenMessage = Context.RmtGenMessages.WaitUntilMessageCome();
+                // 如果被取消则直接返回
+                if (Context.Cancellation.IsCancellationRequested || null == rmtGenMessage)
+                {
+                    return;
+                }
+                // 打印状态日志
+                Context.LogSession.Print(LogLevel.Debug, Context.SessionId, "RmtGenMessage received.");
+                if (!string.IsNullOrWhiteSpace(rmtGenMessage.Sequence))
+                {
+                    SequenceManager.SequenceManager sequenceManager = new SequenceManager.SequenceManager();
+                    Context.SequenceType = rmtGenMessage.SequenceType;
+                    if (rmtGenMessage.SequenceType == RunnerType.TestProject)
+                    {
+                        ITestProject testProject = sequenceManager.RuntimeDeserializeTestProject(rmtGenMessage.Sequence);
+                        Context.Sequence = testProject;
+                        Context.ExecutionModel = ExecutionModel.SequentialExecution;
+                    }
+                    else
+                    {
+                        ISequenceGroup sequenceGroup = sequenceManager.RuntimeDeserializeSequenceGroup(rmtGenMessage.Sequence);
+                        Context.Sequence = sequenceGroup;
+                        Context.ExecutionModel = sequenceGroup.ExecutionModel;
+                    }
+                    sequenceManager.Dispose();
+                }
+                if (null != rmtGenMessage.Params && rmtGenMessage.Params.Count > 0)
+                {
 
-            sequenceManager.Dispose();
-            Context.RmtGenMessage = null;
+                }
+            } while (!rmtGenMessage.IsLastRmtGenMessage);
+
+
+
+
+            Context.RmtGenMessages = null;
 
             this.Next = new TestGenerationFlowTask(Context);
         }

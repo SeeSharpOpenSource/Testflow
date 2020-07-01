@@ -95,6 +95,7 @@ namespace Testflow.CoreCommon.Common
             bool getLock = false;
             _operationLock.Enter(ref getLock);
             Thread.VolatileWrite(ref _stopEnqueueFlag, 1);
+            Thread.MemoryBarrier();
             try
             {
                 while (_blockCount > 0)

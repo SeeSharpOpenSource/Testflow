@@ -25,20 +25,14 @@ namespace Testflow.SlaveCore.Common
             _context.LogSession.Print(LogLevel.Debug, _context.SessionId, 
                 $"Downlink message processer started, thread:{Thread.CurrentThread.ManagedThreadId}.");
 
-            // 首先接收RmtGenMessage
             _messageQueue = _context.MessageTransceiver.MessageQueue;
-            MessageBase message = _messageQueue.WaitUntilMessageCome();
-            RmtGenMessage rmtGenMessage = (RmtGenMessage)message;
-            if (null == rmtGenMessage)
-            {
-                throw new TestflowRuntimeException(ModuleErrorCode.InvalidMessageReceived,
-                    _context.I18N.GetFStr("InvalidMessageReceived", message.GetType().Name));
-            }
-            _context.RmtGenMessage = rmtGenMessage;
+
+            // 首先接收RmtGenMessage
+            WaitUntilRmtGenMessageOver();
 
             while (!_context.Cancellation.IsCancellationRequested)
             {
-                message = _messageQueue.WaitUntilMessageCome();
+                MessageBase message = _messageQueue.WaitUntilMessageCome();
                 if (null == message)
                 {
                     continue;
@@ -69,6 +63,31 @@ namespace Testflow.SlaveCore.Common
             }
             _context.LogSession.Print(LogLevel.Debug, _context.SessionId, 
                 $"Downlink message processor stopped, Thread:{Thread.CurrentThread.ManagedThreadId}");
+        }
+
+        private void WaitUntilRmtGenMessageOver()
+        {
+            MessageBase message = _messageQueue.WaitUntilMessageCome();
+            RmtGenMessage rmtGenMessage = (RmtGenMessage) message;
+            if (null == rmtGenMessage)
+            {
+                throw new TestflowRuntimeException(ModuleErrorCode.InvalidMessageReceived,
+                    _context.I18N.GetFStr("InvalidMessageReceived", message.GetType().Name));
+            }
+            _context.RmtGenMessages.Enqueue(rmtGenMessage);
+            int rmtMsgCount = 1;
+            while (!rmtGenMessage.IsLastRmtGenMessage)
+            {
+                message = _messageQueue.WaitUntilMessageCome();
+                rmtGenMessage = (RmtGenMessage) message;
+                rmtMsgCount++;
+                if (null == rmtGenMessage || rmtMsgCount > Constants.MaxRmtMessageCount)
+                {
+                    throw new TestflowRuntimeException(ModuleErrorCode.InvalidMessageReceived,
+                        _context.I18N.GetFStr("InvalidMessageReceived", message.GetType().Name));
+                }
+                _context.RmtGenMessages.Enqueue(rmtGenMessage);
+            }
         }
 
         public void Stop()

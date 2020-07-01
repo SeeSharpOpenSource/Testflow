@@ -18,6 +18,13 @@ namespace Testflow.CoreCommon.Messages
         {
             this.SequenceType = type;
             this.Sequence = sequence;
+            this.IsLastRmtGenMessage = false;
+            this.Params = new Dictionary<string, string>(CoreConstants.DefaultRuntimeSize);
+        }
+
+        public RmtGenMessage(string name, int id): base(name, id, MessageType.RmtGen)
+        {
+            this.IsLastRmtGenMessage = false;
             this.Params = new Dictionary<string, string>(CoreConstants.DefaultRuntimeSize);
         }
 
@@ -25,8 +32,14 @@ namespace Testflow.CoreCommon.Messages
         {
             this.SequenceType = type;
             this.Sequence = null;
+            this.IsLastRmtGenMessage = false;
             this.Params = new Dictionary<string, string>(CoreConstants.DefaultRuntimeSize);
         }
+
+        /// <summary>
+        /// 标记当前消息是否为最后一条消息
+        /// </summary>
+        public bool IsLastRmtGenMessage { get; set; }
 
         /// <summary>
         /// 测试运行主机的信息
@@ -79,6 +92,7 @@ namespace Testflow.CoreCommon.Messages
             info.AddValue("SequenceType", SequenceType);
             info.AddValue("Sequence", Sequence);
             info.AddValue("Params", Params);
+            info.AddValue("IsLastRmtGenMessage", IsLastRmtGenMessage);
             if (null != this.RunnerHost)
             {
                 info.AddValue("RunnerHost", RunnerHost);

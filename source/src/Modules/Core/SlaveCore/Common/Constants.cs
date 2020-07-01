@@ -35,5 +35,7 @@
         public const int MaxWatchDataLength = 65536;
 
         public const string IllegalValue = "N/A";
+
+        public const int MaxRmtMessageCount = 20;
     }
 }

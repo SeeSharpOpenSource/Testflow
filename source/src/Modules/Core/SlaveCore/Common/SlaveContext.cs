@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading;
@@ -43,7 +44,7 @@ namespace Testflow.SlaveCore.Common
             this.UplinkMsgProcessor = new UplinkMessageProcessor(this);
             this.CallBackEventManager = new CallBackEventManager();
             this.FlowControlThread = null;
-            this.RmtGenMessage = null;
+            this.RmtGenMessages = new LocalMessageQueue<RmtGenMessage>(Constants.DefaultRuntimeSize);
             this.CtrlStartMessage = null;
             this.CtrlStartMessage = null;
             this.TraceVariables = new HashSet<string>();
@@ -100,7 +101,7 @@ namespace Testflow.SlaveCore.Common
         /// <summary>
         /// 测试生成消息实例，全局唯一
         /// </summary>
-        public RmtGenMessage RmtGenMessage { get; set; }
+        public LocalMessageQueue<RmtGenMessage> RmtGenMessages { get; set; }
 
         /// <summary>
         /// 控制开始消息，可以接收到多个
@@ -168,6 +169,7 @@ namespace Testflow.SlaveCore.Common
             Thread.VolatileWrite(ref _diposedFlag, 1);
             Thread.MemoryBarrier();
             MessageTransceiver?.Dispose();
+            RmtGenMessages?.FreeBlocks();
             TimingManager.Dispose();
             CoroutineManager.Dispose();
             DebugManager.Dispose();

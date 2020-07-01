@@ -9,6 +9,7 @@ using Testflow.CoreCommon.Common;
 using Testflow.CoreCommon.Data;
 using Testflow.CoreCommon.Data.EventInfos;
 using Testflow.CoreCommon.Messages;
+using Testflow.Data.Expression;
 using Testflow.Data.Sequence;
 using Testflow.MasterCore.Common;
 using Testflow.MasterCore.TestMaintain.Container;
@@ -119,16 +120,31 @@ namespace Testflow.MasterCore.TestMaintain
         public void SendRmtGenMessage(int session, string sequenceData)
         {
             // TODO 暂时不配置Host信息
+            // 发送保存序列信息的消息
             RunnerType runnerType = (session == Constants.TestProjectSessionId)
                 ? RunnerType.TestProject
                 : RunnerType.SequenceGroup;
+
             RmtGenMessage rmtGenMessage = new RmtGenMessage(MessageNames.DownRmtGenMsgName, session, runnerType,
                 sequenceData);
             rmtGenMessage.Params.Add("MsgType", "Generation");
             _globalInfo.MessageTransceiver.Send(rmtGenMessage);
+
             // 发送生成事件
             TestGenEventInfo testGenEventInfo = new TestGenEventInfo(rmtGenMessage, TestGenState.StartGeneration);
             _globalInfo.EventQueue.Enqueue(testGenEventInfo);
+
+            // 发送保存表达式信息的消息
+            rmtGenMessage = new RmtGenMessage(MessageNames.DownRmtGenMsgName, session);
+            rmtGenMessage.Params.Add("MsgType", "Generation");
+            Dictionary<string, ExpressionOperatorInfo> operatorInfos = 
+                _globalInfo.ConfigData.GetProperty<Dictionary<string, ExpressionOperatorInfo>>("ExpressionOperators");
+            ExpressionCalculatorInfo[] calculatorInfos = 
+                _globalInfo.ConfigData.GetProperty<ExpressionCalculatorInfo[]>("ExpressionCalculators");
+            rmtGenMessage.Params.Add("ExpressionOperators", JsonConvert.SerializeObject(operatorInfos.Values));
+            rmtGenMessage.Params.Add("ExpressionCalculators", JsonConvert.SerializeObject(calculatorInfos));
+            rmtGenMessage.IsLastRmtGenMessage = true;
+            _globalInfo.MessageTransceiver.Send(rmtGenMessage);
         }
         
         public Dictionary<int, RuntimeContainer> TestContainers => _runtimeContainers;
@@ -207,9 +223,9 @@ namespace Testflow.MasterCore.TestMaintain
             configData.Add("RuntimeType", _globalInfo.ConfigData.GetProperty<RuntimeType>("RuntimeType").ToString());
             configData.Add("SessionName", sessionName);
             configData.Add("InstanceName", _globalInfo.ConfigData.GetProperty<string>("TestName"));
-            configData.Add("DotNetLibDir", "");
-            configData.Add("DotNetRootDir", "");
-            configData.Add("PlatformLibDir", "");
+            configData.Add("DotNetLibDir", _globalInfo.ConfigData.GetProperty<string>("DotNetLibDir"));
+            configData.Add("DotNetRootDir", _globalInfo.ConfigData.GetProperty<string>("DotNetRootDir"));
+            configData.Add("PlatformLibDir", _globalInfo.ConfigData.GetProperty<string>("PlatformLibDir"));
             configData.Add("InstanceLibDir", "");
             configData.Add("EnablePerformanceMonitor", _globalInfo.ConfigData.GetProperty<bool>("EnablePerformanceMonitor").ToString());
             configData.Add("NumericFormat", _globalInfo.ConfigData.GetProperty<string>("NumericFormat"));
