@@ -13,6 +13,9 @@ namespace Testflow.Data.Expression
         public string AssemblyPath { get; set; }
 
         [XmlAttribute]
+        public string AssemblyName { get; set; }
+
+        [XmlAttribute]
         public string ClassName { get; set; }
     }
 }
