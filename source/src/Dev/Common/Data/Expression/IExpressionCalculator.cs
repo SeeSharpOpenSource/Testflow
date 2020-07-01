@@ -15,7 +15,7 @@ namespace Testflow.Data.Expression
         /// <summary>
         /// 判断待测试的数据类型是否匹配
         /// </summary>
-        bool IsValidValue(object sourceValue, params object[] arguments);
+        bool IsValidValue(out string errorInfo, object sourceValue, params object[] arguments);
 
         /// <summary>
         /// 计算表达式结果
