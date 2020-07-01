@@ -141,6 +141,12 @@
   <data name="EventQueueOverflow" xml:space="preserve">
     <value>事件队列已溢出。</value>
   </data>
+  <data name="ExpVariableNotExist" xml:space="preserve">
+    <value>表达式中使用了未定义的变量{0}。</value>
+  </data>
+  <data name="IllegalExpression" xml:space="preserve">
+    <value>表达式&lt;{0}&gt;非法。</value>
+  </data>
   <data name="IllegalStepType" xml:space="preserve">
     <value>序列中存在类型不符合规则的步骤。</value>
   </data>
@@ -149,6 +155,9 @@
   </data>
   <data name="IncorrectParamType" xml:space="preserve">
     <value>事件参数类型应为”{0}“。</value>
+  </data>
+  <data name="InvalidCalculator" xml:space="preserve">
+    <value>类”{0}“不是有效的表达式计算类。</value>
   </data>
   <data name="InvalidLibVersion" xml:space="preserve">
     <value>程序集‘{0}’是序列中定义程序集的早期版本。</value>

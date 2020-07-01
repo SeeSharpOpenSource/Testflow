@@ -141,6 +141,12 @@
   <data name="EventQueueOverflow" xml:space="preserve">
     <value>The event queue is overflow.</value>
   </data>
+  <data name="ExpVariableNotExist" xml:space="preserve">
+    <value>The variable '{0}' in expression has not declared.</value>
+  </data>
+  <data name="IllegalExpression" xml:space="preserve">
+    <value>Illegal expression value: {0}.</value>
+  </data>
   <data name="IllegalStepType" xml:space="preserve">
     <value>Illegal step type exist in sequence data.</value>
   </data>
@@ -149,6 +155,9 @@
   </data>
   <data name="IncorrectParamType" xml:space="preserve">
     <value>The type of event parameter should be "{0}".</value>
+  </data>
+  <data name="InvalidCalculator" xml:space="preserve">
+    <value>Class '{0}' is not valid expression calculator class.</value>
   </data>
   <data name="InvalidLibVersion" xml:space="preserve">
     <value>The version of assembly {0} is lower than the version defined in sequence.</value>

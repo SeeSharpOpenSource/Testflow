@@ -133,6 +133,24 @@ namespace Testflow.SlaveCore.Resources.locale {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The variable &apos;{0}&apos; in expression has not declared..
+        /// </summary>
+        internal static string ExpVariableNotExist {
+            get {
+                return ResourceManager.GetString("ExpVariableNotExist", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Illegal expression value: {0}..
+        /// </summary>
+        internal static string IllegalExpression {
+            get {
+                return ResourceManager.GetString("IllegalExpression", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Illegal step type exist in sequence data..
         /// </summary>
         internal static string IllegalStepType {
@@ -156,6 +174,15 @@ namespace Testflow.SlaveCore.Resources.locale {
         internal static string IncorrectParamType {
             get {
                 return ResourceManager.GetString("IncorrectParamType", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Class &apos;{0}&apos; is not valid expression calculator class..
+        /// </summary>
+        internal static string InvalidCalculator {
+            get {
+                return ResourceManager.GetString("InvalidCalculator", resourceCulture);
             }
         }
         

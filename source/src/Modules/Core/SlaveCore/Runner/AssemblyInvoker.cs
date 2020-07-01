@@ -5,6 +5,7 @@ using System.Reflection;
 using Testflow.Usr;
 using Testflow.CoreCommon;
 using Testflow.Data;
+using Testflow.Data.Expression;
 using Testflow.Data.Sequence;
 using Testflow.SlaveCore.Common;
 
@@ -23,6 +24,7 @@ namespace Testflow.SlaveCore.Runner
         private readonly SlaveContext _context;
 
         private readonly string _dotNetLibDir;
+        private readonly string _dotNetRootDir;
         private readonly string _platformLibDir;
         private readonly string[] _instanceLibDir;
 
@@ -37,6 +39,7 @@ namespace Testflow.SlaveCore.Runner
             this._context = context;
 
             this._dotNetLibDir = context.GetProperty<string>("DotNetLibDir");
+            this._dotNetRootDir = context.GetProperty<string>("DotNetRootDir");
             this._platformLibDir = context.GetProperty<string>("PlatformLibDir");
             this._instanceLibDir = context.GetProperty<string>("InstanceLibDir").Split(';');
 
@@ -252,6 +255,11 @@ namespace Testflow.SlaveCore.Runner
                 return fullPath;
             }
             fullPath = ModuleUtils.GetFileFullPath(path, _dotNetLibDir);
+            if (null != fullPath)
+            {
+                return fullPath;
+            }
+            fullPath = ModuleUtils.GetFileFullPath(path, _dotNetRootDir);
             return fullPath;
         }
 
@@ -287,5 +295,79 @@ namespace Testflow.SlaveCore.Runner
                 throw new TestflowDataException(ModuleErrorCode.UnavailableLibrary, _context.I18N.GetFStr("InvalidLibVersion", assmblyName));
             }
         }
+
+        #region 表达式相关
+
+        public IExpressionCalculator GetCalculatorInstance(ExpressionCalculatorInfo calculatorInfo)
+        {
+            ExpressionTypeData calculatorClass = calculatorInfo.CalculatorClass;
+            Assembly assembly = GetCalculatorAssembly(calculatorClass);
+            return GetCalculatorInstance(assembly, calculatorClass);
+        }
+
+        private IExpressionCalculator GetCalculatorInstance(Assembly assembly, ExpressionTypeData calculatorClass)
+        {
+            Type calculatorType = assembly.GetType(calculatorClass.ClassName);
+            if (null == calculatorType)
+            {
+                _context.LogSession.Print(LogLevel.Error, _context.SessionId, $"Cannot find type {calculatorClass.ClassName}.");
+                throw new TestflowRuntimeException(ModuleErrorCode.UnaccessibleType, 
+                    _context.I18N.GetStr("LoadTypeFailed"));
+            }
+            if (!calculatorType.IsSubclassOf(typeof(IExpressionCalculator)))
+            {
+                throw new TestflowRuntimeException(ModuleErrorCode.ExpressionError,
+                    _context.I18N.GetFStr("InvalidCalculator", calculatorClass.ClassName));
+            }
+            try
+            {
+                return (IExpressionCalculator) Activator.CreateInstance(calculatorType);
+            }
+            catch (ApplicationException ex)
+            {
+                _context.LogSession.Print(LogLevel.Error, _context.SessionId, ex, $"Create object {calculatorClass.ClassName} failed.");
+                throw new TestflowRuntimeException(ModuleErrorCode.UnaccessibleType,
+                    _context.I18N.GetStr("LoadTypeFailed"), ex);
+            }
+        }
+
+        private Assembly GetCalculatorAssembly(ExpressionTypeData calculatorClass)
+        {
+            Assembly assembly = null;
+            if (_assembliesMapping.ContainsKey(calculatorClass.AssemblyName))
+            {
+                assembly = _assembliesMapping[calculatorClass.AssemblyName];
+            }
+            else
+            {
+                try
+                {
+                    string fullPath = GetAssemblyFullPath(calculatorClass.AssemblyPath);
+                    if (null == fullPath)
+                    {
+                        _context.LogSession.Print(LogLevel.Error, CommonConst.PlatformLogSession,
+                            $"Assembly '{calculatorClass.AssemblyName}' cannot be found in path '{calculatorClass.AssemblyPath}'.");
+                        throw new TestflowRuntimeException(ModuleErrorCode.UnavailableLibrary,
+                            _context.I18N.GetFStr("UnexistLibrary", calculatorClass.AssemblyName, calculatorClass.AssemblyPath));
+                    }
+                    assembly = Assembly.LoadFrom(fullPath);
+                    _assembliesMapping.Add(calculatorClass.AssemblyName, assembly);
+                }
+                catch (TestflowException)
+                {
+                    throw;
+                }
+                catch (Exception ex)
+                {
+                    _context.LogSession.Print(LogLevel.Error, CommonConst.PlatformLogSession, ex, "Load assembly failed.");
+                    throw new TestflowRuntimeException(ModuleErrorCode.UnavailableLibrary,
+                        _context.I18N.GetStr("LoadAssemblyFailed"), ex);
+                }
+            }
+            return assembly;
+        }
+
+        #endregion
+
     }
 }

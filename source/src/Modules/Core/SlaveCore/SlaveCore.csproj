@@ -44,6 +44,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Runner\Expression\ExpressionData.cs" />
+    <Compile Include="Runner\Expression\ExpressionElement.cs" />
+    <Compile Include="Runner\Expression\ExpressionParser.cs" />
+    <Compile Include="Runner\Expression\ExpressionProcessor.cs" />
+    <Compile Include="Runner\Expression\OperatorAdapter.cs" />
+    <Compile Include="Runner\Expression\OperatorAdapterComparer.cs" />
     <Compile Include="ProcessTestLauncher.cs" />
     <Compile Include="AppDomainTestLauncher.cs" />
     <Compile Include="Common\CallBackEventManager.cs" />
@@ -164,6 +170,7 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

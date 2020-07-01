@@ -7,6 +7,7 @@ using Newtonsoft.Json;
 using Testflow.CoreCommon.Common;
 using Testflow.CoreCommon.Messages;
 using Testflow.Data;
+using Testflow.Data.Expression;
 using Testflow.Data.Sequence;
 using Testflow.Logger;
 using Testflow.Runtime;
@@ -70,6 +71,10 @@ namespace Testflow.SlaveCore.Common
         public ISequenceFlowContainer Sequence { get; set; }
 
         public ExecutionModel ExecutionModel { get; set; }
+
+        public ExpressionOperatorInfo[] ExpOperatorInfos { get; set; }
+
+        public ExpressionCalculatorInfo[] ExpCalculatorInfos { get; set; }
 
         public VariableMapper VariableMapper { get; set; }
 

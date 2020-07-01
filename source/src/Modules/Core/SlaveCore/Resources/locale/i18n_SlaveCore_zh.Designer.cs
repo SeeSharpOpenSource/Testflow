@@ -133,6 +133,24 @@ namespace Testflow.SlaveCore.Resources.locale {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to 表达式中使用了未定义的变量{0}。.
+        /// </summary>
+        internal static string ExpVariableNotExist {
+            get {
+                return ResourceManager.GetString("ExpVariableNotExist", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 表达式&lt;{0}&gt;非法。.
+        /// </summary>
+        internal static string IllegalExpression {
+            get {
+                return ResourceManager.GetString("IllegalExpression", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to 序列中存在类型不符合规则的步骤。.
         /// </summary>
         internal static string IllegalStepType {
@@ -156,6 +174,15 @@ namespace Testflow.SlaveCore.Resources.locale {
         internal static string IncorrectParamType {
             get {
                 return ResourceManager.GetString("IncorrectParamType", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 类”{0}“不是有效的表达式计算类。.
+        /// </summary>
+        internal static string InvalidCalculator {
+            get {
+                return ResourceManager.GetString("InvalidCalculator", resourceCulture);
             }
         }
         
@@ -219,15 +246,6 @@ namespace Testflow.SlaveCore.Resources.locale {
         internal static string LoadFunctionFailed {
             get {
                 return ResourceManager.GetString("LoadFunctionFailed", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to 加载类型数据失败。.
-        /// </summary>
-        internal static string LoadTypeFailed {
-            get {
-                return ResourceManager.GetString("LoadTypeFailed", resourceCulture);
             }
         }
         

@@ -1,11 +1,14 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using Newtonsoft.Json;
 using Testflow.Usr;
 using Testflow.CoreCommon;
 using Testflow.CoreCommon.Common;
 using Testflow.CoreCommon.Messages;
 using Testflow.Data;
+using Testflow.Data.Expression;
 using Testflow.Data.Sequence;
 using Testflow.Runtime;
 using Testflow.SlaveCore.Common;
@@ -58,16 +61,33 @@ namespace Testflow.SlaveCore.SlaveFlowControl
                 }
                 if (null != rmtGenMessage.Params && rmtGenMessage.Params.Count > 0)
                 {
-
+                    ProcessRmtGenParameters(rmtGenMessage.Params);
                 }
             } while (!rmtGenMessage.IsLastRmtGenMessage);
-
-
-
 
             Context.RmtGenMessages = null;
 
             this.Next = new TestGenerationFlowTask(Context);
+        }
+
+        private void ProcessRmtGenParameters(Dictionary<string, string> parameters)
+        {
+            foreach (KeyValuePair<string, string> paramKeyToValue in parameters)
+            {
+                string paramName = paramKeyToValue.Key;
+                string paramValue = paramKeyToValue.Value;
+                switch (paramName)
+                {
+                    case "MsgType":
+                        break;
+                    case "ExpressionOperators":
+                        Context.ExpOperatorInfos = JsonConvert.DeserializeObject<ExpressionOperatorInfo[]>(paramValue);
+                        break;
+                    case "ExpressionCalculators":
+                        Context.ExpCalculatorInfos = JsonConvert.DeserializeObject<ExpressionCalculatorInfo[]>(paramValue);
+                        break;
+                }
+            }
         }
 
         public override void TaskAbortAction()
