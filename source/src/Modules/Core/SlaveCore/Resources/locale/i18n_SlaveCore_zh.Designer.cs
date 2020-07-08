@@ -133,6 +133,24 @@ namespace Testflow.SlaveCore.Resources.locale {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to 表达式计算错误。.
+        /// </summary>
+        internal static string ExpressionCalculateError {
+            get {
+                return ResourceManager.GetString("ExpressionCalculateError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 因为表达式参数的值非法导致表达式计算错误。.
+        /// </summary>
+        internal static string ExpressionParamError {
+            get {
+                return ResourceManager.GetString("ExpressionParamError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to 表达式中使用了未定义的变量{0}。.
         /// </summary>
         internal static string ExpVariableNotExist {
@@ -246,6 +264,15 @@ namespace Testflow.SlaveCore.Resources.locale {
         internal static string LoadFunctionFailed {
             get {
                 return ResourceManager.GetString("LoadFunctionFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 加载类型数据失败。.
+        /// </summary>
+        internal static string LoadTypeFailed {
+            get {
+                return ResourceManager.GetString("LoadTypeFailed", resourceCulture);
             }
         }
         

@@ -71,6 +71,11 @@ namespace Testflow.SlaveCore.Coroutine
             ExpressionProcessor = new ExpressionProcessor(slaveContext, id);
         }
 
+        public void SequenceGenerationEnd()
+        {
+            ExpressionProcessor.TrimExpressionCache();
+        }
+
         public void Start()
         {
             this.State = CoroutineState.Running;
@@ -143,5 +148,6 @@ namespace Testflow.SlaveCore.Coroutine
         {
             return stateValue == (int) CoroutineState.Running || stateValue == (int) CoroutineState.Blocked;
         }
+
     }
 }

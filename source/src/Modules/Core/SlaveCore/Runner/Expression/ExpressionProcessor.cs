@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Testflow.CoreCommon;
 using Testflow.CoreCommon.Common;
+using Testflow.Data;
 using Testflow.Data.Expression;
 using Testflow.Data.Sequence;
 using Testflow.SlaveCore.Common;
@@ -28,6 +29,8 @@ namespace Testflow.SlaveCore.Runner.Expression
         private readonly Stack<int> _expArgIndexStack;
         private readonly Stack<IExpressionData> _expElementStack;
 
+        private List<ExpressionData> _expressions;
+
         public ExpressionProcessor(SlaveContext context, int coroutineId)
         {
             this._coroutineId = coroutineId;
@@ -49,9 +52,14 @@ namespace Testflow.SlaveCore.Runner.Expression
             {
                 _calculators[calculatorInfo.OperatorName].Add(new ExpressionCalculator(context, calculatorInfo));
             }
+
+            _expressions = new List<ExpressionData>(200);
         }
 
-        public IExpressionData CompileExpression(string expression, ISequenceStep step)
+        /// <summary>
+        /// 解析表达式，并返回表达式的缓存ID
+        /// </summary>
+        public int CompileExpression(string expression, ISequenceStep step)
         {
             const int sourceIndex = -1;
             const int startIndex = -2;
@@ -94,11 +102,19 @@ namespace Testflow.SlaveCore.Runner.Expression
                         throw new ArgumentOutOfRangeException();
                 }
             }
-            return expressionData;
+            int index = _expressions.Count;
+            _expressions.Add((ExpressionData) expressionData);
+            return index;
         }
 
-        private object Calculate(ExpressionData expression)
+        public void TrimExpressionCache()
         {
+            _expressions.TrimExcess();
+        }
+
+        public object Calculate(int index, ITypeData targetType)
+        {
+            ExpressionData expression = _expressions[index];
             try
             {
                 _expArgIndexStack.Push(StartIndex);
@@ -131,7 +147,8 @@ namespace Testflow.SlaveCore.Runner.Expression
                     CalculateSingleExpression(currentExpression);
                     _expElementStack.Pop();
                 }
-                return expression.ExpressionValue;
+                object targetValue = _context.Convertor.CastValue(targetType, expression.ExpressionValue);
+                return targetValue;
             }
             catch (TestflowException)
             {
@@ -146,11 +163,12 @@ namespace Testflow.SlaveCore.Runner.Expression
             {
                 _expArgIndexStack.Clear();
                 _expElementStack.Clear();
+                // 清空expression中的所有Value
                 expression.Reset();
             }
         }
 
-        public void CalculateSingleExpression(ExpressionData expData)
+        private void CalculateSingleExpression(ExpressionData expData)
         {
             IList<ExpressionCalculator> calculators = _calculators[expData.Operation];
             // 按照定义顺序依次检查表达式能否被正确计算，如果存在计算结束的情况则返回
@@ -207,6 +225,8 @@ namespace Testflow.SlaveCore.Runner.Expression
         public void Dispose()
         {
             this._expParser = null;
+            _expressions.Clear();
+            _expressions = null;
         }
     }
 }

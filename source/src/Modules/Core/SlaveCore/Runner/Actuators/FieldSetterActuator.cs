@@ -5,6 +5,7 @@ using Testflow.Data;
 using Testflow.Data.Sequence;
 using Testflow.Runtime.Data;
 using Testflow.SlaveCore.Common;
+using Testflow.SlaveCore.Runner.Expression;
 using Testflow.SlaveCore.Runner.Model;
 
 namespace Testflow.SlaveCore.Runner.Actuators
@@ -72,6 +73,14 @@ namespace Testflow.SlaveCore.Runner.Actuators
                         parameters[i].Value = ModuleUtils.GetFullParameterVariableName(varFullName, paramValue);
                         _params.Add(null);
                         break;
+                    case ParameterType.Expression:
+                        ExpressionProcessor expProcessor =
+                            Context.CoroutineManager.GetCoroutineHandle(CoroutineId).ExpressionProcessor;
+                        int expIndex = expProcessor.CompileExpression(paramValue, StepData);
+                        // 在参数数据中写入表达式索引
+                        parameters[i].Value = expIndex.ToString();
+                        _params.Add(null);
+                        break;
                     default:
                         throw new ArgumentOutOfRangeException();
                 }
@@ -110,6 +119,13 @@ namespace Testflow.SlaveCore.Runner.Actuators
                     // 根据ParamString和变量对应的值配置参数。
                     _params[i] = Context.VariableMapper.GetParamValue(variableName, parameters[i].Value,
                         arguments[i].Type);
+                }
+                else if (parameters[i].ParameterType == ParameterType.Expression)
+                {
+                    int expIndex = int.Parse(parameters[i].Value);
+                    ExpressionProcessor expProcessor =
+                        Context.CoroutineManager.GetCoroutineHandle(CoroutineId).ExpressionProcessor;
+                    _params[i] = expProcessor.Calculate(expIndex, arguments[i].Type);
                 }
                 _fields[i].SetValue(instance, _params[i]);
             }

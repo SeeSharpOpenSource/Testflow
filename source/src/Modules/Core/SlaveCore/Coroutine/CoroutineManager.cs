@@ -54,6 +54,14 @@ namespace Testflow.SlaveCore.Coroutine
             _coroutineHandles[coroutineId].Stop();
         }
 
+        public void SequenceGenerationEnd()
+        {
+            foreach (CoroutineHandle coroutineHandle in _coroutineHandles.Values)
+            {
+                coroutineHandle.SequenceGenerationEnd();
+            }
+        }
+
         // 获取最后一个执行的Step
         public StepExecutionInfo GetLastStepInfo(int coroutineId)
         {

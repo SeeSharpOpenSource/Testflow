@@ -141,6 +141,12 @@
   <data name="EventQueueOverflow" xml:space="preserve">
     <value>The event queue is overflow.</value>
   </data>
+  <data name="ExpressionCalculateError" xml:space="preserve">
+    <value>Expression calculation error.</value>
+  </data>
+  <data name="ExpressionParamError" xml:space="preserve">
+    <value>Expression calculation failed caused by illegal parameter value.</value>
+  </data>
   <data name="ExpVariableNotExist" xml:space="preserve">
     <value>The variable '{0}' in expression has not declared.</value>
   </data>

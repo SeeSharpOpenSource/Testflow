@@ -133,6 +133,24 @@ namespace Testflow.SlaveCore.Resources.locale {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Expression calculation error..
+        /// </summary>
+        internal static string ExpressionCalculateError {
+            get {
+                return ResourceManager.GetString("ExpressionCalculateError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Expression calculation failed caused by illegal parameter value..
+        /// </summary>
+        internal static string ExpressionParamError {
+            get {
+                return ResourceManager.GetString("ExpressionParamError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The variable &apos;{0}&apos; in expression has not declared..
         /// </summary>
         internal static string ExpVariableNotExist {

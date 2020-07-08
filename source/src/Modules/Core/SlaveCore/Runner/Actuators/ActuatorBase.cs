@@ -72,7 +72,7 @@ namespace Testflow.SlaveCore.Runner.Actuators
         /// <summary>
         /// 当前运行所在运行器的逻辑ID。(因为是在县城内部控制调用逻辑，可以认为是某种协程)
         /// </summary>
-        private int _coroutineId;
+        protected int CoroutineId { get; private set; }
 
         #region 测试生成相关接口
 
@@ -114,7 +114,7 @@ namespace Testflow.SlaveCore.Runner.Actuators
         /// </summary>
         public void Generate(int coroutineId)
         {
-            this._coroutineId = coroutineId;
+            this.CoroutineId = coroutineId;
             this.GenerateInvokeInfo();
             this.InitializeParamsValues();
         }
@@ -131,7 +131,7 @@ namespace Testflow.SlaveCore.Runner.Actuators
         {
             this.ExecutionTicks = -1;
             this.ExecutionTime = DateTime.Now;
-            Context.TimingManager.StartTiming(_coroutineId);
+            Context.TimingManager.StartTiming(CoroutineId);
         }
 
         /// <summary>
@@ -139,7 +139,7 @@ namespace Testflow.SlaveCore.Runner.Actuators
         /// </summary>
         public void EndTiming()
         {
-            long ticks = Context.TimingManager.EndTiming(_coroutineId);
+            long ticks = Context.TimingManager.EndTiming(CoroutineId);
             if (this.ExecutionTicks <= -1)
             {
                 this.ExecutionTicks = ticks;

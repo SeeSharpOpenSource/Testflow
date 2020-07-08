@@ -11,6 +11,7 @@ using Testflow.ExtensionBase.Common;
 using Testflow.Runtime;
 using Testflow.Runtime.Data;
 using Testflow.SlaveCore.Common;
+using Testflow.SlaveCore.Runner.Expression;
 using Testflow.SlaveCore.Runner.Model;
 using Testflow.Usr;
 using Testflow.Usr.Common;
@@ -19,14 +20,14 @@ namespace Testflow.SlaveCore.Runner.Actuators
 {
     internal class CallBackActuator : ActuatorBase
     {
-        private object[] Params;
+        private object[] _params;
         private string FullName;
         private int CallBackId;
         private CallBackType callBackType;
 
         public CallBackActuator(ISequenceStep step, SlaveContext context, int sequenceIndex) : base(step, context, sequenceIndex)
         {
-            this.Params = new object[Function.Parameters?.Count ?? 0];
+            this._params = new object[Function.Parameters?.Count ?? 0];
         }
 
         protected override void GenerateInvokeInfo()
@@ -49,30 +50,65 @@ namespace Testflow.SlaveCore.Runner.Actuators
             for (int i = 0; i < argumentInfos.Count; i++)
             {
                 string paramValue = parameters[i].Value;
-                if (parameters[i].ParameterType == ParameterType.Value)
+                switch (parameters[i].ParameterType)
                 {
-                    Params[i] = Context.TypeInvoker.CastConstantValue(argumentInfos[i].Type, paramValue);
-                }
-                else
-                {
-                    // 如果是变量，则先获取对应的Varaible变量，真正的值在运行时才更新获取
-                    string variableName = ModuleUtils.GetVariableNameFromParamValue(paramValue);
-                    IVariable variable = ModuleUtils.GetVaraibleByRawVarName(variableName, StepData);
-                    if (null == variable)
-                    {
-                        Context.LogSession.Print(LogLevel.Error, SequenceIndex,
-                            $"Unexist variable '{variableName}' in sequence data.");
+                    case ParameterType.Value:
+                        _params[i] = Context.TypeInvoker.CastConstantValue(argumentInfos[i].Type, paramValue);
+                        break;
+                    case ParameterType.Variable:
+                        // 如果是变量，则先获取对应的Varaible变量，真正的值在运行时才更新获取
+                        string variableName = ModuleUtils.GetVariableNameFromParamValue(paramValue);
+                        IVariable variable = ModuleUtils.GetVaraibleByRawVarName(variableName, StepData);
+                        if (null == variable)
+                        {
+                            Context.LogSession.Print(LogLevel.Error, Context.SessionId,
+                                $"Unexist variable '{variableName}' in sequence data.");
+                            throw new TestflowDataException(ModuleErrorCode.SequenceDataError,
+                                Context.I18N.GetFStr("UnexistVariable", variableName));
+                        }
+                        // 将变量的值保存到Parameter中
+                        string varFullName = CoreUtils.GetRuntimeVariableName(Context.SessionId, variable);
+                        parameters[i].Value = ModuleUtils.GetFullParameterVariableName(varFullName, parameters[i].Value);
+                        _params[i] = null;
+                        break;
+                    case ParameterType.NotAvailable:
+                        // 如果参数的修饰符为out，则可以不配置
+                        if (argumentInfos[i].Modifier != ArgumentModifier.Out)
+                        {
+                            Context.LogSession.Print(LogLevel.Error, Context.SessionId,
+                                $"The value of parameter '{argumentInfos[i].Name}' in step '{StepData.Name}' is not configured");
+                            throw new TestflowDataException(ModuleErrorCode.SequenceDataError,
+                                    Context.I18N.GetFStr("UnconfiguredParam", argumentInfos[i].Name));
+                        }
+                        break;
+                    case ParameterType.Expression:
+                        ExpressionProcessor expProcessor =
+                            Context.CoroutineManager.GetCoroutineHandle(CoroutineId).ExpressionProcessor;
+                        int expIndex = expProcessor.CompileExpression(paramValue, StepData);
+                        // 在参数数据中写入表达式索引
+                        parameters[i].Value = expIndex.ToString();
+                        break;
+                    default:
                         throw new TestflowDataException(ModuleErrorCode.SequenceDataError,
-                            Context.I18N.GetFStr("UnexistVariable", variableName));
-
-                    }
-                    // 将变量的值保存到Parameter中
-                    string varFullName = CoreUtils.GetRuntimeVariableName(Context.SessionId, variable);
-                    parameters[i].Value = ModuleUtils.GetFullParameterVariableName(varFullName, parameters[i].Value);
-                    Params[i] = null;
+                                Context.I18N.GetStr("InvalidParamVar"));
+                        break;
                 }
             }
-            //todo 做同步的时候再添加对返回值的处理，代码参照StepExecutionEntity的InitializeParamsValue
+            if (null != Function.ReturnType && CoreUtils.IsValidVaraible(Function.Return))
+            {
+                // 如果是变量，则先获取对应的Varaible变量，真正的值在运行时才更新获取
+                string variableName = ModuleUtils.GetVariableNameFromParamValue(Function.Return);
+                IVariable variable = ModuleUtils.GetVaraibleByRawVarName(variableName, StepData);
+                if (null == variable)
+                {
+                    Context.LogSession.Print(LogLevel.Error, SequenceIndex,
+                        $"Unexist variable '{variableName}' in sequence data.");
+                    throw new TestflowDataException(ModuleErrorCode.SequenceDataError,
+                        Context.I18N.GetFStr("UnexistVariable", variableName));
+                }
+//                _returnVar = CoreUtils.GetRuntimeVariableName(Context.SessionId, variable);
+            }
+//            CommonStepDataCheck(_instanceVar);
         }
 
         //发送CallBackMessage至queue，让CallBackProcessor接受
@@ -109,12 +145,12 @@ namespace Testflow.SlaveCore.Runner.Actuators
         //参数转成字符串
         private string[] getStringParams(IFunctionData function)
         {
-            string[] stringParams = new string[Params.Length];
-            for (int n = 0; n < Params.Length; n++)
+            string[] stringParams = new string[_params.Length];
+            for (int n = 0; n < _params.Length; n++)
             {
                 stringParams[n] = function.ParameterType[n].VariableType == VariableType.Class
-                ? JsonConvert.SerializeObject(Params[n])
-                : Params[n].ToString();
+                ? JsonConvert.SerializeObject(_params[n])
+                : _params[n].ToString();
             }
             return stringParams;
         }
@@ -183,8 +219,15 @@ namespace Testflow.SlaveCore.Runner.Actuators
                     // 获取变量值的名称，该名称为变量的运行时名称，其值在InitializeParamValue方法里配置
                     string variableName = ModuleUtils.GetVariableNameFromParamValue(parameters[i].Value);
                     // 根据ParamString和变量对应的值配置参数。
-                    Params[i] = Context.VariableMapper.GetParamValue(variableName, parameters[i].Value,
+                    _params[i] = Context.VariableMapper.GetParamValue(variableName, parameters[i].Value,
                         arguments[i].Type);
+                }
+                else if (parameters[i].ParameterType == ParameterType.Expression)
+                {
+                    int expIndex = int.Parse(parameters[i].Value);
+                    ExpressionProcessor expProcessor =
+                        Context.CoroutineManager.GetCoroutineHandle(CoroutineId).ExpressionProcessor;
+                    _params[i] = expProcessor.Calculate(expIndex, arguments[i].Type);
                 }
             }
         }
