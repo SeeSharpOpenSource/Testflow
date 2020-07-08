@@ -283,7 +283,8 @@ namespace Testflow.SlaveCore.Runner.Expression
             {
                 if (null != step && !SequenceUtils.IsVariableExist(value, step))
                 {
-                    throw new TestflowDataException(ModuleErrorCode.ExpressionError, "ExpVariableNotExist");
+                    throw new TestflowDataException(ModuleErrorCode.ExpressionError,
+                        $"Expression variable '{value}' NotExist");
                 }
                 // 否则则认为表达式为变量值
                 expressionElement.Value = value;

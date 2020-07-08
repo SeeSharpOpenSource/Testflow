@@ -4,6 +4,7 @@ using System.Threading;
 using Testflow.SlaveCore.Common;
 using Testflow.SlaveCore.Data;
 using Testflow.SlaveCore.Debugger;
+using Testflow.SlaveCore.Runner.Expression;
 using Testflow.SlaveCore.Runner.Model;
 
 namespace Testflow.SlaveCore.Coroutine
@@ -32,6 +33,11 @@ namespace Testflow.SlaveCore.Coroutine
 
         public ExecutionTrack ExecutionTracker { get; }
 
+        /// <summary>
+        /// 表达式解析器
+        /// </summary>
+        public ExpressionProcessor ExpressionProcessor { get; }
+
         public event Action<StepTaskEntityBase> PreListener;
         public event Action<StepTaskEntityBase> PostListener;
 
@@ -52,7 +58,7 @@ namespace Testflow.SlaveCore.Coroutine
 
         private readonly Stopwatch _stopWatch;
 
-        public CoroutineHandle(int id)
+        public CoroutineHandle(SlaveContext slaveContext, int id)
         {
             this.State = CoroutineState.Idle;
             this.Id = id;
@@ -62,6 +68,7 @@ namespace Testflow.SlaveCore.Coroutine
             this.EndTime = DateTime.MinValue;
             this._stopWatch = new Stopwatch();
             this.ElapsedTicks = -1;
+            ExpressionProcessor = new ExpressionProcessor(slaveContext, id);
         }
 
         public void Start()

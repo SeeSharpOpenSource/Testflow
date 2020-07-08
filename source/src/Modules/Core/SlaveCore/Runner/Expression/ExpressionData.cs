@@ -59,6 +59,25 @@ namespace Testflow.SlaveCore.Runner.Expression
         /// </summary>
         public string Operation { get; set; }
 
+        private object _expressionValue;
+        /// <summary>
+        /// 表达式计算后的值
+        /// </summary>
+        public object ExpressionValue
+        {
+            get { return _expressionValue; }
+            set
+            {
+                _expressionValue = value;
+                IsValueSet = true;
+            }
+        }
+
+        /// <summary>
+        /// 表达式的值是否已经被配置
+        /// </summary>
+        public bool IsValueSet { get; private set; }
+
         public ExpressionData(int argumentCount)
         {
             this.Name = string.Empty;
@@ -66,6 +85,8 @@ namespace Testflow.SlaveCore.Runner.Expression
             this.Arguments = new List<IExpressionElement>(argumentCount);
             this.Operation = CommonConst.NAOperator;
             this.Parent = null;
+            this._expressionValue = null;
+            this.IsValueSet = false;
         }
 
         public IExpressionData Clone()
@@ -84,6 +105,30 @@ namespace Testflow.SlaveCore.Runner.Expression
                     argument.Initialize(parent);
                 }
             }
+        }
+
+        public void Reset()
+        {
+            this.ExpressionValue = null;
+            this.IsValueSet = false;
+            ResetElement(this.Source);
+            if (Arguments?.Count > 0)
+            {
+                foreach (IExpressionElement element in Arguments)
+                {
+                    ResetElement(element);
+                }
+            }
+        }
+
+        private static void ResetElement(IExpressionElement element)
+        {
+            if (element.Type != ParameterType.Expression)
+            {
+                return;
+            }
+            ((ExpressionData) element.Expression).ExpressionValue = null;
+            ((ExpressionData) element.Expression).IsValueSet = false;
         }
     }
 }

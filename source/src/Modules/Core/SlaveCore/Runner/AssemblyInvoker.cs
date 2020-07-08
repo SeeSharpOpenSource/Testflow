@@ -16,8 +16,6 @@ namespace Testflow.SlaveCore.Runner
         private readonly Dictionary<string, Assembly> _assembliesMapping;
         private readonly Dictionary<string, Type> _typeDataMapping;
 
-        private readonly Dictionary<string, Func<string, object>> _valueTypeConvertors;
-
         private readonly IAssemblyInfoCollection _assemblyInfos;
         private readonly ITypeDataCollection _typeDatas;
 
@@ -42,26 +40,6 @@ namespace Testflow.SlaveCore.Runner
             this._dotNetRootDir = context.GetProperty<string>("DotNetRootDir");
             this._platformLibDir = context.GetProperty<string>("PlatformLibDir");
             this._instanceLibDir = context.GetProperty<string>("InstanceLibDir").Split(';');
-
-            _valueTypeConvertors = new Dictionary<string, Func<string, object>>(20)
-            {
-                {typeof (double).Name, valueStr => double.Parse(valueStr)},
-                {typeof (float).Name, valueStr => float.Parse(valueStr)},
-                {typeof (long).Name, valueStr => long.Parse(valueStr)},
-                {typeof (ulong).Name, valueStr => ulong.Parse(valueStr)},
-                {typeof (int).Name, valueStr => int.Parse(valueStr)},
-                {typeof (uint).Name, valueStr => uint.Parse(valueStr)},
-                {typeof (short).Name, valueStr => short.Parse(valueStr)},
-                {typeof (ushort).Name, valueStr => ushort.Parse(valueStr)},
-                {typeof (char).Name, valueStr => char.Parse(valueStr)},
-                {typeof (byte).Name, valueStr => byte.Parse(valueStr)},
-                {typeof (bool).Name, valueStr => bool.Parse(valueStr)},
-                {typeof (decimal).Name, valueStr => decimal.Parse(valueStr)},
-                {typeof (sbyte).Name, valueStr => sbyte.Parse(valueStr)},
-                {typeof (DateTime).Name, valueStr => DateTime.Parse(valueStr)},
-            };
-
-
         }
 
         public void LoadAssemblyAndType()
@@ -301,37 +279,17 @@ namespace Testflow.SlaveCore.Runner
         public IExpressionCalculator GetCalculatorInstance(ExpressionCalculatorInfo calculatorInfo)
         {
             ExpressionTypeData calculatorClass = calculatorInfo.CalculatorClass;
-            Assembly assembly = GetCalculatorAssembly(calculatorClass);
+            Assembly assembly = GetAssembly(calculatorClass);
             return GetCalculatorInstance(assembly, calculatorClass);
         }
 
-        private IExpressionCalculator GetCalculatorInstance(Assembly assembly, ExpressionTypeData calculatorClass)
+        public Type GetExpArgumentType(ExpressionTypeData expArgTypeData)
         {
-            Type calculatorType = assembly.GetType(calculatorClass.ClassName);
-            if (null == calculatorType)
-            {
-                _context.LogSession.Print(LogLevel.Error, _context.SessionId, $"Cannot find type {calculatorClass.ClassName}.");
-                throw new TestflowRuntimeException(ModuleErrorCode.UnaccessibleType, 
-                    _context.I18N.GetStr("LoadTypeFailed"));
-            }
-            if (!calculatorType.IsSubclassOf(typeof(IExpressionCalculator)))
-            {
-                throw new TestflowRuntimeException(ModuleErrorCode.ExpressionError,
-                    _context.I18N.GetFStr("InvalidCalculator", calculatorClass.ClassName));
-            }
-            try
-            {
-                return (IExpressionCalculator) Activator.CreateInstance(calculatorType);
-            }
-            catch (ApplicationException ex)
-            {
-                _context.LogSession.Print(LogLevel.Error, _context.SessionId, ex, $"Create object {calculatorClass.ClassName} failed.");
-                throw new TestflowRuntimeException(ModuleErrorCode.UnaccessibleType,
-                    _context.I18N.GetStr("LoadTypeFailed"), ex);
-            }
+            Assembly assembly = GetAssembly(expArgTypeData);
+            return GetExpressionType(assembly, expArgTypeData);
         }
 
-        private Assembly GetCalculatorAssembly(ExpressionTypeData calculatorClass)
+        private Assembly GetAssembly(ExpressionTypeData calculatorClass)
         {
             Assembly assembly = null;
             if (_assembliesMapping.ContainsKey(calculatorClass.AssemblyName))
@@ -365,6 +323,38 @@ namespace Testflow.SlaveCore.Runner
                 }
             }
             return assembly;
+        }
+
+        private IExpressionCalculator GetCalculatorInstance(Assembly assembly, ExpressionTypeData calculatorClass)
+        {
+            Type calculatorType = GetExpressionType(assembly, calculatorClass);
+            if (!calculatorType.IsSubclassOf(typeof(IExpressionCalculator)))
+            {
+                throw new TestflowRuntimeException(ModuleErrorCode.ExpressionError,
+                    _context.I18N.GetFStr("InvalidCalculator", calculatorClass.ClassName));
+            }
+            try
+            {
+                return (IExpressionCalculator) Activator.CreateInstance(calculatorType);
+            }
+            catch (ApplicationException ex)
+            {
+                _context.LogSession.Print(LogLevel.Error, _context.SessionId, ex, $"Create object {calculatorClass.ClassName} failed.");
+                throw new TestflowRuntimeException(ModuleErrorCode.UnaccessibleType,
+                    _context.I18N.GetStr("LoadTypeFailed"), ex);
+            }
+        }
+
+        private Type GetExpressionType(Assembly assembly, ExpressionTypeData expressionType)
+        {
+            Type calculatorType = assembly.GetType(expressionType.ClassName);
+            if (null == calculatorType)
+            {
+                _context.LogSession.Print(LogLevel.Error, _context.SessionId, $"Cannot find type {expressionType.ClassName}.");
+                throw new TestflowRuntimeException(ModuleErrorCode.UnaccessibleType,
+                    _context.I18N.GetStr("LoadTypeFailed"));
+            }
+            return calculatorType;
         }
 
         #endregion

@@ -24,7 +24,7 @@ namespace Testflow.SlaveCore.Coroutine
         public CoroutineHandle GetNextCoroutine()
         {
             int coroutineId = Interlocked.Add(ref _currentIndex, CommonConst.SequenceCoroutineCapacity);
-            CoroutineHandle coroutineHandle = new CoroutineHandle(coroutineId);
+            CoroutineHandle coroutineHandle = new CoroutineHandle(_context, coroutineId);
             _coroutineHandles.Add(coroutineId, coroutineHandle);
             return coroutineHandle;
         }

@@ -195,6 +195,22 @@ namespace Testflow.SlaveCore.Data
             }
         }
 
+        public object GetParamValue(string variableName, string paramValueStr)
+        {
+            object value;
+            if (_syncVariables.Contains(variableName))
+            {
+                _syncVarLock.EnterReadLock();
+                value = GetParamValue(this._variables[variableName], paramValueStr);
+                _syncVarLock.ExitReadLock();
+            }
+            else
+            {
+                value = GetParamValue(this._variables[variableName], paramValueStr);
+            }
+            return value;
+        }
+
         public object GetParamValue(string variableName, string paramValueStr, ITypeData targetType)
         {
             object value;
