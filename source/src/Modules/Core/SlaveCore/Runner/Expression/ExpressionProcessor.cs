@@ -171,8 +171,9 @@ namespace Testflow.SlaveCore.Runner.Expression
         private void CalculateSingleExpression(ExpressionData expData)
         {
             IList<ExpressionCalculator> calculators = _calculators[expData.Operation];
-            // 按照定义顺序依次检查表达式能否被正确计算，如果存在计算结束的情况则返回
-            if (calculators.Any(calculator => calculator.TryCalculate(expData)))
+            // 按照定义顺序依次检查表达式能否被为转换值且正确计算或转换值且正确计算，如果存在计算结束的情况则返回
+            if (calculators.Any(calculator => calculator.TryCalculateWithNoConvert(expData))
+                || calculators.Any(calculator => calculator.TryCalculate(expData)))
             {
                 return;
             }

@@ -30,6 +30,32 @@ namespace Testflow.SlaveCore.Runner.Expression
             }
         }
 
+        public bool TryCalculateWithNoConvert(ExpressionData expression)
+        {
+            object sourceValue;
+            if (!TryGetElementOriginalValue(expression.Source, out sourceValue) || sourceValue.GetType() != _sourceType)
+            {
+                return false;
+            }
+            object[] argumentValues = new object[_argumentType.Length];
+            object argumentValue;
+            for (int i = 0; i < _argumentType.Length; i++)
+            {
+                if (!TryGetElementOriginalValue(expression.Arguments[i], out argumentValue) ||
+                    argumentValue.GetType() != _argumentType[i])
+                {
+                    return false;
+                }
+                argumentValues[i] = argumentValue;
+            }
+            if (!_calculator.IsCalculable(sourceValue, argumentValues))
+            {
+                return false;
+            }
+            expression.ExpressionValue = _calculator.Calculate(sourceValue, argumentValues);
+            return true;
+        }
+
         public bool TryCalculate(ExpressionData expression)
         {
             object sourceValue;
@@ -57,8 +83,29 @@ namespace Testflow.SlaveCore.Runner.Expression
 
         private bool TryGetElementValue(IExpressionElement element, Type targetType, out object elementValue)
         {
-            object originalValue = null;
             elementValue = null;
+            object originalValue;
+            if (!TryGetElementOriginalValue(element, out originalValue))
+            {
+                return false;
+            }
+            Type valueType = originalValue.GetType();
+            if (valueType == targetType || valueType.IsSubclassOf(targetType))
+            {
+                elementValue = originalValue;
+                return true;
+            }
+            if (!_context.Convertor.IsValidValueCast(valueType, targetType))
+            {
+                return false;
+            }
+            elementValue = _context.Convertor.CastValue(targetType, originalValue);
+            return true;
+        }
+
+        private bool TryGetElementOriginalValue(IExpressionElement element, out object originalValue)
+        {
+            originalValue = null;
             switch (element.Type)
             {
                 case ParameterType.Value:
@@ -76,17 +123,6 @@ namespace Testflow.SlaveCore.Runner.Expression
                 _context.LogSession.Print(LogLevel.Error, _context.SessionId, $"The value of '{element.Value}' is null.");
                 return false;
             }
-            Type valueType = originalValue.GetType();
-            if (valueType == targetType || valueType.IsSubclassOf(targetType))
-            {
-                elementValue = originalValue;
-                return true;
-            }
-            if (!_context.Convertor.IsValidValueCast(valueType, targetType))
-            {
-                return false;
-            }
-            elementValue = _context.Convertor.CastValue(targetType, originalValue);
             return true;
         }
 
