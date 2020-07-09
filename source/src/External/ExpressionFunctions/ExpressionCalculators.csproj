@@ -40,7 +40,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ArrayElementAcquirer.cs" />
+    <Compile Include="Array3DElementAcquirer.cs" />
+    <Compile Include="Array2DElementAcquirer.cs" />
+    <Compile Include="ComplementationCalculator.cs" />
+    <Compile Include="BracketsOperator.cs" />
+    <Compile Include="NumericDivideCalculator.cs" />
+    <Compile Include="NumericMultiplicateCalculator.cs" />
+    <Compile Include="NumericSubstractCalculator.cs" />
+    <Compile Include="NumericAddCalculator.cs" />
+    <Compile Include="NegativeCalculator.cs" />
+    <Compile Include="ListElementAcquirer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
