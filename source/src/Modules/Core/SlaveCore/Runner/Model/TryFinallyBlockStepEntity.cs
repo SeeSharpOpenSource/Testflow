@@ -61,7 +61,7 @@ namespace Testflow.SlaveCore.Runner.Model
                 {
                     // 停止计时
                     errorStep.EndTiming();
-                    errorStep.RecordTargetInvocationError(ex);
+                    errorStep.RecordTargetInvocationError(ex.InnerException);
                 }
                 throw;
             }
@@ -71,10 +71,34 @@ namespace Testflow.SlaveCore.Runner.Model
                 if (null != errorStep && errorStep.Result == StepResult.NotAvailable)
                 {
                     // 停止计时
-                    Actuator.EndTiming();
-                    this.Result = StepResult.Error;
-                    RecordInvocationError(ex, FailedType.TargetError);
+                    errorStep.EndTiming();
+                    errorStep.Result = StepResult.Error;
+                    errorStep.RecordInvocationError(ex, FailedType.TargetError);
                 }
+                throw;
+            }
+            catch (TestflowInternalException)
+            {
+                throw;
+            }
+            catch (TestflowException ex)
+            {
+                // 停止计时
+                Actuator.EndTiming();
+                StepTaskEntityBase errorStep = StepTaskEntityBase.GetCurrentStep(SequenceIndex, Coroutine.Id);
+                if (errorStep.Result == StepResult.NotAvailable)
+                {
+                    errorStep.Result = StepResult.Error;
+                    if (null != ex.InnerException)
+                    {
+                        errorStep.RecordTargetInvocationError(ex.InnerException);
+                    }
+                    else
+                    {
+                        errorStep.RecordInvocationError(ex, FailedType.TargetError);
+                    }
+                }
+                throw;
             }
             finally
             {

@@ -362,7 +362,7 @@ namespace Testflow.SlaveCore.Runner.Model
                 if (Result == StepResult.NotAvailable)
                 {
                     this.Result = StepResult.Error;
-                    RecordTargetInvocationError(ex);
+                    RecordTargetInvocationError(ex.InnerException);
                 }
                 // 如果失败行为是终止，则抛出异常
                 FailedAction failedAction = ex.InnerException is TestflowAssertException
@@ -377,6 +377,32 @@ namespace Testflow.SlaveCore.Runner.Model
                 this.Result = StepResult.Error;
                 RecordInvocationError(ex, FailedType.TargetError);
                 HandleException(StepData.InvokeErrorAction, ex);
+            }
+            catch (TestflowInternalException)
+            {
+                throw;
+            }
+            catch (TestflowException ex)
+            {
+                // 停止计时
+                Actuator.EndTiming();
+                if (Result == StepResult.NotAvailable)
+                {
+                    this.Result = StepResult.Error;
+                    if (null != ex.InnerException)
+                    {
+                        RecordTargetInvocationError(ex.InnerException);
+                    }
+                    else
+                    {
+                        RecordInvocationError(ex, FailedType.TargetError);
+                    }
+                }
+                // 如果失败行为是终止，则抛出异常
+                FailedAction failedAction = ex.InnerException is TestflowAssertException
+                    ? StepData.AssertFailedAction
+                    : StepData.InvokeErrorAction;
+                HandleException(failedAction, ex.InnerException);
             }
         }
 
@@ -468,6 +494,32 @@ namespace Testflow.SlaveCore.Runner.Model
                     RecordInvocationError(ex, FailedType.TargetError);
                     hasErrorStep = true;
                 }
+                catch (TestflowInternalException)
+                {
+                    throw;
+                }
+                catch (TestflowException ex)
+                {
+                    // 停止计时
+                    Actuator.EndTiming();
+                    if (Result == StepResult.NotAvailable)
+                    {
+                        this.Result = StepResult.Error;
+                        if (null != ex.InnerException)
+                        {
+                            RecordTargetInvocationError(ex.InnerException);
+                        }
+                        else
+                        {
+                            RecordInvocationError(ex, FailedType.TargetError);
+                        }
+                    }
+                    // 如果失败行为是终止，则抛出异常
+                    FailedAction failedAction = ex.InnerException is TestflowAssertException
+                        ? StepData.AssertFailedAction
+                        : StepData.InvokeErrorAction;
+                    HandleException(failedAction, ex.InnerException);
+                }
             }
             // 如果成功次数小于预订的成功次数，则抛出异常
             if (passCount < passTimes)
@@ -525,7 +577,7 @@ namespace Testflow.SlaveCore.Runner.Model
             {
                 // 停止计时
                 Actuator.EndTiming();
-                RecordTargetInvocationError(ex);
+                RecordTargetInvocationError(ex.InnerException);
                 FailedAction failedAction = ex.InnerException is TestflowAssertException
                     ? StepData.AssertFailedAction
                     : StepData.InvokeErrorAction;
@@ -553,6 +605,32 @@ namespace Testflow.SlaveCore.Runner.Model
                 this.Result = StepResult.Error;
                 RecordInvocationError(ex, FailedType.TargetError);
                 HandleException(StepData.InvokeErrorAction, ex);
+            }
+            catch (TestflowInternalException)
+            {
+                throw;
+            }
+            catch (TestflowException ex)
+            {
+                // 停止计时
+                Actuator.EndTiming();
+                if (Result == StepResult.NotAvailable)
+                {
+                    this.Result = StepResult.Error;
+                    if (null != ex.InnerException)
+                    {
+                        RecordTargetInvocationError(ex.InnerException);
+                    }
+                    else
+                    {
+                        RecordInvocationError(ex, FailedType.TargetError);
+                    }
+                }
+                // 如果失败行为是终止，则抛出异常
+                FailedAction failedAction = ex.InnerException is TestflowAssertException
+                    ? StepData.AssertFailedAction
+                    : StepData.InvokeErrorAction;
+                HandleException(failedAction, ex.InnerException);
             }
         }
 
@@ -617,6 +695,32 @@ namespace Testflow.SlaveCore.Runner.Model
                 RecordInvocationError(ex, FailedType.TargetError);
                 HandleException(StepData.InvokeErrorAction, ex);
             }
+            catch (TestflowInternalException)
+            {
+                throw;
+            }
+            catch (TestflowException ex)
+            {
+                // 停止计时
+                Actuator.EndTiming();
+                if (Result == StepResult.NotAvailable)
+                {
+                    this.Result = StepResult.Error;
+                    if (null != ex.InnerException)
+                    {
+                        RecordTargetInvocationError(ex.InnerException);
+                    }
+                    else
+                    {
+                        RecordInvocationError(ex, FailedType.TargetError);
+                    }
+                }
+                // 如果失败行为是终止，则抛出异常
+                FailedAction failedAction = ex.InnerException is TestflowAssertException
+                    ? StepData.AssertFailedAction
+                    : StepData.InvokeErrorAction;
+                HandleException(failedAction, ex.InnerException);
+            }
         }
 
         // 执行step且强制失败
@@ -626,6 +730,11 @@ namespace Testflow.SlaveCore.Runner.Model
             this.Result = StepResult.Failed;
             Context.LogSession.Print(LogLevel.Warn, Context.SessionId, $"Sequence step <{this.GetStack()}> passed but force failed.");
             throw new TaskFailedException(SequenceIndex, FailedType.ForceFailed, ModuleErrorCode.ForceFailed);
+        }
+
+        private void ProcessTargetInvokeException(StepResult result, Exception ex)
+        {
+
         }
 
         public void HandleException(FailedAction failedAction, Exception exception)
@@ -672,9 +781,8 @@ namespace Testflow.SlaveCore.Runner.Model
 
         #endregion
 
-        public void RecordTargetInvocationError(TargetInvocationException ex)
+        public void RecordTargetInvocationError(Exception innerException)
         {
-            Exception innerException = ex.InnerException;
             if (innerException is TestflowLoopBreakException)
             {
                 this.Result = StepResult.Pass;
@@ -765,7 +873,7 @@ namespace Testflow.SlaveCore.Runner.Model
             return false;
         }
 
-        public static FailedType GetFailedType(Exception ex)
+        private static FailedType GetFailedType(Exception ex)
         {
             if (ex is TestflowAssertException)
             {
