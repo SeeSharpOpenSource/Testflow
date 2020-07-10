@@ -8,7 +8,7 @@
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Testflow.External.ExpressionCalculators</RootNamespace>
-    <AssemblyName>ExpressionFuncs</AssemblyName>
+    <AssemblyName>ExpressionCalculators</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -44,6 +44,7 @@
     <Compile Include="Array2DElementAcquirer.cs" />
     <Compile Include="ComplementationCalculator.cs" />
     <Compile Include="BracketsOperator.cs" />
+    <Compile Include="ArrayElementAcquirer.cs" />
     <Compile Include="NumericDivideCalculator.cs" />
     <Compile Include="NumericMultiplicateCalculator.cs" />
     <Compile Include="NumericSubstractCalculator.cs" />
