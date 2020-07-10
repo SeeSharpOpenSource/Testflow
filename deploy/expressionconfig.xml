@@ -63,82 +63,90 @@
     </ExpressionOperator>
   </ExpressionOperators>
   <ExpressionCalculators>
-    <ExpressionCalculatorInfo Name="GetListElement" Description="Get the array data element in specified subscript.">
+  <ExpressionCalculatorInfo Name="GetArrayElement" Description="Get the array data element in specified subscript.">
       <OperatorName>GetElement</OperatorName>
-      <CalculatorClass AssemblyPath="ExpressionCalculators.dll" ClassName="Testflow.ExpressionCalculators.ListElementAcquirer" />
-      <SourceType AssemblyPath="mscorlib.dll" ClassName="System.Collections.IList" />
+      <CalculatorClass AssemblyPath="ExpressionCalculators.dll" AssemblyName='ExpressionCalculators' ClassName="Testflow.External.ExpressionCalculators.ArrayElementAcquirer" />
+      <SourceType AssemblyPath="mscorlib.dll" AssemblyName="mscorlib" ClassName="System.Array" />
       <ArgumentTypes>
-        <ArgumentType AssemblyPath="mscorlib.dll" ClassName="System.Int32" />
+        <ArgumentType AssemblyPath="mscorlib.dll" AssemblyName="mscorlib" ClassName="System.Int32" />
+      </ArgumentTypes>
+    </ExpressionCalculatorInfo>
+    <ExpressionCalculatorInfo Name="GetListElement" Description="Get the list data element in specified subscript.">
+      <OperatorName>GetElement</OperatorName>
+      <CalculatorClass AssemblyPath="ExpressionCalculators.dll" AssemblyName='ExpressionCalculators' ClassName="Testflow.External.ExpressionCalculators.ListElementAcquirer" />
+      <SourceType AssemblyPath="mscorlib.dll" AssemblyName="mscorlib" ClassName="System.Collections.IList" />
+      <ArgumentTypes>
+        <ArgumentType AssemblyPath="mscorlib.dll" AssemblyName="mscorlib" ClassName="System.Int32" />
       </ArgumentTypes>
     </ExpressionCalculatorInfo>
 	<ExpressionCalculatorInfo Name="Get2DArrayElement" Description="Get the array data element in specified subscript.">
       <OperatorName>Get2DArrayElement</OperatorName>
-      <CalculatorClass AssemblyPath="ExpressionCalculators.dll" ClassName="Testflow.ExpressionCalculators.Array2DElementAcquirer" />
+      <CalculatorClass AssemblyPath="ExpressionCalculators.dll" AssemblyName='ExpressionCalculators' ClassName="Testflow.External.ExpressionCalculators.Array2DElementAcquirer" />
       <SourceType AssemblyPath="mscorlib.dll" AssemblyName="mscorlib" ClassName="System.Array" />
       <ArgumentTypes>
-        <ArgumentType AssemblyPath="mscorlib.dll" ClassName="System.Int32" />
-		<ArgumentType AssemblyPath="mscorlib.dll" ClassName="System.Int32" />
+        <ArgumentType AssemblyPath="mscorlib.dll" AssemblyName="mscorlib" ClassName="System.Int32" />
+		<ArgumentType AssemblyPath="mscorlib.dll" AssemblyName="mscorlib" ClassName="System.Int32" />
       </ArgumentTypes>
     </ExpressionCalculatorInfo>
 	<ExpressionCalculatorInfo Name="Get3DArrayElement" Description="Get the array data element in specified subscript.">
       <OperatorName>Get3DArrayElement</OperatorName>
-      <CalculatorClass AssemblyPath="ExpressionCalculators.dll" ClassName="Testflow.ExpressionCalculators.Array3DElementAcquirer" />
+      <CalculatorClass AssemblyPath="ExpressionCalculators.dll" AssemblyName='ExpressionCalculators' ClassName="Testflow.External.ExpressionCalculators.Array3DElementAcquirer" />
       <SourceType AssemblyPath="mscorlib.dll" AssemblyName="mscorlib" ClassName="System.Array" />
       <ArgumentTypes>
-        <ArgumentType AssemblyPath="mscorlib.dll" ClassName="System.Int32" />
-		<ArgumentType AssemblyPath="mscorlib.dll" ClassName="System.Int32" />
-		<ArgumentType AssemblyPath="mscorlib.dll" ClassName="System.Int32" />
+        <ArgumentType AssemblyPath="mscorlib.dll" AssemblyName="mscorlib" ClassName="System.Int32" />
+		<ArgumentType AssemblyPath="mscorlib.dll" AssemblyName="mscorlib" ClassName="System.Int32" />
+		<ArgumentType AssemblyPath="mscorlib.dll" AssemblyName="mscorlib" ClassName="System.Int32" />
       </ArgumentTypes>
     </ExpressionCalculatorInfo>
 	<ExpressionCalculatorInfo Name="NegativeCalculate" Description="Get the negative value of numeric.">
       <OperatorName>NegativeOperation</OperatorName>
-      <CalculatorClass AssemblyPath="ExpressionCalculators.dll" ClassName="Testflow.ExpressionCalculators.NegativeCalculator" />
+      <CalculatorClass AssemblyPath="ExpressionCalculators.dll" AssemblyName='ExpressionCalculators' ClassName="Testflow.External.ExpressionCalculators.NegativeCalculator" />
       <SourceType AssemblyPath="mscorlib.dll" AssemblyName="mscorlib" ClassName="System.Double" />
       <ArgumentTypes></ArgumentTypes>
     </ExpressionCalculatorInfo>
 	<ExpressionCalculatorInfo Name="NumericAdd" Description="Get the value of two numeric add operation.">
       <OperatorName>Addition</OperatorName>
-      <CalculatorClass AssemblyPath="ExpressionCalculators.dll" ClassName="Testflow.ExpressionCalculators.NumericAddCalculator" />
+      <CalculatorClass AssemblyPath="ExpressionCalculators.dll" AssemblyName='ExpressionCalculators' ClassName="Testflow.External.ExpressionCalculators.NumericAddCalculator" />
       <SourceType AssemblyPath="mscorlib.dll" AssemblyName="mscorlib" ClassName="System.Double" />
       <ArgumentTypes>
-        <ArgumentType AssemblyPath="mscorlib.dll" ClassName="System.Double" />
+        <ArgumentType AssemblyPath="mscorlib.dll" AssemblyName="mscorlib" ClassName="System.Double" />
       </ArgumentTypes>
     </ExpressionCalculatorInfo>
 	<ExpressionCalculatorInfo Name="NumericSubstract" Description="Get the value of two numeric substract operation.">
       <OperatorName>Substraction</OperatorName>
-      <CalculatorClass AssemblyPath="ExpressionCalculators.dll" ClassName="Testflow.ExpressionCalculators.NumericSubstractCalculator" />
+      <CalculatorClass AssemblyPath="ExpressionCalculators.dll" AssemblyName='ExpressionCalculators' ClassName="Testflow.External.ExpressionCalculators.NumericSubstractCalculator" />
       <SourceType AssemblyPath="mscorlib.dll" AssemblyName="mscorlib" ClassName="System.Double" />
       <ArgumentTypes>
-        <ArgumentType AssemblyPath="mscorlib.dll" ClassName="System.Double" />
+        <ArgumentType AssemblyPath="mscorlib.dll" AssemblyName="mscorlib" ClassName="System.Double" />
       </ArgumentTypes>
     </ExpressionCalculatorInfo>
 	<ExpressionCalculatorInfo Name="NumericMultiplicate" Description="Get the value of two numeric multiplicate operation.">
       <OperatorName>Multiplication</OperatorName>
-      <CalculatorClass AssemblyPath="ExpressionCalculators.dll" ClassName="Testflow.ExpressionCalculators.NumericMultiplicateCalculator" />
+      <CalculatorClass AssemblyPath="ExpressionCalculators.dll" AssemblyName='ExpressionCalculators' ClassName="Testflow.External.ExpressionCalculators.NumericMultiplicateCalculator" />
       <SourceType AssemblyPath="mscorlib.dll" AssemblyName="mscorlib" ClassName="System.Double" />
       <ArgumentTypes>
-        <ArgumentType AssemblyPath="mscorlib.dll" ClassName="System.Double" />
+        <ArgumentType AssemblyPath="mscorlib.dll" AssemblyName="mscorlib" ClassName="System.Double" />
       </ArgumentTypes>
     </ExpressionCalculatorInfo>
 	<ExpressionCalculatorInfo Name="NumericDivide" Description="Get the value of two numeric division operation.">
       <OperatorName>Division</OperatorName>
-      <CalculatorClass AssemblyPath="ExpressionCalculators.dll" ClassName="Testflow.ExpressionCalculators.NumericDivideCalculator" />
+      <CalculatorClass AssemblyPath="ExpressionCalculators.dll" AssemblyName='ExpressionCalculators' ClassName="Testflow.External.ExpressionCalculators.NumericDivideCalculator" />
       <SourceType AssemblyPath="mscorlib.dll" AssemblyName="mscorlib" ClassName="System.Double" />
       <ArgumentTypes>
-        <ArgumentType AssemblyPath="mscorlib.dll" ClassName="System.Double" />
+        <ArgumentType AssemblyPath="mscorlib.dll" AssemblyName="mscorlib" ClassName="System.Double" />
       </ArgumentTypes>
     </ExpressionCalculatorInfo>
 	<ExpressionCalculatorInfo Name="NumericComplement" Description="Get the value of two numeric complement operation.">
       <OperatorName>Complementation</OperatorName>
-      <CalculatorClass AssemblyPath="ExpressionCalculators.dll" ClassName="Testflow.ExpressionCalculators.ComplementationCalculator" />
+      <CalculatorClass AssemblyPath="ExpressionCalculators.dll" AssemblyName='ExpressionCalculators' ClassName="Testflow.External.ExpressionCalculators.ComplementationCalculator" />
       <SourceType AssemblyPath="mscorlib.dll" AssemblyName="mscorlib" ClassName="System.Int64" />
       <ArgumentTypes>
-        <ArgumentType AssemblyPath="mscorlib.dll" ClassName="System.Int64" />
+        <ArgumentType AssemblyPath="mscorlib.dll" AssemblyName="mscorlib" ClassName="System.Int64" />
       </ArgumentTypes>
     </ExpressionCalculatorInfo>
 	<ExpressionCalculatorInfo Name="BracketsOperation" Description="Get the bracket value.">
       <OperatorName>Brackets</OperatorName>
-      <CalculatorClass AssemblyPath="ExpressionCalculators.dll" ClassName="Testflow.ExpressionCalculators.BracketsOperator" />
+      <CalculatorClass AssemblyPath="ExpressionCalculators.dll" AssemblyName='ExpressionCalculators' ClassName="Testflow.External.ExpressionCalculators.BracketsOperator" />
       <SourceType AssemblyPath="mscorlib.dll" AssemblyName="mscorlib" ClassName="System.Object" />
       <ArgumentTypes></ArgumentTypes>
     </ExpressionCalculatorInfo>
