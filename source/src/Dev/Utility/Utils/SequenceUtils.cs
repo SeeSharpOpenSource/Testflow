@@ -292,10 +292,29 @@ namespace Testflow.Utility.Utils
             return sequence;
         }
 
+        /// <summary>
+        /// 获取某个序列步骤所在的序列
+        /// </summary>
+        /// <param name="step">序列步骤</param>
+        public static ISequence GetParentSequence(ISequenceStep step)
+        {
+            ISequenceFlowContainer parent = step.Parent;
+            while (parent is ISequenceStep)
+            {
+                parent = parent.Parent;
+            }
+            return (ISequence)parent;
+        }
+
         #endregion
 
         #region 查找变量
 
+        /// <summary>
+        /// 判断某个名字的变量是否存在
+        /// </summary>
+        /// <param name="variableName">变量名</param>
+        /// <param name="step">使用变量的序列步骤</param>
         public static bool IsVariableExist(string variableName, ISequenceStep step)
         {
             ISequenceFlowContainer parent = step.Parent;
@@ -311,6 +330,11 @@ namespace Testflow.Utility.Utils
             return IsVariableExist(variableName, sequence);
         }
 
+        /// <summary>
+        /// 判断某个名字的变量是否存在
+        /// </summary>
+        /// <param name="variableName">变量名</param>
+        /// <param name="sequence">使用变量的序列</param>
         public static bool IsVariableExist(string variableName, ISequence sequence)
         {
             // 否则则认为表达式为变量值
