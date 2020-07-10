@@ -33,7 +33,8 @@ namespace Testflow.SlaveCore.Runner.Expression
         public bool TryCalculateWithNoConvert(ExpressionData expression)
         {
             object sourceValue;
-            if (!TryGetElementOriginalValue(expression.Source, out sourceValue) || sourceValue.GetType() != _sourceType)
+            if (!TryGetElementOriginalValue(expression.Source, out sourceValue) || 
+                !ModuleUtils.IsNeedNoConvert(sourceValue.GetType(),  _sourceType))
             {
                 return false;
             }
@@ -42,7 +43,7 @@ namespace Testflow.SlaveCore.Runner.Expression
             for (int i = 0; i < _argumentType.Length; i++)
             {
                 if (!TryGetElementOriginalValue(expression.Arguments[i], out argumentValue) ||
-                    argumentValue.GetType() != _argumentType[i])
+                    !ModuleUtils.IsNeedNoConvert(argumentValue.GetType(), _argumentType[i]))
                 {
                     return false;
                 }
@@ -55,7 +56,7 @@ namespace Testflow.SlaveCore.Runner.Expression
             expression.ExpressionValue = _calculator.Calculate(sourceValue, argumentValues);
             return true;
         }
-
+        
         public bool TryCalculate(ExpressionData expression)
         {
             object sourceValue;
@@ -114,6 +115,11 @@ namespace Testflow.SlaveCore.Runner.Expression
                 case ParameterType.Variable:
                     string variableName = ModuleUtils.GetVariableNameFromParamValue(element.Value);
                     originalValue = _context.VariableMapper.GetParamValue(variableName, element.Value);
+                    break;
+                case ParameterType.Expression:
+                    ExpressionData expressionData = (ExpressionData) element.Expression;
+                    originalValue = expressionData.ExpressionValue;
+                    return expressionData.IsValueSet;
                     break;
                 default:
                     throw new TestflowRuntimeException(ModuleErrorCode.ExpressionError, "Invalid expression.");

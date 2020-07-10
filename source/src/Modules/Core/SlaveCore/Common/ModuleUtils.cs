@@ -405,5 +405,11 @@ namespace Testflow.SlaveCore.Common
                    failedType == FailedType.TargetError ||
                    failedType == FailedType.RetryFailed;
         }
+
+        public static bool IsNeedNoConvert(Type valueType, Type targetType)
+        {
+            return valueType == targetType || valueType.IsSubclassOf(targetType) ||
+                   valueType.IsAssignableFrom(targetType);
+        }
     }
 }

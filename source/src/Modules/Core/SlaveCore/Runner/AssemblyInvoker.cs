@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
+using System.Threading;
 using Testflow.Usr;
 using Testflow.CoreCommon;
 using Testflow.Data;
@@ -13,6 +14,8 @@ namespace Testflow.SlaveCore.Runner
 {
     internal class AssemblyInvoker
     {
+        private object _operationLock = new object();
+
         private readonly Dictionary<string, Assembly> _assembliesMapping;
         private readonly Dictionary<string, Type> _typeDataMapping;
 
@@ -50,7 +53,44 @@ namespace Testflow.SlaveCore.Runner
 
         public Type GetType(ITypeData typeData)
         {
-            return _typeDataMapping[ModuleUtils.GetTypeFullName(typeData)];
+            string typeFullName = ModuleUtils.GetTypeFullName(typeData);
+            if (_typeDataMapping.ContainsKey(typeFullName))
+            {
+                return _typeDataMapping[typeFullName];
+            }
+            if (!_assembliesMapping.ContainsKey(typeData.AssemblyName))
+            {
+                _context.LogSession.Print(LogLevel.Error, CommonConst.PlatformLogSession, 
+                    $"Load assembly '{typeData.AssemblyName}' failed.");
+                throw new TestflowRuntimeException(ModuleErrorCode.UnavailableLibrary, _context.I18N.GetStr("LoadAssemblyFailed"));
+            }
+            lock (_operationLock)
+            {
+                try
+                {
+                    if (_typeDataMapping.ContainsKey(typeFullName))
+                    {
+                        return _typeDataMapping[typeFullName];
+                    }
+                    Thread.MemoryBarrier();
+                    Type type = LoadType(_assembliesMapping[typeData.AssemblyName], typeData);
+                    _typeDataMapping.Add(typeFullName, type);
+                    return type;
+                }
+                catch (TypeLoadException ex)
+                {
+                    _context.LogSession.Print(LogLevel.Error, CommonConst.PlatformLogSession, ex,
+                        $"Type '{typeFullName}' cannot found in assembly '{typeData.AssemblyName}'.");
+                    throw new TestflowDataException(ModuleErrorCode.UnaccessibleType,
+                        _context.I18N.GetStr("LoadTypeFailed"), ex);
+                }
+                catch (Exception ex)
+                {
+                    _context.LogSession.Print(LogLevel.Error, CommonConst.PlatformLogSession, ex, "Load type failed.");
+                    throw new TestflowRuntimeException(ModuleErrorCode.UnaccessibleType,
+                        _context.I18N.GetStr("LoadTypeFailed"), ex);
+                }
+            }
         }
 
         public MethodInfo GetMethod(IFunctionData function)
@@ -132,11 +172,13 @@ namespace Testflow.SlaveCore.Runner
 
         private void LoadAssemblies()
         {
+            string assemblyName = string.Empty;
             try
             {
                 foreach (IAssemblyInfo assemblyInfo in _assemblyInfos)
                 {
                     string fullPath = GetAssemblyFullPath(assemblyInfo.Path);
+                    assemblyName = assemblyInfo.AssemblyName;
                     if (null == fullPath)
                     {
                         _context.LogSession.Print(LogLevel.Error, CommonConst.PlatformLogSession, 
@@ -155,7 +197,7 @@ namespace Testflow.SlaveCore.Runner
             }
             catch (Exception ex)
             {
-                _context.LogSession.Print(LogLevel.Error, CommonConst.PlatformLogSession, ex, "Load assembly failed.");
+                _context.LogSession.Print(LogLevel.Error, CommonConst.PlatformLogSession, ex, $"Load assembly '{assemblyName}' failed.");
                 throw new TestflowRuntimeException(ModuleErrorCode.UnavailableLibrary, _context.I18N.GetStr("LoadAssemblyFailed"), ex);
             }
         }
@@ -328,14 +370,20 @@ namespace Testflow.SlaveCore.Runner
         private IExpressionCalculator GetCalculatorInstance(Assembly assembly, ExpressionTypeData calculatorClass)
         {
             Type calculatorType = GetExpressionType(assembly, calculatorClass);
-            if (!calculatorType.IsSubclassOf(typeof(IExpressionCalculator)))
-            {
-                throw new TestflowRuntimeException(ModuleErrorCode.ExpressionError,
-                    _context.I18N.GetFStr("InvalidCalculator", calculatorClass.ClassName));
-            }
+//            if (!calculatorType.IsAssignableFrom(typeof(IExpressionCalculator)))
+//            {
+//                throw new TestflowRuntimeException(ModuleErrorCode.ExpressionError,
+//                    _context.I18N.GetFStr("InvalidCalculator", calculatorClass.ClassName));
+//            }
             try
             {
-                return (IExpressionCalculator) Activator.CreateInstance(calculatorType);
+                IExpressionCalculator calculatorInstance = (IExpressionCalculator) Activator.CreateInstance(calculatorType);
+                if (null == calculatorInstance)
+                {
+                    throw new TestflowRuntimeException(ModuleErrorCode.ExpressionError,
+                            _context.I18N.GetFStr("InvalidCalculator", calculatorClass.ClassName));
+                }
+                return calculatorInstance;
             }
             catch (ApplicationException ex)
             {

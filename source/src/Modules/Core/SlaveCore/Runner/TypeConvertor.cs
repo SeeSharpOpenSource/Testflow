@@ -50,6 +50,10 @@ namespace Testflow.SlaveCore.Runner
                 return null;
             }
             Type sourceType = sourceValue.GetType();
+            if (IsNeedNoConvert(sourceType, targetType))
+            {
+                return sourceValue;
+            }
             if (!IsValidValueCast(sourceType, targetType))
             {
                 _context.LogSession.Print(LogLevel.Error, _context.SessionId, 
@@ -60,6 +64,16 @@ namespace Testflow.SlaveCore.Runner
             return _convertors[sourceType.Name].CastValue(targetType, sourceValue);
         }
 
+        private bool IsNeedNoConvert(Type sourceType, ITypeData targetType)
+        {
+            if (sourceType.Name.Equals(targetType.Name) && sourceType.Namespace.Equals(targetType.Namespace))
+            {
+                return true;
+            }
+            Type targetRealType = _context.TypeInvoker.GetType(targetType);
+            return ModuleUtils.IsNeedNoConvert(sourceType, targetRealType);
+        }
+
         public object CastValue(Type targetType, object sourceValue)
         {
             if (null == sourceValue)
@@ -68,6 +82,10 @@ namespace Testflow.SlaveCore.Runner
                 return null;
             }
             Type sourceType = sourceValue.GetType();
+            if (ModuleUtils.IsNeedNoConvert(sourceType, targetType))
+            {
+                return sourceValue;
+            }
             if (!IsValidValueCast(sourceType, targetType))
             {
                 _context.LogSession.Print(LogLevel.Error, _context.SessionId,
