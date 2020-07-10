@@ -136,6 +136,12 @@ namespace Testflow.Modules
         /// <param name="expressionValue">表达式的值</param>
         /// <returns></returns>
         IExpressionData GetExpressionData(ISequenceStep step, string expressionValue);
+
+        /// <summary>
+        /// 判断某个参数的配置是否为表达式，该值不能是常量
+        /// </summary>
+        /// <param name="parameterValue">参数值</param>
+        bool IsExpression(string parameterValue);
         
         #endregion
 

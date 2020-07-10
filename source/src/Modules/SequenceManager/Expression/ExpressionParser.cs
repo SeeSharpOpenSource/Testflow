@@ -357,6 +357,10 @@ namespace Testflow.SequenceManager.Expression
             return varExist;
         }
 
+        public bool IsExpression(string parameterValue)
+        {
+            return parameterValue.Any(valueChar => _expressionDelim.Contains(valueChar));
+        }
 
         private void ResetExpressionCache()
         {
@@ -367,5 +371,6 @@ namespace Testflow.SequenceManager.Expression
             }
             _argumentCache.Clear();
         }
+        
     }
 }

@@ -198,6 +198,11 @@ namespace Testflow.SequenceManager
             return _expressionParser.ParseExpression(expressionValue, sequence);
         }
 
+        public bool IsExpression(string parameterValue)
+        {
+            return _expressionParser.IsExpression(parameterValue);
+        }
+
         public void Serialize(ITestProject testProject, SerializationTarget target, params string[] param)
         {
             TestProject project = testProject as TestProject;
