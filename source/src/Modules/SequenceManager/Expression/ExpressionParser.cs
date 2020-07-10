@@ -16,7 +16,7 @@ namespace Testflow.SequenceManager.Expression
     public class ExpressionParser
     {
         private const int CacheCapacity = 500;
-        private readonly List<ExpressionCalculatorInfo> _calculatorInfos;
+        private readonly ExpressionCalculatorInfo[] _calculatorInfos;
         private readonly ILogService _logService;
 
         // 表达式解析缓存
@@ -43,7 +43,7 @@ namespace Testflow.SequenceManager.Expression
             _argumentCache = new Dictionary<string, string>(10);
             Dictionary<string, ExpressionOperatorInfo> operatorInfos =
                 configData.GetProperty<Dictionary<string, ExpressionOperatorInfo>>("ExpressionOperators");
-            _calculatorInfos = configData.GetProperty<List<ExpressionCalculatorInfo>>("ExpressionCalculators");
+            _calculatorInfos = configData.GetProperty<ExpressionCalculatorInfo[]>("ExpressionCalculators");
             _logService = logService;
             _parseOverRegex = new Regex(Constants.SingleExpPattern, RegexOptions.Compiled);
             _digitRegex = new Regex(Constants.DigitPattern, RegexOptions.Compiled);

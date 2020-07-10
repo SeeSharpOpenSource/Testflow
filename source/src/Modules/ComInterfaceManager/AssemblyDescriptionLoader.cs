@@ -811,7 +811,7 @@ namespace Testflow.ComInterfaceManager
             {
                 Type type = _assemblies[assemlyName].GetType(typeName);
                 Type baseType = _assemblies[baseAssemblyName].GetType(baseTypeName);
-                return type.IsSubclassOf(baseType);
+                return type.IsSubclassOf(baseType) || type.IsAssignableFrom(baseType);
             }
             catch (Exception ex)
             {

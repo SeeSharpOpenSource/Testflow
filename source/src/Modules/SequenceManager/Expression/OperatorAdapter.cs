@@ -105,7 +105,8 @@ namespace Testflow.SequenceManager.Expression
             // paramCount中还包含source的计数，所以需要删掉
             ExpressionData expression = new ExpressionData(_paramCount - 1)
             {
-                Name = _operatorInfo.Name
+                Name = _operatorInfo.Name,
+                Operation = _operatorInfo.Name
             };
             
             foreach (int orderIndex in _orderToIndexMapping.Keys)

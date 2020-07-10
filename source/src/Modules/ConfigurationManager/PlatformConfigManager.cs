@@ -99,9 +99,10 @@ namespace Testflow.ConfigurationManager
             globalConfigData.AddConfigItem(Constants.EngineConfig, "ExpressionOperators", operatorInfos);
             globalConfigData.AddConfigItem(Constants.ParamCheck, "ExpressionOperators", operatorInfos);
             // 添加计算类的信息
-            globalConfigData.AddConfigItem(Constants.SequenceManage, "ExpressionCalculators", expressionTokens.Calculators);
-            globalConfigData.AddConfigItem(Constants.EngineConfig, "ExpressionCalculators", expressionTokens.Calculators);
-            globalConfigData.AddConfigItem(Constants.ParamCheck, "ExpressionCalculators", expressionTokens.Calculators);
+            ExpressionCalculatorInfo[] expCalculatorInfos = expressionTokens.Calculators.ToArray();
+            globalConfigData.AddConfigItem(Constants.SequenceManage, "ExpressionCalculators", expCalculatorInfos);
+            globalConfigData.AddConfigItem(Constants.EngineConfig, "ExpressionCalculators", expCalculatorInfos);
+            globalConfigData.AddConfigItem(Constants.ParamCheck, "ExpressionCalculators", expCalculatorInfos);
         }
 
         private ExpressionOperatorConfiguration GetExpressionTokens(GlobalConfigData globalConfigData, ConfigDataLoader dataLoader)
