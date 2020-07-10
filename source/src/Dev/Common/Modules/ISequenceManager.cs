@@ -132,9 +132,10 @@ namespace Testflow.Modules
         /// <summary>
         /// 使用字符串获取表达式数据结构
         /// </summary>
-        /// <param name="expressionValue"></param>
+        /// <param name="step">表达式所在的Step</param>
+        /// <param name="expressionValue">表达式的值</param>
         /// <returns></returns>
-        IExpressionData GetExpressionData(string expressionValue);
+        IExpressionData GetExpressionData(ISequenceStep step, string expressionValue);
         
         #endregion
 

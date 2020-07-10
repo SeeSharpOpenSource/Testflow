@@ -23,6 +23,7 @@ namespace Testflow.SequenceManager
         private static object _instLock = new object();
         private TypeMaintainer _typeMaintainer;
         private DirectoryHelper _directoryHelper;
+        private ExpressionParser _expressionParser;
 
         public SequenceManager()
         {
@@ -67,6 +68,10 @@ namespace Testflow.SequenceManager
             if (null == _typeMaintainer)
             {
                 _typeMaintainer = new TypeMaintainer();
+            }
+            if (null == _expressionParser)
+            {
+                _expressionParser = new ExpressionParser(ConfigData, TestflowRunner.GetInstance().LogService);
             }
         }
 
@@ -187,9 +192,10 @@ namespace Testflow.SequenceManager
             return new AssemblyInfo();
         }
 
-        public IExpressionData GetExpressionData(string expressionValue)
+        public IExpressionData GetExpressionData(ISequenceStep step, string expressionValue)
         {
-            throw new NotImplementedException();
+            ISequence sequence = SequenceUtils.GetParentSequence(step);
+            return _expressionParser.ParseExpression(expressionValue, sequence);
         }
 
         public void Serialize(ITestProject testProject, SerializationTarget target, params string[] param)
