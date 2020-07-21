@@ -37,7 +37,9 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Messaging" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -49,6 +51,12 @@
     <Compile Include="Collections\Convertor\EnumConvertor.cs" />
     <Compile Include="Collections\Convertor\ValueConvertor.cs" />
     <Compile Include="Collections\SerializableMap.cs" />
+    <Compile Include="Controls\ErrorInfoForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Controls\ErrorInfoForm.Designer.cs">
+      <DependentUpon>ErrorInfoForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="MessageUtil\JsonFormatter.cs" />
     <Compile Include="ModuleErrorCode.cs" />
     <Compile Include="Resources\i18n_utils_en.Designer.cs">
@@ -99,6 +107,9 @@
     <Compile Include="Utils\SequenceUtils.cs" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Controls\ErrorInfoForm.resx">
+      <DependentUpon>ErrorInfoForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Resources\i18n_i18n_en.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>i18n_i18n_en.Designer.cs</LastGenOutput>

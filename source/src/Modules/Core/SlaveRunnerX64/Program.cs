@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Runtime.ExceptionServices;
 using System.Text;
 using Testflow.SlaveCore;
+using Testflow.Utility.Controls;
 
 namespace Testflow.SlaveRunnerX64
 {
@@ -22,6 +23,7 @@ namespace Testflow.SlaveRunnerX64
 //                EventLog eventLog = new EventLog("TestFlowSlave");
 //                eventLog.Source = "TestFlowSlaveRunner";
 //                eventLog.WriteEntry(GetExceptionInfo(ex), EventLogEntryType.Error);
+                ErrorInfoForm.ShowErrorInfoForm(Resource.ErrorHead, Resource.ErrorIntroduction, ex);
             }
             finally
             {
