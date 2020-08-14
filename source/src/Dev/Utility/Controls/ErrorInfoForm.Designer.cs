@@ -200,6 +200,7 @@
             this.Controls.Add(this.label_message);
             this.MinimumSize = new System.Drawing.Size(663, 441);
             this.Name = "ErrorInfoForm";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Error";
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_icon)).EndInit();
             this.ResumeLayout(false);
