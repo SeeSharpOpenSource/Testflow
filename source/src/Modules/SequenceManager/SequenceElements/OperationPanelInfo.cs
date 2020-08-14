@@ -12,6 +12,8 @@ namespace Testflow.SequenceManager.SequenceElements
     {
         public IAssemblyInfo Assembly { get; set; }
         public ITypeData OperationPanelClass { get; set; }
+        public IAssemblyInfo OIConfigAssembly { get; set; }
+        public ITypeData OIConfigPanelClass { get; set; }
         public string Parameters { get; set; }
 
         public OperationPanelInfo()
@@ -19,6 +21,8 @@ namespace Testflow.SequenceManager.SequenceElements
             this.Assembly = null;
             this.OperationPanelClass = null;
             this.Parameters = null;
+            this.OIConfigAssembly = null;
+            this.OIConfigPanelClass = null;
         }
 
         public OperationPanelInfo(SerializationInfo info, StreamingContext context)

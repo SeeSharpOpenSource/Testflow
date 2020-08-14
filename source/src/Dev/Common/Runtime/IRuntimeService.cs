@@ -81,6 +81,8 @@ namespace Testflow.Runtime
         /// <param name="sequenceGroup">待运行的序列组</param>
         void Load(ISequenceGroup sequenceGroup);
 
+
+
         /// <summary>
         /// 激活运行时服务
         /// </summary>

@@ -3,10 +3,21 @@ using System.Collections.Generic;
 using Testflow.Data.Sequence;
 using Testflow.Runtime.Data;
 
-namespace Testflow.ExtensionBase.OperationPanel
+namespace Testflow.Runtime.OperationPanel
 {
+    /// <summary>
+    /// OI面板接口类
+    /// </summary>
     public interface IOperationPanel : IDisposable
     {
+        /// <summary>
+        /// OI面板确认可以开始运行的事件
+        /// </summary>
+        event Action<bool, string> OiReady;
+
+        /// <summary>
+        /// OI运行的序列对象
+        /// </summary>
         ISequenceFlowContainer SequenceData { get; }
 
         /// <summary>

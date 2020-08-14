@@ -16,6 +16,16 @@
         ITypeData OperationPanelClass { get; set; }
 
         /// <summary>
+        ///操作员面板配置对象所在程序集
+        /// </summary>
+        IAssemblyInfo OIConfigAssembly { get; set; }
+
+        /// <summary>
+        /// 操作员面板配置对象所在类
+        /// </summary>
+        ITypeData OIConfigPanelClass { get; set; }
+
+        /// <summary>
         /// 操作员面板参数
         /// </summary>
         string Parameters { get; set; }

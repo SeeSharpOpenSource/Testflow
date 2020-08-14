@@ -1,4 +1,4 @@
-﻿namespace Testflow.ExtensionBase.OperationPanel
+﻿namespace Testflow.Runtime.OperationPanel
 {
     /// <summary>
     /// OI支持的序列类型
