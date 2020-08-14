@@ -93,6 +93,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SlaveRunnerX86", "src\Modul
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SlaveRunnerX64", "src\Modules\Core\SlaveRunnerX64\SlaveRunnerX64.csproj", "{058B4A99-3F6D-4D46-8EF8-F14895700447}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RunnerInvoker", "src\External\RunnerInvoker\RunnerInvoker.csproj", "{5543262D-FFEB-44EB-BFC8-6F5E8BA81746}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -239,6 +241,10 @@ Global
 		{058B4A99-3F6D-4D46-8EF8-F14895700447}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{058B4A99-3F6D-4D46-8EF8-F14895700447}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{058B4A99-3F6D-4D46-8EF8-F14895700447}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5543262D-FFEB-44EB-BFC8-6F5E8BA81746}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5543262D-FFEB-44EB-BFC8-6F5E8BA81746}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5543262D-FFEB-44EB-BFC8-6F5E8BA81746}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5543262D-FFEB-44EB-BFC8-6F5E8BA81746}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -287,5 +293,6 @@ Global
 		{1A3B26DB-8F13-4B79-8039-303F7330AB6F} = {28715545-018F-458C-B8E2-63408FD2C1AD}
 		{D76DB625-859D-412D-962F-A910895DA79F} = {EEE2376E-0091-4A52-A018-A84F0620DA76}
 		{058B4A99-3F6D-4D46-8EF8-F14895700447} = {EEE2376E-0091-4A52-A018-A84F0620DA76}
+		{5543262D-FFEB-44EB-BFC8-6F5E8BA81746} = {28715545-018F-458C-B8E2-63408FD2C1AD}
 	EndGlobalSection
 EndGlobal
