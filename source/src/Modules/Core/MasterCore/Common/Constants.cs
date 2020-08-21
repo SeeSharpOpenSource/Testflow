@@ -18,6 +18,8 @@ namespace Testflow.MasterCore.Common
 
         public const int OperationTimeout = 1000;
         public const string TestProjectSessionName = "TestProjectSession";
+        public const string AppDomainLauncherName = "Testflow.SlaveCore.AppDomainTestLauncher";
+        public const string SlaveRunnerNameFormat = "TestFlowSlaveRunner_{0}";
 
         #region Block事件状态值定义
 

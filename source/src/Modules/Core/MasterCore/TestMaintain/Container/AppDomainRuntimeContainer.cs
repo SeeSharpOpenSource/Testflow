@@ -7,25 +7,19 @@ using System.Threading;
 using Testflow.Usr;
 using Testflow.MasterCore.Common;
 using Testflow.Modules;
+using Testflow.SlaveCore;
 
 namespace Testflow.MasterCore.TestMaintain.Container
 {
     internal class AppDomainRuntimeContainer : RuntimeContainer
     {
-        private readonly AppDomain _appDomain;
+        private AppDomainLauncherParser _launcherParser;
         private readonly Thread _testThd;
 
         public AppDomainRuntimeContainer(int sessionId, ModuleGlobalInfo globalInfo,
             params object[] extraParam) : base(sessionId, globalInfo)
         {
 //            RuntimeType runtimeType = globalInfo.ConfigData.GetProperty<RuntimeType>("RuntimeType");
-            string testflowHome = globalInfo.ConfigData.GetProperty<string>("TestflowHome");
-            AppDomainSetup domainSetup = new AppDomainSetup()
-            {
-                ApplicationBase = testflowHome
-            };
-            Evidence evidence = AppDomain.CurrentDomain.Evidence;
-            _appDomain = AppDomain.CreateDomain(GetAppDomainName(), evidence, domainSetup);
             IsAvailable = true;
             _testThd = new Thread(StartLauncher)
             {
@@ -42,15 +36,11 @@ namespace Testflow.MasterCore.TestMaintain.Container
         private void StartLauncher(object param)
         {
             string configStr = (string)param;
-            dynamic launcherInstance = null;
+            AppDomainTestLauncher launcherInstance = null;
             try
             {
-                //                _appDomain.Load(launcherType.Assembly.GetName());
-                string testflowHome = GlobalInfo.ConfigData.GetProperty<string>("TestflowHome");
-                string corePath = $"{testflowHome}SlaveCore.dll";
-                launcherInstance = _appDomain.CreateInstanceFromAndUnwrap(
-                    corePath, Constants.AppDomainLauncherName, false, BindingFlags.Instance | BindingFlags.Public,
-                    null, new object[] { configStr }, CultureInfo.CurrentCulture, null);
+                _launcherParser = new AppDomainLauncherParser();
+                launcherInstance = _launcherParser.CreateAppDomainLauncher(GlobalInfo, Session, configStr);
                 launcherInstance.Start();
             }
             catch (ThreadAbortException ex)
@@ -66,6 +56,7 @@ namespace Testflow.MasterCore.TestMaintain.Container
             }
             finally
             {
+                _launcherParser.LauncherOver();
                 IsAvailable = false;
                 launcherInstance?.Dispose();
             }
@@ -87,6 +78,8 @@ namespace Testflow.MasterCore.TestMaintain.Container
                 IsAvailable = false;
                 Thread.MemoryBarrier();
                 OnRuntimeExited();
+                _launcherParser?.Unload();
+                _launcherParser = null;
             }
             
         }

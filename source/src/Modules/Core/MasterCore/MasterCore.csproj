@@ -80,6 +80,7 @@
     <Compile Include="StatusManage\SessionEventPump.cs" />
     <Compile Include="StatusManage\StateManageContext.cs" />
     <Compile Include="StatusManage\StatePersistance\PersistenceProxy.cs" />
+    <Compile Include="TestMaintain\Container\AppDomainLauncherParser.cs" />
     <Compile Include="TestMaintain\Container\AppDomainRuntimeContainer.cs" />
     <Compile Include="TestMaintain\Container\ProcessRuntimeContainer.cs" />
     <Compile Include="TestMaintain\ITestEntityMaintainer.cs" />
