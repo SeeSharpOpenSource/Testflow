@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Reflection;
 using System.Runtime.ExceptionServices;
+using System.Security;
 using System.Threading;
 using Testflow.Usr;
 using Testflow.CoreCommon.Data;
@@ -75,6 +76,7 @@ namespace Testflow.SlaveCore.Runner.Model
         /// <summary>
         /// 调用序列的函数
         /// </summary>
+        [SecurityCritical]
         [HandleProcessCorruptedStateExceptions]
         public void Invoke(bool forceInvoke = false)
         {
