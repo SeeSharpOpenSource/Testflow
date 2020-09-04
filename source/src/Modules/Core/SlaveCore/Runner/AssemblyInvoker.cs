@@ -163,11 +163,37 @@ namespace Testflow.SlaveCore.Runner
             return constructor;
         }
 
-        public object CastConstantValue(ITypeData type, string valueStr)
+        public object CastConstantValue(ITypeData type, string valueStr, object originalValue = null)
         {
             Type dataType = _typeDataMapping[ModuleUtils.GetTypeFullName(type)];
             // 值或简单类型或使用Json到类或struct的转换
-            return _context.Convertor.CastConstantValue(dataType, valueStr);
+            return _context.Convertor.CastConstantValue(dataType, valueStr, originalValue);
+        }
+
+        public object CastConstantValue(Type type, string valueStr, object originalValue = null)
+        {
+            return _context.Convertor.CastConstantValue(type, valueStr, originalValue);
+        }
+
+        /// <summary>
+        /// 判断某个类型是否为简单类型(复杂类型为类和结构体)
+        /// </summary>
+        public bool IsSimpleType(ITypeData type)
+        {
+            Type dataType = _typeDataMapping[ModuleUtils.GetTypeFullName(type)];
+            return IsSimpleType(dataType);
+        }
+
+        /// <summary>
+        /// 判断某个类型是否为简单类型(复杂类型为类和结构体)
+        /// </summary>
+        public bool IsSimpleType(Type type)
+        {
+            if (type.IsEnum || type == typeof(string))
+            {
+                return true;
+            }
+            return _context.Convertor.IsValidValueCast(typeof(string), type);
         }
 
         private void LoadAssemblies()

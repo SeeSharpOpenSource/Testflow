@@ -42,6 +42,9 @@ namespace Testflow.SlaveCore.Runner
             _nonValueConvertor = new NonValueTypeConvertor(_context);
         }
 
+        /// <summary>
+        /// 运行时转换对象类型
+        /// </summary>
         public object CastValue(ITypeData targetType, object sourceValue)
         {
             if (null == sourceValue)
@@ -74,6 +77,9 @@ namespace Testflow.SlaveCore.Runner
             return ModuleUtils.IsNeedNoConvert(sourceType, targetRealType);
         }
 
+        /// <summary>
+        /// 运行时转换对象类型
+        /// </summary>
         public object CastValue(Type targetType, object sourceValue)
         {
             if (null == sourceValue)
@@ -97,9 +103,9 @@ namespace Testflow.SlaveCore.Runner
         }
 
         /// <summary>
-        /// 字符串转换为值类型
+        /// 字符串常量转换为值类型，测试生成时调用
         /// </summary>
-        public object CastConstantValue(Type targetType, string sourceValue)
+        public object CastConstantValue(Type targetType, string sourceValue, object originalValue = null)
         {
             if (targetType == typeof(string))
             {
@@ -115,7 +121,32 @@ namespace Testflow.SlaveCore.Runner
             }
             else if (_nonValueConvertor.IsNonValueTypeString(targetType, ref sourceValue))
             {
-                return _nonValueConvertor.CastConstantValue(targetType, sourceValue);
+                return _nonValueConvertor.CastConstantValue(targetType, sourceValue, originalValue);
+            }
+            throw new TestflowDataException(ModuleErrorCode.UnsupportedTypeCast,
+                _context.I18N.GetFStr("InvalidTypeCast", targetType.Name));
+        }
+
+        /// <summary>
+        /// 属性值类型转换
+        /// </summary>
+        public object FillPropertyAndFieldValues(Type targetType, string sourceValue, object originalValue)
+        {
+            if (targetType == typeof(string))
+            {
+                return sourceValue;
+            }
+            else if (targetType.IsEnum)
+            {
+                return Enum.Parse(targetType, sourceValue);
+            }
+            else if (_strConvertor.IsValidCastTarget(targetType))
+            {
+                return _strConvertor.CastValue(targetType, sourceValue);
+            }
+            else if (_nonValueConvertor.IsNonValueTypeString(targetType, ref sourceValue))
+            {
+                return _nonValueConvertor.CastConstantValue(targetType, sourceValue, originalValue);
             }
             throw new TestflowDataException(ModuleErrorCode.UnsupportedTypeCast,
                 _context.I18N.GetFStr("InvalidTypeCast", targetType.Name));

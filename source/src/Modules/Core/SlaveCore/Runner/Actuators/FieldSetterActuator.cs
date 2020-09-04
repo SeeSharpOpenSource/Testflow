@@ -62,8 +62,9 @@ namespace Testflow.SlaveCore.Runner.Actuators
                         _params.Add(null);
                         break;
                     case ParameterType.Value:
-                        _params.Add(Context.TypeInvoker.CastConstantValue(argument.Type,
-                            paramValue));
+                        _params.Add(Context.TypeInvoker.IsSimpleType(argument.Type)
+                            ? Context.TypeInvoker.CastConstantValue(argument.Type, paramValue)
+                            : null);
                         break;
                     case ParameterType.Variable:
                         string variableRawName = ModuleUtils.GetVariableNameFromParamValue(paramValue);
@@ -119,6 +120,7 @@ namespace Testflow.SlaveCore.Runner.Actuators
                     // 根据ParamString和变量对应的值配置参数。
                     _params[i] = Context.VariableMapper.GetParamValue(variableName, parameters[i].Value,
                         arguments[i].Type);
+                    _fields[i].SetValue(instance, _params[i]);
                 }
                 else if (parameters[i].ParameterType == ParameterType.Expression)
                 {
@@ -126,8 +128,26 @@ namespace Testflow.SlaveCore.Runner.Actuators
                     ExpressionProcessor expProcessor =
                         Context.CoroutineManager.GetCoroutineHandle(CoroutineId).ExpressionProcessor;
                     _params[i] = expProcessor.Calculate(expIndex, arguments[i].Type);
+                    _fields[i].SetValue(instance, _params[i]);
                 }
-                _fields[i].SetValue(instance, _params[i]);
+                // 如果参数类型为value且参数值为null且参数配置的字符不为空且参数类型是类或结构体，则需要实时计算该属性或字段的值
+                else if (parameters[i].ParameterType == ParameterType.Value && null == _params[i] &&
+                         !string.IsNullOrEmpty(parameters[i].Value) &&
+                         !Context.TypeInvoker.IsSimpleType(_fields[i].FieldType))
+                {
+                    object originalValue = _fields[i].GetValue(instance);
+                    _params[i] = Context.TypeInvoker.CastConstantValue(_fields[i].FieldType, parameters[i].Value,
+                        originalValue);
+                    // 如果原始值为空，则需要配置Value，否则其参数都已经写入，无需外部更新
+                    if (null == originalValue)
+                    {
+                        _fields[i].SetValue(instance, _params[i]);
+                    }
+                }
+                else
+                {
+                    _fields[i].SetValue(instance, _params[i]);
+                }
             }
             // 停止计时
             EndTiming();
