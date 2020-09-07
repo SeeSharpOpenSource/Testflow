@@ -26,8 +26,8 @@
         public const string StepNameFormat = "SequenceStep{0}";
         public const string VariableNameFormat = "Variable{0}";
 
-        public const string CopyPostfix = "-Copy";
-
+        public const string CopyPostfix = "";
+        public const string DuplicatePostfix = "-new";
         public const string ValueTypeName = "Value";
 
 //        public const string CollectionElemName = "Element";
